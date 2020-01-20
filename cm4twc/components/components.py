@@ -7,16 +7,18 @@ class _Component(object):
     """
 
     def __init__(self, category, driving_data_names, ancil_data_names,
-                 inwards, outwards):
+                 parameter_names, inwards, outwards):
 
         self.category = category
         self.driving_data_names = driving_data_names if driving_data_names else ()
         self.ancil_data_names = ancil_data_names if ancil_data_names else ()
+        self.parameter_names = parameter_names if parameter_names else ()
         self.inwards = inwards
         self.outwards = outwards
 
-    def __call__(self, tf, sd, db, *args, **kwargs):
+    def __call__(self, tf, sd, db, **kwargs):
 
+        # check that all inward fluxes of info are provided
         if not all([i in kwargs for i in self.inwards]):
             raise RuntimeError(
                 "One or more input variables are missing in {} component '{}': "
@@ -24,7 +26,15 @@ class _Component(object):
                     self.category, self.__class__.__name__, self.inwards)
             )
 
-        # collect required data from database
+        # check that all parameters are provided
+        if not all([i in kwargs for i in self.parameter_names]):
+            raise RuntimeError(
+                "One or more parameters are missing in {} component '{}': "
+                "{} are all required.".format(
+                    self.category, self.__class__.__name__, self.parameter_names)
+            )
+
+        # check availability and collect required data from database
         for data in self.driving_data_names + self.ancil_data_names:
             try:
                 kwargs[data] = db[data]
@@ -37,8 +47,10 @@ class _Component(object):
         # do something with time frame? with space domain?
         # (use them to check database has data for time and space required?)
 
+        # run simulation for the component
         outputs = self.run(**kwargs)
 
+        # check that all outward fluxes of info are returned
         if isinstance(outputs, dict):
             if all([o in outputs for o in self.outwards]):
                 return outputs
@@ -69,11 +81,12 @@ class SurfaceComponent(_Component):
              'evaporation_soil_surface', 'evaporation_ponded_water',
              'evaporation_openwater')
 
-    def __init__(self, driving_data_names=None, ancil_data_names=None):
+    def __init__(self, driving_data_names=None, ancil_data_names=None,
+                 parameter_names=None):
 
         super(SurfaceComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
-            self._ins, self._outs)
+            parameter_names, self._ins, self._outs)
 
     def run(self, *args, **kwargs):
 
@@ -87,11 +100,12 @@ class SubSurfaceComponent(_Component):
             'transpiration', 'throughfall', 'snowmelt')
     _outs = ('surface_runoff', 'subsurface_runoff')
 
-    def __init__(self, driving_data_names=None, ancil_data_names=None):
+    def __init__(self, driving_data_names=None, ancil_data_names=None,
+                 parameter_names=None):
 
         super(SubSurfaceComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
-            self._ins, self._outs)
+            parameter_names, self._ins, self._outs)
 
     def run(self, *args, **kwargs):
 
@@ -104,11 +118,12 @@ class OpenWaterComponent(_Component):
     _ins = ('evaporation_openwater', 'surface_runoff', 'subsurface_runoff')
     _outs = ('discharge',)
 
-    def __init__(self, driving_data_names=None, ancil_data_names=None):
+    def __init__(self, driving_data_names=None, ancil_data_names=None,
+                 parameter_names=None):
 
         super(OpenWaterComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
-            self._ins, self._outs)
+            parameter_names, self._ins, self._outs)
 
     def run(self, *args, **kwargs):
 
@@ -124,13 +139,15 @@ class DataComponent(_Component):
     def __init__(self, database, required):
         super(DataComponent, self).__init__(
             self._cat, None, None,
-            self._ins, self._outs)
+            None, self._ins, self._outs)
 
         if isinstance(database, DataBase):
             self.database = database
         else:
             raise TypeError("A DataComponent can only be instantiated by "
                             "giving it an instance of Variable.")
+
+        # use 'required' to check if they are all present in 'database'
 
     def run(self, *args, **kwargs):
 
@@ -147,7 +164,6 @@ class NoneComponent(_Component):
 
         super(NoneComponent, self).__init__(
             self._cat, None, None,
-            self._ins, self._outs)
+            None, self._ins, self._outs)
 
     def run(self, *args, **kwargs): return {}
-

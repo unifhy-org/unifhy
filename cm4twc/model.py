@@ -46,11 +46,9 @@ class Model(object):
                             "a sublass of the class SurfaceComponent, "
                             "or an instance of Variable.")
 
-
-
-
-
-    def simulate(self, surface_context, subsurface_context, openwater_context, **kwargs):
+    def simulate(self, surface_context, surface_parameters,
+                 subsurface_context, subsurface_parameters,
+                 openwater_context, openwater_parameters):
 
         self._check_modelling_context('surface', *surface_context)
         self._check_modelling_context('subsurface', *subsurface_context)
@@ -70,17 +68,19 @@ class Model(object):
 
         out_surface = self._surface(
             *surface_context,
-            **kwargs
+            **surface_parameters
         )
 
         out_subsurface = self._subsurface(
             *subsurface_context,
-            **out_surface, **kwargs
+            **subsurface_parameters,
+            **out_surface
         )
 
         out_openwater = self._openwater(
             *openwater_context,
-            **out_surface, **out_subsurface, **kwargs
+            **openwater_parameters,
+            **out_surface, **out_subsurface
         )
 
         return out_surface, out_subsurface, out_openwater
