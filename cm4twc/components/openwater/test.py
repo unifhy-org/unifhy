@@ -1,7 +1,7 @@
 from ..components import OpenWaterComponent
 
 
-class JULES(OpenWaterComponent):
+class Test(OpenWaterComponent):
 
     def __init__(self):
         super().__init__(driving_data_names=('air_temperature',),
