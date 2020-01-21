@@ -1,7 +1,7 @@
 from ..components import SubSurfaceComponent
 
 
-class Test(SubSurfaceComponent):
+class Dummy(SubSurfaceComponent):
 
     def __init__(self):
         super().__init__(driving_data_names=('soil_temperature',),

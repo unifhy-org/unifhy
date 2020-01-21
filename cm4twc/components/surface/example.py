@@ -1,7 +1,7 @@
 from ..components import SurfaceComponent
 
 
-class Test(SurfaceComponent):
+class Dummy(SurfaceComponent):
 
     def __init__(self):
         super().__init__(driving_data_names=('rainfall', 'snowfall',

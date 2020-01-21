@@ -1,7 +1,7 @@
 from ..components import OpenWaterComponent
 
 
-class Test(OpenWaterComponent):
+class Dummy(OpenWaterComponent):
 
     def __init__(self):
         super().__init__(driving_data_names=('air_temperature',),
