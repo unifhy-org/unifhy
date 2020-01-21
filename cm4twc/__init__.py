@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from os import path
 from configparser import ConfigParser
 from importlib import import_module
@@ -15,11 +16,24 @@ cfg = ConfigParser()
 cfg.read(path.join(path.abspath(path.dirname(__file__)),
          'components', 'components.ini'))
 
-for model_type in ['surface', 'subsurface', 'openwater']:
-    if model_type in cfg:
-        for name in cfg[model_type]:
+for component_type in ['surface', 'subsurface', 'openwater']:
+    if component_type in cfg:
+        for path_ in cfg[component_type]:
+            cls_name = cfg[component_type][path_]
+            # import the module defined as a key in the configuration file
             try:
-                import_module(cfg[model_type][name], package='cm4twc')
+                mod_ = import_module(path_, package=__name__)
             except ImportError:
-                raise ImportError("The {} model '{}' could not "
-                                  "be imported.".format(model_type, name))
+                raise ImportError("The {} component '{}' could not be "
+                                  "imported.".format(component_type, cls_name))
+            # get the class defined as a value in the configuration file
+            try:
+                cls_ = getattr(mod_, cls_name)
+            except AttributeError:
+                raise AttributeError("The class '{}' could not be found in "
+                                     "the module '{}'.".format(cls_name,
+                                                               mod_.__name__))
+            # assign the class to the relevant component module
+            setattr(sys.modules['.'.join([__name__, 'components',
+                                          component_type])],
+                    cls_name, cls_)
