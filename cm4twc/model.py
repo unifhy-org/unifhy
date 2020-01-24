@@ -230,6 +230,11 @@ class Model(object):
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("The 2nd contextual item for the '{}' component "
                             "must be an instance of SpaceDomain.".format(category))
+        else:
+            if isinstance(spacedomain, Network):
+                raise NotImplementedError("The SpaceDomain subclass Network is "
+                                          "not currently supported by the "
+                                          "framework.")
 
         if not isinstance(database, DataBase):
             raise TypeError("The 3rd contextual item for the '{}' component "
