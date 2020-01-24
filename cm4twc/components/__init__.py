@@ -1,3 +1,3 @@
 
 from .components import SurfaceComponent, SubSurfaceComponent, \
-    OpenWaterComponent, DataComponent, NoneComponent
+    OpenWaterComponent, DataComponent, NoneComponent, Component
