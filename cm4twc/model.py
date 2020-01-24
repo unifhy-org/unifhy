@@ -1,7 +1,7 @@
 from inspect import isclass
 
 from .time_ import TimeFrame
-from .space_ import _SpaceDomain
+from .space_ import SpaceDomain, Network
 from .data_ import DataBase
 from .components import SurfaceComponent, SubSurfaceComponent, \
     OpenWaterComponent, DataComponent, NoneComponent, Component
@@ -227,7 +227,7 @@ class Model(object):
             raise TypeError("The 1st contextual item for the '{}' component "
                             "must be an instance of TimeFrame.".format(category))
 
-        if not isinstance(spacedomain, _SpaceDomain):
+        if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("The 2nd contextual item for the '{}' component "
                             "must be an instance of SpaceDomain.".format(category))
 

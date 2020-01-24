@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class _SpaceDomain(object):
+class SpaceDomain(object):
     """
     Class to handle geospatial considerations.
     """
@@ -25,7 +25,7 @@ class _SpaceDomain(object):
                              "compared because they are of different kinds.")
 
 
-class Grid(_SpaceDomain):
+class Grid(SpaceDomain):
 
     def __init__(self, geo_coordinate_system, x, y):
 
@@ -53,7 +53,7 @@ class Grid(_SpaceDomain):
             return False
 
 
-class Network(_SpaceDomain):
+class Network(SpaceDomain):
 
     def __init__(self, topology):
 
