@@ -26,6 +26,11 @@ class Model(object):
             'openwater': openwater,
         }
 
+        # check if any component is actually meant to simulate something
+        if all([comp is None for cat, comp in given.items()]):
+            raise UserWarning("Trying to instantiate a Model without any "
+                              "meaningful component (i.e. all are None).")
+
         inferred = {
             'surface': self._infer_component_class(surface),
             'subsurface': self._infer_component_class(subsurface),
