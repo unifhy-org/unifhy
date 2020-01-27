@@ -70,12 +70,8 @@ class TestAPI(unittest.TestCase):
                 surface = cm4twc.surface.Dummy
             elif combination[0] == 'd':
                 surface = cm4twc.DataBase(
-                    throughfall=cm4twc.Variable('throughfall'),
-                    snowmelt=cm4twc.Variable('snowmelt'),
-                    transpiration=cm4twc.Variable('transpiration'),
-                    evaporation_soil_surface=cm4twc.Variable('evaporation_soil_surface'),
-                    evaporation_ponded_water=cm4twc.Variable('evaporation_ponded_water'),
-                    evaporation_openwater=cm4twc.Variable('evaporation_openwater')
+                    **{name: cm4twc.Variable(name)
+                       for name in cm4twc.SurfaceComponent.get_inwards()}
                 )
             else:  # i.e. 'n'
                 surface = None
@@ -85,8 +81,8 @@ class TestAPI(unittest.TestCase):
                 subsurface = cm4twc.subsurface.Dummy
             elif combination[1] == 'd':
                 subsurface = cm4twc.DataBase(
-                    surface_runoff=cm4twc.Variable('surface_runoff'),
-                    subsurface_runoff=cm4twc.Variable('subsurface_runoff')
+                    **{name: cm4twc.Variable(name)
+                       for name in cm4twc.SubSurfaceComponent.get_inwards()}
                 )
             else:  # i.e. 'n'
                 subsurface = None
@@ -96,7 +92,8 @@ class TestAPI(unittest.TestCase):
                 openwater = cm4twc.openwater.Dummy
             elif combination[2] == 'd':
                 openwater = cm4twc.DataBase(
-                    discharge=cm4twc.Variable('discharge')
+                    **{name: cm4twc.Variable(name)
+                       for name in cm4twc.OpenWaterComponent.get_inwards()}
                 )
             else:  # i.e. 'n'
                 openwater = None
