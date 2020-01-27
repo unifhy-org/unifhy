@@ -74,24 +74,33 @@ class Model(object):
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
-        out_surface = self._surface(
-            *surface_context,
-            **surface_parameters
+        out_ = {}
+
+        out_.update(
+            self._surface(
+                *surface_context,
+                **surface_parameters,
+                **out_
+            )
         )
 
-        out_subsurface = self._subsurface(
-            *subsurface_context,
-            **subsurface_parameters,
-            **out_surface
+        out_.update(
+            self._subsurface(
+                *subsurface_context,
+                **subsurface_parameters,
+                **out_
+            )
         )
 
-        out_openwater = self._openwater(
-            *openwater_context,
-            **openwater_parameters,
-            **out_surface, **out_subsurface
+        out_.update(
+            self._openwater(
+                *openwater_context,
+                **openwater_parameters,
+                **out_
+            )
         )
 
-        return out_surface, out_subsurface, out_openwater
+        return out_
 
     def _instantiate_component_with_depend_checks(self, category,
                                                   given, inferred):
@@ -118,13 +127,13 @@ class Model(object):
         of |Model| - keys: component category / values: object
         :type given: dict
         :param inferred: dictionary of classes previously inferred from
-        given objects - keyrs: component category / values: subclass of Component
+        given objects - keys: component category /
+                        values: subclass of |Component|
         :type inferred: dict
 
         :return: instance of Component
         :rtype: Component
         """
-
         given_object = given[category]
         inferred_class = inferred[category]
         expected_class = self._cat_to_class[category]
@@ -132,7 +141,8 @@ class Model(object):
         if issubclass(inferred_class, DataComponent):
             # not expecting to get data for this component
             # if not required by its dependencies
-            if not all([issubclass(inferred[down_], (DataComponent, NoneComponent))
+            if not all([issubclass(inferred[down_],
+                                   (DataComponent, NoneComponent))
                         for down_ in expected_class.get_downwards()]):
 
                 required_data = (
@@ -175,12 +185,12 @@ class Model(object):
 
     @staticmethod
     def _infer_component_class(given_object):
-
         """
         The purpose of this method is to return a class not matter what
         is given during the instantiation of the |Model| object.
 
-        Only three objects are supported for instantiating a Component of Model:
+        Only three objects are supported for instantiating a |Component|
+        of Model:
             - a subclass of |Component| (e.g. |SurfaceComponent|,
             |SubSurfaceComponent|, etc.) ;
             - an instance of |DataBase| ;
@@ -189,10 +199,10 @@ class Model(object):
         If something else is given, the method returns the class |type|.
 
         :param given_object: object given during instantiation of |Model|
-        :return: a subclass of |Component| or type if object given is unsupported
+        :return: a subclass of |Component| or type if object given
+        is unsupported
         :rtype: type
         """
-
         if given_object is None:
             return NoneComponent
         elif isclass(given_object):
@@ -227,7 +237,6 @@ class Model(object):
 
         :return: None
         """
-
         if not isinstance(timeframe, TimeFrame):
             raise TypeError("The 1st contextual item for the '{}' component "
                             "must be an instance of TimeFrame.".format(category))
