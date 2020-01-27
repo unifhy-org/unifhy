@@ -220,17 +220,17 @@ class Model(object):
         """
         The purpose of this method is to check that the elements in the
         tuple given for a given component category are if the right type
-        (i.e. (TimeFrame instance, SpaceDomain instance, DataBase instance))
+        (i.e. ([TimeFrame] instance, [SpaceDomain] instance, [DataBase] instance))
 
         :param category: name of the component category being checked
         (e.g. 'surface', 'subsurface', etc.)
         :type category: str
         :param timeframe: object being given as 1st argument during the
-        call of the |simulate| method for the given component category
+        call of the [simulate] method for the given component category
         :type timeframe: object being given as 2nd argument during the
-        call of the |simulate| method for the given component category
+        call of the [simulate] method for the given component category
         :param spacedomain: object being given as 3rd argument during the
-        call of the |simulate| method for the given component category
+        call of the [simulate] method for the given component category
         :type spacedomain: object
         :param database:
         :type database: object
