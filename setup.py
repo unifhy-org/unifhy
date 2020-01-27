@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019 HydroJULES
+# Copyright (C) 2020 HydroJULES
 from setuptools import setup
 
 
