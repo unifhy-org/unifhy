@@ -107,28 +107,28 @@ class Model(object):
         """
         The purpose of this method is to instantiate a given component
         after some checks on its compatibility with other components:
-            - if a subclass of |Component| is given for the component,
+            - if a subclass of [Component] is given for the component,
             check that this is a subclass of the relevant class (e.g.
-            |SurfaceComponent| if given for the |surface| argument) ;
-            - if a |DataBase| is given for the component, check that the
+            [SurfaceComponent] if given for the [surface] argument) ;
+            - if a [DataBase] is given for the component, check that the
             components depending on it require data (i.e. they are not
-            all |DataComponent| or |NoneComponent|) ;
-            - if |None| is given for the component, check that the
+            all [DataComponent] or [NoneComponent]) ;
+            - if [None] is given for the component, check that the
             components depending on it do not require data (i.e. they
-            are all |NoneComponent|).
+            are all [NoneComponent]).
 
-        Once these checks are done, an instance of |DataComponent|,
-        |NoneComponent|, or a "genuine" |Component| (e.g.
-        |SurfaceComponent|, |SubSurfaceComponent|, etc.) is returned.
+        Once these checks are done, an instance of [DataComponent],
+        [NoneComponent], or a "genuine" [Component] (e.g.
+        [SurfaceComponent], [SubSurfaceComponent], etc.) is returned.
 
         :param category: name of the component category
         :type category: str
         :param given: dictionary of objects given during instantiation
-        of |Model| - keys: component category / values: object
+        of [Model] - keys: component category / values: object
         :type given: dict
         :param inferred: dictionary of classes previously inferred from
         given objects - keys: component category /
-                        values: subclass of |Component|
+                        values: subclass of [Component]
         :type inferred: dict
 
         :return: instance of Component
@@ -187,19 +187,19 @@ class Model(object):
     def _infer_component_class(given_object):
         """
         The purpose of this method is to return a class not matter what
-        is given during the instantiation of the |Model| object.
+        is given during the instantiation of the [Model] object.
 
-        Only three objects are supported for instantiating a |Component|
-        of Model:
-            - a subclass of |Component| (e.g. |SurfaceComponent|,
-            |SubSurfaceComponent|, etc.) ;
-            - an instance of |DataBase| ;
-            - |None|.
+        Only three objects are supported for instantiating a [Component]
+        of [Model]:
+            - a subclass of [Component] (e.g. [SurfaceComponent],
+            [SubSurfaceComponent], etc.) ;
+            - an instance of [DataBase] ;
+            - [None].
 
-        If something else is given, the method returns the class |type|.
+        If anything else is given, the method returns the class [type].
 
-        :param given_object: object given during instantiation of |Model|
-        :return: a subclass of |Component| or type if object given
+        :param given_object: object given during instantiation of [Model]
+        :return: a subclass of [Component] or type if object given
         is unsupported
         :rtype: type
         """
