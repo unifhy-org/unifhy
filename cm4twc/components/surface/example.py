@@ -7,7 +7,7 @@ class Dummy(SurfaceComponent):
         super().__init__(driving_data_names=('rainfall', 'snowfall',
                                              'air_temperature',),
                          ancil_data_names=('leaf_area_index',),
-                         parameter_names=('stomatal_resistance',))
+                         parameter_names=())
 
     def run(self, rainfall, snowfall, air_temperature,
             leaf_area_index,
