@@ -74,33 +74,33 @@ class Model(object):
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
-        out_ = {}
+        interface_ = {}
 
-        out_.update(
+        interface_.update(
             self._surface(
                 *surface_context,
                 **surface_parameters,
-                **out_
+                **interface_
             )
         )
 
-        out_.update(
+        interface_.update(
             self._subsurface(
                 *subsurface_context,
                 **subsurface_parameters,
-                **out_
+                **interface_
             )
         )
 
-        out_.update(
+        interface_.update(
             self._openwater(
                 *openwater_context,
                 **openwater_parameters,
-                **out_
+                **interface_
             )
         )
 
-        return out_
+        return interface_
 
     def _instantiate_component_with_depend_checks(self, category,
                                                   given, inferred):
