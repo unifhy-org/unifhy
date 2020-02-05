@@ -1,54 +1,94 @@
 import numpy as np
 from datetime import datetime, timedelta
+import cf
+import cfunits
 
 
-class TimeFrame(object):
+class TimeDomain(cf.Field):
     """
     Class to handle temporal considerations
     (note: assumes everything is UTC for now).
     """
 
-    _epoch = datetime(1970, 1, 1, 0, 0, 0)
+    _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
+    _calendar = 'gregorian'
+    _reftime = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%S.%f"))
+    _units = cfunits.Units(_reftime, calendar=_calendar)
 
-    def __init__(self, timestamps):
+    def __init__(self, timestamps, reftime, calendar='gregorian',
+                 timestep_check=True):
 
-        self.timestamps = timestamps
+        super(TimeDomain, self).__init__()
+
+        timestamps = self._issequence(timestamps)
+
+        if np.issubdtype(timestamps.dtype, np.number):
+            if not reftime:
+                raise RuntimeError(
+                    "Error when initialising a {} from a sequence of "
+                    "timestamps: the reference time must be provided.".format(
+                        self.__class__.__name__))
+            elif isinstance(reftime, str):
+                units = cfunits.Units(reftime, calendar=calendar)
+            elif isinstance(reftime, cfunits.Units):
+                units = reftime
+            else:
+                raise TypeError(
+                    "Error when initialising a {} from a sequence of "
+                    "timestamps: the reference time must be an instance of "
+                    "cfunits.Units or a string.".format(
+                        self.__class__.__name__))
+
+            if not (units.isvalid and units.isreftime):
+                raise ValueError(
+                    "Error when initialising a {} from a sequence of "
+                    "timestamps: the reference time is not valid, it must "
+                    "comply with the format 'unit_of_time since date'.".format(
+                        self.__class__.__name__))
+        else:
+            raise TypeError("Error when initialising a {} from a sequence of "
+                            "timestamps: the values contained in the sequence "
+                            "must be numerical.")
+
+        if timestep_check:
+            self._check_timestep_consistency(timestamps)
+
+        axis = self.set_construct(cf.DomainAxis(len(timestamps)))
+        self.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': units.units,
+                            'calendar': units.calendar},
+                data=cf.Data(timestamps)),
+            axes=axis
+        )
+
+        self.cfunits = units
 
     def __eq__(self, other):
 
-        return np.array_equal(self.timestamps, other.timestamps)
+        return self.domain.equals(other.domain)
 
     @classmethod
-    def from_sequence(cls, sequence, reference=None, check=True):
+    def from_datetime_sequence(cls, datetimes, timestep_check=True):
 
-        if isinstance(sequence, (list, tuple)):
-            sequence = np.asarray(sequence)
+        datetimes = cls._issequence(datetimes)
 
-        if np.issubdtype(sequence.dtype, np.dtype(datetime)):
+        if np.issubdtype(datetimes.dtype, np.dtype(datetime)):
             timestamps = cls._convert_datetimes_to_timestamps(
-                sequence.astype('datetime64'), cls._epoch)
-        elif np.issubdtype(sequence.dtype, np.dtype('datetime64')):
-            timestamps = cls._convert_datetimes_to_timestamps(sequence, cls._epoch)
-        elif np.issubdtype(sequence.dtype, np.number):
-            if not reference:
-                timestamps = sequence
-            elif not isinstance(reference, datetime):
-                raise TypeError("Error when initialising a TimeFrame from "
-                                "sequence: if a reference is given, it must "
-                                "be a datetime object.")
-            elif reference == cls._epoch:
-                timestamps = sequence
-            else:
-                timestamps = cls._shift_timestamps_reference(
-                    sequence, reference, cls._epoch)
+                datetimes.astype('datetime64'), cls._epoch)
+        elif np.issubdtype(datetimes.dtype, np.dtype('datetime64')):
+            timestamps = cls._convert_datetimes_to_timestamps(
+                datetimes, cls._epoch)
         else:
-            raise TypeError("The values contained in the sequence are neither "
-                            "of DateTime nor numerical type.")
+            raise TypeError("Error when initialising a {} from sequence of "
+                            "datetime objects: the sequence given does not "
+                            "contain datetime objects.")
 
-        if check:
+        if timestep_check:
             cls._check_timestep_consistency(timestamps)
 
-        return cls(timestamps)
+        return cls(timestamps, cls._reftime, cls._calendar)
 
     @classmethod
     def from_start_end_step(cls, start, end, step):
@@ -73,10 +113,39 @@ class TimeFrame(object):
         (divisor, remainder) = divmod(int((end - start).total_seconds()),
                                       int(step.total_seconds()))
 
-        sequence = [start + timedelta(seconds=td * step.total_seconds())
-                    for td in range(divisor + 1)]
+        datetimes = [start + timedelta(seconds=td * step.total_seconds())
+                     for td in range(divisor + 1)]
 
-        return cls.from_sequence(np.asarray(sequence), check=False)
+        return cls.from_datetime_sequence(np.asarray(datetimes),
+                                          timestep_check=False)
+
+    @classmethod
+    def _issequence(cls, sequence):
+
+        if isinstance(sequence, (list, tuple)):
+            sequence = np.asarray(sequence)
+
+        if isinstance(sequence, np.ndarray):
+            if not sequence.ndim == 1:
+                raise ValueError(
+                    "Error when initialising a {} from sequence: the sequence "
+                    "given is not unidimensional.".format(cls.__name__))
+            else:
+                return sequence
+        else:
+            raise TypeError(
+                "Error when initialising a {} from sequence: the sequence "
+                "given must be a list, a tuple, or a numpy.ndarray.".format(
+                    cls.__name__))
+
+    def as_utc_datetime_sequence(self):
+
+        return self._convert_timestamps_to_datetimes(
+            cfunits.Units.conform(self.construct('time').array,
+                                  self.cfunits,
+                                  self._units),
+            reference=self._epoch
+        )
 
     @staticmethod
     def _convert_datetimes_to_timestamps(datetimes, reference):
@@ -103,8 +172,3 @@ class TimeFrame(object):
         if np.amin(time_diff) != np.amax(time_diff):
             raise RuntimeWarning("The timestep in the sequence is not constant "
                                  "across the period.")
-
-    def as_datetime_sequence(self):
-
-        return self._convert_timestamps_to_datetimes(
-            self.timestamps, reference=self._epoch)

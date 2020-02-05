@@ -1,6 +1,6 @@
 from inspect import isclass
 
-from .time_ import TimeFrame
+from .time_ import TimeDomain
 from .space_ import SpaceDomain, Network
 from .data_ import DataBase
 from .components import SurfaceComponent, SubSurfaceComponent, \
@@ -26,7 +26,7 @@ class Model(object):
             'openwater': openwater,
         }
 
-        # check if any component is actually meant to simulate something
+        # check if any component is actually meant to simulate anything
         if all([comp is None for cat, comp in given.items()]):
             raise UserWarning("Trying to instantiate a Model without any "
                               "meaningful component (i.e. all are None).")
@@ -57,7 +57,7 @@ class Model(object):
         """
 
         # check that the context given for each component is a tuple
-        # (TimeFrame instance, SpaceDomain instance, DataBase instance)
+        # (TimeDomain instance, SpaceDomain instance, DataBase instance)
         self._check_modelling_context('surface', *surface_context)
         self._check_modelling_context('subsurface', *subsurface_context)
         self._check_modelling_context('openwater', *openwater_context)
@@ -66,7 +66,7 @@ class Model(object):
                 or (surface_context[0] != openwater_context[0]):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
-                "for components to work on different TimeFrames.")
+                "for components to work on different TimeDomains.")
 
         if (surface_context[1] != subsurface_context[1]) \
                 or (surface_context[1] != openwater_context[1]):
@@ -216,18 +216,19 @@ class Model(object):
             return type
 
     @staticmethod
-    def _check_modelling_context(category, timeframe, spacedomain, database):
+    def _check_modelling_context(category, timedomain, spacedomain, database):
         """
         The purpose of this method is to check that the elements in the
         tuple given for a given component category are if the right type
-        (i.e. ([TimeFrame] instance, [SpaceDomain] instance, [DataBase] instance))
+        (i.e. ([TimeDomain] instance, [SpaceDomain] instance,
+        [DataBase] instance))
 
         :param category: name of the component category being checked
         (e.g. 'surface', 'subsurface', etc.)
         :type category: str
-        :param timeframe: object being given as 1st argument during the
+        :param timedomain: object being given as 1st argument during the
         call of the [simulate] method for the given component category
-        :type timeframe: object being given as 2nd argument during the
+        :type timedomain: object being given as 2nd argument during the
         call of the [simulate] method for the given component category
         :param spacedomain: object being given as 3rd argument during the
         call of the [simulate] method for the given component category
@@ -237,9 +238,9 @@ class Model(object):
 
         :return: None
         """
-        if not isinstance(timeframe, TimeFrame):
+        if not isinstance(timedomain, TimeDomain):
             raise TypeError("The 1st contextual item for the '{}' component "
-                            "must be an instance of TimeFrame.".format(category))
+                            "must be an instance of TimeDomain.".format(category))
 
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("The 2nd contextual item for the '{}' component "
