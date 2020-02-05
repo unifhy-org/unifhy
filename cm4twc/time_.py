@@ -12,7 +12,7 @@ class TimeDomain(cf.Field):
 
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
     _calendar = 'gregorian'
-    _reftime = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%S.%f"))
+    _reftime = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%S"))
     _units = cfunits.Units(_reftime, calendar=_calendar)
 
     def __init__(self, timestamps, reftime, calendar='gregorian',
