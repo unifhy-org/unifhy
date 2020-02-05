@@ -11,8 +11,7 @@ class Dummy(SubSurfaceComponent):
     def run(self, evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             soil_temperature,
-            permeability,
-            hydraulic_conductivity,
+            saturated_hydraulic_conductivity,
             **kwargs):
 
         return {

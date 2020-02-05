@@ -9,8 +9,6 @@ class Dummy(OpenWaterComponent):
                          parameter_names=('residence_time',))
 
     def run(self, evaporation_openwater, surface_runoff, subsurface_runoff,
-            air_temperature,
-            roughness,
             residence_time,
             **kwargs):
 

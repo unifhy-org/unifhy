@@ -10,8 +10,7 @@ class Dummy(SurfaceComponent):
                          parameter_names=())
 
     def run(self, rainfall, snowfall, air_temperature,
-            leaf_area_index,
-            stomatal_resistance,
+            vegetation_fraction,
             **kwargs):
 
         return {
