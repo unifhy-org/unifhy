@@ -69,6 +69,10 @@ class TimeDomain(cf.Field):
 
         return self.domain.equals(other.domain)
 
+    def __ne__(self, other):
+
+        return not self.__eq__(other)
+
     @classmethod
     def from_datetime_sequence(cls, datetimes, timestep_check=True):
 
