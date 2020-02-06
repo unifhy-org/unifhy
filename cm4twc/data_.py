@@ -64,7 +64,8 @@ class Variable(cf.Field):
     def from_cf_nc_file(cls, variablename, pathname):
 
         try:
-            field = cf.read(pathname)(variablename)
+            field = cf.read(pathname).select_by_property(
+                standard_name=variablename)
         except FileNotFoundError:
             raise FileNotFoundError("Error during initialisation of {} from "
                                     "CF-netCDF file: there is no such file or "
@@ -72,7 +73,14 @@ class Variable(cf.Field):
                                                             pathname))
 
         if field:
-            return cls(source=field)
+            if len(field) == 1:
+                return cls(source=field[0])
+            else:
+                raise UserWarning(
+                    "AmbiguityWarning - There is more than one variable whose "
+                    "standard_name are '{}' in CF-netCDF file located at "
+                    "{}.".format(variablename, pathname))
         else:
-            raise ValueError("There is no variable named '{}' in the CF-netCDF"
-                             " file located at {}".format(variablename, pathname))
+            raise ValueError(
+                "There is no variable whose standard_name is '{}' in the "
+                "CF-netCDF file located at {}".format(variablename, pathname))
