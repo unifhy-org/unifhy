@@ -67,7 +67,12 @@ class TimeDomain(cf.Field):
 
     def __eq__(self, other):
 
-        return self.construct('time').equals(other.construct('time'))
+        if isinstance(other, TimeDomain):
+            return self.construct('time').equals(other.construct('time'))
+        else:
+            return TypeError("The {} instance cannot be compared to "
+                             "a {} instance.".format(self.__class__.__name__,
+                                                     other.__class__.__name__))
 
     def __ne__(self, other):
 
