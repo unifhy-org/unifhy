@@ -68,7 +68,7 @@ class TimeDomain(cf.Field):
     def __eq__(self, other):
 
         if isinstance(other, TimeDomain):
-            return self.construct('time').equals(other.construct('time'))
+            return self.matched_in(other)
         else:
             return TypeError("The {} instance cannot be compared to "
                              "a {} instance.".format(self.__class__.__name__,
@@ -77,6 +77,10 @@ class TimeDomain(cf.Field):
     def __ne__(self, other):
 
         return not self.__eq__(other)
+
+    def matched_in(self, field):
+
+        return self.construct('time').equals(field.construct('time'))
 
     @classmethod
     def from_datetime_sequence(cls, datetimes, timestep_check=True):
