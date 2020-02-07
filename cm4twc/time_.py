@@ -78,9 +78,9 @@ class TimeDomain(cf.Field):
 
         return not self.__eq__(other)
 
-    def matched_in(self, field):
+    def matched_in(self, variable):
 
-        return self.construct('time').equals(field.construct('time'))
+        return self.construct('time').equals(variable.construct('time'))
 
     @classmethod
     def from_datetime_sequence(cls, datetimes, timestep_check=True):
