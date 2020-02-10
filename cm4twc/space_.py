@@ -165,11 +165,3 @@ class Grid(SpaceDomain):
                 alt = True
 
         return lat_lon and alt
-
-
-class Network(SpaceDomain):
-
-    def __init__(self):
-
-        super(Network, self).__init__()
-

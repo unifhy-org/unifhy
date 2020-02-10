@@ -1,7 +1,7 @@
 from inspect import isclass
 
 from .time_ import TimeDomain
-from .space_ import SpaceDomain, Network
+from .space_ import SpaceDomain, Grid
 from .data_ import DataBase
 from .components import SurfaceComponent, SubSurfaceComponent, \
     OpenWaterComponent, DataComponent, NoneComponent, Component
@@ -240,17 +240,21 @@ class Model(object):
         """
         if not isinstance(timedomain, TimeDomain):
             raise TypeError("The 1st contextual item for the '{}' component "
-                            "must be an instance of TimeDomain.".format(category))
+                            "must be an instance of {}.".format(
+                                category, TimeDomain.__name__))
 
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("The 2nd contextual item for the '{}' component "
-                            "must be an instance of SpaceDomain.".format(category))
+                            "must be an instance of {}.".format(
+                                category, TimeDomain.__name__))
         else:
-            if isinstance(spacedomain, Network):
-                raise NotImplementedError("The SpaceDomain subclass Network is "
-                                          "not currently supported by the "
-                                          "framework.")
+            if not isinstance(spacedomain, Grid):
+                raise NotImplementedError("The only {} subclass currently "
+                                          "supported by the framework is "
+                                          "{}.".format(SpaceDomain.__name__,
+                                                       Grid.__name__))
 
         if not isinstance(database, DataBase):
             raise TypeError("The 3rd contextual item for the '{}' component "
-                            "must be an instance of DataBase.".format(category))
+                            "must be an instance of {}.".format(
+                                category, DataBase.__name__))
