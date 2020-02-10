@@ -70,9 +70,9 @@ class TimeDomain(cf.Field):
         if isinstance(other, TimeDomain):
             return self.is_matched_in(other)
         else:
-            return TypeError("The {} instance cannot be compared to "
-                             "a {} instance.".format(self.__class__.__name__,
-                                                     other.__class__.__name__))
+            raise TypeError("The {} instance cannot be compared to "
+                            "a {} instance.".format(self.__class__.__name__,
+                                                    other.__class__.__name__))
 
     def __ne__(self, other):
 
