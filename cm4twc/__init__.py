@@ -6,7 +6,7 @@ from importlib import import_module
 
 from .model import Model
 from .time_ import TimeDomain
-from .space_ import Grid, Network
+from .space_ import Grid
 from .data_ import DataBase, Variable
 from .components import surface, subsurface, openwater, \
     SurfaceComponent, SubSurfaceComponent, OpenWaterComponent
