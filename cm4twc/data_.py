@@ -31,24 +31,24 @@ class DataBase(MutableMapping):
 
     def append(self, *args, **kwargs): self.update(*args, **kwargs)
 
-    def update_with_cf_nc_file(self, pathname, mapping=None):
+    def update_with_cf_nc_file(self, pathname, name_mapping=None):
 
         return self.update(
-            self._get_dict_variables_from_cf_nc_file(pathname, mapping)
+            self._get_dict_variables_from_cf_nc_file(pathname, name_mapping)
         )
 
     @classmethod
-    def from_cf_nc_file(cls, pathname, mapping=None):
+    def from_cf_nc_file(cls, pathname, name_mapping=None):
 
         return cls(
-            cls._get_dict_variables_from_cf_nc_file(pathname, mapping)
+            cls._get_dict_variables_from_cf_nc_file(pathname, name_mapping)
         )
 
     @staticmethod
-    def _get_dict_variables_from_cf_nc_file(pathname, mapping=None):
+    def _get_dict_variables_from_cf_nc_file(pathname, name_mapping=None):
         return {
-            mapping[field.standard_name]
-            if mapping and (field.standard_name in mapping)
+            name_mapping[field.standard_name]
+            if name_mapping and (field.standard_name in name_mapping)
             else field.standard_name: Variable(source=field, copy=False)
             for field in cf.read(pathname)
         }
