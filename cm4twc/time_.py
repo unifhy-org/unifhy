@@ -162,6 +162,12 @@ class TimeDomain(cf.Field):
             reference=self._epoch
         )
 
+    def as_utc_string_sequence(self):
+
+        return [
+            s.isoformat() for s in self.as_utc_datetime_sequence()
+        ]
+
     @staticmethod
     def _convert_datetimes_to_timestamps(datetimes, reference):
 
