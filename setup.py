@@ -6,16 +6,19 @@ from setuptools import setup
 with open("README.md", "r") as fh:
     long_desc = fh.read()
 
+with open('cm4twc/version.py') as fv:
+    exec(fv.read())
+
 setup(
     name='cm4twc',
 
-    version='0.0.1',
+    version=__version__,
 
     description='Community Model for the Terrestrial Water Cycle',
     long_description=long_desc,
     long_description_content_type="text/markdown",
 
-    url='https://github.com/NERC-CEH/cm4twc',
+    url='https://github.com/ThibHlln/cm4twc',
 
     author='HydroJULES Team',
     author_email='https://hydro-jules.org/',

@@ -4,6 +4,7 @@ from os import path
 from configparser import ConfigParser
 from importlib import import_module
 
+from .version import __version__
 from .model import Model
 from .time_ import TimeDomain
 from .space_ import Grid
