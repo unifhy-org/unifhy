@@ -8,7 +8,7 @@ import cm4twc
 def set_up_model_from_3_components(surface, subsurface, openwater):
 
     try:
-        cm4twc.Model(surface=surface,
+        cm4twc.Model(surfacelayer=surface,
                      subsurface=subsurface,
                      openwater=openwater)
     except (TypeError, UserWarning) as e:
@@ -37,16 +37,16 @@ class TestAPI(unittest.TestCase):
             # values: 's' for supported, 'i' for impossible, 'p' for possible but not supported
             ('c', 'c', 'c'): 's',
             ('d', 'c', 'c'): 's',
-            ('n', 'c', 'c'): 'i',  # surface outwards required
+            ('n', 'c', 'c'): 'i',  # surfacelayer outwards required
             ('c', 'd', 'c'): 's',
             ('d', 'd', 'c'): 's',
-            ('n', 'd', 'c'): 'i',  # surface outwards required
+            ('n', 'd', 'c'): 'i',  # surfacelayer outwards required
             ('c', 'n', 'c'): 'i',  # subsurface outwards required
             ('d', 'n', 'c'): 'i',  # subsurface outwards required
-            ('n', 'n', 'c'): 'i',  # surface+subsurface outwards required
+            ('n', 'n', 'c'): 'i',  # surfacelayer+subsurface outwards required
             ('c', 'c', 'd'): 'p',  # openwater data unnecessary
             ('d', 'c', 'd'): 'p',  # openwater data unnecessary
-            ('n', 'c', 'd'): 'i',  # surface outwards required & openwater data unnecessary
+            ('n', 'c', 'd'): 'i',  # surfacelayer outwards required & openwater data unnecessary
             ('c', 'd', 'd'): 'p',  # subsurface+openwater data unnecessary
             ('d', 'd', 'd'): 'p',  # no modelling component at all
             ('n', 'd', 'd'): 'p',  # no modelling component at all
@@ -55,7 +55,7 @@ class TestAPI(unittest.TestCase):
             ('n', 'n', 'd'): 'p',  # no modelling component at all
             ('c', 'c', 'n'): 's',
             ('d', 'c', 'n'): 's',
-            ('n', 'c', 'n'): 'i',  # surface outwards required
+            ('n', 'c', 'n'): 'i',  # surfacelayer outwards required
             ('c', 'd', 'n'): 'p',  # subsurface data unnecessary
             ('d', 'd', 'n'): 'p',  # no modelling component at all
             ('n', 'd', 'n'): 'p',  # no modelling component at all
@@ -65,13 +65,13 @@ class TestAPI(unittest.TestCase):
         }
 
         for combination, outcome in doe.items():
-            # for surface component
+            # for surfacelayer component
             if combination[0] == 'c':
-                surface = cm4twc.surface.Dummy
+                surface = cm4twc.surfacelayer.Dummy
             elif combination[0] == 'd':
                 surface = cm4twc.DataBase(
                     **{name: cm4twc.Variable(name)
-                       for name in cm4twc.SurfaceComponent.get_inwards()}
+                       for name in cm4twc.SurfaceLayerComponent.get_inwards()}
                 )
             else:  # i.e. 'n'
                 surface = None

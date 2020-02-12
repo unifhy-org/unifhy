@@ -82,9 +82,9 @@ class Component(object):
             "method.".format(self.category, self.__class__.__name__))
 
 
-class SurfaceComponent(Component):
+class SurfaceLayerComponent(Component):
 
-    _cat = 'surface'
+    _cat = 'surfacelayer'
     _ups = ()
     _ins = ()
     _downs = ('subsurface', 'openwater')
@@ -95,19 +95,19 @@ class SurfaceComponent(Component):
     def __init__(self, driving_data_names=None, ancil_data_names=None,
                  parameter_names=None):
 
-        super(SurfaceComponent, self).__init__(
+        super(SurfaceLayerComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
             parameter_names, self._ups, self._ins, self._downs, self._outs)
 
     def run(self, *args, **kwargs):
 
-        super(SurfaceComponent, self).run(self, *args, **kwargs)
+        super(SurfaceLayerComponent, self).run(self, *args, **kwargs)
 
 
 class SubSurfaceComponent(Component):
 
     _cat = 'subsurface'
-    _ups = ('surface',)
+    _ups = ('surfacelayer',)
     _ins = ('evaporation_soil_surface', 'evaporation_ponded_water',
             'transpiration', 'throughfall', 'snowmelt')
     _downs = ('openwater',)
@@ -128,7 +128,7 @@ class SubSurfaceComponent(Component):
 class OpenWaterComponent(Component):
 
     _cat = 'openwater'
-    _ups = ('surface', 'subsurface')
+    _ups = ('surfacelayer', 'subsurface')
     _ins = ('evaporation_openwater', 'surface_runoff', 'subsurface_runoff')
     _downs = ()
     _outs = ('discharge',)

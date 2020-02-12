@@ -3,7 +3,7 @@ from inspect import isclass
 from .time_ import TimeDomain
 from .space_ import SpaceDomain, Grid
 from .data_ import DataBase
-from .components import SurfaceComponent, SubSurfaceComponent, \
+from .components import SurfaceLayerComponent, SubSurfaceComponent, \
     OpenWaterComponent, DataComponent, NoneComponent, Component
 
 
@@ -13,15 +13,15 @@ class Model(object):
     """
 
     _cat_to_class = {
-        'surface': SurfaceComponent,
+        'surfacelayer': SurfaceLayerComponent,
         'subsurface': SubSurfaceComponent,
         'openwater': OpenWaterComponent,
     }
 
-    def __init__(self, surface, subsurface, openwater):
+    def __init__(self, surfacelayer, subsurface, openwater):
 
         given = {
-            'surface': surface,
+            'surfacelayer': surfacelayer,
             'subsurface': subsurface,
             'openwater': openwater,
         }
@@ -32,13 +32,13 @@ class Model(object):
                               "meaningful component (i.e. all are None).")
 
         inferred = {
-            'surface': self._infer_component_class(surface),
+            'surfacelayer': self._infer_component_class(surfacelayer),
             'subsurface': self._infer_component_class(subsurface),
             'openwater': self._infer_component_class(openwater),
         }
 
-        self._surface = self._instantiate_component_with_depend_checks(
-            'surface', given, inferred
+        self._surfacelayer = self._instantiate_component_with_depend_checks(
+            'surfacelayer', given, inferred
         )
 
         self._subsurface = self._instantiate_component_with_depend_checks(
@@ -49,39 +49,40 @@ class Model(object):
             'openwater', given, inferred
         )
 
-    def simulate(self, surface_domain, surface_data, surface_parameters,
-                 subsurface_domain, subsurface_data, subsurface_parameters,
-                 openwater_domain, openwater_data, openwater_parameters):
+    def simulate(self, surfacelayer_domain, surfacelayer_data,
+                 surfacelayer_parameters, subsurface_domain, subsurface_data,
+                 subsurface_parameters, openwater_domain, openwater_data,
+                 openwater_parameters):
         """
         DOCSTRING REQUIRED
         """
 
         # check that the context given for each component is a tuple
         # (TimeDomain instance, SpaceDomain instance)
-        self._check_component_domain(self._surface, *surface_domain)
+        self._check_component_domain(self._surfacelayer, *surfacelayer_domain)
         self._check_component_domain(self._subsurface, *subsurface_domain)
         self._check_component_domain(self._openwater, *openwater_domain)
 
-        if (surface_domain[0] != subsurface_domain[0]) \
-                or (surface_domain[0] != openwater_domain[0]):
+        if (surfacelayer_domain[0] != subsurface_domain[0]) \
+                or (surfacelayer_domain[0] != openwater_domain[0]):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different TimeDomains.")
 
-        if (surface_domain[1] != subsurface_domain[1]) \
-                or (surface_domain[1] != openwater_domain[1]):
+        if (surfacelayer_domain[1] != subsurface_domain[1]) \
+                or (surfacelayer_domain[1] != openwater_domain[1]):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
         # check that the required parameters are provided
-        self._check_component_parameters(self._surface, surface_parameters)
+        self._check_component_parameters(self._surfacelayer, surfacelayer_parameters)
         self._check_component_parameters(self._subsurface, subsurface_parameters)
         self._check_component_parameters(self._openwater, openwater_parameters)
 
         # check that the required data is available in a DataBase instance
-        self._check_component_data(self._surface, surface_data,
-                                   *surface_domain)
+        self._check_component_data(self._surfacelayer, surfacelayer_data,
+                                   *surfacelayer_domain)
         self._check_component_data(self._subsurface, subsurface_data,
                                    *subsurface_domain)
         self._check_component_data(self._openwater, openwater_data,
@@ -90,10 +91,10 @@ class Model(object):
         interface_ = {}
 
         interface_.update(
-            self._surface(
-                *surface_domain,
-                db=surface_data,
-                **surface_parameters,
+            self._surfacelayer(
+                *surfacelayer_domain,
+                db=surfacelayer_data,
+                **surfacelayer_parameters,
                 **interface_
             )
         )
@@ -125,7 +126,8 @@ class Model(object):
         after some checks on its compatibility with other components:
             - if a subclass of [Component] is given for the component,
             check that this is a subclass of the relevant class (e.g.
-            [SurfaceComponent] if given for the [surface] argument) ;
+            [SurfaceLayerComponent] if given for the [surfacelayer]
+            argument) ;
             - if a [DataBase] is given for the component, check that the
             components depending on it require data (i.e. they are not
             all [DataComponent] or [NoneComponent]) ;
@@ -207,7 +209,7 @@ class Model(object):
 
         Only three objects are supported for instantiating a [Component]
         of [Model]:
-            - a subclass of [Component] (e.g. [SurfaceComponent],
+            - a subclass of [Component] (e.g. [SurfaceLayerComponent],
             [SubSurfaceComponent], etc.) ;
             - an instance of [DataBase] ;
             - [None].

@@ -9,15 +9,15 @@ from .model import Model
 from .time_ import TimeDomain
 from .space_ import Grid
 from .data_ import DataBase, Variable
-from .components import surface, subsurface, openwater, \
-    SurfaceComponent, SubSurfaceComponent, OpenWaterComponent
+from .components import surfacelayer, subsurface, openwater, \
+    SurfaceLayerComponent, SubSurfaceComponent, OpenWaterComponent
 
 # import the modelling components defined in the configuration file
 cfg = ConfigParser()
 cfg.read(path.join(path.abspath(path.dirname(__file__)),
          'components', 'components.ini'))
 
-for component_type in ['surface', 'subsurface', 'openwater']:
+for component_type in ['surfacelayer', 'subsurface', 'openwater']:
     if component_type in cfg:
         for path_ in cfg[component_type]:
             cls_name = cfg[component_type][path_]
