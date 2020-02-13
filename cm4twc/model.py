@@ -4,7 +4,7 @@ from .time_ import TimeDomain
 from .space_ import SpaceDomain, Grid
 from .data_ import DataBase
 from .components import SurfaceLayerComponent, SubSurfaceComponent, \
-    OpenWaterComponent, DataComponent, NoneComponent, Component
+    OpenWaterComponent, DataComponent, NullComponent, _Component
 
 
 class Model(object):
@@ -20,34 +20,14 @@ class Model(object):
 
     def __init__(self, surfacelayer, subsurface, openwater):
 
-        given = {
-            'surfacelayer': surfacelayer,
-            'subsurface': subsurface,
-            'openwater': openwater,
-        }
+        self._surfacelayer = self._process_component_type(
+            surfacelayer, SurfaceLayerComponent)
 
-        # check if any component is actually meant to simulate anything
-        if all([comp is None for cat, comp in given.items()]):
-            raise UserWarning("Trying to instantiate a Model without any "
-                              "meaningful component (i.e. all are None).")
+        self._subsurface = self._process_component_type(
+            subsurface, SubSurfaceComponent)
 
-        inferred = {
-            'surfacelayer': self._infer_component_class(surfacelayer),
-            'subsurface': self._infer_component_class(subsurface),
-            'openwater': self._infer_component_class(openwater),
-        }
-
-        self._surfacelayer = self._instantiate_component_with_depend_checks(
-            'surfacelayer', given, inferred
-        )
-
-        self._subsurface = self._instantiate_component_with_depend_checks(
-            'subsurface', given, inferred
-        )
-
-        self._openwater = self._instantiate_component_with_depend_checks(
-            'openwater', given, inferred
-        )
+        self._openwater = self._process_component_type(
+            openwater, OpenWaterComponent)
 
     def simulate(self, surfacelayer_domain, surfacelayer_data,
                  surfacelayer_parameters, subsurface_domain, subsurface_data,
@@ -119,119 +99,23 @@ class Model(object):
 
         return interface_
 
-    def _instantiate_component_with_depend_checks(self, category,
-                                                  given, inferred):
-        """
-        The purpose of this method is to instantiate a given component
-        after some checks on its compatibility with other components:
-            - if a subclass of [Component] is given for the component,
-            check that this is a subclass of the relevant class (e.g.
-            [SurfaceLayerComponent] if given for the [surfacelayer]
-            argument) ;
-            - if a [DataBase] is given for the component, check that the
-            components depending on it require data (i.e. they are not
-            all [DataComponent] or [NoneComponent]) ;
-            - if [None] is given for the component, check that the
-            components depending on it do not require data (i.e. they
-            are all [NoneComponent]).
+    @staticmethod
+    def _process_component_type(component, expected_component):
 
-        Once these checks are done, an instance of [DataComponent],
-        [NoneComponent], or a "genuine" [Component] (e.g.
-        [SurfaceComponent], [SubSurfaceComponent], etc.) is returned.
-
-        :param category: name of the component category
-        :type category: str
-        :param given: dictionary of objects given during instantiation
-        of [Model] - keys: component category / values: object
-        :type given: dict
-        :param inferred: dictionary of classes previously inferred from
-        given objects - keys: component category /
-                        values: subclass of [Component]
-        :type inferred: dict
-
-        :return: instance of Component
-        :rtype: Component
-        """
-        given_object = given[category]
-        inferred_class = inferred[category]
-        expected_class = self._cat_to_class[category]
-
-        if issubclass(inferred_class, DataComponent):
-            # not expecting to get data for this component
-            # if not required by its dependencies
-            if not all([issubclass(inferred[down_],
-                                   (DataComponent, NoneComponent))
-                        for down_ in expected_class.get_downwards()]):
-
-                required_data = (
-                    data_ for down_ in inferred_class.get_downwards()
-                    if not issubclass(inferred[down_],
-                                      (DataComponent, NoneComponent))
-                    for data_ in self._cat_to_class[down_].get_inwards()
-                    if data_ in expected_class.get_outwards())
-                # return an instance of DataComponent which will only be
-                # instantiated successfully if the data required its
-                # dependencies are available in the DataBase
-                return DataComponent(category, given_object, required_data)
-            else:
-                raise UserWarning(
-                    "The given {} component is a DataBase, "
-                    "but no other component depending on it "
-                    "requires any data.".format(category)
-                )
-        elif issubclass(inferred_class, NoneComponent):
-            # can only be a NoneComponent if any component which depends
-            # on this component is a NoneComponent or a DataComponent
-            if all([issubclass(inferred[down_],
-                               (DataComponent, NoneComponent))
-                    for down_ in expected_class.get_downwards()]):
-                return NoneComponent()
-            else:
-                raise TypeError(
-                    "The given {} component is None but other components "
-                    "depending on it are not None.".format(category)
-                )
-        elif issubclass(inferred_class, expected_class):
-            # matching types, proceed with instantiation without further ado
-            return given_object()
+        if issubclass(component, expected_component):
+            # check inwards interface
+            # check outwards interface
+            return component()
+        elif issubclass(component, (DataComponent, NullComponent)):
+            return component(expected_component)
         else:
             raise TypeError(
-                "The {} component given must either be a subclass of the "
-                "class {}, an instance of DataBase (if relevant), or None "
-                "(if possible).".format(category, expected_class.__name__)
+                "The '{}' component given must either be a subclass of the "
+                "class {}, the class {}, or the class {}.".format(
+                    expected_component.category,
+                    SurfaceLayerComponent.__name__, DataComponent.__name__,
+                    NullComponent.__name__)
             )
-
-    @staticmethod
-    def _infer_component_class(given_object):
-        """
-        The purpose of this method is to return a class not matter what
-        is given during the instantiation of the [Model] object.
-
-        Only three objects are supported for instantiating a [Component]
-        of [Model]:
-            - a subclass of [Component] (e.g. [SurfaceLayerComponent],
-            [SubSurfaceComponent], etc.) ;
-            - an instance of [DataBase] ;
-            - [None].
-
-        If anything else is given, the method returns the class [type].
-
-        :param given_object: object given during instantiation of [Model]
-        :return: a subclass of [Component] or type if object given
-        is unsupported
-        :rtype: type
-        """
-        if given_object is None:
-            return NoneComponent
-        elif isclass(given_object):
-            if issubclass(given_object, Component):
-                return given_object
-            else:
-                return type
-        elif isinstance(given_object, DataBase):
-            return DataComponent
-        else:
-            return type
 
     @staticmethod
     def _check_component_domain(component, timedomain, spacedomain):
@@ -242,7 +126,7 @@ class Model(object):
 
         :param component: instance of the component whose domain is
         being checked
-        :type component: Component
+        :type component: _Component
         :param timedomain: object being given as 1st element of the domain
         tuple during the call of the [simulate] method for the given component
         :type timedomain: object
@@ -276,7 +160,7 @@ class Model(object):
 
         :param component: instance of the component whose domain is
         being checked
-        :type component: Component
+        :type component: _Component
         :param parameters: a dictionary containing the parameter values given
         during the call of the [simulate] method for the given component
         :type parameters: dict
@@ -303,7 +187,7 @@ class Model(object):
             - the domain of each variable complies with the component's domain
 
         :param component: instance of the component whose data is being checked
-        :type component: Component
+        :type component: _Component
         :param database: object being given as the database for the given
         component category
         :type database: object

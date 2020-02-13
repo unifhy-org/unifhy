@@ -1,18 +1,16 @@
 
 
-class Component(object):
+class _Component(object):
     """
     DOCSTRING REQUIRED
     """
 
     _cat = None
-    _ups = None
     _ins = None
-    _downs = None
     _outs = None
 
     def __init__(self, category, driving_data_names, ancil_data_names,
-                 parameter_names, upwards, inwards, downwards, outwards):
+                 parameter_names, inwards, outwards):
 
         self.category = category
         self.driving_data_names = \
@@ -21,73 +19,37 @@ class Component(object):
             ancil_data_names if ancil_data_names else ()
         self.parameter_names = \
             parameter_names if parameter_names else ()
-        self.upwards = upwards
         self.inwards = inwards
-        self.downwards = downwards
         self.outwards = outwards
 
     def __call__(self, td, sd, db, **kwargs):
-
-        # check that all inward fluxes of info are provided
-        if not all([i in kwargs for i in self.inwards]):
-            raise RuntimeError(
-                "One or more input variables are missing in {} component '{}': "
-                "{} are all required.".format(
-                    self.category, self.__class__.__name__, self.inwards)
-            )
 
         # collect required data from database
         for data in self.driving_data_names + self.ancil_data_names:
             kwargs[data] = db[data].array
 
-        # do something with time frame? with space domain?
-        # (use them to check database has data for time and space required?)
-
         # run simulation for the component
-        outputs = self.run(**kwargs)
-
-        # check that all outward fluxes of info are returned
-        if isinstance(outputs, dict):
-            if all([o in outputs for o in self.outwards]):
-                return outputs
-            else:
-                raise RuntimeError(
-                    "One or more output variables are not returned by the {} "
-                    "component '{}': {} are all required.".format(
-                        self.category, self.__class__.__name__, self.outwards)
-                )
-        else:
-            raise TypeError(
-                "The 'run' function of the {} component '{}' does not "
-                "return a dictionary as required.".format(
-                    self.category, self.__class__.__name__)
-            )
+        return self.run(**kwargs)
 
     @classmethod
-    def get_upwards(cls): return cls._ups
+    def get_inwards(cls):
+        return cls._ins
 
     @classmethod
-    def get_inwards(cls): return cls._ins
+    def get_outwards(cls):
+        return cls._outs
 
-    @classmethod
-    def get_downwards(cls): return cls._downs
-
-    @classmethod
-    def get_outwards(cls): return cls._outs
-
-    def run(self, *args, **kwargs):
+    def run(self, **kwargs):
 
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'run' "
             "method.".format(self.category, self.__class__.__name__))
 
 
-class SurfaceLayerComponent(Component):
+class SurfaceLayerComponent(_Component):
 
     _cat = 'surfacelayer'
-    _ups = ()
     _ins = ()
-    _downs = ('subsurface', 'openwater')
     _outs = ('throughfall', 'snowmelt', 'transpiration',
              'evaporation_soil_surface', 'evaporation_ponded_water',
              'evaporation_openwater')
@@ -97,20 +59,18 @@ class SurfaceLayerComponent(Component):
 
         super(SurfaceLayerComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
-            parameter_names, self._ups, self._ins, self._downs, self._outs)
+            parameter_names, self._ins, self._outs)
 
-    def run(self, *args, **kwargs):
+    def run(self, **kwargs):
 
-        super(SurfaceLayerComponent, self).run(self, *args, **kwargs)
+        super(SurfaceLayerComponent, self).run(**kwargs)
 
 
-class SubSurfaceComponent(Component):
+class SubSurfaceComponent(_Component):
 
     _cat = 'subsurface'
-    _ups = ('surfacelayer',)
     _ins = ('evaporation_soil_surface', 'evaporation_ponded_water',
             'transpiration', 'throughfall', 'snowmelt')
-    _downs = ('openwater',)
     _outs = ('surface_runoff', 'subsurface_runoff')
 
     def __init__(self, driving_data_names=None, ancil_data_names=None,
@@ -118,19 +78,17 @@ class SubSurfaceComponent(Component):
 
         super(SubSurfaceComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
-            parameter_names, self._ups, self._ins, self._downs, self._outs)
+            parameter_names, self._ins, self._outs)
 
-    def run(self, *args, **kwargs):
+    def run(self, **kwargs):
 
-        super(SubSurfaceComponent, self).run(self, *args, **kwargs)
+        super(SubSurfaceComponent, self).run(**kwargs)
 
 
-class OpenWaterComponent(Component):
+class OpenWaterComponent(_Component):
 
     _cat = 'openwater'
-    _ups = ('surfacelayer', 'subsurface')
     _ins = ('evaporation_openwater', 'surface_runoff', 'subsurface_runoff')
-    _downs = ()
     _outs = ('discharge',)
 
     def __init__(self, driving_data_names=None, ancil_data_names=None,
@@ -138,54 +96,42 @@ class OpenWaterComponent(Component):
 
         super(OpenWaterComponent, self).__init__(
             self._cat, driving_data_names, ancil_data_names,
-            parameter_names, self._ups, self._ins, self._downs, self._outs)
+            parameter_names, self._ins, self._outs)
 
-    def run(self, *args, **kwargs):
+    def run(self, **kwargs):
 
-        super(OpenWaterComponent, self).run(self, *args, **kwargs)
+        super(OpenWaterComponent, self).run(**kwargs)
 
 
-class DataComponent(Component):
+class DataComponent(_Component):
 
     _cat = 'data'
-    _ups = ()
     _ins = ()
-    _downs = ()
     _outs = ()
 
-    def __init__(self, substituting, database, required):
+    def __init__(self, substituting_class):
 
         super(DataComponent, self).__init__(
-            self._cat, None, None,
-            None, self._ups, self._ins, self._downs, self._outs)
+            self._cat, substituting_class.get_outwards(), None, None,
+            self._ins, self._outs)
 
-        self.database = database
+    def run(self, **kwargs):
 
-        # check that 'required' data is present in 'database'
-        for data in required:
-            if data not in self.database:
-                raise KeyError(
-                    "There is no data '{}' available in the database "
-                    "used in substitution for the {} component.".format(
-                        data, substituting))
-
-    def run(self, *args, **kwargs):
-
-        return {v.standard_name: v.array for v in self.database}
+        return {n: kwargs[n] for n in self.driving_data_names}
 
 
-class NoneComponent(Component):
+class NullComponent(_Component):
 
-    _cat = 'none'
-    _ups = ()
+    _cat = 'null'
     _ins = ()
-    _downs = ()
     _outs = ()
 
-    def __init__(self):
+    def __init__(self, substituting_class):
 
-        super(NoneComponent, self).__init__(
-            self._cat, None, None,
-            None, self._ups, self._ins, self._downs, self._outs)
+        super(NullComponent, self).__init__(
+            self._cat, None, None, None,
+            self._ins, substituting_class.get_outwards())
 
-    def run(self, *args, **kwargs): return {}
+    def run(self, **kwargs):
+
+        return {n: 0.0 for n in self.outwards}

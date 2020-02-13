@@ -10,7 +10,8 @@ from .time_ import TimeDomain
 from .space_ import Grid
 from .data_ import DataBase, Variable
 from .components import surfacelayer, subsurface, openwater, \
-    SurfaceLayerComponent, SubSurfaceComponent, OpenWaterComponent
+    SurfaceLayerComponent, SubSurfaceComponent, OpenWaterComponent, \
+    DataComponent, NullComponent
 
 # import the modelling components defined in the configuration file
 cfg = ConfigParser()
