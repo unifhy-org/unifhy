@@ -5,7 +5,7 @@ class _Component(object):
     DOCSTRING REQUIRED
     """
 
-    _cat = None
+    _kind = None
     _ins = None
     _outs = None
 
@@ -35,6 +35,10 @@ class _Component(object):
         return self.run(**kwargs)
 
     @classmethod
+    def get_kind(cls):
+        return cls._kind
+
+    @classmethod
     def get_inwards(cls):
         return cls._ins
 
@@ -51,7 +55,7 @@ class _Component(object):
 
 class SurfaceLayerComponent(_Component):
 
-    _cat = 'surfacelayer'
+    _kind = 'surfacelayer'
     _ins = {}
     _outs = {
         'throughfall': 'kg m-2 s-1',
@@ -66,7 +70,7 @@ class SurfaceLayerComponent(_Component):
                  parameter_info=None):
 
         super(SurfaceLayerComponent, self).__init__(
-            self._cat, driving_data_info, ancil_data_info,
+            self._kind, driving_data_info, ancil_data_info,
             parameter_info, self._ins, self._outs)
 
     def run(self, **kwargs):
@@ -76,7 +80,7 @@ class SurfaceLayerComponent(_Component):
 
 class SubSurfaceComponent(_Component):
 
-    _cat = 'subsurface'
+    _kind = 'subsurface'
     _ins = {
         'evaporation_soil_surface': 'kg m-2 s-1',
         'evaporation_ponded_water': 'kg m-2 s-1',
@@ -93,7 +97,7 @@ class SubSurfaceComponent(_Component):
                  parameter_info=None):
 
         super(SubSurfaceComponent, self).__init__(
-            self._cat, driving_data_info, ancil_data_info,
+            self._kind, driving_data_info, ancil_data_info,
             parameter_info, self._ins, self._outs)
 
     def run(self, **kwargs):
@@ -103,7 +107,7 @@ class SubSurfaceComponent(_Component):
 
 class OpenWaterComponent(_Component):
 
-    _cat = 'openwater'
+    _kind = 'openwater'
     _ins = {
         'evaporation_openwater': 'kg m-2 s-1',
         'surface_runoff': 'kg m-2 s-1',
@@ -117,7 +121,7 @@ class OpenWaterComponent(_Component):
                  parameter_info=None):
 
         super(OpenWaterComponent, self).__init__(
-            self._cat, driving_data_info, ancil_data_info,
+            self._kind, driving_data_info, ancil_data_info,
             parameter_info, self._ins, self._outs)
 
     def run(self, **kwargs):
@@ -127,19 +131,15 @@ class OpenWaterComponent(_Component):
 
 class DataComponent(_Component):
 
-    _cat = 'data'
-    _ins = {
-
-    }
-    _outs = {
-
-    }
+    _kind = 'data'
+    _ins = {}
+    _outs = {}
 
     def __init__(self, substituting_class):
 
         super(DataComponent, self).__init__(
-            self._cat, substituting_class.get_outwards(), None, None,
-            self._ins, self._outs)
+            substituting_class.get_kind(), substituting_class.get_outwards(),
+            None, None, self._ins, self._outs)
 
     def run(self, **kwargs):
 
@@ -148,14 +148,14 @@ class DataComponent(_Component):
 
 class NullComponent(_Component):
 
-    _cat = 'null'
+    _kind = 'null'
     _ins = {}
     _outs = {}
 
     def __init__(self, substituting_class):
 
         super(NullComponent, self).__init__(
-            self._cat, None, None, None,
+            substituting_class.get_kind(), None, None, None,
             self._ins, substituting_class.get_outwards())
 
     def run(self, **kwargs):
