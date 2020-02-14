@@ -29,10 +29,11 @@ class Model(object):
         self._openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
-    def simulate(self, surfacelayer_domain, surfacelayer_data,
-                 surfacelayer_parameters, subsurface_domain, subsurface_data,
-                 subsurface_parameters, openwater_domain, openwater_data,
-                 openwater_parameters):
+    def simulate(self, surfacelayer_domain, subsurface_domain,
+                 openwater_domain, surfacelayer_data=None,
+                 subsurface_data=None, openwater_data=None,
+                 surfacelayer_parameters=None, subsurface_parameters=None,
+                 openwater_parameters=None):
         """
         DOCSTRING REQUIRED
         """
@@ -56,15 +57,27 @@ class Model(object):
                 "for components to work on different SpaceDomains.")
 
         # check that the required parameters are provided
+        if not surfacelayer_parameters:
+            surfacelayer_parameters = {}
         self._check_component_parameters(self._surfacelayer, surfacelayer_parameters)
+        if not subsurface_parameters:
+            subsurface_parameters = {}
         self._check_component_parameters(self._subsurface, subsurface_parameters)
+        if not openwater_parameters:
+            openwater_parameters = {}
         self._check_component_parameters(self._openwater, openwater_parameters)
 
         # check that the required data is available in a DataBase instance
+        if not surfacelayer_data:
+            surfacelayer_data = DataBase()
         self._check_component_data(self._surfacelayer, surfacelayer_data,
                                    *surfacelayer_domain)
+        if not subsurface_data:
+            subsurface_data = DataBase()
         self._check_component_data(self._subsurface, subsurface_data,
                                    *subsurface_domain)
+        if not openwater_data:
+            openwater_data = DataBase()
         self._check_component_data(self._openwater, openwater_data,
                                    *openwater_domain)
 
@@ -203,9 +216,11 @@ class Model(object):
 
         # check that the data is an instance of DataBase
         if not isinstance(database, DataBase):
-            raise TypeError("The database object given for the '{}' component "
-                            "must be an instance of {}.".format(
-                                component.category, DataBase.__name__))
+            raise TypeError(
+                "The database object given for the {} component '{}' must "
+                "be an instance of {}.".format(
+                    component.category, component.__class__.__name__,
+                    DataBase.__name__))
 
         # check driving data for time and space compatibility with component
         for data_name, data_unit in component.driving_data_info.items():
