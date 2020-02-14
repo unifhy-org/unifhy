@@ -1,4 +1,4 @@
-from inspect import isclass
+from cfunits import Units
 
 from .time_ import TimeDomain
 from .space_ import SpaceDomain, Grid
@@ -169,12 +169,12 @@ class Model(object):
         """
 
         # check that all parameters are provided
-        if not all([i in parameters for i in component.parameter_names]):
+        if not all([i in parameters for i in component.parameter_info]):
             raise RuntimeError(
                 "One or more parameters are missing in {} component '{}': "
                 "{} are all required.".format(
                     component.category, component.__class__.__name__,
-                    component.parameter_names)
+                    component.parameter_info)
             )
 
     @staticmethod
@@ -208,42 +208,73 @@ class Model(object):
                                 component.category, DataBase.__name__))
 
         # check driving data for time and space compatibility with component
-        for data in component.driving_data_names:
+        for data_name, data_unit in component.driving_data_info.items():
             # check that all driving data are available in DataBase
-            if data not in database:
+            if data_name not in database:
                 raise KeyError(
                     "There is no data '{}' available in the database "
                     "for the {} component '{}'.".format(
-                        data, component.category,
+                        data_name, component.category,
                         component.__class__.__name__))
+            # check that driving data units are compliant with component units
+            if hasattr(database[data_name], 'units'):
+                if not Units(data_unit).equals(
+                        Units(database[data_name].units)):
+                    raise ValueError(
+                        "The units of the variable '{}' in the {} DataBase "
+                        "are not equal to the units required by the {} "
+                        "component '{}': {} are required.".format(
+                            data_name, component.category, component.category,
+                            component.__class__.__name__, data_unit))
+            else:
+                raise AttributeError("The variable '{}' in the DataBase for "
+                                     "the {} component is missing a 'units' "
+                                     "attribute.".format(data_name,
+                                                         component.category))
+
             # check that the data and component time domains are compatible
-            if not timedomain.is_matched_in(database[data]):
+            if not timedomain.is_matched_in(database[data_name]):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
-                        data, component.category,
+                        data_name, component.category,
                         component.__class__.__name__))
             # check that the data and component space domains are compatible
-            if not spacedomain.is_matched_in(database[data]):
+            if not spacedomain.is_matched_in(database[data_name]):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(
-                        data, component.category,
+                        data_name, component.category,
                         component.__class__.__name__))
 
         # check ancillary data for space compatibility with component
-        for data in component.ancil_data_names:
+        for data_name, data_unit in component.ancil_data_info.items():
             # check that all ancillary data are available in DataBase
-            if data not in database:
+            if data_name not in database:
                 raise KeyError(
                     "There is no data '{}' available in the database "
                     "for the {} component '{}'.".format(
-                        data, component.category,
+                        data_name, component.category,
                         component.__class__.__name__))
+            # check that driving data units are compliant with component units
+            if hasattr(database[data_name], 'units'):
+                if not Units(data_unit).equals(
+                        Units(database[data_name].units)):
+                    raise ValueError(
+                        "The units of the variable '{}' in the {} DataBase "
+                        "are not equal to the units required by the {} "
+                        "component '{}': {} are required.".format(
+                            data_name, component.category, component.category,
+                            component.__class__.__name__, data_unit))
+            else:
+                raise AttributeError("The variable '{}' in the DataBase for "
+                                     "the {} component is missing a 'units' "
+                                     "attribute.".format(data_name,
+                                                         component.category))
             # check that the data and component space domains are compatible
-            if not spacedomain.is_matched_in(database[data]):
+            if not spacedomain.is_matched_in(database[data_name]):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(
-                        data, component.category,
+                        data_name, component.category,
                         component.__class__.__name__))

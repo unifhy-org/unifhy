@@ -9,23 +9,26 @@ class _Component(object):
     _ins = None
     _outs = None
 
-    def __init__(self, category, driving_data_names, ancil_data_names,
-                 parameter_names, inwards, outwards):
+    def __init__(self, category, driving_data_info, ancil_data_info,
+                 parameter_info, inwards, outwards):
 
         self.category = category
-        self.driving_data_names = \
-            driving_data_names if driving_data_names else ()
-        self.ancil_data_names = \
-            ancil_data_names if ancil_data_names else ()
-        self.parameter_names = \
-            parameter_names if parameter_names else ()
+        self.driving_data_info = \
+            driving_data_info if driving_data_info else {}
+        self.ancil_data_info = \
+            ancil_data_info if ancil_data_info else {}
+        self.parameter_info = \
+            parameter_info if parameter_info else {}
         self.inwards = inwards
         self.outwards = outwards
 
     def __call__(self, td, sd, db, **kwargs):
 
-        # collect required data from database
-        for data in self.driving_data_names + self.ancil_data_names:
+        # collect required driving data from database
+        for data in self.driving_data_info:
+            kwargs[data] = db[data].array
+        # collect required ancillary data from database
+        for data in self.ancil_data_info:
             kwargs[data] = db[data].array
 
         # run simulation for the component
@@ -49,17 +52,22 @@ class _Component(object):
 class SurfaceLayerComponent(_Component):
 
     _cat = 'surfacelayer'
-    _ins = ()
-    _outs = ('throughfall', 'snowmelt', 'transpiration',
-             'evaporation_soil_surface', 'evaporation_ponded_water',
-             'evaporation_openwater')
+    _ins = {}
+    _outs = {
+        'throughfall': 'kg m-2 s-1',
+        'snowmelt': 'kg m-2 s-1',
+        'transpiration': 'kg m-2 s-1',
+        'evaporation_soil_surface': 'kg m-2 s-1',
+        'evaporation_ponded_water': 'kg m-2 s-1',
+        'evaporation_openwater': 'kg m-2 s-1',
+    }
 
-    def __init__(self, driving_data_names=None, ancil_data_names=None,
-                 parameter_names=None):
+    def __init__(self, driving_data_info=None, ancil_data_info=None,
+                 parameter_info=None):
 
         super(SurfaceLayerComponent, self).__init__(
-            self._cat, driving_data_names, ancil_data_names,
-            parameter_names, self._ins, self._outs)
+            self._cat, driving_data_info, ancil_data_info,
+            parameter_info, self._ins, self._outs)
 
     def run(self, **kwargs):
 
@@ -69,16 +77,24 @@ class SurfaceLayerComponent(_Component):
 class SubSurfaceComponent(_Component):
 
     _cat = 'subsurface'
-    _ins = ('evaporation_soil_surface', 'evaporation_ponded_water',
-            'transpiration', 'throughfall', 'snowmelt')
-    _outs = ('surface_runoff', 'subsurface_runoff')
+    _ins = {
+        'evaporation_soil_surface': 'kg m-2 s-1',
+        'evaporation_ponded_water': 'kg m-2 s-1',
+        'transpiration': 'kg m-2 s-1',
+        'throughfall': 'kg m-2 s-1',
+        'snowmelt': 'kg m-2 s-1'
+    }
+    _outs = {
+        'surface_runoff': 'kg m-2 s-1',
+        'subsurface_runoff': 'kg m-2 s-1'
+    }
 
-    def __init__(self, driving_data_names=None, ancil_data_names=None,
-                 parameter_names=None):
+    def __init__(self, driving_data_info=None, ancil_data_info=None,
+                 parameter_info=None):
 
         super(SubSurfaceComponent, self).__init__(
-            self._cat, driving_data_names, ancil_data_names,
-            parameter_names, self._ins, self._outs)
+            self._cat, driving_data_info, ancil_data_info,
+            parameter_info, self._ins, self._outs)
 
     def run(self, **kwargs):
 
@@ -88,15 +104,21 @@ class SubSurfaceComponent(_Component):
 class OpenWaterComponent(_Component):
 
     _cat = 'openwater'
-    _ins = ('evaporation_openwater', 'surface_runoff', 'subsurface_runoff')
-    _outs = ('discharge',)
+    _ins = {
+        'evaporation_openwater': 'kg m-2 s-1',
+        'surface_runoff': 'kg m-2 s-1',
+        'subsurface_runoff': 'kg m-2 s-1'
+    }
+    _outs = {
+        'discharge': 'kg m-2 s-1'
+    }
 
-    def __init__(self, driving_data_names=None, ancil_data_names=None,
-                 parameter_names=None):
+    def __init__(self, driving_data_info=None, ancil_data_info=None,
+                 parameter_info=None):
 
         super(OpenWaterComponent, self).__init__(
-            self._cat, driving_data_names, ancil_data_names,
-            parameter_names, self._ins, self._outs)
+            self._cat, driving_data_info, ancil_data_info,
+            parameter_info, self._ins, self._outs)
 
     def run(self, **kwargs):
 
@@ -106,8 +128,12 @@ class OpenWaterComponent(_Component):
 class DataComponent(_Component):
 
     _cat = 'data'
-    _ins = ()
-    _outs = ()
+    _ins = {
+
+    }
+    _outs = {
+
+    }
 
     def __init__(self, substituting_class):
 
@@ -117,14 +143,14 @@ class DataComponent(_Component):
 
     def run(self, **kwargs):
 
-        return {n: kwargs[n] for n in self.driving_data_names}
+        return {n: kwargs[n] for n in self.driving_data_info}
 
 
 class NullComponent(_Component):
 
     _cat = 'null'
-    _ins = ()
-    _outs = ()
+    _ins = {}
+    _outs = {}
 
     def __init__(self, substituting_class):
 

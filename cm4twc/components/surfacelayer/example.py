@@ -4,10 +4,17 @@ from ..components import SurfaceLayerComponent
 class Dummy(SurfaceLayerComponent):
 
     def __init__(self):
-        super().__init__(driving_data_names=('rainfall', 'snowfall',
-                                             'air_temperature',),
-                         ancil_data_names=('vegetation_fraction',),
-                         parameter_names=())
+        super().__init__(
+            driving_data_info={
+                'rainfall': 'kg m-2 s-1',
+                'snowfall': 'kg m-2 s-1',
+                'air_temperature': 'K',
+            },
+            ancil_data_info={
+                'vegetation_fraction': '1'
+            },
+            parameter_info={}
+        )
 
     def run(self, rainfall, snowfall, air_temperature,
             vegetation_fraction,
