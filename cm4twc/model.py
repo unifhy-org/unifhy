@@ -203,14 +203,9 @@ class Model(object):
 
         # check that the data is an instance of DataBase
         if not isinstance(database, DataBase):
-            if database is None:
-                database = DataBase()
-            else:
-                raise TypeError(
-                    "The database object given for the {} component '{}' must "
-                    "be an instance of {}.".format(
-                        component.category, component.__class__.__name__,
-                        DataBase.__name__))
+            raise TypeError("The database object given for the '{}' component "
+                            "must be an instance of {}.".format(
+                                component.category, DataBase.__name__))
 
         # check driving data for time and space compatibility with component
         for data_name, data_unit in component.driving_data_info.items():
