@@ -14,7 +14,9 @@ class SpaceDomain(cf.Field):
 
 class Grid(SpaceDomain):
 
-    def __init__(self, latitude_deg, longitude_deg, altitude_m=None,
+    def __init__(self, latitude_deg, longitude_deg,
+                 latitude_bounds_deg, longitude_bounds_deg,
+                 altitude_m=None,
                  rotated=False, earth_radius_m=None,
                  grid_north_pole_latitude_deg=None,
                  grid_north_pole_longitude_deg=None):
@@ -42,10 +44,18 @@ class Grid(SpaceDomain):
         # set the latitude construct
         if not isinstance(latitude_deg, np.ndarray):
             latitude_deg = np.asarray(latitude_deg)
+        if not isinstance(latitude_bounds_deg, np.ndarray):
+            latitude_bounds_deg = np.asarray(latitude_bounds_deg)
         if latitude_deg.ndim != 1:
             raise RuntimeError("Error when initialising a {}: the "
                                "latitude array given is not "
                                "unidimensional".format(
+                                    self.__class__.__name__))
+        if latitude_bounds_deg.shape != (latitude_deg.size, 2):
+            raise RuntimeError("Error when initialising a {}: the "
+                               "latitude bounds array given is not "
+                               "compatible in size with the latitude "
+                               "array given.".format(
                                     self.__class__.__name__))
         axis_lat = self.set_construct(cf.DomainAxis(len(latitude_deg)))
         self.set_construct(
@@ -54,17 +64,26 @@ class Grid(SpaceDomain):
                     'standard_name':
                         'grid_latitude' if rotated else 'latitude',
                     'units': 'degrees' if rotated else 'degrees_north'},
-                data=cf.Data(latitude_deg)),
+                data=cf.Data(latitude_deg),
+                bounds=cf.Bounds(data=cf.Data(latitude_bounds_deg))),
             axes=axis_lat
         )
 
         # set the longitude construct
         if not isinstance(longitude_deg, np.ndarray):
             longitude_deg = np.asarray(longitude_deg)
+        if not isinstance(longitude_bounds_deg, np.ndarray):
+            longitude_bounds_deg = np.asarray(longitude_bounds_deg)
         if longitude_deg.ndim != 1:
             raise RuntimeError("Error when initialising a {}: the "
                                "longitude array given is not "
                                "unidimensional".format(
+                                    self.__class__.__name__))
+        if longitude_bounds_deg.shape != (longitude_deg.size, 2):
+            raise RuntimeError("Error when initialising a {}: the "
+                               "longitude bounds array given is not "
+                               "compatible in size with the latitude "
+                               "array given.".format(
                                     self.__class__.__name__))
         axis_lon = self.set_construct(cf.DomainAxis(len(longitude_deg)))
         self.set_construct(
@@ -73,7 +92,8 @@ class Grid(SpaceDomain):
                     'standard_name':
                         'grid_longitude' if rotated else 'longitude',
                     'units': 'degrees' if rotated else 'degrees_east'},
-                data=cf.Data(longitude_deg)),
+                data=cf.Data(longitude_deg),
+                bounds=cf.Bounds(data=cf.Data(longitude_bounds_deg))),
             axes=axis_lon
         )
 
