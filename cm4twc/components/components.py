@@ -1,6 +1,7 @@
+import abc
 
 
-class _Component(object):
+class _Component(metaclass=abc.ABCMeta):
     """
     DOCSTRING REQUIRED
     """
@@ -22,14 +23,15 @@ class _Component(object):
         self.inwards = inwards
         self.outwards = outwards
 
-    def __call__(self, td, sd, db, **kwargs):
+    def __call__(self, t, db, **kwargs):
+
+        # collect required ancillary data from database
+        for data in self.ancil_data_info:
+            kwargs[data] = db[data].array[...]
 
         # collect required driving data from database
         for data in self.driving_data_info:
-            kwargs[data] = db[data].array
-        # collect required ancillary data from database
-        for data in self.ancil_data_info:
-            kwargs[data] = db[data].array
+            kwargs[data] = db[data].array[t, ...]
 
         # run simulation for the component
         return self.run(**kwargs)
@@ -46,14 +48,29 @@ class _Component(object):
     def get_outwards(cls):
         return cls._outs
 
+    @abc.abstractmethod
+    def initialise(self):
+
+        raise NotImplementedError(
+            "The {} class '{}' does not feature an 'initialise' "
+            "method.".format(self.category, self.__class__.__name__))
+
+    @abc.abstractmethod
     def run(self, **kwargs):
 
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'run' "
             "method.".format(self.category, self.__class__.__name__))
 
+    @abc.abstractmethod
+    def finalise(self):
 
-class SurfaceLayerComponent(_Component):
+        raise NotImplementedError(
+            "The {} class '{}' does not feature a 'finalise' "
+            "method.".format(self.category, self.__class__.__name__))
+
+
+class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
 
     _kind = 'surfacelayer'
     _ins = {}
@@ -73,12 +90,8 @@ class SurfaceLayerComponent(_Component):
             self._kind, driving_data_info, ancil_data_info,
             parameter_info, self._ins, self._outs)
 
-    def run(self, **kwargs):
 
-        super(SurfaceLayerComponent, self).run(**kwargs)
-
-
-class SubSurfaceComponent(_Component):
+class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
 
     _kind = 'subsurface'
     _ins = {
@@ -100,12 +113,8 @@ class SubSurfaceComponent(_Component):
             self._kind, driving_data_info, ancil_data_info,
             parameter_info, self._ins, self._outs)
 
-    def run(self, **kwargs):
 
-        super(SubSurfaceComponent, self).run(**kwargs)
-
-
-class OpenWaterComponent(_Component):
+class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
 
     _kind = 'openwater'
     _ins = {
@@ -124,10 +133,6 @@ class OpenWaterComponent(_Component):
             self._kind, driving_data_info, ancil_data_info,
             parameter_info, self._ins, self._outs)
 
-    def run(self, **kwargs):
-
-        super(OpenWaterComponent, self).run(**kwargs)
-
 
 class DataComponent(_Component):
 
@@ -141,9 +146,17 @@ class DataComponent(_Component):
             substituting_class.get_kind(), substituting_class.get_outwards(),
             None, None, self._ins, self._outs)
 
+    def initialise(self):
+
+        return {}
+
     def run(self, **kwargs):
 
         return {n: kwargs[n] for n in self.driving_data_info}
+
+    def finalise(self):
+
+        print('finalise!')
 
 
 class NullComponent(_Component):
@@ -158,6 +171,14 @@ class NullComponent(_Component):
             substituting_class.get_kind(), None, None, None,
             self._ins, substituting_class.get_outwards())
 
+    def initialise(self):
+
+        return {}
+
     def run(self, **kwargs):
 
         return {n: 0.0 for n in self.outwards}
+
+    def finalise(self):
+
+        print('finalise!')

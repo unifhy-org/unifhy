@@ -12,6 +12,10 @@ class Dummy(OpenWaterComponent):
             }
         )
 
+    def initialise(self):
+
+        return {}
+
     def run(self, evaporation_openwater, surface_runoff, subsurface_runoff,
             residence_time,
             **kwargs):
@@ -19,3 +23,7 @@ class Dummy(OpenWaterComponent):
         return {
             'discharge': None
         }
+
+    def finalise(self):
+
+        pass

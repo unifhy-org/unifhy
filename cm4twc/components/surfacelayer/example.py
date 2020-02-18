@@ -16,6 +16,10 @@ class Dummy(SurfaceLayerComponent):
             parameter_info={}
         )
 
+    def initialise(self):
+
+        return {}
+
     def run(self, rainfall, snowfall, air_temperature,
             vegetation_fraction,
             **kwargs):
@@ -28,3 +32,7 @@ class Dummy(SurfaceLayerComponent):
             'evaporation_ponded_water': None,
             'evaporation_openwater': None
         }
+
+    def finalise(self):
+
+        pass

@@ -14,6 +14,10 @@ class Dummy(SubSurfaceComponent):
             }
         )
 
+    def initialise(self):
+
+        return {}
+
     def run(self, evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             soil_temperature,
@@ -24,3 +28,7 @@ class Dummy(SubSurfaceComponent):
             'surface_runoff': None,
             'subsurface_runoff': None
         }
+
+    def finalise(self):
+
+        pass

@@ -83,32 +83,59 @@ class Model(object):
 
         interface_ = {}
 
+        # initialise components
         interface_.update(
-            self._surfacelayer(
-                *surfacelayer_domain,
-                db=surfacelayer_data,
-                **surfacelayer_parameters,
-                **interface_
-            )
+            self._surfacelayer.initialise()
         )
 
         interface_.update(
-            self._subsurface(
-                *subsurface_domain,
-                db=subsurface_data,
-                **subsurface_parameters,
-                **interface_
-            )
+            self._subsurface.initialise()
         )
 
         interface_.update(
-            self._openwater(
-                *openwater_domain,
-                db=openwater_data,
-                **openwater_parameters,
-                **interface_
-            )
+            self._openwater.initialise()
         )
+
+        # run components
+        for t in range(surfacelayer_domain[0].construct('time').size):
+            # use the time domain of surfacelayer for now, because the time
+            # domains of the three components are checked for equality, but
+            # eventually need to implement a time-stepping object to deal with
+            # components operating at different temporal (and spatial for that
+            # matter) resolution(s)
+            interface_.update(
+                self._surfacelayer(
+                    t=t,
+                    db=surfacelayer_data,
+                    **surfacelayer_parameters,
+                    **interface_
+                )
+            )
+
+            interface_.update(
+                self._subsurface(
+                    t=t,
+                    db=subsurface_data,
+                    **subsurface_parameters,
+                    **interface_
+                )
+            )
+
+            interface_.update(
+                self._openwater(
+                    t=t,
+                    db=openwater_data,
+                    **openwater_parameters,
+                    **interface_
+                )
+            )
+
+        # finalise components
+        self._surfacelayer.finalise()
+
+        self._subsurface.finalise()
+
+        self._openwater.finalise()
 
         return interface_
 
