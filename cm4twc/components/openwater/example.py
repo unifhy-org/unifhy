@@ -7,7 +7,7 @@ class Dummy(OpenWaterComponent):
         super().__init__(
             driving_data_info={},
             ancil_data_info={},
-            parameter_info={
+            parameters_info={
                 'residence_time': 's',
             }
         )

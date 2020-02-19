@@ -209,12 +209,12 @@ class Model(object):
         """
 
         # check that all parameters are provided
-        if not all([i in parameters for i in component.parameter_info]):
+        if not all([i in parameters for i in component.parameters_info]):
             raise RuntimeError(
                 "One or more parameters are missing in {} component '{}': "
                 "{} are all required.".format(
                     component.category, component.__class__.__name__,
-                    component.parameter_info)
+                    component.parameters_info)
             )
 
     @staticmethod

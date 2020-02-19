@@ -13,7 +13,7 @@ class Dummy(SurfaceLayerComponent):
             ancil_data_info={
                 'vegetation_fraction': '1'
             },
-            parameter_info={}
+            parameters_info={}
         )
 
     def initialise(self):

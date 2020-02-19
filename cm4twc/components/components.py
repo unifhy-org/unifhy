@@ -11,15 +11,15 @@ class _Component(metaclass=abc.ABCMeta):
     _outs = None
 
     def __init__(self, category, driving_data_info, ancil_data_info,
-                 parameter_info, inwards, outwards):
+                 parameters_info, inwards, outwards):
 
         self.category = category
         self.driving_data_info = \
             driving_data_info if driving_data_info else {}
         self.ancil_data_info = \
             ancil_data_info if ancil_data_info else {}
-        self.parameter_info = \
-            parameter_info if parameter_info else {}
+        self.parameters_info = \
+            parameters_info if parameters_info else {}
         self.inwards = inwards
         self.outwards = outwards
 
@@ -84,11 +84,11 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameter_info=None):
+                 parameters_info=None):
 
         super(SurfaceLayerComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameter_info, self._ins, self._outs)
+            parameters_info, self._ins, self._outs)
 
 
 class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
@@ -107,11 +107,11 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameter_info=None):
+                 parameters_info=None):
 
         super(SubSurfaceComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameter_info, self._ins, self._outs)
+            parameters_info, self._ins, self._outs)
 
 
 class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
@@ -127,11 +127,11 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameter_info=None):
+                 parameters_info=None):
 
         super(OpenWaterComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameter_info, self._ins, self._outs)
+            parameters_info, self._ins, self._outs)
 
 
 class DataComponent(_Component):

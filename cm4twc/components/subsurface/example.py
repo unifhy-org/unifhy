@@ -9,7 +9,7 @@ class Dummy(SubSurfaceComponent):
                 'soil_temperature': 'K',
             },
             ancil_data_info={},
-            parameter_info={
+            parameters_info={
                 'saturated_hydraulic_conductivity': 'kg m-2 s-1',
             }
         )
