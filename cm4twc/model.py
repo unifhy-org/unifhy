@@ -12,12 +12,6 @@ class Model(object):
     DOCSTRING REQUIRED
     """
 
-    _cat_to_class = {
-        'surfacelayer': SurfaceLayerComponent,
-        'subsurface': SubSurfaceComponent,
-        'openwater': OpenWaterComponent,
-    }
-
     def __init__(self, surfacelayer, subsurface, openwater):
 
         self._surfacelayer = self._process_component_type(
