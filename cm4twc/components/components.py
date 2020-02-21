@@ -156,7 +156,7 @@ class DataComponent(_Component):
 
     def finalise(self):
 
-        print('finalise!')
+        pass
 
 
 class NullComponent(_Component):
@@ -181,4 +181,4 @@ class NullComponent(_Component):
 
     def finalise(self):
 
-        print('finalise!')
+        pass
