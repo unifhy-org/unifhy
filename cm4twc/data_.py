@@ -2,7 +2,7 @@ from collections.abc import MutableMapping
 import cf
 
 
-class DataBase(MutableMapping):
+class DataSet(MutableMapping):
     """
     Class behaving like a dictionary but restricting the values of
     its items of type Variable.
@@ -20,8 +20,9 @@ class DataBase(MutableMapping):
         if isinstance(value, Variable):
             self.variables[key] = value
         else:
-            raise TypeError("The database can only contain "
-                            "instances of Variable.")
+            raise TypeError("A {} can only contain instances of "
+                            "{}.".format(self.__class__.__name__,
+                                         Variable.__name__))
 
     def __delitem__(self, key): del self.variables[key]
 

@@ -32,11 +32,11 @@ class _Component(metaclass=abc.ABCMeta):
 
     def __call__(self, t, db, **kwargs):
 
-        # collect required ancillary data from database
+        # collect required ancillary data from dataset
         for data in self.ancil_data_info:
             kwargs[data] = db[data].array[...]
 
-        # collect required driving data from database
+        # collect required driving data from dataset
         for data in self.driving_data_info:
             kwargs[data] = db[data].array[t, ...]
 

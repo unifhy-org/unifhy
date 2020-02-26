@@ -8,7 +8,7 @@ from .version import __version__
 from .model import Model
 from .time_ import TimeDomain
 from .space_ import Grid
-from .data_ import DataBase, Variable
+from .data_ import DataSet, Variable
 from .components import surfacelayer, subsurface, openwater, \
     SurfaceLayerComponent, SubSurfaceComponent, OpenWaterComponent, \
     DataComponent, NullComponent

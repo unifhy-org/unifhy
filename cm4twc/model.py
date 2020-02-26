@@ -2,7 +2,7 @@ from cfunits import Units
 
 from .time_ import TimeDomain
 from .space_ import SpaceDomain, Grid
-from .data_ import DataBase
+from .data_ import DataSet
 from .components import SurfaceLayerComponent, SubSurfaceComponent, \
     OpenWaterComponent, DataComponent, NullComponent, _Component
 
@@ -61,17 +61,17 @@ class Model(object):
             openwater_parameters = {}
         self._check_component_parameters(self._openwater, openwater_parameters)
 
-        # check that the required data is available in a DataBase instance
+        # check that the required data is available in a DataSet instance
         if not surfacelayer_data:
-            surfacelayer_data = DataBase()
+            surfacelayer_data = DataSet()
         self._check_component_data(self._surfacelayer, surfacelayer_data,
                                    *surfacelayer_domain)
         if not subsurface_data:
-            subsurface_data = DataBase()
+            subsurface_data = DataSet()
         self._check_component_data(self._subsurface, subsurface_data,
                                    *subsurface_domain)
         if not openwater_data:
-            openwater_data = DataBase()
+            openwater_data = DataSet()
         self._check_component_data(self._openwater, openwater_data,
                                    *openwater_domain)
 
@@ -212,19 +212,19 @@ class Model(object):
             )
 
     @staticmethod
-    def _check_component_data(component, database, timedomain, spacedomain):
+    def _check_component_data(component, dataset, timedomain, spacedomain):
         """
         The purpose of this method is to check that:
-            - the object given for the database is an instance of [DataBase]
-            - the database contains [Variable] instances for all the driving
+            - the object given for the dataset is an instance of [DataSet]
+            - the dataset contains [Variable] instances for all the driving
             and ancillary data the component requires
             - the domain of each variable complies with the component's domain
 
         :param component: instance of the component whose data is being checked
         :type component: _Component
-        :param database: object being given as the database for the given
+        :param dataset: object being given as the dataset for the given
         component category
-        :type database: object
+        :type dataset: object
         :param timedomain: instance of [TimeDomain] for the given
         component category
         :type timedomain: TimeDomain
@@ -235,48 +235,50 @@ class Model(object):
         :return: None
         """
 
-        # check that the data is an instance of DataBase
-        if not isinstance(database, DataBase):
+        # check that the data is an instance of DataSet
+        if not isinstance(dataset, DataSet):
             raise TypeError(
-                "The database object given for the {} component '{}' must "
+                "The dataset object given for the {} component '{}' must "
                 "be an instance of {}.".format(
                     component.category, component.__class__.__name__,
-                    DataBase.__name__))
+                    DataSet.__name__))
 
         # check driving data for time and space compatibility with component
         for data_name, data_unit in component.driving_data_info.items():
-            # check that all driving data are available in DataBase
-            if data_name not in database:
+            # check that all driving data are available in DataSet
+            if data_name not in dataset:
                 raise KeyError(
-                    "There is no data '{}' available in the database "
+                    "There is no data '{}' available in the {} "
                     "for the {} component '{}'.".format(
-                        data_name, component.category,
+                        data_name, DataSet.__name__, component.category,
                         component.__class__.__name__))
             # check that driving data units are compliant with component units
-            if hasattr(database[data_name], 'units'):
+            if hasattr(dataset[data_name], 'units'):
                 if not Units(data_unit).equals(
-                        Units(database[data_name].units)):
+                        Units(dataset[data_name].units)):
                     raise ValueError(
-                        "The units of the variable '{}' in the {} DataBase "
+                        "The units of the variable '{}' in the {} {} "
                         "are not equal to the units required by the {} "
                         "component '{}': {} are required.".format(
-                            data_name, component.category, component.category,
-                            component.__class__.__name__, data_unit))
+                            data_name, component.category, DataSet.__name__,
+                            component.category, component.__class__.__name__,
+                            data_unit))
             else:
-                raise AttributeError("The variable '{}' in the DataBase for "
+                raise AttributeError("The variable '{}' in the {} for "
                                      "the {} component is missing a 'units' "
                                      "attribute.".format(data_name,
+                                                         DataSet.__name__,
                                                          component.category))
 
             # check that the data and component time domains are compatible
-            if not timedomain.is_matched_in(database[data_name]):
+            if not timedomain.is_matched_in(dataset[data_name]):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
                         data_name, component.category,
                         component.__class__.__name__))
             # check that the data and component space domains are compatible
-            if not spacedomain.is_matched_in(database[data_name]):
+            if not spacedomain.is_matched_in(dataset[data_name]):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(
@@ -285,30 +287,32 @@ class Model(object):
 
         # check ancillary data for space compatibility with component
         for data_name, data_unit in component.ancil_data_info.items():
-            # check that all ancillary data are available in DataBase
-            if data_name not in database:
+            # check that all ancillary data are available in DataSet
+            if data_name not in dataset:
                 raise KeyError(
-                    "There is no data '{}' available in the database "
+                    "There is no data '{}' available in the {} "
                     "for the {} component '{}'.".format(
-                        data_name, component.category,
+                        data_name, DataSet.__name__, component.category,
                         component.__class__.__name__))
             # check that driving data units are compliant with component units
-            if hasattr(database[data_name], 'units'):
+            if hasattr(dataset[data_name], 'units'):
                 if not Units(data_unit).equals(
-                        Units(database[data_name].units)):
+                        Units(dataset[data_name].units)):
                     raise ValueError(
-                        "The units of the variable '{}' in the {} DataBase "
+                        "The units of the variable '{}' in the {} {} "
                         "are not equal to the units required by the {} "
                         "component '{}': {} are required.".format(
-                            data_name, component.category, component.category,
-                            component.__class__.__name__, data_unit))
+                            data_name, component.category, DataSet.__name__,
+                            component.category, component.__class__.__name__,
+                            data_unit))
             else:
-                raise AttributeError("The variable '{}' in the DataBase for "
+                raise AttributeError("The variable '{}' in the {} for "
                                      "the {} component is missing a 'units' "
                                      "attribute.".format(data_name,
+                                                         DataSet.__name__,
                                                          component.category))
             # check that the data and component space domains are compatible
-            if not spacedomain.is_matched_in(database[data_name]):
+            if not spacedomain.is_matched_in(dataset[data_name]):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(
