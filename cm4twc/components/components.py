@@ -11,15 +11,22 @@ class _Component(metaclass=abc.ABCMeta):
     _outs = None
 
     def __init__(self, category, driving_data_info, ancil_data_info,
-                 parameters_info, inwards, outwards):
+                 parameters_info, states_info, inwards, outwards):
 
+        # category attribute
         self.category = category
+
+        # definition attributes
         self.driving_data_info = \
             driving_data_info if driving_data_info else {}
         self.ancil_data_info = \
             ancil_data_info if ancil_data_info else {}
         self.parameters_info = \
             parameters_info if parameters_info else {}
+        self.states_info = \
+            states_info if states_info else {}
+
+        # interface attributes
         self.inwards = inwards
         self.outwards = outwards
 
@@ -63,7 +70,7 @@ class _Component(metaclass=abc.ABCMeta):
             "method.".format(self.category, self.__class__.__name__))
 
     @abc.abstractmethod
-    def finalise(self):
+    def finalise(self, **kwargs):
 
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'finalise' "
@@ -84,11 +91,11 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None):
+                 parameters_info=None, states_info=None):
 
         super(SurfaceLayerComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, self._ins, self._outs)
+            parameters_info, states_info, self._ins, self._outs)
 
 
 class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
@@ -107,11 +114,11 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None):
+                 parameters_info=None, states_info=None):
 
         super(SubSurfaceComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, self._ins, self._outs)
+            parameters_info, states_info, self._ins, self._outs)
 
 
 class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
@@ -127,11 +134,11 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None):
+                 parameters_info=None, states_info=None):
 
         super(OpenWaterComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, self._ins, self._outs)
+            parameters_info, states_info, self._ins, self._outs)
 
 
 class DataComponent(_Component):
@@ -144,7 +151,7 @@ class DataComponent(_Component):
 
         super(DataComponent, self).__init__(
             substituting_class.get_kind(), substituting_class.get_outwards(),
-            None, None, self._ins, self._outs)
+            None, None, None, self._ins, self._outs)
 
     def initialise(self):
 
@@ -154,7 +161,7 @@ class DataComponent(_Component):
 
         return {n: kwargs[n] for n in self.driving_data_info}
 
-    def finalise(self):
+    def finalise(self, **kwargs):
 
         pass
 
@@ -168,7 +175,7 @@ class NullComponent(_Component):
     def __init__(self, substituting_class):
 
         super(NullComponent, self).__init__(
-            substituting_class.get_kind(), None, None, None,
+            substituting_class.get_kind(), None, None, None, None,
             self._ins, substituting_class.get_outwards())
 
     def initialise(self):
@@ -179,6 +186,6 @@ class NullComponent(_Component):
 
         return {n: 0.0 for n in self.outwards}
 
-    def finalise(self):
+    def finalise(self, **kwargs):
 
         pass

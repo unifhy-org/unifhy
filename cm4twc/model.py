@@ -75,18 +75,18 @@ class Model(object):
         self._check_component_data(self._openwater, openwater_data,
                                    *openwater_domain)
 
-        interface_ = {}
+        interface = {}
 
         # initialise components
-        interface_.update(
+        interface.update(
             self._surfacelayer.initialise()
         )
 
-        interface_.update(
+        interface.update(
             self._subsurface.initialise()
         )
 
-        interface_.update(
+        interface.update(
             self._openwater.initialise()
         )
 
@@ -97,41 +97,41 @@ class Model(object):
             # eventually need to implement a time-stepping object to deal with
             # components operating at different temporal (and spatial for that
             # matter) resolution(s)
-            interface_.update(
+            interface.update(
                 self._surfacelayer(
                     t=t,
                     db=surfacelayer_data,
                     **surfacelayer_parameters,
-                    **interface_
+                    **interface
                 )
             )
 
-            interface_.update(
+            interface.update(
                 self._subsurface(
                     t=t,
                     db=subsurface_data,
                     **subsurface_parameters,
-                    **interface_
+                    **interface
                 )
             )
 
-            interface_.update(
+            interface.update(
                 self._openwater(
                     t=t,
                     db=openwater_data,
                     **openwater_parameters,
-                    **interface_
+                    **interface
                 )
             )
 
         # finalise components
-        self._surfacelayer.finalise()
+        self._surfacelayer.finalise(**interface)
 
-        self._subsurface.finalise()
+        self._subsurface.finalise(**interface)
 
-        self._openwater.finalise()
+        self._openwater.finalise(**interface)
 
-        return interface_
+        return interface
 
     @staticmethod
     def _process_component_type(component, expected_component):

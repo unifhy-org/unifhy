@@ -13,15 +13,23 @@ class Dummy(SurfaceLayerComponent):
             ancil_data_info={
                 'vegetation_fraction': '1'
             },
-            parameters_info={}
+            parameters_info={},
+            states_info={
+                'canopy': 'kg m-2',
+                'snowpack': 'kg m-2'
+            }
         )
 
     def initialise(self):
 
-        return {}
+        return {
+            'canopy': None,
+            'snowpack': None
+        }
 
     def run(self, rainfall, snowfall, air_temperature,
             vegetation_fraction,
+            canopy, snowpack,
             **kwargs):
 
         return {
@@ -30,9 +38,12 @@ class Dummy(SurfaceLayerComponent):
             'transpiration': None,
             'evaporation_soil_surface': None,
             'evaporation_ponded_water': None,
-            'evaporation_openwater': None
+            'evaporation_openwater': None,
+            'canopy': None,
+            'snowpack': None
         }
 
-    def finalise(self):
+    def finalise(self, canopy, snowpack,
+                 **kwargs):
 
         pass
