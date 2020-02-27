@@ -15,8 +15,7 @@ class TimeDomain(cf.Field):
     _reftime = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%SZ"))
     _units = cfunits.Units(_reftime, calendar=_calendar)
 
-    def __init__(self, timestamps, reftime, calendar='gregorian',
-                 timestep_check=True):
+    def __init__(self, timestamps, reftime, calendar='gregorian'):
 
         super(TimeDomain, self).__init__()
 
@@ -50,8 +49,7 @@ class TimeDomain(cf.Field):
                             "timestamps: the values contained in the sequence "
                             "must be numerical.")
 
-        if timestep_check:
-            self._check_timestep_consistency(timestamps)
+        self.timestep = self._check_timestep_consistency(timestamps)
 
         axis = self.set_construct(cf.DomainAxis(len(timestamps)))
         self.set_construct(
@@ -85,7 +83,7 @@ class TimeDomain(cf.Field):
             ignore_data_type=True)
 
     @classmethod
-    def from_datetime_sequence(cls, datetimes, timestep_check=True):
+    def from_datetime_sequence(cls, datetimes):
 
         datetimes = cls._issequence(datetimes)
 
@@ -99,9 +97,6 @@ class TimeDomain(cf.Field):
             raise TypeError("Error when initialising a {} from sequence of "
                             "datetime objects: the sequence given does not "
                             "contain datetime objects.")
-
-        if timestep_check:
-            cls._check_timestep_consistency(timestamps)
 
         return cls(timestamps, cls._reftime, cls._calendar)
 
@@ -131,8 +126,7 @@ class TimeDomain(cf.Field):
         datetimes = [start + timedelta(seconds=td * step.total_seconds())
                      for td in range(divisor + 1)]
 
-        return cls.from_datetime_sequence(np.asarray(datetimes),
-                                          timestep_check=False)
+        return cls.from_datetime_sequence(np.asarray(datetimes))
 
     @classmethod
     def _issequence(cls, sequence):
@@ -193,3 +187,5 @@ class TimeDomain(cf.Field):
         if np.amin(time_diff) != np.amax(time_diff):
             raise RuntimeWarning("The timestep in the sequence is not constant "
                                  "across the period.")
+
+        return time_diff[0]
