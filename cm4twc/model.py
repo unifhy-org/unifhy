@@ -1,6 +1,6 @@
 from cfunits import Units
 
-from .time_ import TimeDomain
+from .time_ import TimeDomain, Clock
 from .space_ import SpaceDomain, Grid
 from .data_ import DataSet
 from .components import SurfaceLayerComponent, SubSurfaceComponent, \
@@ -75,6 +75,12 @@ class Model(object):
         self._check_component_data(self._openwater, openwater_data,
                                    *openwater_domain)
 
+        # set up clock responsible for the time-stepping schemes
+        clock = Clock(surfacelayer_timedomain=surfacelayer_domain[0],
+                      subsurface_timedomain=subsurface_domain[0],
+                      openwater_timedomain=openwater_domain[0])
+
+        # set up interface responsible for exchanges between components
         interface = {}
 
         # initialise components
@@ -91,38 +97,36 @@ class Model(object):
         )
 
         # run components
-        for t in range(surfacelayer_domain[0].construct('time').size):
-            # use the time domain of surfacelayer for now, because the time
-            # domains of the three components are checked for equality, but
-            # eventually need to implement a time-stepping object to deal with
-            # components operating at different temporal (and spatial for that
-            # matter) resolution(s)
-            interface.update(
-                self._surfacelayer(
-                    t=t,
-                    db=surfacelayer_data,
-                    **surfacelayer_parameters,
-                    **interface
+        for run_surfacelayer, run_subsurface, run_openwater in clock:
+            if run_surfacelayer:
+                interface.update(
+                    self._surfacelayer(
+                        t=clock.get_current_timeindex(),
+                        db=surfacelayer_data,
+                        **surfacelayer_parameters,
+                        **interface
+                    )
                 )
-            )
 
-            interface.update(
-                self._subsurface(
-                    t=t,
-                    db=subsurface_data,
-                    **subsurface_parameters,
-                    **interface
+            if run_subsurface:
+                interface.update(
+                    self._subsurface(
+                        t=clock.get_current_timeindex(),
+                        db=subsurface_data,
+                        **subsurface_parameters,
+                        **interface
+                    )
                 )
-            )
 
-            interface.update(
-                self._openwater(
-                    t=t,
-                    db=openwater_data,
-                    **openwater_parameters,
-                    **interface
+            if run_openwater:
+                interface.update(
+                    self._openwater(
+                        t=clock.get_current_timeindex(),
+                        db=openwater_data,
+                        **openwater_parameters,
+                        **interface
+                    )
                 )
-            )
 
         # finalise components
         self._surfacelayer.finalise(**interface)

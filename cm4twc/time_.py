@@ -4,10 +4,6 @@ import cf
 import cfunits
 
 
-# dictionary of supported calendar names (i.e. classic in CF-convention sense):
-# - keys provide list of supported calendars,
-# - key-to-value provides mapping for aliases to same arbitrarily chosen name
-# note: 'none' calendar is not supported, unlike CF-convention
 _supported_calendar_mapping = {
     'standard': 'standard',
     'gregorian': 'standard',
@@ -73,7 +69,8 @@ class TimeDomain(cf.Field):
                             "timestamps: the values contained in the sequence "
                             "must be numerical.")
 
-        self.timestep = self._check_timestep_consistency(timestamps)
+        # check that the time series is regularly spaced
+        self._check_timestep_consistency(timestamps)
 
         # define the time construct of the cf.Field
         axis = self.set_construct(cf.DomainAxis(len(timestamps)))
@@ -88,6 +85,12 @@ class TimeDomain(cf.Field):
 
         # store cf.Units instance in an attribute
         self.cfunits = units
+
+        # determine timedelta
+        self.timedelta = (
+                self.construct('time').datetime_array[1] -
+                self.construct('time').datetime_array[0]
+        )
 
     def __eq__(self, other):
 
@@ -251,7 +254,115 @@ class TimeDomain(cf.Field):
 
         time_diff = np.diff(timestamps)
         if np.amin(time_diff) != np.amax(time_diff):
-            raise RuntimeWarning("The timestep in the sequence is not constant "
-                                 "across the period.")
+            raise RuntimeWarning("The timestep in the sequence is not "
+                                 "constant across the period.")
 
-        return time_diff[0]
+
+class Clock(object):
+
+    def __init__(self, surfacelayer_timedomain, subsurface_timedomain,
+                 openwater_timedomain):
+
+        # check that the time domains have the same start and the same end
+        match = (surfacelayer_timedomain.construct('time').data[[0, -1]] ==
+                 subsurface_timedomain.construct('time').data[[0, -1]]) * \
+                (surfacelayer_timedomain.construct('time').data[[0, -1]] ==
+                 openwater_timedomain.construct('time').data[[0, -1]])
+        if not match.min(squeeze=True):
+            raise RuntimeError(
+                "The three {}s for the three components do not feature the "
+                "same start and/or end.".format(TimeDomain.__name__))
+
+        # determine temporal supermesh properties
+        # (supermesh is the fastest component)
+        supermesh_timedelta = min(
+            surfacelayer_timedomain.timedelta,
+            subsurface_timedomain.timedelta,
+            openwater_timedomain.timedelta
+        )
+        supermesh_length = max(
+            surfacelayer_timedomain.construct('time').data.size,
+            subsurface_timedomain.construct('time').data.size,
+            openwater_timedomain.construct('time').data.size
+        )
+        supermesh_timestep = supermesh_timedelta.total_seconds()
+
+        # check that all timesteps are multiple integers of the supermesh step
+        surfacelayer_timedomain_timestep = \
+            surfacelayer_timedomain.timedelta.total_seconds()
+        if not surfacelayer_timedomain_timestep % supermesh_timestep == 0:
+            raise ValueError(
+                "The timestep of the surfacelayer component ({}s) is not a "
+                "multiple integer of the timestep of the fastest component "
+                "({}s).".format(surfacelayer_timedomain_timestep,
+                                supermesh_timestep))
+        subsurface_timedomain_timestep = \
+            subsurface_timedomain.timedelta.total_seconds()
+        if not subsurface_timedomain_timestep % supermesh_timestep == 0:
+            raise ValueError(
+                "The timestep of the subsurface component ({}s) is not a "
+                "multiple integer of the timestep of the fastest component "
+                "({}s).".format(subsurface_timedomain_timestep,
+                                supermesh_timestep))
+        openwater_timedomain_timestep = \
+            openwater_timedomain.timedelta.total_seconds()
+        if not openwater_timedomain_timestep % supermesh_timestep == 0:
+            raise ValueError(
+                "The timestep of the openwater component ({}s) is not a "
+                "multiple integer of the timestep of the fastest component "
+                "({}s).".format(openwater_timedomain_timestep,
+                                supermesh_timestep))
+
+        # get boolean arrays (switches) to determine when to run a given
+        # component on temporal supermesh
+        self._surfacelayer_switch = np.zeros((supermesh_length,), dtype=bool)
+        surfacelayer_increment = \
+            int(surfacelayer_timedomain_timestep // supermesh_timestep)
+        self._surfacelayer_switch[0::surfacelayer_increment] = True
+
+        self._subsurface_switch = np.zeros((supermesh_length,), dtype=bool)
+        subsurface_increment = \
+            int(subsurface_timedomain_timestep // supermesh_timestep)
+        self._subsurface_switch[0::subsurface_increment] = True
+
+        self._openwater_switch = np.zeros((supermesh_length,), dtype=bool)
+        openwater_increment = \
+            int(openwater_timedomain_timestep // supermesh_timestep)
+        self._openwater_switch[0::openwater_increment] = True
+
+        # set static time attributes
+        self.start_datetime = \
+            surfacelayer_timedomain.construct('time').datetime_array[0]
+        self.end_datetime = \
+            surfacelayer_timedomain.construct('time').datetime_array[-1]
+        self.start_timeindex = 0
+        self.end_timeindex = supermesh_length
+        self.timedelta = supermesh_timedelta
+
+        # initialise 'iterable' time attributes
+        self._current_datetime = self.start_datetime
+        self._current_timeindex = self.start_timeindex
+
+    def get_current_datetime(self): return self._current_datetime
+
+    def get_current_timeindex(self): return self._current_timeindex
+
+    def __iter__(self):
+
+        return self
+
+    def __next__(self):
+
+        if self._current_timeindex < self.end_timeindex - 1:
+            switches = (
+                self._surfacelayer_switch[self._current_timeindex],
+                self._subsurface_switch[self._current_timeindex],
+                self._openwater_switch[self._current_timeindex]
+            )
+
+            self._current_timeindex += 1
+            self._current_datetime += self.timedelta
+
+            return switches
+        else:
+            raise StopIteration
