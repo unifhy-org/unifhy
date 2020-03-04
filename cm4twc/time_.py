@@ -4,6 +4,12 @@ import cf
 import cfunits
 
 
+# dictionary of supported calendar names (i.e. classic in CF-convention sense):
+# - keys provide list of supported calendars,
+# - key-to-value provides mapping allowing for aliases to point to the
+#   same arbitrarily chosen name
+# note: 'none' calendar is not supported, unlike CF-convention, because you
+# cannot yield a datetime_array from it
 _supported_calendar_mapping = {
     'standard': 'standard',
     'gregorian': 'standard',
