@@ -4,6 +4,23 @@ import cf
 import cfunits
 
 
+# dictionary of supported calendar names (i.e. classic in CF-convention sense):
+# - keys provide list of supported calendars,
+# - key-to-value provides mapping for aliases to same arbitrarily chosen name
+# note: 'none' calendar is not supported, unlike CF-convention
+_supported_calendar_mapping = {
+    'standard': 'standard',
+    'gregorian': 'standard',
+    'proleptic_gregorian': 'proleptic_gregorian',
+    '365_day': '365_day',
+    'noleap': '365_day',
+    '366_day': '366_day',
+    'all_leap': '366_day',
+    '360_day': '360_day',
+    'julian': 'julian'
+}
+
+
 class TimeDomain(cf.Field):
     """
     Class to handle temporal considerations
@@ -19,8 +36,15 @@ class TimeDomain(cf.Field):
 
         super(TimeDomain, self).__init__()
 
+        # check that calendar is a classic one for CF-convention
+        if calendar.lower() not in _supported_calendar_mapping:
+            raise ValueError(
+                "The calendar '{}' is not supported.".format(calendar))
+
+        # check that timestamps is a sequence and get it as an array
         timestamps = self._issequence(timestamps)
 
+        # get a cf.Units instance from reftime (and calendar if necessary)
         if np.issubdtype(timestamps.dtype, np.number):
             if not reftime:
                 raise RuntimeError(
@@ -51,6 +75,7 @@ class TimeDomain(cf.Field):
 
         self.timestep = self._check_timestep_consistency(timestamps)
 
+        # define the time construct of the cf.Field
         axis = self.set_construct(cf.DomainAxis(len(timestamps)))
         self.set_construct(
             cf.DimensionCoordinate(
@@ -61,12 +86,13 @@ class TimeDomain(cf.Field):
             axes=axis
         )
 
+        # store cf.Units instance in an attribute
         self.cfunits = units
 
     def __eq__(self, other):
 
         if isinstance(other, TimeDomain):
-            return self.is_matched_in(other)
+            return self.is_time_equal_to(other)
         else:
             raise TypeError("The {} instance cannot be compared to "
                             "a {} instance.".format(self.__class__.__name__,
@@ -76,11 +102,51 @@ class TimeDomain(cf.Field):
 
         return not self.__eq__(other)
 
-    def is_matched_in(self, variable):
+    def is_time_equal_to(self, variable):
 
-        return self.construct('time').equals(
-            variable.construct('time', default=None),
-            ignore_data_type=True)
+        # check that the variable has a time construct
+        if variable.construct('time', default=None) is None:
+            return RuntimeError(
+                "The {} instance cannot be compared to a {} instance because "
+                "it does not feature a 'time' construct.".format(
+                    variable.__class__.__name__, self.__class__.__name__))
+
+        # check that variable calendar is a classic one for CF-convention
+        if variable.construct('time').calendar.lower() \
+                not in _supported_calendar_mapping:
+            raise ValueError("The calendar '{}' of the {} instance is not "
+                             "supported.".format(variable.calendar,
+                                                 variable.__class__.__name__))
+
+        # map alternative names for given calendar to same name
+        self_calendar = _supported_calendar_mapping[
+            self.construct('time').calendar.lower()
+        ]
+        variable_calendar = _supported_calendar_mapping[
+            variable.construct('time').calendar.lower()
+        ]
+
+        # check that the two instances have the same calendar
+        if not self_calendar == variable_calendar:
+            raise ValueError(
+                "The {} instance cannot be compared to a {} instance because "
+                "they do not have the same calendar.".format(
+                    variable.__class__.__name__, self.__class__.__name__))
+
+        # check that the two instances have the same time series length
+        if not (self.construct('time').data.size ==
+                variable.construct('time').data.size):
+            return False
+
+        # check that the time data are equal (__eq__ operator on cf.Data for
+        # reference time units will convert data with different reftime as long
+        # as they are in the same calendar)
+        match = self.construct('time').data == variable.construct('time').data
+
+        # use a trick by checking the minimum value of the boolean array
+        # (False if any value is False, i.e. at least one value is not equal
+        # in the time series) and by squeezing the data to get one boolean
+        return match.min(squeeze=True)
 
     @classmethod
     def from_datetime_sequence(cls, datetimes):

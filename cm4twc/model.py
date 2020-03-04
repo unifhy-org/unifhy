@@ -271,7 +271,7 @@ class Model(object):
                                                          component.category))
 
             # check that the data and component time domains are compatible
-            if not timedomain.is_matched_in(dataset[data_name]):
+            if not timedomain.is_time_equal_to(dataset[data_name]):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
