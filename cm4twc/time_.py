@@ -111,7 +111,8 @@ class TimeDomain(cf.Field):
 
         return not self.__eq__(other)
 
-    def is_time_equal_to(self, variable):
+    def is_time_equal_to(self, variable, _leading_truncation_idx=None,
+                         _trailing_truncation_idx=None):
 
         # check that the variable has a time construct
         if variable.construct('time', default=None) is None:
@@ -143,14 +144,19 @@ class TimeDomain(cf.Field):
                     variable.__class__.__name__, self.__class__.__name__))
 
         # check that the two instances have the same time series length
-        if not (self.construct('time').data.size ==
+        leading_size = _trailing_truncation_idx if _leading_truncation_idx else 0
+        trailing_size = - _trailing_truncation_idx if _trailing_truncation_idx else 0
+        if not (self.construct('time').data.size -
+                leading_size - trailing_size ==
                 variable.construct('time').data.size):
             return False
 
         # check that the time data are equal (__eq__ operator on cf.Data for
         # reference time units will convert data with different reftime as long
         # as they are in the same calendar)
-        match = self.construct('time').data == variable.construct('time').data
+        match = self.construct('time').data[_leading_truncation_idx:
+                                            _trailing_truncation_idx] == \
+            variable.construct('time').data
 
         # use a trick by checking the minimum value of the boolean array
         # (False if any value is False, i.e. at least one value is not equal
