@@ -275,7 +275,10 @@ class Model(object):
                                                          component.category))
 
             # check that the data and component time domains are compatible
-            if not timedomain.is_time_equal_to(dataset[data_name]):
+            # using _truncation=-1 to remove requirement for last datetime
+            # of TimeDomain to be available which is not required
+            if not timedomain.is_time_equal_to(dataset[data_name],
+                                               _trailing_truncation_idx=-1):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
