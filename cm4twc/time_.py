@@ -25,8 +25,12 @@ _supported_calendar_mapping = {
 
 class TimeDomain(cf.Field):
     """
-    Class to handle temporal considerations
-    (note: assumes everything is UTC for now).
+    Class to define a temporal dimension to be given to a Component.
+    The first datetime (timestamp) of the sequence is the beginning of the
+    first Component timestep, and the last datetime (timestamp) is the end of
+    the last timestep (not its start). The `timedelta` attribute corresponds
+    to the length of a timestep (i.e. the gap between two consecutive datetimes
+    in the sequence.
     """
 
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
