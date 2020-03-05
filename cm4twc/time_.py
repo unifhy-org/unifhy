@@ -341,13 +341,15 @@ class Clock(object):
             surfacelayer_timedomain.construct('time').datetime_array[0]
         self.end_datetime = \
             surfacelayer_timedomain.construct('time').datetime_array[-1]
-        self.start_timeindex = 0
-        self.end_timeindex = supermesh_length
         self.timedelta = supermesh_timedelta
+        self.start_timeindex = 0
+        self.end_timeindex = supermesh_length - 1
 
-        # initialise 'iterable' time attributes
-        self._current_datetime = self.start_datetime
-        self._current_timeindex = self.start_timeindex
+        # initialise 'iterable' time attributes to the point in time just
+        # prior the actual specified start of the supermesh because the
+        # iterator needs to increment in time prior indexing the switches
+        self._current_datetime = self.start_datetime - supermesh_timedelta
+        self._current_timeindex = self.start_timeindex - 1
 
     def get_current_datetime(self): return self._current_datetime
 
@@ -359,16 +361,18 @@ class Clock(object):
 
     def __next__(self):
 
+        # loop until it hits the second to last index (because the last index
+        # corresponds to the end of the last timestep, so that it should not
+        # be used as the start of another iteration
         if self._current_timeindex < self.end_timeindex - 1:
+            self._current_timeindex += 1
+            self._current_datetime += self.timedelta
+
             switches = (
                 self._surfacelayer_switch[self._current_timeindex],
                 self._subsurface_switch[self._current_timeindex],
                 self._openwater_switch[self._current_timeindex]
             )
-
-            self._current_timeindex += 1
-            self._current_datetime += self.timedelta
-
             return switches
         else:
             raise StopIteration
