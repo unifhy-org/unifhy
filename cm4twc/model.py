@@ -50,6 +50,14 @@ class Model(object):
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
+        # assign the domains to the components
+        self._surfacelayer.timedomain, self._surfacelayer.spacedomain = \
+            surfacelayer_domain
+        self._subsurface.timedomain, self._subsurface.spacedomain = \
+            subsurface_domain
+        self._openwater.timedomain, self._openwater.spacedomain = \
+            openwater_domain
+
         # check that the required parameters are provided
         if not surfacelayer_parameters:
             surfacelayer_parameters = {}

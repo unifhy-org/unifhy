@@ -30,6 +30,12 @@ class _Component(metaclass=abc.ABCMeta):
         self.inwards = inwards
         self.outwards = outwards
 
+        # time attributes
+        self.timedomain = None
+
+        # space attributes
+        self.spacedomain = None
+
     def __call__(self, t, db, **kwargs):
 
         # collect required ancillary data from dataset
