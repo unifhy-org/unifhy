@@ -36,15 +36,15 @@ class _Component(metaclass=abc.ABCMeta):
         # space attributes
         self.spacedomain = None
 
-    def __call__(self, timeindex, datetime, db, **kwargs):
+    def __call__(self, timeindex, datetime, dataset, **kwargs):
 
         # collect required ancillary data from dataset
         for data in self.ancil_data_info:
-            kwargs[data] = db[data].array[...]
+            kwargs[data] = dataset[data].array[...]
 
         # collect required driving data from dataset
         for data in self.driving_data_info:
-            kwargs[data] = db[data].array[timeindex, ...]
+            kwargs[data] = dataset[data].array[timeindex, ...]
 
         # run simulation for the component
         return self.run(datetime=datetime, **kwargs)

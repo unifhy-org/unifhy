@@ -115,7 +115,7 @@ class Model(object):
                     self._surfacelayer(
                         timeindex=timeindex,
                         datetime=datetime,
-                        db=surfacelayer_data,
+                        dataset=surfacelayer_data,
                         **surfacelayer_parameters,
                         **interface
                     )
@@ -126,7 +126,7 @@ class Model(object):
                     self._subsurface(
                         timeindex=timeindex,
                         datetime=datetime,
-                        db=subsurface_data,
+                        dataset=subsurface_data,
                         **subsurface_parameters,
                         **interface
                     )
@@ -137,7 +137,7 @@ class Model(object):
                     self._openwater(
                         timeindex=timeindex,
                         datetime=datetime,
-                        db=openwater_data,
+                        dataset=openwater_data,
                         **openwater_parameters,
                         **interface
                     )
