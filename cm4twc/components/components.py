@@ -36,7 +36,8 @@ class _Component(metaclass=abc.ABCMeta):
         # space attributes
         self.spacedomain = None
 
-    def __call__(self, timeindex, datetime, dataset, **kwargs):
+    def __call__(self, timeindex, datetime, timestepinseconds, dataset,
+                 **kwargs):
 
         # collect required ancillary data from dataset
         for data in self.ancil_data_info:
@@ -47,7 +48,8 @@ class _Component(metaclass=abc.ABCMeta):
             kwargs[data] = dataset[data].array[timeindex, ...]
 
         # run simulation for the component
-        return self.run(datetime=datetime, **kwargs)
+        return self.run(datetime=datetime, timestepinseconds=timestepinseconds,
+                        **kwargs)
 
     @classmethod
     def get_class_kind(cls):
@@ -156,7 +158,8 @@ class DataComponent(_Component):
     def __init__(self, substituting_class):
 
         super(DataComponent, self).__init__(
-            substituting_class.get_class_kind(), substituting_class.get_class_outwards(),
+            substituting_class.get_class_kind(),
+            substituting_class.get_class_outwards(),
             None, None, None, self._ins, self._outs)
 
     def initialise(self):

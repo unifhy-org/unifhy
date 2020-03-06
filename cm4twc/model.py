@@ -105,6 +105,13 @@ class Model(object):
         )
 
         # run components
+        surfacelayer_timestepinseconds = \
+            self._surfacelayer.timedomain.timedelta.total_seconds()
+        subsurface_timestepinseconds = \
+            self._subsurface.timedomain.timedelta.total_seconds()
+        openwater_timestepinseconds = \
+            self._openwater.timedomain.timedelta.total_seconds()
+
         for run_surfacelayer, run_subsurface, run_openwater in clock:
 
             timeindex = clock.get_current_timeindex()
@@ -115,6 +122,7 @@ class Model(object):
                     self._surfacelayer(
                         timeindex=timeindex,
                         datetime=datetime,
+                        timestepinseconds=surfacelayer_timestepinseconds,
                         dataset=surfacelayer_data,
                         **surfacelayer_parameters,
                         **interface
@@ -126,6 +134,7 @@ class Model(object):
                     self._subsurface(
                         timeindex=timeindex,
                         datetime=datetime,
+                        timestepinseconds=subsurface_timestepinseconds,
                         dataset=subsurface_data,
                         **subsurface_parameters,
                         **interface
@@ -137,6 +146,7 @@ class Model(object):
                     self._openwater(
                         timeindex=timeindex,
                         datetime=datetime,
+                        timestepinseconds=openwater_timestepinseconds,
                         dataset=openwater_data,
                         **openwater_parameters,
                         **interface
