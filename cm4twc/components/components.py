@@ -50,15 +50,15 @@ class _Component(metaclass=abc.ABCMeta):
         return self.run(datetime=datetime, **kwargs)
 
     @classmethod
-    def get_kind(cls):
+    def get_class_kind(cls):
         return cls._kind
 
     @classmethod
-    def get_inwards(cls):
+    def get_class_inwards(cls):
         return cls._ins
 
     @classmethod
-    def get_outwards(cls):
+    def get_class_outwards(cls):
         return cls._outs
 
     @abc.abstractmethod
@@ -156,7 +156,7 @@ class DataComponent(_Component):
     def __init__(self, substituting_class):
 
         super(DataComponent, self).__init__(
-            substituting_class.get_kind(), substituting_class.get_outwards(),
+            substituting_class.get_class_kind(), substituting_class.get_class_outwards(),
             None, None, None, self._ins, self._outs)
 
     def initialise(self):
@@ -181,8 +181,8 @@ class NullComponent(_Component):
     def __init__(self, substituting_class):
 
         super(NullComponent, self).__init__(
-            substituting_class.get_kind(), None, None, None, None,
-            self._ins, substituting_class.get_outwards())
+            substituting_class.get_class_kind(), None, None, None, None,
+            self._ins, substituting_class.get_class_outwards())
 
     def initialise(self):
 
