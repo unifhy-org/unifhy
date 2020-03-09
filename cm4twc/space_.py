@@ -36,8 +36,11 @@ class Grid(SpaceDomain):
             axis_alt = self.set_construct(cf.DomainAxis(len(altitude_m)))
             self.set_construct(
                 cf.DimensionCoordinate(
-                    properties={'standard_name': 'altitude',
-                                'units': 'm'},
+                    properties={
+                        'standard_name': 'altitude',
+                        'units': 'm',
+                        'axis': 'Z'
+                    },
                     data=cf.Data(altitude_m)),
                 axes=axis_alt)
 
@@ -63,7 +66,9 @@ class Grid(SpaceDomain):
                 properties={
                     'standard_name':
                         'grid_latitude' if rotated else 'latitude',
-                    'units': 'degrees' if rotated else 'degrees_north'},
+                    'units': 'degrees' if rotated else 'degrees_north',
+                    'axis': 'Y'
+                },
                 data=cf.Data(latitude_deg),
                 bounds=cf.Bounds(data=cf.Data(latitude_bounds_deg))),
             axes=axis_lat
@@ -91,7 +96,9 @@ class Grid(SpaceDomain):
                 properties={
                     'standard_name':
                         'grid_longitude' if rotated else 'longitude',
-                    'units': 'degrees' if rotated else 'degrees_east'},
+                    'units': 'degrees' if rotated else 'degrees_east',
+                    'axis': 'X'
+                },
                 data=cf.Data(longitude_deg),
                 bounds=cf.Bounds(data=cf.Data(longitude_bounds_deg))),
             axes=axis_lon

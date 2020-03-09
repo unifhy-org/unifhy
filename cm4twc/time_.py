@@ -84,7 +84,8 @@ class TimeDomain(cf.Field):
             cf.DimensionCoordinate(
                 properties={'standard_name': 'time',
                             'units': units.units,
-                            'calendar': units.calendar},
+                            'calendar': units.calendar,
+                            'axis': 'T'},
                 data=cf.Data(timestamps)),
             axes=axis
         )
