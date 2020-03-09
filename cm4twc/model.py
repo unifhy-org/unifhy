@@ -310,7 +310,7 @@ class Model(object):
                         data_name, component.category,
                         component.__class__.__name__))
             # check that the data and component space domains are compatible
-            if not spacedomain.is_matched_in(dataset[data_name]):
+            if not spacedomain.is_space_equal_to(dataset[data_name]):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(
@@ -344,7 +344,7 @@ class Model(object):
                                                          DataSet.__name__,
                                                          component.category))
             # check that the data and component space domains are compatible
-            if not spacedomain.is_matched_in(dataset[data_name]):
+            if not spacedomain.is_space_equal_to(dataset[data_name]):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(

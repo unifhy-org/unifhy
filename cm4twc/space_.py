@@ -127,7 +127,7 @@ class Grid(SpaceDomain):
     def __eq__(self, other):
 
         if isinstance(other, Grid):
-            return self.is_matched_in(other)
+            return self.is_space_equal_to(other)
         else:
             raise TypeError("The {} instance cannot be compared to "
                             "a {} instance.".format(self.__class__.__name__,
@@ -137,7 +137,7 @@ class Grid(SpaceDomain):
 
         return not self.__eq__(other)
 
-    def is_matched_in(self, variable, ignore_altitude=False):
+    def is_space_equal_to(self, variable, ignore_altitude=False):
 
         # check whether latitude and longitude constructs are identical
         if self.is_rotated:
