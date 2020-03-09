@@ -1,3 +1,5 @@
+import numpy as np
+
 from ..components import SurfaceLayerComponent
 
 
@@ -27,20 +29,23 @@ class Dummy(SurfaceLayerComponent):
             'snowpack': None
         }
 
-    def run(self, rainfall, snowfall, air_temperature,
+    def run(self, spaceshape,
+            rainfall, snowfall, air_temperature,
             vegetation_fraction,
             canopy, snowpack,
             **kwargs):
 
+        dummy_array = np.ones(spaceshape, np.float32)
+
         return {
-            'throughfall': None,
-            'snowmelt': None,
-            'transpiration': None,
-            'evaporation_soil_surface': None,
-            'evaporation_ponded_water': None,
-            'evaporation_openwater': None,
-            'canopy': None,
-            'snowpack': None
+            'throughfall': dummy_array,
+            'snowmelt': dummy_array,
+            'transpiration': dummy_array,
+            'evaporation_soil_surface': dummy_array,
+            'evaporation_ponded_water': dummy_array,
+            'evaporation_openwater': dummy_array,
+            'canopy': dummy_array,
+            'snowpack': dummy_array
         }
 
     def finalise(self, canopy, snowpack,

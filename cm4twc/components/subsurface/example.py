@@ -1,3 +1,5 @@
+import numpy as np
+
 from ..components import SubSurfaceComponent
 
 
@@ -25,18 +27,21 @@ class Dummy(SubSurfaceComponent):
             'aquifer': None
         }
 
-    def run(self, evaporation_soil_surface, evaporation_ponded_water,
+    def run(self, spaceshape,
+            evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             soil_temperature,
             saturated_hydraulic_conductivity,
             soil_moisture, aquifer,
             **kwargs):
 
+        dummy_array = np.ones(spaceshape, np.float32)
+
         return {
-            'surface_runoff': None,
-            'subsurface_runoff': None,
-            'soil_moisture': None,
-            'aquifer': None
+            'surface_runoff': dummy_array,
+            'subsurface_runoff': dummy_array,
+            'soil_moisture': dummy_array,
+            'aquifer': dummy_array
         }
 
     def finalise(self, soil_moisture, aquifer,

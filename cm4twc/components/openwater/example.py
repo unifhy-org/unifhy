@@ -1,3 +1,5 @@
+import numpy as np
+
 from ..components import OpenWaterComponent
 
 
@@ -21,13 +23,16 @@ class Dummy(OpenWaterComponent):
             'river_channel': None
         }
 
-    def run(self, evaporation_openwater, surface_runoff, subsurface_runoff,
+    def run(self, spaceshape,
+            evaporation_openwater, surface_runoff, subsurface_runoff,
             residence_time, river_channel,
             **kwargs):
 
+        dummy_array = np.ones(spaceshape, np.float32)
+
         return {
-            'discharge': None,
-            'river_channel': None
+            'discharge': dummy_array,
+            'river_channel': dummy_array
         }
 
     def finalise(self, river_channel,

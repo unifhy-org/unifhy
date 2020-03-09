@@ -1,4 +1,5 @@
 import abc
+import numpy as np
 
 
 class _Component(metaclass=abc.ABCMeta):
@@ -36,7 +37,8 @@ class _Component(metaclass=abc.ABCMeta):
         # space attributes
         self.spacedomain = None
 
-    def __call__(self, timeindex, datetime, timestepinseconds, dataset,
+    def __call__(self, timeindex, datetime, timestepinseconds, spaceshape,
+                 dataset,
                  **kwargs):
 
         # collect required ancillary data from dataset
@@ -49,7 +51,7 @@ class _Component(metaclass=abc.ABCMeta):
 
         # run simulation for the component
         return self.run(datetime=datetime, timestepinseconds=timestepinseconds,
-                        **kwargs)
+                        spaceshape=spaceshape, **kwargs)
 
     @classmethod
     def get_class_kind(cls):
@@ -191,9 +193,11 @@ class NullComponent(_Component):
 
         return {}
 
-    def run(self, **kwargs):
+    def run(self, spaceshape, **kwargs):
 
-        return {n: 0.0 for n in self.outwards}
+        null_array = np.zeros(spaceshape, np.float32)
+
+        return {n: null_array for n in self.outwards}
 
     def finalise(self, **kwargs):
 

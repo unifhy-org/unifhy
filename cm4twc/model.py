@@ -123,6 +123,7 @@ class Model(object):
                         timeindex=timeindex,
                         datetime=datetime,
                         timestepinseconds=surfacelayer_timestepinseconds,
+                        spaceshape=self._surfacelayer.spacedomain.shape_,
                         dataset=surfacelayer_data,
                         **surfacelayer_parameters,
                         **interface
@@ -135,6 +136,7 @@ class Model(object):
                         timeindex=timeindex,
                         datetime=datetime,
                         timestepinseconds=subsurface_timestepinseconds,
+                        spaceshape=self._subsurface.spacedomain.shape_,
                         dataset=subsurface_data,
                         **subsurface_parameters,
                         **interface
@@ -147,6 +149,7 @@ class Model(object):
                         timeindex=timeindex,
                         datetime=datetime,
                         timestepinseconds=openwater_timestepinseconds,
+                        spaceshape=self._openwater.spacedomain.shape_,
                         dataset=openwater_data,
                         **openwater_parameters,
                         **interface
