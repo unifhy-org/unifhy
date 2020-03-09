@@ -23,6 +23,9 @@ class Grid(SpaceDomain):
 
         super(Grid, self).__init__()
 
+        # initialise a list to store the shape of the domain
+        shape_ = []
+
         # set the altitude construct
         if altitude_m:
             if not isinstance(altitude_m, np.ndarray):
@@ -43,6 +46,7 @@ class Grid(SpaceDomain):
                     },
                     data=cf.Data(altitude_m)),
                 axes=axis_alt)
+            shape_.append(len(altitude_m))
 
         # set the latitude construct
         if not isinstance(latitude_deg, np.ndarray):
@@ -73,6 +77,7 @@ class Grid(SpaceDomain):
                 bounds=cf.Bounds(data=cf.Data(latitude_bounds_deg))),
             axes=axis_lat
         )
+        shape_.append(len(latitude_deg))
 
         # set the longitude construct
         if not isinstance(longitude_deg, np.ndarray):
@@ -103,6 +108,7 @@ class Grid(SpaceDomain):
                 bounds=cf.Bounds(data=cf.Data(longitude_bounds_deg))),
             axes=axis_lon
         )
+        shape_.append(len(longitude_deg))
 
         # set the coordinate reference construct if relevant
         if rotated:
@@ -130,6 +136,9 @@ class Grid(SpaceDomain):
         # set a few attributes to avoid more sophisticated tests later on
         self.has_altitude = True if altitude_m else False
         self.is_rotated = rotated
+
+        # store the shape of the domain as an attribute
+        self.shape_ = tuple(shape_)
 
     def __eq__(self, other):
 
