@@ -51,6 +51,7 @@ setup(
     install_requires=[
         'numpy',
         'cf-python',
+        'cftime',
         'cfunits'
     ]
 )

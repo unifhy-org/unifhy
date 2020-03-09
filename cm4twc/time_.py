@@ -1,6 +1,7 @@
 import numpy as np
 from datetime import datetime, timedelta
 import cf
+import cftime
 import cfunits
 
 
@@ -35,10 +36,10 @@ class TimeDomain(cf.Field):
 
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
     _calendar = 'gregorian'
-    _reftime = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%SZ"))
-    _units = cfunits.Units(_reftime, calendar=_calendar)
+    _units = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%SZ"))
+    _Units = cfunits.Units(_units, calendar=_calendar)
 
-    def __init__(self, timestamps, reftime, calendar='gregorian'):
+    def __init__(self, timestamps, units, calendar=_calendar):
 
         super(TimeDomain, self).__init__()
 
@@ -50,21 +51,16 @@ class TimeDomain(cf.Field):
         # check that timestamps is a sequence and get it as an array
         timestamps = self._issequence(timestamps)
 
-        # get a cf.Units instance from reftime (and calendar if necessary)
+        # get a cf.Units instance from units (and calendar if necessary)
         if np.issubdtype(timestamps.dtype, np.number):
-            if not reftime:
-                raise RuntimeError(
-                    "Error when initialising a {} from a sequence of "
-                    "timestamps: the reference time must be provided.".format(
-                        self.__class__.__name__))
-            elif isinstance(reftime, str):
-                units = cfunits.Units(reftime, calendar=calendar)
-            elif isinstance(reftime, cfunits.Units):
-                units = reftime
+            if isinstance(units, str):
+                units = cfunits.Units(units, calendar=calendar)
+            elif isinstance(units, cfunits.Units):
+                units = units
             else:
                 raise TypeError(
                     "Error when initialising a {} from a sequence of "
-                    "timestamps: the reference time must be an instance of "
+                    "timestamps: the units must be an instance of "
                     "cfunits.Units or a string.".format(
                         self.__class__.__name__))
 
@@ -72,8 +68,8 @@ class TimeDomain(cf.Field):
                 raise ValueError(
                     "Error when initialising a {} from a sequence of "
                     "timestamps: the reference time is not valid, it must "
-                    "comply with the format 'unit_of_time since date'.".format(
-                        self.__class__.__name__))
+                    "comply with the format 'unit_of_time since "
+                    "reference_datetime'.".format(self.__class__.__name__))
         else:
             raise TypeError("Error when initialising a {} from a sequence of "
                             "timestamps: the values contained in the sequence "
@@ -92,9 +88,6 @@ class TimeDomain(cf.Field):
                 data=cf.Data(timestamps)),
             axes=axis
         )
-
-        # store cf.Units instance in an attribute
-        self.cfunits = units
 
         # determine timedelta
         self.timedelta = (
@@ -173,37 +166,37 @@ class TimeDomain(cf.Field):
         datetimes = cls._issequence(datetimes)
 
         if np.issubdtype(datetimes.dtype, np.dtype(datetime)):
-            timestamps = cls._convert_datetimes_to_timestamps(
-                datetimes.astype('datetime64'), cls._epoch)
+            try:
+                timestamps = cftime.date2num(datetimes, units=cls._units,
+                                             calendar=datetimes[0].calendar)
+                calendar = datetimes[0].calendar
+            except AttributeError:
+                timestamps = cftime.date2num(datetimes, units=cls._units,
+                                             calendar=cls._calendar)
+                calendar = cls._calendar
         elif np.issubdtype(datetimes.dtype, np.dtype('datetime64')):
-            timestamps = cls._convert_datetimes_to_timestamps(
-                datetimes, cls._epoch)
+            timestamps = cftime.date2num(datetimes, units=cls._units,
+                                         calendar=cls._calendar)
+            calendar = cls._calendar
         else:
             raise TypeError("Error when initialising a {} from sequence of "
                             "datetime objects: the sequence given does not "
                             "contain datetime objects.")
 
-        return cls(timestamps, cls._reftime, cls._calendar)
+        return cls(timestamps, cls._units, calendar)
 
     @classmethod
     def from_start_end_step(cls, start, end, step):
 
-        if not isinstance(start, datetime):
-            try:
-                start = datetime.strptime(start, '%d/%m/%Y %H:%M:%S')
-            except ValueError:
-                raise ValueError("Start date given is not in a valid format: "
-                                 "'{0}'.".format(start))
-        if not isinstance(end, datetime):
-            try:
-                end = datetime.strptime(end, "%d/%m/%Y %H:%M:%S")
-            except ValueError:
-                raise ValueError("End date given is not in a valid format: "
-                                 "'{0}'.".format(end))
-
+        if not isinstance(start, (datetime, cftime.datetime)):
+            raise TypeError("Start date must be an instance of "
+                            "datetime.datetime or cftime.datetime.")
+        if not isinstance(end, (datetime, cftime.datetime)):
+            raise TypeError("End date must be an instance of "
+                            "datetime.datetime or cftime.datetime.")
         if not isinstance(step, timedelta):
-            raise ValueError("Timestep given is not an instance of the "
-                             "built-in class datetime.timedelta.")
+            raise TypeError("Step must be an instance of the "
+                            "datetime.timedelta.")
 
         (divisor, remainder) = divmod(int((end - start).total_seconds()),
                                       int(step.total_seconds()))
@@ -232,38 +225,17 @@ class TimeDomain(cf.Field):
                 "given must be a list, a tuple, or a numpy.ndarray.".format(
                     cls.__name__))
 
-    def as_utc_datetime_sequence(self):
+    def as_datetime_array(self):
 
-        return self._convert_timestamps_to_datetimes(
-            cfunits.Units.conform(self.construct('time').array,
-                                  self.cfunits,
-                                  self._units),
-            reference=self._epoch
-        )
+        return self.construct('time').datetime_array
 
-    def as_utc_string_sequence(self):
+    def as_string_array(self, formatting=None):
 
-        return [
-            s.isoformat() for s in self.as_utc_datetime_sequence()
-        ]
-
-    @staticmethod
-    def _convert_datetimes_to_timestamps(datetimes, reference):
-
-        return (datetimes - np.datetime64(reference)) / np.timedelta64(1, 's')
-
-    @staticmethod
-    def _convert_timestamps_to_datetimes(timestamps, reference):
+        formatting = formatting if formatting else "%Y-%m-%d %H:%M:%S"
 
         return np.asarray(
-            [reference + timedelta(seconds=tstamp) for tstamp in timestamps],
-            dtype=datetime
+            [dt.strftime(format=formatting) for dt in self.as_datetime_array()]
         )
-
-    @staticmethod
-    def _shift_timestamps_reference(timestamps, current_ref, new_ref):
-
-        return timestamps - (new_ref - current_ref).total_seconds()
 
     @staticmethod
     def _check_timestep_consistency(timestamps):
