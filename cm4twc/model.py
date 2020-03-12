@@ -178,8 +178,8 @@ class Model(object):
             raise TypeError(
                 "The '{}' component given must either be a subclass of the "
                 "class {}, the class {}, or the class {}.".format(
-                    expected_component.category,
-                    SurfaceLayerComponent.__name__, DataComponent.__name__,
+                    expected_component.get_class_kind(),
+                    expected_component.__name__, DataComponent.__name__,
                     NullComponent.__name__)
             )
 
