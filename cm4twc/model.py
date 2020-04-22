@@ -93,15 +93,21 @@ class Model(object):
 
         # initialise components
         interface.update(
-            self._surfacelayer.initialise()
+            self._surfacelayer.initialise(
+                spaceshape=self._surfacelayer.spacedomain.shape_
+            )
         )
 
         interface.update(
-            self._subsurface.initialise()
+            self._subsurface.initialise(
+                spaceshape=self._surfacelayer.spacedomain.shape_
+            )
         )
 
         interface.update(
-            self._openwater.initialise()
+            self._openwater.initialise(
+                spaceshape=self._surfacelayer.spacedomain.shape_
+            )
         )
 
         # run components

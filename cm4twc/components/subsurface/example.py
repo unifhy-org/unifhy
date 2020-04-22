@@ -20,7 +20,7 @@ class Dummy(SubSurfaceComponent):
             }
         )
 
-    def initialise(self):
+    def initialise(self, **kwargs):
 
         return {
             'soil_moisture': None,

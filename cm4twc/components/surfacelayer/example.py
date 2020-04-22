@@ -22,7 +22,7 @@ class Dummy(SurfaceLayerComponent):
             }
         )
 
-    def initialise(self):
+    def initialise(self, **kwargs):
 
         return {
             'canopy': None,

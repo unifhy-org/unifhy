@@ -17,7 +17,7 @@ class Dummy(OpenWaterComponent):
             }
         )
 
-    def initialise(self):
+    def initialise(self, **kwargs):
 
         return {
             'river_channel': None

@@ -66,7 +66,7 @@ class _Component(metaclass=abc.ABCMeta):
         return cls._outs
 
     @abc.abstractmethod
-    def initialise(self):
+    def initialise(self, **kwargs):
 
         raise NotImplementedError(
             "The {} class '{}' does not feature an 'initialise' "
@@ -164,7 +164,7 @@ class DataComponent(_Component):
             substituting_class.get_class_outwards(),
             None, None, None, self._ins, self._outs)
 
-    def initialise(self):
+    def initialise(self, **kwargs):
 
         return {}
 
@@ -189,7 +189,7 @@ class NullComponent(_Component):
             substituting_class.get_class_kind(), None, None, None, None,
             self._ins, substituting_class.get_class_outwards())
 
-    def initialise(self):
+    def initialise(self, **kwargs):
 
         return {}
 
