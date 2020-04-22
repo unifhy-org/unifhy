@@ -4,7 +4,7 @@ from .time_ import TimeDomain, Clock
 from .space_ import SpaceDomain, Grid
 from .data_ import DataSet
 from .components import SurfaceLayerComponent, SubSurfaceComponent, \
-    OpenWaterComponent, DataComponent, NullComponent, _Component
+    OpenWaterComponent, DataComponent, NullComponent
 
 
 class Model(object):
@@ -198,7 +198,9 @@ class Model(object):
 
         :param component: instance of the component whose domain is
         being checked
-        :type component: _Component
+        :type component: Union[SurfaceLaterComponent, SubSurfaceComponent,
+                               OpenWaterComponent, DataComponent,
+                               NullComponent]
         :param timedomain: object being given as 1st element of the domain
         tuple during the call of the [simulate] method for the given component
         :type timedomain: object
@@ -232,7 +234,9 @@ class Model(object):
 
         :param component: instance of the component whose domain is
         being checked
-        :type component: _Component
+        :type component: Union[SurfaceLaterComponent, SubSurfaceComponent,
+                               OpenWaterComponent, DataComponent,
+                               NullComponent]
         :param parameters: a dictionary containing the parameter values given
         during the call of the [simulate] method for the given component
         :type parameters: dict
@@ -259,7 +263,9 @@ class Model(object):
             - the domain of each variable complies with the component's domain
 
         :param component: instance of the component whose data is being checked
-        :type component: _Component
+        :type component: Union[SurfaceLaterComponent, SubSurfaceComponent,
+                               OpenWaterComponent, DataComponent,
+                               NullComponent]
         :param dataset: object being given as the dataset for the given
         component category
         :type dataset: object
