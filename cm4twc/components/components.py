@@ -119,8 +119,7 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
         'snowmelt': 'kg m-2 s-1'
     }
     _outs = {
-        'surface_runoff': 'kg m-2 s-1',
-        'subsurface_runoff': 'kg m-2 s-1'
+        'runoff': 'kg m-2 s-1'
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
@@ -136,8 +135,7 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
     _kind = 'openwater'
     _ins = {
         'evaporation_openwater': 'kg m-2 s-1',
-        'surface_runoff': 'kg m-2 s-1',
-        'subsurface_runoff': 'kg m-2 s-1'
+        'runoff': 'kg m-2 s-1'
     }
     _outs = {
         'discharge': 'kg m-2 s-1'

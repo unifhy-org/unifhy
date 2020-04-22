@@ -38,8 +38,7 @@ class Dummy(SubSurfaceComponent):
         dummy_array = np.ones(spaceshape, np.float32)
 
         return {
-            'surface_runoff': dummy_array,
-            'subsurface_runoff': dummy_array,
+            'runoff': dummy_array,
             'soil_moisture': dummy_array,
             'aquifer': dummy_array
         }

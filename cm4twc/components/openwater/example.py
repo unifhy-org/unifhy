@@ -24,7 +24,7 @@ class Dummy(OpenWaterComponent):
         }
 
     def run(self, spaceshape,
-            evaporation_openwater, surface_runoff, subsurface_runoff,
+            evaporation_openwater, runoff,
             residence_time, river_channel,
             **kwargs):
 
