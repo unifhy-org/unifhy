@@ -23,11 +23,19 @@ class Model(object):
         self._openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
-    def simulate(self, surfacelayer_domain, subsurface_domain,
-                 openwater_domain, surfacelayer_data=None,
-                 subsurface_data=None, openwater_data=None,
+    def simulate(self,
+                 # domain for components
+                 surfacelayer_domain, subsurface_domain,
+                 openwater_domain,
+                 # data for components
+                 surfacelayer_data=None, subsurface_data=None,
+                 openwater_data=None,
+                 # parameters for components
                  surfacelayer_parameters=None, subsurface_parameters=None,
-                 openwater_parameters=None):
+                 openwater_parameters=None,
+                 # constants for components
+                 surfacelayer_constants=None, subsurface_constants=None,
+                 openwater_constants=None):
         """
         DOCSTRING REQUIRED
         """
@@ -58,16 +66,27 @@ class Model(object):
         self._openwater.timedomain, self._openwater.spacedomain = \
             openwater_domain
 
+        # check whether constants are provided
+        if not surfacelayer_constants:
+            surfacelayer_constants = {}
+        if not subsurface_constants:
+            subsurface_constants = {}
+        if not openwater_constants:
+            openwater_constants = {}
+
         # check that the required parameters are provided
         if not surfacelayer_parameters:
             surfacelayer_parameters = {}
-        self._check_component_parameters(self._surfacelayer, surfacelayer_parameters)
+        self._check_component_parameters(
+            self._surfacelayer, surfacelayer_parameters)
         if not subsurface_parameters:
             subsurface_parameters = {}
-        self._check_component_parameters(self._subsurface, subsurface_parameters)
+        self._check_component_parameters(
+            self._subsurface, subsurface_parameters)
         if not openwater_parameters:
             openwater_parameters = {}
-        self._check_component_parameters(self._openwater, openwater_parameters)
+        self._check_component_parameters(
+            self._openwater, openwater_parameters)
 
         # check that the required data is available in a DataSet instance
         if not surfacelayer_data:
@@ -94,19 +113,22 @@ class Model(object):
         # initialise components
         interface.update(
             self._surfacelayer.initialise(
-                spaceshape=self._surfacelayer.spacedomain.shape_
+                spaceshape=self._surfacelayer.spacedomain.shape_,
+                **surfacelayer_constants
             )
         )
 
         interface.update(
             self._subsurface.initialise(
-                spaceshape=self._surfacelayer.spacedomain.shape_
+                spaceshape=self._surfacelayer.spacedomain.shape_,
+                **subsurface_constants
             )
         )
 
         interface.update(
             self._openwater.initialise(
-                spaceshape=self._surfacelayer.spacedomain.shape_
+                spaceshape=self._surfacelayer.spacedomain.shape_,
+                **openwater_constants
             )
         )
 
@@ -132,6 +154,7 @@ class Model(object):
                         spaceshape=self._surfacelayer.spacedomain.shape_,
                         dataset=surfacelayer_data,
                         **surfacelayer_parameters,
+                        **surfacelayer_constants,
                         **interface
                     )
                 )
@@ -145,6 +168,7 @@ class Model(object):
                         spaceshape=self._subsurface.spacedomain.shape_,
                         dataset=subsurface_data,
                         **subsurface_parameters,
+                        **subsurface_constants,
                         **interface
                     )
                 )
@@ -158,6 +182,7 @@ class Model(object):
                         spaceshape=self._openwater.spacedomain.shape_,
                         dataset=openwater_data,
                         **openwater_parameters,
+                        **openwater_constants,
                         **interface
                     )
                 )

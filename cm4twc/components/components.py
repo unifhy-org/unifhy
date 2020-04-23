@@ -12,7 +12,8 @@ class _Component(metaclass=abc.ABCMeta):
     _outs = None
 
     def __init__(self, category, driving_data_info, ancil_data_info,
-                 parameters_info, states_info, inwards, outwards):
+                 parameters_info, states_info, constants_info,
+                 inwards, outwards):
 
         # category attribute
         self.category = category
@@ -26,6 +27,8 @@ class _Component(metaclass=abc.ABCMeta):
             parameters_info if parameters_info else {}
         self.states_info = \
             states_info if states_info else {}
+        self.constants_info = \
+            constants_info if constants_info else {}
 
         # interface attributes
         self.inwards = inwards
@@ -101,11 +104,12 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, states_info=None):
+                 parameters_info=None, states_info=None, constants_info=None):
 
         super(SurfaceLayerComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, states_info, self._ins, self._outs)
+            parameters_info, states_info, constants_info,
+            self._ins, self._outs)
 
 
 class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
@@ -123,11 +127,12 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, states_info=None):
+                 parameters_info=None, states_info=None, constants_info=None):
 
         super(SubSurfaceComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, states_info, self._ins, self._outs)
+            parameters_info, states_info, constants_info,
+            self._ins, self._outs)
 
 
 class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
@@ -142,11 +147,12 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, states_info=None):
+                 parameters_info=None, states_info=None, constants_info=None):
 
         super(OpenWaterComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, states_info, self._ins, self._outs)
+            parameters_info, states_info, constants_info,
+            self._ins, self._outs)
 
 
 class DataComponent(_Component):
@@ -160,7 +166,7 @@ class DataComponent(_Component):
         super(DataComponent, self).__init__(
             substituting_class.get_class_kind(),
             substituting_class.get_class_outwards(),
-            None, None, None, self._ins, self._outs)
+            None, None, None, None, self._ins, self._outs)
 
     def initialise(self, **kwargs):
 
@@ -184,7 +190,7 @@ class NullComponent(_Component):
     def __init__(self, substituting_class):
 
         super(NullComponent, self).__init__(
-            substituting_class.get_class_kind(), None, None, None, None,
+            substituting_class.get_class_kind(), None, None, None, None, None,
             self._ins, substituting_class.get_class_outwards())
 
     def initialise(self, **kwargs):

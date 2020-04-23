@@ -19,7 +19,8 @@ class Dummy(SurfaceLayerComponent):
             states_info={
                 'canopy': 'kg m-2',
                 'snowpack': 'kg m-2'
-            }
+            },
+            constants_info={}
         )
 
     def initialise(self, **kwargs):

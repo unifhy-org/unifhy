@@ -14,7 +14,8 @@ class Dummy(OpenWaterComponent):
             },
             states_info={
                 'river_channel': 'kg m-2'
-            }
+            },
+            constants_info={}
         )
 
     def initialise(self, **kwargs):

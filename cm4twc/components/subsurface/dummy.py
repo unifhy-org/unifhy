@@ -17,7 +17,8 @@ class Dummy(SubSurfaceComponent):
             states_info={
                 'soil_moisture': 'kg m-2',
                 'aquifer': 'kg m-2'
-            }
+            },
+            constants_info={}
         )
 
     def initialise(self, **kwargs):
