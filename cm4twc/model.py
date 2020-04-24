@@ -3,6 +3,7 @@ from cfunits import Units
 from .time_ import TimeDomain, Clock
 from .space_ import SpaceDomain, Grid
 from .data_ import DataSet
+from .interface import Interface
 from .components import SurfaceLayerComponent, SubSurfaceComponent, \
     OpenWaterComponent, DataComponent, NullComponent
 
@@ -108,7 +109,18 @@ class Model(object):
                       openwater_timedomain=openwater_domain[0])
 
         # set up interface responsible for exchanges between components
-        interface = {}
+        interface = Interface(
+            states={
+                s: c.solver_history
+                for c in [self._surfacelayer, self._subsurface, self._openwater]
+                for s in list(c.states_info.keys())
+            },
+            fluxes={
+                f
+                for c in [self._surfacelayer, self._subsurface, self._openwater]
+                for f in list(c.inwards.keys()) + list(c.outwards.keys())
+            }
+        )
 
         # initialise components
         interface.update(
@@ -186,6 +198,8 @@ class Model(object):
                         **interface
                     )
                 )
+
+            interface.increment_states()
 
         # finalise components
         self._surfacelayer.finalise(**interface)
