@@ -18,33 +18,49 @@ class Dummy(SubSurfaceComponent):
                 'soil_moisture': 'kg m-2',
                 'aquifer': 'kg m-2'
             },
-            constants_info={}
+            constants_info={},
+            solver_history=1
         )
 
-    def initialise(self, **kwargs):
-
+    def initialise(self, spaceshape, **kwargs):
+        # component has a history of 1, so needs states for t-1 and t
         return {
-            'soil_moisture': None,
-            'aquifer': None
+            # component states for t-1
+            'soil_moisture_': np.zeros(spaceshape, np.float32),
+            'aquifer_': np.zeros(spaceshape, np.float32),
+            # component states for t
+            'soil_moisture': np.zeros(spaceshape, np.float32),
+            'aquifer': np.zeros(spaceshape, np.float32)
         }
 
-    def run(self, spaceshape,
+    def run(self,
+            # interface fluxes in
             evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
+            # component features
+            spaceshape,
+            # component driving data
             soil_temperature,
+            # component ancillary data
+            # component parameters
             saturated_hydraulic_conductivity,
-            soil_moisture, aquifer,
+            # component states
+            soil_moisture_, aquifer_, soil_moisture, aquifer,
+            # component constants
             **kwargs):
 
         dummy_array = np.ones(spaceshape, np.float32)
 
+        soil_moisture[:] = soil_moisture_ + 1
+        aquifer[:] = aquifer_ + 1
+
         return {
+            # interface fluxes out
             'runoff': dummy_array,
-            'soil_moisture': dummy_array,
-            'aquifer': dummy_array
+            'soil_moisture': dummy_array
         }
 
-    def finalise(self, soil_moisture, aquifer,
+    def finalise(self, soil_moisture_, aquifer_,
                  **kwargs):
 
         pass

@@ -20,36 +20,51 @@ class Dummy(SurfaceLayerComponent):
                 'canopy': 'kg m-2',
                 'snowpack': 'kg m-2'
             },
-            constants_info={}
+            constants_info={},
+            solver_history=1
         )
 
-    def initialise(self, **kwargs):
-
+    def initialise(self, spaceshape, **kwargs):
+        # component has a history of 1, so needs states for t-1 and t
         return {
-            'canopy': None,
-            'snowpack': None
+            # component states for t-1
+            'canopy_': np.zeros(spaceshape, np.float32),
+            'snowpack_': np.zeros(spaceshape, np.float32),
+            # component states for t
+            'canopy': np.zeros(spaceshape, np.float32),
+            'snowpack': np.zeros(spaceshape, np.float32)
         }
 
-    def run(self, spaceshape,
+    def run(self,
+            # interface fluxes in
+            # component features
+            spaceshape,
+            # component driving data
             rainfall, snowfall, air_temperature,
+            # component ancillary data
             vegetation_fraction,
-            canopy, snowpack,
+            # component parameters
+            # component states
+            canopy_, snowpack_, canopy, snowpack,
+            # component constants
             **kwargs):
 
         dummy_array = np.ones(spaceshape, np.float32)
 
+        canopy[:] = canopy_ + 1
+        snowpack[:] = snowpack_ + 1
+
         return {
+            # interface fluxes out
             'throughfall': dummy_array,
             'snowmelt': dummy_array,
             'transpiration': dummy_array,
             'evaporation_soil_surface': dummy_array,
             'evaporation_ponded_water': dummy_array,
             'evaporation_openwater': dummy_array,
-            'canopy': dummy_array,
-            'snowpack': dummy_array
         }
 
-    def finalise(self, canopy, snowpack,
+    def finalise(self, canopy_, snowpack_,
                  **kwargs):
 
         pass

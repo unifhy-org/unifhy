@@ -15,28 +15,43 @@ class Dummy(OpenWaterComponent):
             states_info={
                 'river_channel': 'kg m-2'
             },
-            constants_info={}
+            constants_info={},
+            solver_history=1
         )
 
-    def initialise(self, **kwargs):
-
+    def initialise(self, spaceshape, **kwargs):
+        # component has a history of 1, so needs states for t-1 and t
         return {
-            'river_channel': None
+            # component states for t-1
+            'river_channel_': np.zeros(spaceshape, np.float32),
+            # component states for t
+            'river_channel': np.zeros(spaceshape, np.float32)
         }
 
-    def run(self, spaceshape,
+    def run(self,
+            # interface fluxes in
             evaporation_openwater, runoff,
-            residence_time, river_channel,
+            # component features
+            spaceshape,
+            # component driving data
+            # component ancillary data
+            # component parameters
+            residence_time,
+            # component states
+            river_channel_, river_channel,
+            # component constants
             **kwargs):
 
         dummy_array = np.ones(spaceshape, np.float32)
 
+        river_channel[:] = river_channel + 1
+
         return {
-            'discharge': dummy_array,
-            'river_channel': dummy_array
+            # interface fluxes out
+            'discharge': dummy_array
         }
 
-    def finalise(self, river_channel,
+    def finalise(self, river_channel_,
                  **kwargs):
 
         pass

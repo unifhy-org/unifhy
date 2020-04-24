@@ -12,7 +12,7 @@ class _Component(metaclass=abc.ABCMeta):
     _outs = None
 
     def __init__(self, category, driving_data_info, ancil_data_info,
-                 parameters_info, states_info, constants_info,
+                 parameters_info, states_info, constants_info, solver_history,
                  inwards, outwards):
 
         # category attribute
@@ -29,6 +29,7 @@ class _Component(metaclass=abc.ABCMeta):
             states_info if states_info else {}
         self.constants_info = \
             constants_info if constants_info else {}
+        self.solver_history = solver_history
 
         # interface attributes
         self.inwards = inwards
@@ -103,12 +104,13 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
         'evaporation_openwater': 'kg m-2 s-1',
     }
 
-    def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, states_info=None, constants_info=None):
+    def __init__(self, solver_history, driving_data_info=None,
+                 ancil_data_info=None, parameters_info=None, states_info=None,
+                 constants_info=None):
 
         super(SurfaceLayerComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, states_info, constants_info,
+            parameters_info, states_info, constants_info, solver_history,
             self._ins, self._outs)
 
 
@@ -126,12 +128,13 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
         'runoff': 'kg m-2 s-1'
     }
 
-    def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, states_info=None, constants_info=None):
+    def __init__(self, solver_history, driving_data_info=None,
+                 ancil_data_info=None, parameters_info=None, states_info=None,
+                 constants_info=None):
 
         super(SubSurfaceComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, states_info, constants_info,
+            parameters_info, states_info, constants_info, solver_history,
             self._ins, self._outs)
 
 
@@ -146,12 +149,13 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
         'discharge': 'kg m-2 s-1'
     }
 
-    def __init__(self, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, states_info=None, constants_info=None):
+    def __init__(self, solver_history, driving_data_info=None,
+                 ancil_data_info=None, parameters_info=None, states_info=None,
+                 constants_info=None):
 
         super(OpenWaterComponent, self).__init__(
             self._kind, driving_data_info, ancil_data_info,
-            parameters_info, states_info, constants_info,
+            parameters_info, states_info, constants_info, solver_history,
             self._ins, self._outs)
 
 
@@ -166,7 +170,7 @@ class DataComponent(_Component):
         super(DataComponent, self).__init__(
             substituting_class.get_class_kind(),
             substituting_class.get_class_outwards(),
-            None, None, None, None, self._ins, self._outs)
+            None, None, None, None, 0, self._ins, self._outs)
 
     def initialise(self, **kwargs):
 
@@ -191,7 +195,7 @@ class NullComponent(_Component):
 
         super(NullComponent, self).__init__(
             substituting_class.get_class_kind(), None, None, None, None, None,
-            self._ins, substituting_class.get_class_outwards())
+            0, self._ins, substituting_class.get_class_outwards())
 
     def initialise(self, **kwargs):
 
