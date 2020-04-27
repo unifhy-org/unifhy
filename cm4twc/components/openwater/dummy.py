@@ -22,10 +22,10 @@ class Dummy(OpenWaterComponent):
     def initialise(self, spaceshape, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         return {
-            # component states for t-1
-            'river_channel_': np.zeros(spaceshape, np.float32),
-            # component states for t
-            'river_channel': np.zeros(spaceshape, np.float32)
+            'river_channel': (
+                np.zeros(spaceshape, np.float32),  # for t-1
+                np.zeros(spaceshape, np.float32)  # for t
+            )
         }
 
     def run(self,
@@ -38,20 +38,20 @@ class Dummy(OpenWaterComponent):
             # component parameters
             residence_time,
             # component states
-            river_channel_, river_channel,
+            river_channel,
             # component constants
             **kwargs):
 
         dummy_array = np.ones(spaceshape, np.float32)
 
-        river_channel[:] = river_channel + 1
+        river_channel[0][:] = river_channel[-1] + 1
 
         return {
             # interface fluxes out
             'discharge': dummy_array
         }
 
-    def finalise(self, river_channel_,
+    def finalise(self, river_channel,
                  **kwargs):
 
         pass

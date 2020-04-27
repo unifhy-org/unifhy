@@ -110,36 +110,34 @@ class Model(object):
 
         # set up interface responsible for exchanges between components
         interface = Interface(
-            states={
-                s: c.solver_history
-                for c in [self._surfacelayer, self._subsurface, self._openwater]
-                for s in list(c.states_info.keys())
-            },
             fluxes={
-                f
-                for c in [self._surfacelayer, self._subsurface, self._openwater]
+                f for c in
+                [self._surfacelayer, self._subsurface, self._openwater]
                 for f in list(c.inwards.keys()) + list(c.outwards.keys())
-            }
+            },
+            surfacelayer_states=list(self._surfacelayer.states_info.keys()),
+            subsurface_states=list(self._subsurface.states_info.keys()),
+            openwater_states=list(self._openwater.states_info.keys())
         )
 
         # initialise components
-        interface.update(
+        interface.initialise_surfacelayer_states(
             self._surfacelayer.initialise(
                 spaceshape=self._surfacelayer.spacedomain.shape_,
                 **surfacelayer_constants
             )
         )
 
-        interface.update(
+        interface.initialise_subsurface_states(
             self._subsurface.initialise(
-                spaceshape=self._surfacelayer.spacedomain.shape_,
+                spaceshape=self._subsurface.spacedomain.shape_,
                 **subsurface_constants
             )
         )
 
-        interface.update(
+        interface.initialise_openwater_states(
             self._openwater.initialise(
-                spaceshape=self._surfacelayer.spacedomain.shape_,
+                spaceshape=self._openwater.spacedomain.shape_,
                 **openwater_constants
             )
         )
@@ -199,7 +197,12 @@ class Model(object):
                     )
                 )
 
-            interface.increment_states()
+            if run_surfacelayer:
+                interface.increment_surfacelayer_states()
+            if run_subsurface:
+                interface.increment_subsurface_states()
+            if run_openwater:
+                interface.increment_openwater_states()
 
         # finalise components
         self._surfacelayer.finalise(**interface)

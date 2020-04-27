@@ -25,12 +25,14 @@ class Dummy(SubSurfaceComponent):
     def initialise(self, spaceshape, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         return {
-            # component states for t-1
-            'soil_moisture_': np.zeros(spaceshape, np.float32),
-            'aquifer_': np.zeros(spaceshape, np.float32),
-            # component states for t
-            'soil_moisture': np.zeros(spaceshape, np.float32),
-            'aquifer': np.zeros(spaceshape, np.float32)
+            'soil_moisture': (
+                np.zeros(spaceshape, np.float32),  # for t-1
+                np.zeros(spaceshape, np.float32)  # for t
+            ),
+            'aquifer': (
+                np.zeros(spaceshape, np.float32),  # for t-1
+                np.zeros(spaceshape, np.float32)  # for t
+            )
         }
 
     def run(self,
@@ -45,21 +47,21 @@ class Dummy(SubSurfaceComponent):
             # component parameters
             saturated_hydraulic_conductivity,
             # component states
-            soil_moisture_, aquifer_, soil_moisture, aquifer,
+            soil_moisture, aquifer,
             # component constants
             **kwargs):
 
         dummy_array = np.ones(spaceshape, np.float32)
 
-        soil_moisture[:] = soil_moisture_ + 1
-        aquifer[:] = aquifer_ + 1
+        soil_moisture[0][:] = soil_moisture[-1] + 1
+        aquifer[0][:] = soil_moisture[-1] + 1
 
         return {
             # interface fluxes out
             'runoff': dummy_array
         }
 
-    def finalise(self, soil_moisture_, aquifer_,
+    def finalise(self, soil_moisture, aquifer,
                  **kwargs):
 
         pass
