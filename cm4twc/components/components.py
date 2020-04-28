@@ -35,6 +35,9 @@ class _Component(metaclass=abc.ABCMeta):
         self.inwards = inwards
         self.outwards = outwards
 
+        # states attribute
+        self.states = {}
+
         # time attributes
         self.timedomain = None
 
@@ -55,7 +58,41 @@ class _Component(metaclass=abc.ABCMeta):
 
         # run simulation for the component
         return self.run(datetime=datetime, timestepinseconds=timestepinseconds,
-                        spaceshape=spaceshape, **kwargs)
+                        spaceshape=spaceshape, **self.states, **kwargs)
+
+    def initialise_states(self, **kwargs):
+        states = self.initialise(**kwargs)
+        for s in self.states_info.keys():
+            if s in states:
+                self.states[s] = State(*states[s])
+            else:
+                raise KeyError(
+                    "The state '{}' of the {} component was "
+                    "not initialised.".format(s, self._kind)
+                )
+
+    def increment_states(self):
+        for s in self.states.keys():
+            # determine first index in the State
+            # (function of solver's history)
+            first_index = -len(self.states[s]) + 1
+            # prepare the left-hand side of the name re-binding
+            lhs = [t for t in self.states[s]]
+            # prepare the right-hand side of the name re-binding
+            rhs = [t for t in self.states[s][first_index + 1:]] + \
+                [self.states[s][first_index]]
+            # carry out the permutation (i.e. name re-binding)
+            # to avoid new object creations
+            lhs[:] = rhs[:]
+            # apply new name bindings to the State
+            z = self.states[s][:]
+            self.states[s][:] = lhs
+
+            # re-initialise current timestep of State to zero
+            self.states[s][0][:] = 0.0
+
+    def finalise_states(self):
+        self.finalise(**self.states)
 
     @classmethod
     def get_class_kind(cls):
@@ -210,3 +247,57 @@ class NullComponent(_Component):
     def finalise(self, **kwargs):
 
         pass
+
+
+class State(object):
+    """
+    The State class behaves like a list which stores the values of a
+    given component state for several consecutive timesteps (in
+    chronological order, i.e. the oldest timestep is the first item,
+    the most recent is the last item).
+
+    Although, unlike a list, its indexing is shifted so that the last
+    item has index 0, and all previous items are accessible via a
+    negative integer (e.g. -1 for the 2nd-to-last, -2 for the
+    3rd-to-last, etc.). The first item (i.e. the oldest timestep stored)
+    is accessible at the index equals to minus the length of the list
+    plus one. Since the list remains in chronological order, it means
+    that for a given timestep t, index -1 corresponds to timestep t-1,
+    index -2 to timestep t-2, etc. Current timestep t is accessible at
+    index 0.
+    """
+    def __init__(self, *args):
+        self.history = list(args)
+
+    def __getitem__(self, index):
+        index = self.shift_index(index)
+        return self.history[index]
+
+    def __setitem__(self, index, item):
+        index = self.shift_index(index)
+        self.history[index] = item
+
+    def shift_index(self, index):
+        if isinstance(index, int):
+            index = index + len(self) - 1
+        elif isinstance(index, slice):
+            start, stop = index.start, index.stop
+            if start is not None:
+                start = start + len(self) - 1
+            if stop is not None:
+                stop = stop + len(self) - 1
+            index = slice(start, stop, index.step)
+        return index
+
+    def __delitem__(self, index):
+        index = self.shift_index(index)
+        del self.history[index]
+
+    def __len__(self):
+        return len(self.history)
+
+    def __iter__(self):
+        return iter(self.history)
+
+    def __repr__(self):
+        return "%r" % self.history
