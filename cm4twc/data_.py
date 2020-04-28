@@ -10,7 +10,7 @@ class DataSet(MutableMapping):
 
     def __init__(self, *args, **kwargs):
 
-        self.variables = dict()
+        self.variables = {}
         self.update(dict(*args, **kwargs))  # use the 'free' update to set keys
 
     def __getitem__(self, key): return self.variables[key]
