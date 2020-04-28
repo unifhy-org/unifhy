@@ -5,8 +5,10 @@ from ..components import SurfaceLayerComponent
 
 class Dummy(SurfaceLayerComponent):
 
-    def __init__(self):
+    def __init__(self, timedomain, spacedomain,
+                 dataset=None, parameters=None, constants=None):
         super().__init__(
+            timedomain, spacedomain, dataset, parameters, constants,
             driving_data_info={
                 'rainfall': 'kg m-2 s-1',
                 'snowfall': 'kg m-2 s-1',
@@ -16,32 +18,30 @@ class Dummy(SurfaceLayerComponent):
                 'vegetation_fraction': '1'
             },
             parameters_info={},
+            constants_info={},
             states_info={
                 'canopy': 'kg m-2',
                 'snowpack': 'kg m-2'
             },
-            constants_info={},
             solver_history=1
         )
 
-    def initialise(self, spaceshape, **kwargs):
+    def initialise(self, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         return {
             # component states
             'canopy': (  # in chronological order
-                np.zeros(spaceshape, np.float32),  # for t-1
-                np.zeros(spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, np.float32),  # for t-1
+                np.zeros(self.spaceshape, np.float32)  # for t
             ),
             'snowpack': (  # in chronological order
-                np.zeros(spaceshape, np.float32),  # for t-1
-                np.zeros(spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, np.float32),  # for t-1
+                np.zeros(self.spaceshape, np.float32)  # for t
             )
         }
 
     def run(self,
             # interface fluxes in
-            # component features
-            spaceshape,
             # component driving data
             rainfall, snowfall, air_temperature,
             # component ancillary data
@@ -52,7 +52,7 @@ class Dummy(SurfaceLayerComponent):
             # component constants
             **kwargs):
 
-        dummy_array = np.ones(spaceshape, np.float32)
+        dummy_array = np.ones(self.spaceshape, np.float32)
 
         canopy[0][:] = canopy[-1] + 1
         snowpack[0][:] = snowpack[-1] + 1

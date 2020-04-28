@@ -1,8 +1,4 @@
-from cfunits import Units
-
-from .time_ import TimeDomain, Clock
-from .space_ import SpaceDomain, Grid
-from .data_ import DataSet
+from .time_ import Clock
 from .interface import Interface
 from .components import SurfaceLayerComponent, SubSurfaceComponent, \
     OpenWaterComponent, DataComponent, NullComponent
@@ -24,89 +20,50 @@ class Model(object):
         self._openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
-    def simulate(self,
-                 # domain for components
-                 surfacelayer_domain, subsurface_domain,
-                 openwater_domain,
-                 # data for components
-                 surfacelayer_data=None, subsurface_data=None,
-                 openwater_data=None,
-                 # parameters for components
-                 surfacelayer_parameters=None, subsurface_parameters=None,
-                 openwater_parameters=None,
-                 # constants for components
-                 surfacelayer_constants=None, subsurface_constants=None,
-                 openwater_constants=None):
-        """
-        DOCSTRING REQUIRED
-        """
-
-        # check that the context given for each component is a tuple
-        # (TimeDomain instance, SpaceDomain instance)
-        self._check_component_domain(self._surfacelayer, *surfacelayer_domain)
-        self._check_component_domain(self._subsurface, *subsurface_domain)
-        self._check_component_domain(self._openwater, *openwater_domain)
-
-        if (surfacelayer_domain[0] != subsurface_domain[0]) \
-                or (surfacelayer_domain[0] != openwater_domain[0]):
+        if (self._surfacelayer.timedomain != self._subsurface.timedomain) or \
+                (self._surfacelayer.timedomain != self._openwater.timedomain):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different TimeDomains.")
 
-        if (surfacelayer_domain[1] != subsurface_domain[1]) \
-                or (surfacelayer_domain[1] != openwater_domain[1]):
+        if (self._surfacelayer.spacedomain != self._subsurface.spacedomain) or \
+                (self._surfacelayer.spacedomain != self._openwater.spacedomain):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
-        # assign the domains to the components
-        self._surfacelayer.timedomain, self._surfacelayer.spacedomain = \
-            surfacelayer_domain
-        self._subsurface.timedomain, self._subsurface.spacedomain = \
-            subsurface_domain
-        self._openwater.timedomain, self._openwater.spacedomain = \
-            openwater_domain
+    @staticmethod
+    def _process_component_type(component, expected_component):
 
-        # check whether constants are provided
-        if not surfacelayer_constants:
-            surfacelayer_constants = {}
-        if not subsurface_constants:
-            subsurface_constants = {}
-        if not openwater_constants:
-            openwater_constants = {}
+        if isinstance(component, expected_component):
+            # check inwards interface
+            # check outwards interface
+            return component
+        elif isinstance(component, (DataComponent, NullComponent)):
+            if component.category != expected_component.get_class_kind():
+                raise TypeError(
+                    "The '{}' component given must be substituting an instance "
+                    "of  the class {}.".format(
+                        expected_component.get_class_kind(),
+                        expected_component.__name__))
+            else:
+                return component
+        else:
+            raise TypeError(
+                "The '{}' component given must either be an instance of "
+                "the class {}, the class {}, or the class {}.".format(
+                    expected_component.get_class_kind(),
+                    expected_component.__name__, DataComponent.__name__,
+                    NullComponent.__name__))
 
-        # check that the required parameters are provided
-        if not surfacelayer_parameters:
-            surfacelayer_parameters = {}
-        self._check_component_parameters(
-            self._surfacelayer, surfacelayer_parameters)
-        if not subsurface_parameters:
-            subsurface_parameters = {}
-        self._check_component_parameters(
-            self._subsurface, subsurface_parameters)
-        if not openwater_parameters:
-            openwater_parameters = {}
-        self._check_component_parameters(
-            self._openwater, openwater_parameters)
-
-        # check that the required data is available in a DataSet instance
-        if not surfacelayer_data:
-            surfacelayer_data = DataSet()
-        self._check_component_data(self._surfacelayer, surfacelayer_data,
-                                   *surfacelayer_domain)
-        if not subsurface_data:
-            subsurface_data = DataSet()
-        self._check_component_data(self._subsurface, subsurface_data,
-                                   *subsurface_domain)
-        if not openwater_data:
-            openwater_data = DataSet()
-        self._check_component_data(self._openwater, openwater_data,
-                                   *openwater_domain)
-
+    def simulate(self):
+        """
+        DOCSTRING REQUIRED
+        """
         # set up clock responsible for the time-stepping schemes
-        clock = Clock(surfacelayer_timedomain=surfacelayer_domain[0],
-                      subsurface_timedomain=subsurface_domain[0],
-                      openwater_timedomain=openwater_domain[0])
+        clock = Clock(surfacelayer_timedomain=self._surfacelayer.timedomain,
+                      subsurface_timedomain=self._subsurface.timedomain,
+                      openwater_timedomain=self._openwater.timedomain)
 
         # set up interface responsible for exchanges between components
         interface = Interface(
@@ -120,29 +77,11 @@ class Model(object):
         )
 
         # initialise components
-        self._surfacelayer.initialise_states(
-            spaceshape=self._surfacelayer.spacedomain.shape_,
-            **surfacelayer_constants
-        )
-
-        self._subsurface.initialise_states(
-            spaceshape=self._subsurface.spacedomain.shape_,
-            **subsurface_constants
-        )
-
-        self._openwater.initialise_states(
-            spaceshape=self._openwater.spacedomain.shape_,
-            **openwater_constants
-        )
+        self._surfacelayer.initialise_states()
+        self._subsurface.initialise_states()
+        self._openwater.initialise_states()
 
         # run components
-        surfacelayer_timestepinseconds = \
-            self._surfacelayer.timedomain.timedelta.total_seconds()
-        subsurface_timestepinseconds = \
-            self._subsurface.timedomain.timedelta.total_seconds()
-        openwater_timestepinseconds = \
-            self._openwater.timedomain.timedelta.total_seconds()
-
         for run_surfacelayer, run_subsurface, run_openwater in clock:
 
             timeindex = clock.get_current_timeindex()
@@ -153,11 +92,6 @@ class Model(object):
                     self._surfacelayer(
                         timeindex=timeindex,
                         datetime=datetime,
-                        timestepinseconds=surfacelayer_timestepinseconds,
-                        spaceshape=self._surfacelayer.spacedomain.shape_,
-                        dataset=surfacelayer_data,
-                        **surfacelayer_parameters,
-                        **surfacelayer_constants,
                         **interface
                     )
                 )
@@ -167,11 +101,6 @@ class Model(object):
                     self._subsurface(
                         timeindex=timeindex,
                         datetime=datetime,
-                        timestepinseconds=subsurface_timestepinseconds,
-                        spaceshape=self._subsurface.spacedomain.shape_,
-                        dataset=subsurface_data,
-                        **subsurface_parameters,
-                        **subsurface_constants,
                         **interface
                     )
                 )
@@ -181,11 +110,6 @@ class Model(object):
                     self._openwater(
                         timeindex=timeindex,
                         datetime=datetime,
-                        timestepinseconds=openwater_timestepinseconds,
-                        spaceshape=self._openwater.spacedomain.shape_,
-                        dataset=openwater_data,
-                        **openwater_parameters,
-                        **openwater_constants,
                         **interface
                     )
                 )
@@ -203,198 +127,3 @@ class Model(object):
         self._openwater.finalise_states()
 
         return interface
-
-    @staticmethod
-    def _process_component_type(component, expected_component):
-
-        if issubclass(component, expected_component):
-            # check inwards interface
-            # check outwards interface
-            return component()
-        elif issubclass(component, (DataComponent, NullComponent)):
-            return component(expected_component)
-        else:
-            raise TypeError(
-                "The '{}' component given must either be a subclass of the "
-                "class {}, the class {}, or the class {}.".format(
-                    expected_component.get_class_kind(),
-                    expected_component.__name__, DataComponent.__name__,
-                    NullComponent.__name__)
-            )
-
-    @staticmethod
-    def _check_component_domain(component, timedomain, spacedomain):
-        """
-        The purpose of this method is to check that the elements in the
-        tuple given for a given component category are of the right type
-        (i.e. ([TimeDomain] instance and [SpaceDomain] instance)
-
-        :param component: instance of the component whose domain is
-        being checked
-        :type component: Union[SurfaceLaterComponent, SubSurfaceComponent,
-                               OpenWaterComponent, DataComponent,
-                               NullComponent]
-        :param timedomain: object being given as 1st element of the domain
-        tuple during the call of the [simulate] method for the given component
-        :type timedomain: object
-        :param spacedomain: object being given as 2nd element of the domain
-        tuple during the call of the [simulate] method for the given component
-        :type spacedomain: object
-
-        :return: None
-        """
-        if not isinstance(timedomain, TimeDomain):
-            raise TypeError("The 1st domain item for the '{}' component "
-                            "must be an instance of {}.".format(
-                                component.category, TimeDomain.__name__))
-
-        if not isinstance(spacedomain, SpaceDomain):
-            raise TypeError("The 2nd domain item for the '{}' component "
-                            "must be an instance of {}.".format(
-                                component.category, TimeDomain.__name__))
-        else:
-            if not isinstance(spacedomain, Grid):
-                raise NotImplementedError("The only {} subclass currently "
-                                          "supported by the framework is "
-                                          "{}.".format(SpaceDomain.__name__,
-                                                       Grid.__name__))
-
-    @staticmethod
-    def _check_component_parameters(component, parameters):
-        """
-        The purpose of this method is to check that parameter values are given
-        for the corresponding component.
-
-        :param component: instance of the component whose domain is
-        being checked
-        :type component: Union[SurfaceLaterComponent, SubSurfaceComponent,
-                               OpenWaterComponent, DataComponent,
-                               NullComponent]
-        :param parameters: a dictionary containing the parameter values given
-        during the call of the [simulate] method for the given component
-        :type parameters: dict
-
-        :return: None
-        """
-
-        # check that all parameters are provided
-        if not all([i in parameters for i in component.parameters_info]):
-            raise RuntimeError(
-                "One or more parameters are missing in {} component '{}': "
-                "{} are all required.".format(
-                    component.category, component.__class__.__name__,
-                    component.parameters_info)
-            )
-
-    @staticmethod
-    def _check_component_data(component, dataset, timedomain, spacedomain):
-        """
-        The purpose of this method is to check that:
-            - the object given for the dataset is an instance of [DataSet]
-            - the dataset contains [Variable] instances for all the driving
-            and ancillary data the component requires
-            - the domain of each variable complies with the component's domain
-
-        :param component: instance of the component whose data is being checked
-        :type component: Union[SurfaceLaterComponent, SubSurfaceComponent,
-                               OpenWaterComponent, DataComponent,
-                               NullComponent]
-        :param dataset: object being given as the dataset for the given
-        component category
-        :type dataset: object
-        :param timedomain: instance of [TimeDomain] for the given
-        component category
-        :type timedomain: TimeDomain
-        :param spacedomain: instance of [SpaceDomain] for the given
-        component category
-        :type spacedomain: SpaceDomain
-
-        :return: None
-        """
-
-        # check that the data is an instance of DataSet
-        if not isinstance(dataset, DataSet):
-            raise TypeError(
-                "The dataset object given for the {} component '{}' must "
-                "be an instance of {}.".format(
-                    component.category, component.__class__.__name__,
-                    DataSet.__name__))
-
-        # check driving data for time and space compatibility with component
-        for data_name, data_unit in component.driving_data_info.items():
-            # check that all driving data are available in DataSet
-            if data_name not in dataset:
-                raise KeyError(
-                    "There is no data '{}' available in the {} "
-                    "for the {} component '{}'.".format(
-                        data_name, DataSet.__name__, component.category,
-                        component.__class__.__name__))
-            # check that driving data units are compliant with component units
-            if hasattr(dataset[data_name], 'units'):
-                if not Units(data_unit).equals(
-                        Units(dataset[data_name].units)):
-                    raise ValueError(
-                        "The units of the variable '{}' in the {} {} "
-                        "are not equal to the units required by the {} "
-                        "component '{}': {} are required.".format(
-                            data_name, component.category, DataSet.__name__,
-                            component.category, component.__class__.__name__,
-                            data_unit))
-            else:
-                raise AttributeError("The variable '{}' in the {} for "
-                                     "the {} component is missing a 'units' "
-                                     "attribute.".format(data_name,
-                                                         DataSet.__name__,
-                                                         component.category))
-
-            # check that the data and component time domains are compatible
-            # using _truncation=-1 to remove requirement for last datetime
-            # of TimeDomain to be available which is not required
-            if not timedomain.is_time_equal_to(dataset[data_name],
-                                               _trailing_truncation_idx=-1):
-                raise ValueError(
-                    "The time domain of the data '{}' is not compatible with "
-                    "the time domain of the {} component '{}'.".format(
-                        data_name, component.category,
-                        component.__class__.__name__))
-            # check that the data and component space domains are compatible
-            if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise ValueError(
-                    "The space domain of the data '{}' is not compatible with "
-                    "the space domain of the {} component '{}'.".format(
-                        data_name, component.category,
-                        component.__class__.__name__))
-
-        # check ancillary data for space compatibility with component
-        for data_name, data_unit in component.ancil_data_info.items():
-            # check that all ancillary data are available in DataSet
-            if data_name not in dataset:
-                raise KeyError(
-                    "There is no data '{}' available in the {} "
-                    "for the {} component '{}'.".format(
-                        data_name, DataSet.__name__, component.category,
-                        component.__class__.__name__))
-            # check that driving data units are compliant with component units
-            if hasattr(dataset[data_name], 'units'):
-                if not Units(data_unit).equals(
-                        Units(dataset[data_name].units)):
-                    raise ValueError(
-                        "The units of the variable '{}' in the {} {} "
-                        "are not equal to the units required by the {} "
-                        "component '{}': {} are required.".format(
-                            data_name, component.category, DataSet.__name__,
-                            component.category, component.__class__.__name__,
-                            data_unit))
-            else:
-                raise AttributeError("The variable '{}' in the {} for "
-                                     "the {} component is missing a 'units' "
-                                     "attribute.".format(data_name,
-                                                         DataSet.__name__,
-                                                         component.category))
-            # check that the data and component space domains are compatible
-            if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise ValueError(
-                    "The space domain of the data '{}' is not compatible with "
-                    "the space domain of the {} component '{}'.".format(
-                        data_name, component.category,
-                        component.__class__.__name__))

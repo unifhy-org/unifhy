@@ -5,8 +5,10 @@ from ..components import SubSurfaceComponent
 
 class Dummy(SubSurfaceComponent):
 
-    def __init__(self):
+    def __init__(self, timedomain, spacedomain,
+                 dataset=None, parameters=None, constants=None):
         super().__init__(
+            timedomain, spacedomain, dataset, parameters, constants,
             driving_data_info={
                 'soil_temperature': 'K',
             },
@@ -14,24 +16,24 @@ class Dummy(SubSurfaceComponent):
             parameters_info={
                 'saturated_hydraulic_conductivity': 'kg m-2 s-1',
             },
+            constants_info={},
             states_info={
                 'soil_moisture': 'kg m-2',
                 'aquifer': 'kg m-2'
             },
-            constants_info={},
             solver_history=1
         )
 
-    def initialise(self, spaceshape, **kwargs):
+    def initialise(self, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         return {
             'soil_moisture': (
-                np.zeros(spaceshape, np.float32),  # for t-1
-                np.zeros(spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, np.float32),  # for t-1
+                np.zeros(self.spaceshape, np.float32)  # for t
             ),
             'aquifer': (
-                np.zeros(spaceshape, np.float32),  # for t-1
-                np.zeros(spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, np.float32),  # for t-1
+                np.zeros(self.spaceshape, np.float32)  # for t
             )
         }
 
@@ -39,8 +41,6 @@ class Dummy(SubSurfaceComponent):
             # interface fluxes in
             evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
-            # component features
-            spaceshape,
             # component driving data
             soil_temperature,
             # component ancillary data
@@ -51,7 +51,7 @@ class Dummy(SubSurfaceComponent):
             # component constants
             **kwargs):
 
-        dummy_array = np.ones(spaceshape, np.float32)
+        dummy_array = np.ones(self.spaceshape, np.float32)
 
         soil_moisture[0][:] = soil_moisture[-1] + 1
         aquifer[0][:] = soil_moisture[-1] + 1
