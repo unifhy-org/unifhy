@@ -58,7 +58,8 @@ class Dummy(SubSurfaceComponent):
 
         return {
             # interface fluxes out
-            'runoff': dummy_array
+            'runoff': dummy_array,
+            'soil_water_stress': dummy_array
         }
 
     def finalise(self, soil_moisture, aquifer,

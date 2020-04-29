@@ -318,14 +318,16 @@ class _Component(metaclass=abc.ABCMeta):
 class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
 
     _kind = 'surfacelayer'
-    _ins = {}
+    _ins = {
+        'soil_water_stress': '1'
+    }
     _outs = {
         'throughfall': 'kg m-2 s-1',
         'snowmelt': 'kg m-2 s-1',
         'transpiration': 'kg m-2 s-1',
         'evaporation_soil_surface': 'kg m-2 s-1',
         'evaporation_ponded_water': 'kg m-2 s-1',
-        'evaporation_openwater': 'kg m-2 s-1',
+        'evaporation_openwater': 'kg m-2 s-1'
     }
 
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
@@ -351,7 +353,8 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
         'snowmelt': 'kg m-2 s-1'
     }
     _outs = {
-        'runoff': 'kg m-2 s-1'
+        'runoff': 'kg m-2 s-1',
+        'soil_water_stress': '1'
     }
 
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,

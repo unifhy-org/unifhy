@@ -42,6 +42,7 @@ class Dummy(SurfaceLayerComponent):
 
     def run(self,
             # interface fluxes in
+            soil_water_stress,
             # component driving data
             rainfall, snowfall, air_temperature,
             # component ancillary data
