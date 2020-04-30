@@ -159,9 +159,11 @@ class TestModelAPI(unittest.TestCase):
                 )
 
             # try to get an instance of model with the given combination
-            get_instance_model_from_components(surfacelayer,
-                                               subsurface,
-                                               openwater)
+            model = get_instance_model_from_components(surfacelayer,
+                                                       subsurface,
+                                                       openwater)
+
+            model.simulate()
 
 
 if __name__ == '__main__':
