@@ -324,6 +324,12 @@ class TestClock(unittest.TestCase):
         )
 
         self.td_d = cm4twc.TimeDomain(
+            timestamps=np.array([4, 7]),
+            units='days since 1970-01-01 00:00:00',
+            calendar='gregorian'
+        )
+
+        self.td_e = cm4twc.TimeDomain(
             timestamps=np.array([1, 4, 7, 10]),
             units='days since 1970-01-01 00:00:00',
             calendar='gregorian'
@@ -348,11 +354,18 @@ class TestClock(unittest.TestCase):
         self.assertEqual(clock._openwater_switch.tolist(), self.exp_bool_c)
 
     @unittest.expectedFailure
-    def test_clock_init_timedomain_mismatch(self):
+    def test_clock_init_timedomain_start_mismatch(self):
         # should fail because end date do not match
         cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
                            subsurface_timedomain=self.td_b,
                            openwater_timedomain=self.td_d)
+
+    @unittest.expectedFailure
+    def test_clock_init_timedomain_end_mismatch(self):
+        # should fail because end date do not match
+        cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
+                           subsurface_timedomain=self.td_b,
+                           openwater_timedomain=self.td_e)
 
     def test_clock_iteration(self):
         clock = cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
