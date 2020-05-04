@@ -157,8 +157,10 @@ class TestModelAPI(unittest.TestCase):
         self.spacedomain = get_dummy_spacedomain()
         # load dummy driving and ancillary data
         self.dataset = get_dummy_dataset()
+        # dictionary to store model instances
+        self.doe_models = {}
 
-    def test_model_init(self):
+    def test_0_model_init(self):
         # loop through all the possible combinations of components
         for surfacelayer_kind, subsurface_kind, openwater_kind in self.doe:
             with self.subTest(surfacelayer=surfacelayer_kind,
@@ -178,39 +180,23 @@ class TestModelAPI(unittest.TestCase):
                     self.dataset)
 
                 # try to get an instance of model with the given combination
-                cm4twc.Model(
+                self.doe_models[(surfacelayer_kind, subsurface_kind,
+                                 openwater_kind)] = cm4twc.Model(
                     surfacelayer=surfacelayer,
                     subsurface=subsurface,
                     openwater=openwater
                 )
 
-    def test_model_simulate(self):
+    def test_1_model_simulate(self):
         # loop through all the possible combinations of components
-        for surfacelayer_kind, subsurface_kind, openwater_kind in self.doe:
+        for surfacelayer_kind, subsurface_kind, openwater_kind in \
+                self.doe_models.keys():
             with self.subTest(surfacelayer=surfacelayer_kind,
                               subsurface=subsurface_kind,
                               openwater=openwater_kind):
-                # for surfacelayer component
-                surfacelayer = get_surfacelayer_component(
-                    surfacelayer_kind, self.timedomain, self.spacedomain,
-                    self.dataset)
-                # for subsurface component
-                subsurface = get_subsurface_component(
-                    subsurface_kind, self.timedomain, self.spacedomain,
-                    self.dataset)
-                # for openwater
-                openwater = get_openwater_component(
-                    openwater_kind, self.timedomain, self.spacedomain,
-                    self.dataset)
-
-                # try to get an instance of model with the given combination
-                model = cm4twc.Model(
-                    surfacelayer=surfacelayer,
-                    subsurface=subsurface,
-                    openwater=openwater
-                )
-
-                model.simulate()
+                # try to run the model for the given combination
+                self.doe_models[(surfacelayer_kind, subsurface_kind,
+                                 openwater_kind)].simulate()
 
 
 if __name__ == '__main__':
