@@ -308,16 +308,19 @@ class Clock(object):
         surfacelayer_increment = \
             int(surfacelayer_timedomain_timestep // supermesh_timestep)
         self._surfacelayer_switch[0::surfacelayer_increment] = True
+        self._surfacelayer_index_multiple = surfacelayer_increment
 
         self._subsurface_switch = np.zeros((supermesh_length,), dtype=bool)
         subsurface_increment = \
             int(subsurface_timedomain_timestep // supermesh_timestep)
         self._subsurface_switch[0::subsurface_increment] = True
+        self._subsurface_index_multiple = subsurface_increment
 
         self._openwater_switch = np.zeros((supermesh_length,), dtype=bool)
         openwater_increment = \
             int(openwater_timedomain_timestep // supermesh_timestep)
         self._openwater_switch[0::openwater_increment] = True
+        self._openwater_index_multiple = openwater_increment
 
         # set static time attributes
         self.start_datetime = \
@@ -334,9 +337,22 @@ class Clock(object):
         self._current_datetime = self.start_datetime - supermesh_timedelta
         self._current_timeindex = self.start_timeindex - 1
 
-    def get_current_datetime(self): return self._current_datetime
+    def get_current_datetime(self):
+        return self._current_datetime
 
-    def get_current_timeindex(self): return self._current_timeindex
+    def get_current_timeindex(self, component_type):
+        if component_type == 'surfacelayer':
+            return (self._current_timeindex //
+                    self._surfacelayer_index_multiple)
+        if component_type == 'subsurface':
+            return (self._current_timeindex //
+                    self._subsurface_index_multiple)
+        if component_type == 'openwater':
+            return (self._current_timeindex //
+                    self._openwater_index_multiple)
+        else:
+            raise ValueError("Cannot get current time index: unknown "
+                             "component type {}.".format(component_type))
 
     def __iter__(self):
 

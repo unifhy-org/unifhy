@@ -84,13 +84,12 @@ class Model(object):
         # run components
         for run_surfacelayer, run_subsurface, run_openwater in clock:
 
-            timeindex = clock.get_current_timeindex()
             datetime = clock.get_current_datetime()
 
             if run_surfacelayer:
                 interface.update(
                     self._surfacelayer(
-                        timeindex=timeindex,
+                        timeindex=clock.get_current_timeindex('surfacelayer'),
                         datetime=datetime,
                         **interface
                     )
@@ -99,7 +98,7 @@ class Model(object):
             if run_subsurface:
                 interface.update(
                     self._subsurface(
-                        timeindex=timeindex,
+                        timeindex=clock.get_current_timeindex('subsurface'),
                         datetime=datetime,
                         **interface
                     )
@@ -108,7 +107,7 @@ class Model(object):
             if run_openwater:
                 interface.update(
                     self._openwater(
-                        timeindex=timeindex,
+                        timeindex=clock.get_current_timeindex('openwater'),
                         datetime=datetime,
                         **interface
                     )
