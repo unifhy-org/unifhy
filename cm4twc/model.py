@@ -20,17 +20,8 @@ class Model(object):
         self._openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
-        if (self._surfacelayer.timedomain != self._subsurface.timedomain) or \
-                (self._surfacelayer.timedomain != self._openwater.timedomain):
-            raise NotImplementedError(
-                "Currently, the modelling framework does not allow "
-                "for components to work on different TimeDomains.")
-
-        if (self._surfacelayer.spacedomain != self._subsurface.spacedomain) or \
-                (self._surfacelayer.spacedomain != self._openwater.spacedomain):
-            raise NotImplementedError(
-                "Currently, the modelling framework does not allow "
-                "for components to work on different SpaceDomains.")
+        self._check_timedomain_compatibilities()
+        self._check_spacedomain_compatibilities()
 
     @staticmethod
     def _process_component_type(component, expected_component):
@@ -55,6 +46,20 @@ class Model(object):
                     expected_component.get_class_kind(),
                     expected_component.__name__, DataComponent.__name__,
                     NullComponent.__name__))
+
+    def _check_timedomain_compatibilities(self):
+        if (self._surfacelayer.timedomain != self._subsurface.timedomain) or \
+                (self._surfacelayer.timedomain != self._openwater.timedomain):
+            raise NotImplementedError(
+                "Currently, the modelling framework does not allow "
+                "for components to work on different TimeDomains.")
+
+    def _check_spacedomain_compatibilities(self):
+        if (self._surfacelayer.spacedomain != self._subsurface.spacedomain) or \
+                (self._surfacelayer.spacedomain != self._openwater.spacedomain):
+            raise NotImplementedError(
+                "Currently, the modelling framework does not allow "
+                "for components to work on different SpaceDomains.")
 
     def simulate(self):
         """
