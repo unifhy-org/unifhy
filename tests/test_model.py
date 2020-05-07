@@ -1,119 +1,11 @@
 import unittest
 
 import cm4twc
-
-
-def get_dummy_timedomain():
-    return cm4twc.TimeDomain(
-            timestamps=[0, 1, 2, 3],
-            units='days since 2019-01-01 09:00:00Z',
-            calendar='gregorian'
-    )
-
-
-def get_dummy_spacedomain():
-    return cm4twc.Grid(
-            latitude_deg=[2.2, 1.76, 1.32, 0.88, 0.44, 0., -0.44, -0.88, -1.32, -1.76],
-            longitude_deg=[-4.7, -4.26, -3.82, -3.38, -2.94, -2.5, -2.06, -1.62, -1.18],
-            latitude_bounds_deg=[[2.42, 1.98], [1.98, 1.54], [1.54, 1.1], [1.1,  0.66],
-                                 [0.66, 0.22], [0.22, -0.22], [-0.22, -0.66],
-                                 [-0.66, -1.1], [-1.1, -1.54], [-1.54, -1.98]],
-            longitude_bounds_deg=[[-4.92, -4.48], [-4.48, -4.04], [-4.04, -3.6],
-                                  [-3.6,  -3.16], [-3.16, -2.72], [-2.72, -2.28],
-                                  [-2.28, -1.84], [-1.84, -1.4], [-1.4, -0.96]],
-            rotated=True,
-            earth_radius_m=6371007., grid_north_pole_latitude_deg=38.0,
-            grid_north_pole_longitude_deg=190.0
-    )
-
-
-def get_dummy_dataset():
-    return cm4twc.DataSet.from_cf_nc_file(
-        ['dummy_data/dummy_driving_data.nc',
-         'dummy_data/dummy_ancillary_data.nc'],
-        name_mapping={'rainfall_flux': 'rainfall',
-                      'snowfall_flux': 'snowfall',
-                      'air_temperature': 'air_temperature',
-                      'soil_temperature': 'soil_temperature'}
-    )
-
-
-def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
-    if kind == 'c':
-        surfacelayer = cm4twc.surfacelayer.Dummy(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=dataset,
-            parameters={},
-            constants={}
-        )
-    elif kind == 'd':
-        surfacelayer = cm4twc.DataComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_cf_nc_file(
-                'dummy_data/dummy_surfacelayer_substitute_data.nc'),
-            substituting_class=cm4twc.SurfaceLayerComponent
-        )
-    else:  # i.e. 'n'
-        surfacelayer = cm4twc.NullComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            substituting_class=cm4twc.SurfaceLayerComponent
-        )
-    return surfacelayer
-
-
-def get_subsurface_component(kind, timedomain, spacedomain, dataset):
-    if kind == 'c':
-        subsurface = cm4twc.subsurface.Dummy(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=dataset,
-            parameters={'saturated_hydraulic_conductivity': 2},
-            constants={}
-        )
-    elif kind == 'd':
-        subsurface = cm4twc.DataComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_cf_nc_file(
-                'dummy_data/dummy_subsurface_substitute_data.nc'),
-            substituting_class=cm4twc.SubSurfaceComponent
-        )
-    else:  # i.e. 'n'
-        subsurface = cm4twc.NullComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            substituting_class=cm4twc.SubSurfaceComponent
-        )
-    return subsurface
-
-
-def get_openwater_component(kind, timedomain, spacedomain, dataset):
-    if kind == 'c':
-        openwater = cm4twc.openwater.Dummy(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=dataset,
-            parameters={'residence_time': 1},
-            constants={}
-        )
-    elif kind == 'd':
-        openwater = cm4twc.DataComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_cf_nc_file(
-                'dummy_data/dummy_openwater_substitute_data.nc'),
-            substituting_class=cm4twc.OpenWaterComponent
-        )
-    else:  # i.e. 'n'
-        openwater = cm4twc.NullComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            substituting_class=cm4twc.OpenWaterComponent
-        )
-    return openwater
+from test_time import get_dummy_timedomain, get_different_dummy_timedomain
+from test_space import get_dummy_spacedomain
+from test_data import get_dummy_dataset
+from test_components import get_subsurface_component, \
+    get_surfacelayer_component, get_openwater_component
 
 
 class TestModelAPI(unittest.TestCase):
@@ -197,6 +89,22 @@ class TestModelAPI(unittest.TestCase):
                 # try to run the model for the given combination
                 self.doe_models[(surfacelayer_kind, subsurface_kind,
                                  openwater_kind)].simulate()
+
+    @unittest.expectedFailure
+    def test_init_with_different_component_timedomains(self):
+        # use NullComponents to test this
+        surfacelayer = get_surfacelayer_component(
+            'n', self.timedomain, self.spacedomain, None)
+        subsurface = get_subsurface_component(
+            'n', self.timedomain, self.spacedomain, None)
+        openwater = get_openwater_component(
+            'n', get_different_dummy_timedomain(), self.spacedomain, None)
+
+        cm4twc.Model(
+            surfacelayer=surfacelayer,
+            subsurface=subsurface,
+            openwater=openwater
+        )
 
 
 if __name__ == '__main__':

@@ -250,17 +250,6 @@ class Clock(object):
 
     def __init__(self, surfacelayer_timedomain, subsurface_timedomain,
                  openwater_timedomain):
-
-        # check that the time domains have the same start and the same end
-        match = (surfacelayer_timedomain.construct('time').data[[0, -1]] ==
-                 subsurface_timedomain.construct('time').data[[0, -1]]) * \
-                (surfacelayer_timedomain.construct('time').data[[0, -1]] ==
-                 openwater_timedomain.construct('time').data[[0, -1]])
-        if not match.min(squeeze=True):
-            raise RuntimeError(
-                "The three {}s for the three components do not feature the "
-                "same start and/or end.".format(TimeDomain.__name__))
-
         # determine temporal supermesh properties
         # (supermesh is the fastest component)
         supermesh_timedelta = min(

@@ -6,6 +6,22 @@ import cftime
 import cm4twc
 
 
+def get_dummy_timedomain():
+    return cm4twc.TimeDomain(
+            timestamps=[0, 1, 2, 3],
+            units='days since 2019-01-01 09:00:00Z',
+            calendar='gregorian'
+    )
+
+
+def get_different_dummy_timedomain():
+    return cm4twc.TimeDomain(
+            timestamps=[0, 1, 2, 3, 4],
+            units='days since 2019-01-01 09:00:00Z',
+            calendar='gregorian'
+    )
+
+
 class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_standard_on_leap_year(self):
@@ -177,7 +193,7 @@ class TestTimeDomainAPI(unittest.TestCase):
 
 class TestTimeDomainComparison(unittest.TestCase):
 
-    def test_timedomain_compare_with_different_reference_dates(self):
+    def test_timedomain_not_equal_with_different_reference_dates(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([1, 2, 3, 4]),
             units='days since 2019-01-01 09:00:00Z',
@@ -200,7 +216,7 @@ class TestTimeDomainComparison(unittest.TestCase):
 
         self.assertNotEqual(td1, td3)
 
-    def test_timedomain_compare_with_different_units_of_time(self):
+    def test_timedomain_equal_with_different_units_of_time(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]) * 86400,
             units='seconds since 2019-01-01 09:00:00Z',
@@ -223,7 +239,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td1, td3)
         self.assertEqual(td2, td3)
 
-    def test_timedomain_compare_with_different_alias_calendars(self):
+    def test_timedomain_equal_with_different_alias_calendars(self):
         for cal, alias in cm4twc.time_._supported_calendar_mapping.items():
             if not cal == alias:
 
@@ -246,7 +262,7 @@ class TestTimeDomainComparison(unittest.TestCase):
                         "The calendar '{}' and its alias '{}' are not "
                         "found equal.".format(cal, alias)) from e
 
-    def test_timedomain_compare_with_different_dtypes(self):
+    def test_timedomain_equal_with_different_dtypes(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3], dtype=np.float32),
             units='days since 2019-01-01 09:00:00Z',
@@ -269,7 +285,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td1, td3)
         self.assertEqual(td2, td3)
 
-    def test_timedomain_compare_with_different_lengths(self):
+    def test_timedomain_not_equal_with_different_lengths(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3, 4]),
             units='days since 2019-01-01 09:00:00Z',
@@ -285,7 +301,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertNotEqual(td1, td2)
 
     @unittest.expectedFailure
-    def test_timedomain_compare_with_different_non_alias_calendars(self):
+    def test_timedomain_equal_with_different_non_alias_calendars(self):
         # should fail because it cannot compare across different calendars
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
@@ -301,8 +317,39 @@ class TestTimeDomainComparison(unittest.TestCase):
 
         self.assertEqual(td1, td2)
 
+    def test_timedomain_equal_span_periods(self):
+        td1 = cm4twc.TimeDomain(
+            timestamps=np.array([1, 2, 3, 4, 5]),
+            units='days since 1970-01-01 00:00:00',
+            calendar='gregorian'
+        )
 
-class TestClock(unittest.TestCase):
+        td2 = cm4twc.TimeDomain(
+            timestamps=np.array([1, 3, 5]),
+            units='days since 1970-01-01 00:00:00',
+            calendar='gregorian'
+        )
+
+        td3 = cm4twc.TimeDomain(
+            timestamps=np.array([1, 2, 3, 4]),
+            units='days since 1970-01-01 00:00:00',
+            calendar='gregorian'
+        )
+
+        td4 = cm4twc.TimeDomain(
+            timestamps=np.array([2, 3, 4, 5]),
+            units='days since 1970-01-01 00:00:00',
+            calendar='gregorian'
+        )
+        # same start/end, different timesteps, should be True
+        self.assertTrue(td1.spans_same_period_as(td2))
+        # same start, same ends, different timesteps, should be False
+        self.assertFalse(td1.spans_same_period_as(td3))
+        # different starts, same end, different timesteps, should be False
+        self.assertFalse(td1.spans_same_period_as(td4))
+
+
+class TestClockAPI(unittest.TestCase):
 
     def setUp(self):
         self.td_a = cm4twc.TimeDomain(
@@ -319,18 +366,6 @@ class TestClock(unittest.TestCase):
 
         self.td_c = cm4twc.TimeDomain(
             timestamps=np.array([1, 4, 7]),
-            units='days since 1970-01-01 00:00:00',
-            calendar='gregorian'
-        )
-
-        self.td_d = cm4twc.TimeDomain(
-            timestamps=np.array([4, 7]),
-            units='days since 1970-01-01 00:00:00',
-            calendar='gregorian'
-        )
-
-        self.td_e = cm4twc.TimeDomain(
-            timestamps=np.array([1, 4, 7, 10]),
             units='days since 1970-01-01 00:00:00',
             calendar='gregorian'
         )
@@ -352,20 +387,6 @@ class TestClock(unittest.TestCase):
         self.assertEqual(clock._surfacelayer_switch.tolist(), self.exp_bool_a)
         self.assertEqual(clock._subsurface_switch.tolist(), self.exp_bool_b)
         self.assertEqual(clock._openwater_switch.tolist(), self.exp_bool_c)
-
-    @unittest.expectedFailure
-    def test_clock_init_timedomain_start_mismatch(self):
-        # should fail because end date do not match
-        cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
-                           subsurface_timedomain=self.td_b,
-                           openwater_timedomain=self.td_d)
-
-    @unittest.expectedFailure
-    def test_clock_init_timedomain_end_mismatch(self):
-        # should fail because end date do not match
-        cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
-                           subsurface_timedomain=self.td_b,
-                           openwater_timedomain=self.td_e)
 
     def test_clock_iteration(self):
         clock = cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
