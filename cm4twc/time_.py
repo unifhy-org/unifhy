@@ -33,14 +33,12 @@ class TimeDomain(cf.Field):
     to the length of a timestep (i.e. the gap between two consecutive datetimes
     in the sequence.
     """
-
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
     _calendar = 'gregorian'
     _units = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%SZ"))
     _Units = cfunits.Units(_units, calendar=_calendar)
 
     def __init__(self, timestamps, units, calendar=_calendar):
-
         super(TimeDomain, self).__init__()
 
         # check that calendar is a classic one for CF-convention
@@ -111,7 +109,6 @@ class TimeDomain(cf.Field):
 
     def is_time_equal_to(self, variable, _leading_truncation_idx=None,
                          _trailing_truncation_idx=None):
-
         # check that the variable has a time construct
         if variable.construct('time', default=None) is None:
             return RuntimeError(
@@ -161,6 +158,12 @@ class TimeDomain(cf.Field):
         # in the time series) and by squeezing the data to get one boolean
         return match.min(squeeze=True)
 
+    def spans_same_period_as(self, timedomain):
+        start, end = self.construct('time').data[[0, -1]] == \
+            timedomain.construct('time').data[[0, -1]]
+
+        return start and end
+
     @classmethod
     def from_datetime_sequence(cls, datetimes):
 
@@ -209,7 +212,6 @@ class TimeDomain(cf.Field):
 
     @classmethod
     def _issequence(cls, sequence):
-
         if isinstance(sequence, (list, tuple)):
             sequence = np.asarray(sequence)
 
@@ -227,11 +229,9 @@ class TimeDomain(cf.Field):
                     cls.__name__))
 
     def as_datetime_array(self):
-
         return self.construct('time').datetime_array
 
     def as_string_array(self, formatting=None):
-
         formatting = formatting if formatting else "%Y-%m-%d %H:%M:%S"
 
         return np.asarray(
@@ -240,7 +240,6 @@ class TimeDomain(cf.Field):
 
     @staticmethod
     def _check_timestep_consistency(timestamps):
-
         time_diff = np.diff(timestamps)
         if np.amin(time_diff) != np.amax(time_diff):
             raise RuntimeWarning("The timestep in the sequence is not "
@@ -355,11 +354,9 @@ class Clock(object):
                              "component type {}.".format(component_type))
 
     def __iter__(self):
-
         return self
 
     def __next__(self):
-
         # loop until it hits the second to last index (because the last index
         # corresponds to the end of the last timestep, so that it should not
         # be used as the start of another iteration

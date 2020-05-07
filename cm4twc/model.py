@@ -10,7 +10,6 @@ class Model(object):
     """
 
     def __init__(self, surfacelayer, subsurface, openwater):
-
         self._surfacelayer = self._process_component_type(
             surfacelayer, SurfaceLayerComponent)
 
@@ -25,7 +24,6 @@ class Model(object):
 
     @staticmethod
     def _process_component_type(component, expected_component):
-
         if isinstance(component, expected_component):
             # check inwards interface
             # check outwards interface
@@ -33,8 +31,8 @@ class Model(object):
         elif isinstance(component, (DataComponent, NullComponent)):
             if component.category != expected_component.get_class_kind():
                 raise TypeError(
-                    "The '{}' component given must be substituting an instance "
-                    "of  the class {}.".format(
+                    "The '{}' component given must be substituting an "
+                    "instance of the class {}.".format(
                         expected_component.get_class_kind(),
                         expected_component.__name__))
             else:
@@ -48,6 +46,16 @@ class Model(object):
                     NullComponent.__name__))
 
     def _check_timedomain_compatibilities(self):
+        # check that components' timedomains start/end on same datetime
+        if (not self._surfacelayer.timedomain.spans_same_period_as(
+                self._subsurface.timedomain)) or \
+            (not self._surfacelayer.timedomain.spans_same_period_as(
+                self._openwater.timedomain)):
+            raise ValueError(
+                "The Timedomains of the Components do not span "
+                "the same period.")
+        # check that components' timedomains are equal
+        # (to stay until temporal supermesh supported)
         if (self._surfacelayer.timedomain != self._subsurface.timedomain) or \
                 (self._surfacelayer.timedomain != self._openwater.timedomain):
             raise NotImplementedError(
@@ -55,6 +63,8 @@ class Model(object):
                 "for components to work on different TimeDomains.")
 
     def _check_spacedomain_compatibilities(self):
+        # check that components' spacedomains are equal
+        # (to stay until spatial supermesh supported)
         if (self._surfacelayer.spacedomain != self._subsurface.spacedomain) or \
                 (self._surfacelayer.spacedomain != self._openwater.spacedomain):
             raise NotImplementedError(
@@ -81,7 +91,7 @@ class Model(object):
             }
         )
 
-        # initialise components
+        # initialise components' states
         self._surfacelayer.initialise_states()
         self._subsurface.initialise_states()
         self._openwater.initialise_states()
