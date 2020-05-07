@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..components import SubSurfaceComponent
+from cm4twc.components import SubSurfaceComponent
 
 
 class Dummy(SubSurfaceComponent):

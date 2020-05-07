@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..components import OpenWaterComponent
+from cm4twc.components import OpenWaterComponent
 
 
 class Dummy(OpenWaterComponent):

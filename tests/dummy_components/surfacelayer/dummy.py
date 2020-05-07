@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..components import SurfaceLayerComponent
+from cm4twc.components import SurfaceLayerComponent
 
 
 class Dummy(SurfaceLayerComponent):

@@ -1,9 +1,13 @@
 import cm4twc
 
+from tests.dummy_components.surfacelayer import Dummy as SurfaceLayerDummy
+from tests.dummy_components.subsurface import Dummy as SubSurfaceDummy
+from tests.dummy_components.openwater import Dummy as OpenWaterDummy
+
 
 def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
     if kind == 'c':
-        surfacelayer = cm4twc.surfacelayer.Dummy(
+        surfacelayer = SurfaceLayerDummy(
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
@@ -29,7 +33,7 @@ def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
 
 def get_subsurface_component(kind, timedomain, spacedomain, dataset):
     if kind == 'c':
-        subsurface = cm4twc.subsurface.Dummy(
+        subsurface = SubSurfaceDummy(
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
@@ -55,7 +59,7 @@ def get_subsurface_component(kind, timedomain, spacedomain, dataset):
 
 def get_openwater_component(kind, timedomain, spacedomain, dataset):
     if kind == 'c':
-        openwater = cm4twc.openwater.Dummy(
+        openwater = OpenWaterDummy(
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
