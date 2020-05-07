@@ -1,10 +1,11 @@
 import unittest
 
 import cm4twc
-from test_time import get_dummy_timedomain, get_different_dummy_timedomain
-from test_space import get_dummy_spacedomain
-from test_data import get_dummy_dataset
-from test_components import get_subsurface_component, \
+from tests.test_time import get_dummy_timedomain, \
+    get_different_dummy_timedomain
+from tests.test_space import get_dummy_spacedomain
+from tests.test_data import get_dummy_dataset
+from tests.test_components import get_subsurface_component, \
     get_surfacelayer_component, get_openwater_component
 
 
