@@ -266,13 +266,12 @@ class _Component(metaclass=abc.ABCMeta):
             # prepare the left-hand side of the name re-binding
             lhs = [t for t in self.states[s]]
             # prepare the right-hand side of the name re-binding
-            rhs = [t for t in self.states[s][first_index + 1:]] + \
+            rhs = [t for t in self.states[s][first_index+1:]] + \
                 [self.states[s][first_index]]
             # carry out the permutation (i.e. name re-binding)
             # to avoid new object creations
             lhs[:] = rhs[:]
             # apply new name bindings to the State
-            z = self.states[s][:]
             self.states[s][:] = lhs
 
             # re-initialise current timestep of State to zero
