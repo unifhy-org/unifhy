@@ -41,52 +41,22 @@ class TimeDomain(cf.Field):
     def __init__(self, timestamps, units, calendar=_calendar):
         super(TimeDomain, self).__init__()
 
-        # check that calendar is a classic one for CF-convention
-        if calendar.lower() not in _supported_calendar_mapping:
-            raise ValueError(
-                "The calendar '{}' is not supported.".format(calendar))
-
-        # check that timestamps is a sequence and get it as an array
-        timestamps = self._issequence(timestamps)
-
-        # get a cf.Units instance from units (and calendar if necessary)
-        if np.issubdtype(timestamps.dtype, np.number):
-            if isinstance(units, str):
-                units = cfunits.Units(units, calendar=calendar)
-            elif isinstance(units, cfunits.Units):
-                units = units
-            else:
-                raise TypeError(
-                    "Error when initialising a {} from a sequence of "
-                    "timestamps: the units must be an instance of "
-                    "cfunits.Units or a string.".format(
-                        self.__class__.__name__))
-
-            if not (units.isvalid and units.isreftime):
-                raise ValueError(
-                    "Error when initialising a {} from a sequence of "
-                    "timestamps: the reference time is not valid, it must "
-                    "comply with the format 'unit_of_time since "
-                    "reference_datetime'.".format(self.__class__.__name__))
-        else:
-            raise TypeError("Error when initialising a {} from a sequence of "
-                            "timestamps: the values contained in the sequence "
-                            "must be numerical.")
-
-        # check that the time series is regularly spaced
-        self._check_timestep_consistency(timestamps)
+        # get a cf.Units instance from units and calendar
+        units = self._get_cf_units(units, calendar)
 
         # define the time construct of the cf.Field
-        axis = self.set_construct(cf.DomainAxis(len(timestamps)))
+        axis = self.set_construct(cf.DomainAxis(size=0))
         self.set_construct(
             cf.DimensionCoordinate(
                 properties={'standard_name': 'time',
                             'units': units.units,
                             'calendar': units.calendar,
-                            'axis': 'T'},
-                data=cf.Data(timestamps)),
+                            'axis': 'T'}),
             axes=axis
         )
+
+        # set timestamps to construct
+        self._set_time(timestamps)
 
         # determine timedelta
         self.timedelta = (
@@ -94,8 +64,41 @@ class TimeDomain(cf.Field):
                 self.construct('time').datetime_array[0]
         )
 
-    def __eq__(self, other):
+    def _get_cf_units(self, units, calendar):
+        # check that calendar is a classic one for CF-convention
+        if calendar.lower() not in _supported_calendar_mapping:
+            raise ValueError(
+                "The calendar '{}' is not supported.".format(calendar))
 
+        # get a cf.Units instance from units and calendar
+        units = cfunits.Units(units, calendar=calendar)
+
+        if not (units.isvalid and units.isreftime):
+            raise ValueError(
+                "Error when initialising a {} from a sequence of "
+                "timestamps: the reference time is not valid, it must "
+                "comply with the format 'unit_of_time since "
+                "reference_datetime'.".format(self.__class__.__name__))
+
+        return units
+
+    def _set_time(self, timestamps):
+        # check that timestamps is a sequence and get it as an array
+        timestamps = self._issequence(timestamps)
+
+        if not np.issubdtype(timestamps.dtype, np.number):
+            raise TypeError("Error when initialising a {} from a sequence of "
+                            "timestamps: the values contained in the sequence "
+                            "must be numerical.")
+
+        # check that the time series is regularly spaced
+        self._check_timestep_consistency(timestamps)
+
+        # add the timestamps
+        self.domain_axis('time').set_size(len(timestamps))
+        self.construct('time').set_data(cf.Data(timestamps))
+
+    def __eq__(self, other):
         if isinstance(other, TimeDomain):
             return self.is_time_equal_to(other)
         else:
@@ -104,7 +107,6 @@ class TimeDomain(cf.Field):
                                                     other.__class__.__name__))
 
     def __ne__(self, other):
-
         return not self.__eq__(other)
 
     def is_time_equal_to(self, variable, _leading_truncation_idx=None,
