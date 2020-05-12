@@ -167,33 +167,33 @@ class TimeDomain(cf.Field):
         return start and end
 
     @classmethod
-    def from_datetime_sequence(cls, datetimes):
-
+    def from_datetime_sequence(cls, datetimes, units=None, calendar=None):
+        # check that datetimes is a sequence and get it as an array
         datetimes = cls._issequence(datetimes)
-
-        if np.issubdtype(datetimes.dtype, np.dtype(datetime)):
-            try:
-                timestamps = cftime.date2num(datetimes, units=cls._units,
-                                             calendar=datetimes[0].calendar)
-                calendar = datetimes[0].calendar
-            except AttributeError:
-                timestamps = cftime.date2num(datetimes, units=cls._units,
-                                             calendar=cls._calendar)
-                calendar = cls._calendar
-        elif np.issubdtype(datetimes.dtype, np.dtype('datetime64')):
-            timestamps = cftime.date2num(datetimes, units=cls._units,
-                                         calendar=cls._calendar)
-            calendar = cls._calendar
-        else:
+        # check that datetimes sequence contains datetime objects
+        if (not np.issubdtype(datetimes.dtype, np.dtype(datetime)) and
+                not np.issubdtype(datetimes.dtype, np.dtype('datetime64'))):
             raise TypeError("Error when initialising a {} from sequence of "
                             "datetime objects: the sequence given does not "
                             "contain datetime objects.")
+        # set units to default if not given
+        if units is None:
+            units = cls._units
+        # determine calendar if not given
+        if calendar is None:
+            try:
+                # try to infer calendar from datetime (i.e. if cftime.datetime)
+                calendar = datetimes[0].calendar
+            except AttributeError:
+                # set calendar to default if not given or inferred
+                calendar = cls._calendar
 
-        return cls(timestamps, cls._units, calendar)
+        timestamps = cftime.date2num(datetimes, units, calendar)
+
+        return cls(timestamps, units, calendar)
 
     @classmethod
-    def from_start_end_step(cls, start, end, step):
-
+    def from_start_end_step(cls, start, end, step, units=None, calendar=None):
         if not isinstance(start, (datetime, cftime.datetime)):
             raise TypeError("Start date must be an instance of "
                             "datetime.datetime or cftime.datetime.")
@@ -210,7 +210,8 @@ class TimeDomain(cf.Field):
         datetimes = [start + timedelta(seconds=td * step.total_seconds())
                      for td in range(divisor + 1)]
 
-        return cls.from_datetime_sequence(np.asarray(datetimes))
+        return cls.from_datetime_sequence(np.asarray(datetimes),
+                                          units, calendar)
 
     @classmethod
     def _issequence(cls, sequence):
