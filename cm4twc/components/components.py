@@ -1,5 +1,6 @@
 import abc
 import numpy as np
+import cf
 from cfunits import Units
 
 from ..time_ import TimeDomain
@@ -164,6 +165,10 @@ class _Component(metaclass=abc.ABCMeta):
                                      "attribute.".format(
                                         data_name, DataSet.__name__,
                                         self.category))
+
+            # subspace in time
+            dataset[data_name] = dataset[data_name].subspace(
+                T=cf.wi(*timedomain.construct('time').datetime_array[[0, -2]]))
 
             # check that the data and component time domains are compatible
             # using _truncation=-1 to remove requirement for last datetime
