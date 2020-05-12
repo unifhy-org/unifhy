@@ -18,7 +18,7 @@ def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
         surfacelayer = cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_cf_nc_file(
+            dataset=cm4twc.DataSet.from_file(
                 'dummy_data/dummy_surfacelayer_substitute_data.nc'),
             substituting_class=cm4twc.SurfaceLayerComponent
         )
@@ -44,7 +44,7 @@ def get_subsurface_component(kind, timedomain, spacedomain, dataset):
         subsurface = cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_cf_nc_file(
+            dataset=cm4twc.DataSet.from_file(
                 'dummy_data/dummy_subsurface_substitute_data.nc'),
             substituting_class=cm4twc.SubSurfaceComponent
         )
@@ -70,7 +70,7 @@ def get_openwater_component(kind, timedomain, spacedomain, dataset):
         openwater = cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_cf_nc_file(
+            dataset=cm4twc.DataSet.from_file(
                 'dummy_data/dummy_openwater_substitute_data.nc'),
             substituting_class=cm4twc.OpenWaterComponent
         )
