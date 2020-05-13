@@ -80,7 +80,20 @@ class TestModelAPI(unittest.TestCase):
                     openwater=openwater
                 )
 
-    def test_1_model_simulate(self):
+    def test_1_model_spin_up(self):
+        # loop through all the possible combinations of components
+        start, end = \
+            get_dummy_timedomain().construct('time').datetime_array[[0, -2]]
+        for surfacelayer_kind, subsurface_kind, openwater_kind in \
+                self.doe_models.keys():
+            with self.subTest(surfacelayer=surfacelayer_kind,
+                              subsurface=subsurface_kind,
+                              openwater=openwater_kind):
+                # try to run the model for the given combination
+                self.doe_models[(surfacelayer_kind, subsurface_kind,
+                                 openwater_kind)].spin_up(start, end, cycles=2)
+
+    def test_2_model_simulate(self):
         # loop through all the possible combinations of components
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
                 self.doe_models.keys():

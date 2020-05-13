@@ -238,6 +238,14 @@ class _Component(metaclass=abc.ABCMeta):
                     self.category, self.__class__.__name__,
                     self.parameters_info))
 
+    def get_spin_up_timedomain(self, start, end):
+        timedomain = TimeDomain.from_start_end_step(
+            start, end, self.timedomain.timedelta, (-1, 0),
+            self.timedomain.construct('time').units,
+            self.timedomain.construct('time').calendar
+        )
+        return timedomain
+
     def __call__(self, timeindex, datetime, **kwargs):
 
         # collect required ancillary data from dataset

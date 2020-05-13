@@ -22,6 +22,8 @@ class Model(object):
         self._check_timedomain_compatibilities()
         self._check_spacedomain_compatibilities()
 
+        self._span_up = False
+
     @staticmethod
     def _process_component_type(component, expected_component):
         if isinstance(component, expected_component):
@@ -71,14 +73,53 @@ class Model(object):
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
+    def spin_up(self, start, end, cycles=1):
+        """
+        DOCSTRING REQUIRED
+        """
+        self._initialise()
+
+        surfacelayer_timedomain = \
+            self._surfacelayer.get_spin_up_timedomain(start, end)
+        subsurface_timedomain = \
+            self._subsurface.get_spin_up_timedomain(start, end)
+        openwater_timedomain = \
+            self._openwater.get_spin_up_timedomain(start, end)
+
+        for cycle in range(cycles):
+            self._run(surfacelayer_timedomain,
+                      subsurface_timedomain,
+                      openwater_timedomain)
+
+        self._span_up = True
+
     def simulate(self):
         """
         DOCSTRING REQUIRED
         """
+        if not self._span_up:
+            self._initialise()
+
+        interface = self._run(self._surfacelayer.timedomain,
+                              self._subsurface.timedomain,
+                              self._openwater.timedomain)
+
+        self._finalise()
+
+        return interface
+
+    def _initialise(self):
+        # initialise components' states
+        self._surfacelayer.initialise_states()
+        self._subsurface.initialise_states()
+        self._openwater.initialise_states()
+
+    def _run(self, surfacelayer_timedomain, subsurface_timedomain,
+             openwater_timedomain):
         # set up clock responsible for the time-stepping schemes
-        clock = Clock(surfacelayer_timedomain=self._surfacelayer.timedomain,
-                      subsurface_timedomain=self._subsurface.timedomain,
-                      openwater_timedomain=self._openwater.timedomain)
+        clock = Clock(surfacelayer_timedomain,
+                      subsurface_timedomain,
+                      openwater_timedomain)
 
         # set up interface responsible for exchanges between components
         interface = Interface(
@@ -90,11 +131,6 @@ class Model(object):
                 for f in list(c.inwards.keys()) + list(c.outwards.keys())
             }
         )
-
-        # initialise components' states
-        self._surfacelayer.initialise_states()
-        self._subsurface.initialise_states()
-        self._openwater.initialise_states()
 
         # run components
         for run_surfacelayer, run_subsurface, run_openwater in clock:
@@ -135,9 +171,10 @@ class Model(object):
             if run_openwater:
                 self._openwater.increment_states()
 
+        return interface
+
+    def _finalise(self):
         # finalise components
         self._surfacelayer.finalise_states()
         self._subsurface.finalise_states()
         self._openwater.finalise_states()
-
-        return interface
