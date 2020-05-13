@@ -204,6 +204,9 @@ class TimeDomain(cf.Field):
             raise TypeError("Step must be an instance of the "
                             "datetime.timedelta.")
 
+        if start >= end:
+            raise ValueError("End date is not later than start date.")
+
         (divisor, remainder) = divmod(int((end - start).total_seconds()),
                                       int(step.total_seconds()))
 
