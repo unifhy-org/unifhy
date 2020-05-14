@@ -8,17 +8,17 @@ import cm4twc
 
 def get_dummy_timedomain():
     return cm4twc.TimeDomain(
-            timestamps=[0, 1, 2, 3],
-            units='days since 2019-01-01 09:00:00Z',
-            calendar='gregorian'
+        timestamps=[0, 1, 2, 3],
+        units='days since 2019-01-01 09:00:00Z',
+        calendar='gregorian'
     )
 
 
-def get_different_dummy_timedomain():
+def get_dummy_timedomain_different_end():
     return cm4twc.TimeDomain(
-            timestamps=[0, 1, 2, 3, 4],
-            units='days since 2019-01-01 09:00:00Z',
-            calendar='gregorian'
+        timestamps=[0, 1, 2, 3, 4],
+        units='days since 2019-01-01 09:00:00Z',
+        calendar='gregorian'
     )
 
 

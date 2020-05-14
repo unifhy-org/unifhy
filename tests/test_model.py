@@ -2,7 +2,7 @@ import unittest
 
 import cm4twc
 from tests.test_time import get_dummy_timedomain, \
-    get_different_dummy_timedomain
+    get_dummy_timedomain_different_end
 from tests.test_space import get_dummy_spacedomain
 from tests.test_data import get_dummy_dataset
 from tests.test_components import get_subsurface_component, \
@@ -112,7 +112,7 @@ class TestModelAPI(unittest.TestCase):
         subsurface = get_subsurface_component(
             'n', self.timedomain, self.spacedomain, None)
         openwater = get_openwater_component(
-            'n', get_different_dummy_timedomain(), self.spacedomain, None)
+            'n', get_dummy_timedomain_different_end(), self.spacedomain, None)
 
         cm4twc.Model(
             surfacelayer=surfacelayer,
