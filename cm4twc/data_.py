@@ -88,7 +88,7 @@ class DataSet(MutableMapping):
         **Examples**
 
         >>> ds = cm4twc.DataSet()
-        >>> td = cm4twc.update_with_file(
+        >>> ds.update_with_file(
         ...     files='tests/dummy_data/dummy_driving_data.nc',
         ...     select='snowfall_flux'
         ...)
