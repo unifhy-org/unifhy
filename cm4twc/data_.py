@@ -27,26 +27,26 @@ class DataSet(MutableMapping):
         >>> ds = cm4twc.DataSet(dictionary={'rainfall': cf.Field()})
         """
 
-        self.variables = {}
+        self._variables = {}
         if dictionary is not None:
             self.update(dict(**dictionary))
 
-    def __getitem__(self, key): return self.variables[key]
+    def __getitem__(self, key): return self._variables[key]
 
     def __setitem__(self, key, value):
 
         if isinstance(value, cf.Field):
-            self.variables[key] = value
+            self._variables[key] = value
         else:
             raise TypeError("A {} can only contain instances of "
                             "{}.".format(self.__class__.__name__,
                                          cf.Field.__name__))
 
-    def __delitem__(self, key): del self.variables[key]
+    def __delitem__(self, key): del self._variables[key]
 
-    def __iter__(self): return iter(self.variables)
+    def __iter__(self): return iter(self._variables)
 
-    def __len__(self): return len(self.variables)
+    def __len__(self): return len(self._variables)
 
     def update_with_file(self, files, name_mapping=None,
                          squeeze=True, select=None, **kwargs):
