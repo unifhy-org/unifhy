@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2020 HydroJULES
 from setuptools import setup
 
@@ -49,8 +48,8 @@ setup(
     ],
 
     install_requires=[
-        'numpy',
-        'cf-python',
+        'numpy>=1.16',
+        'cf-python>=3.4.0',
         'cftime',
         'cfunits'
     ]
