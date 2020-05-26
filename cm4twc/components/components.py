@@ -264,7 +264,7 @@ class _Component(metaclass=abc.ABCMeta):
         states = self.initialise(**self.constants)
         for s in self.states_info.keys():
             if s in states:
-                self.states[s] = State(*states[s])
+                self.states[s] = _State(*states[s])
             else:
                 raise KeyError(
                     "The state '{}' of the {} component was "
@@ -462,7 +462,7 @@ class NullComponent(_Component):
         pass
 
 
-class State(object):
+class _State(object):
     """
     The State class behaves like a list which stores the values of a
     given component state for several consecutive timesteps (in
