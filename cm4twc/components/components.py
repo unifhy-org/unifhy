@@ -483,14 +483,14 @@ class State(object):
         self.history = list(args)
 
     def __getitem__(self, index):
-        index = self.shift_index(index)
+        index = self._shift_index(index)
         return self.history[index]
 
     def __setitem__(self, index, item):
-        index = self.shift_index(index)
+        index = self._shift_index(index)
         self.history[index] = item
 
-    def shift_index(self, index):
+    def _shift_index(self, index):
         if isinstance(index, int):
             index = index + len(self) - 1
         elif isinstance(index, slice):
@@ -503,7 +503,7 @@ class State(object):
         return index
 
     def __delitem__(self, index):
-        index = self.shift_index(index)
+        index = self._shift_index(index)
         del self.history[index]
 
     def __len__(self):
