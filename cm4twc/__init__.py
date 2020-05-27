@@ -8,9 +8,9 @@ from .model import Model
 from .time_ import TimeDomain
 from .space_ import Grid
 from .data_ import DataSet
-from .components import surfacelayer, subsurface, openwater, \
-    SurfaceLayerComponent, SubSurfaceComponent, OpenWaterComponent, \
-    DataComponent, NullComponent
+from .components import (surfacelayer, subsurface, openwater,
+                         SurfaceLayerComponent, SubSurfaceComponent,
+                         OpenWaterComponent, DataComponent, NullComponent)
 
 # import the modelling components defined in the configuration file
 cfg = ConfigParser()

@@ -1,7 +1,7 @@
 from .time_ import Clock
 from .interface import Interface
-from .components import SurfaceLayerComponent, SubSurfaceComponent, \
-    OpenWaterComponent, DataComponent, NullComponent
+from .components import (SurfaceLayerComponent, SubSurfaceComponent,
+                         OpenWaterComponent, DataComponent, NullComponent)
 
 
 class Model(object):

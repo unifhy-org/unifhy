@@ -1,12 +1,13 @@
 import unittest
 
 import cm4twc
-from tests.test_time import get_dummy_timedomain, \
-    get_dummy_timedomain_different_end
+from tests.test_time import (get_dummy_timedomain,
+                             get_dummy_timedomain_different_end)
 from tests.test_space import get_dummy_spacedomain
 from tests.test_data import get_dummy_dataset
-from tests.test_components import get_subsurface_component, \
-    get_surfacelayer_component, get_openwater_component
+from tests.test_components import (get_subsurface_component,
+                                   get_surfacelayer_component,
+                                   get_openwater_component)
 
 
 class TestModelAPI(unittest.TestCase):

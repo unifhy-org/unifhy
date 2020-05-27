@@ -1,2 +1,4 @@
-from .components import SurfaceLayerComponent, SubSurfaceComponent, \
-    OpenWaterComponent, DataComponent, NullComponent
+
+
+from .components import (SurfaceLayerComponent, SubSurfaceComponent,
+                         OpenWaterComponent, DataComponent, NullComponent)
