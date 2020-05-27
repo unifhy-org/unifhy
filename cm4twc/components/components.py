@@ -9,9 +9,6 @@ from ..data_ import DataSet
 
 
 class _Component(metaclass=abc.ABCMeta):
-    """
-    DOCSTRING REQUIRED
-    """
 
     _kind = None
     _ins = None
@@ -74,12 +71,6 @@ class _Component(metaclass=abc.ABCMeta):
         """
         The purpose of this method is to check that the timedomain is
         of the right type.
-
-        :param timedomain: object being given as timedomain during the
-        call of the [simulate] method for the given component
-        :type timedomain: object
-
-        :return: None
         """
         if not isinstance(timedomain, TimeDomain):
             raise TypeError("The 1st domain item for the '{}' component "
@@ -90,12 +81,6 @@ class _Component(metaclass=abc.ABCMeta):
         """
         The purpose of this method is to check that the spacedomain is
         of the right type.
-
-        :param spacedomain: object being given as spacedomain during the
-        call of the [simulate] method for the given component
-        :type spacedomain: object
-
-        :return: None
         """
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("The 2nd domain item for the '{}' component "
@@ -117,20 +102,7 @@ class _Component(metaclass=abc.ABCMeta):
               driving and ancillary data the component requires
             - the domain of each variable complies with the component's
               domain
-
-        :param dataset: object being given as the dataset for the given
-        component category
-        :type dataset: object
-        :param timedomain: instance of [TimeDomain] for the given
-        component category
-        :type timedomain: TimeDomain
-        :param spacedomain: instance of [SpaceDomain] for the given
-        component category
-        :type spacedomain: SpaceDomain
-
-        :return: None
         """
-
         # check that the dataset is an instance of DataSet
         if not isinstance(dataset, DataSet):
             raise TypeError(
@@ -223,12 +195,6 @@ class _Component(metaclass=abc.ABCMeta):
         """
         The purpose of this method is to check that parameter values are given
         for the corresponding component.
-
-        :param parameters: a dictionary containing the parameter values given
-        during the call of the [simulate] method for the given component
-        :type parameters: dict
-
-        :return: None
         """
         # check that all parameters are provided
         if not all([i in parameters for i in self.parameters_info]):
@@ -247,7 +213,6 @@ class _Component(metaclass=abc.ABCMeta):
         return timedomain
 
     def __call__(self, timeindex, datetime, **kwargs):
-
         # collect required ancillary data from dataset
         for data in self.ancil_data_info:
             kwargs[data] = self.dataset[data].array[...]
@@ -307,28 +272,27 @@ class _Component(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
-
         raise NotImplementedError(
             "The {} class '{}' does not feature an 'initialise' "
             "method.".format(self.category, self.__class__.__name__))
 
     @abc.abstractmethod
     def run(self, **kwargs):
-
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'run' "
             "method.".format(self.category, self.__class__.__name__))
 
     @abc.abstractmethod
     def finalise(self, **kwargs):
-
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'finalise' "
             "method.".format(self.category, self.__class__.__name__))
 
 
 class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
-
+    """
+    DOCSTRING REQUIRED
+    """
     _kind = 'surfacelayer'
     _ins = {
         'soil_water_stress': '1'
@@ -345,7 +309,6 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
                  solver_history, driving_data_info=None, ancil_data_info=None,
                  parameters_info=None, constants_info=None, states_info=None):
-
         super(SurfaceLayerComponent, self).__init__(
             self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
@@ -355,7 +318,9 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
 
 
 class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
-
+    """
+    DOCSTRING REQUIRED
+    """
     _kind = 'subsurface'
     _ins = {
         'evaporation_soil_surface': 'kg m-2 s-1',
@@ -382,7 +347,9 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
 
 
 class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
-
+    """
+    DOCSTRING REQUIRED
+    """
     _kind = 'openwater'
     _ins = {
         'evaporation_openwater': 'kg m-2 s-1',
@@ -395,7 +362,6 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
                  solver_history, driving_data_info=None, ancil_data_info=None,
                  parameters_info=None, constants_info=None, states_info=None):
-
         super(OpenWaterComponent, self).__init__(
             self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
@@ -405,13 +371,14 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
 
 
 class DataComponent(_Component):
-
+    """
+    DOCSTRING REQUIRED
+    """
     _kind = 'data'
     _ins = {}
     _outs = {}
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
-
         super(DataComponent, self).__init__(
             substituting_class.get_class_kind(),
             timedomain, spacedomain, dataset, None, None,
@@ -420,26 +387,24 @@ class DataComponent(_Component):
             self._ins, self._outs)
 
     def initialise(self, **kwargs):
-
         return {}
 
     def run(self, **kwargs):
-
         return {n: kwargs[n] for n in self.driving_data_info}
 
     def finalise(self, **kwargs):
-
         pass
 
 
 class NullComponent(_Component):
-
+    """
+    DOCSTRING REQUIRED
+    """
     _kind = 'null'
     _ins = {}
     _outs = {}
 
     def __init__(self, timedomain, spacedomain, substituting_class):
-
         super(NullComponent, self).__init__(
             substituting_class.get_class_kind(),
             timedomain, spacedomain, None, None, None,
@@ -448,23 +413,19 @@ class NullComponent(_Component):
             self._ins, substituting_class.get_class_outwards())
 
     def initialise(self, **kwargs):
-
         return {}
 
     def run(self, **kwargs):
-
         null_array = np.zeros(self.spaceshape, np.float32)
-
         return {n: null_array for n in self.outwards}
 
     def finalise(self, **kwargs):
-
         pass
 
 
 class _State(object):
     """
-    The State class behaves like a list which stores the values of a
+    The _State class behaves like a list which stores the values of a
     given component state for several consecutive timesteps (in
     chronological order, i.e. the oldest timestep is the first item,
     the most recent is the last item).
