@@ -227,7 +227,7 @@ class _Component(metaclass=abc.ABCMeta):
 
     def initialise_states(self):
         states = self.initialise(**self.constants)
-        for s in self.states_info.keys():
+        for s in self.states_info:
             if s in states:
                 self.states[s] = _State(*states[s])
             else:
@@ -237,7 +237,7 @@ class _Component(metaclass=abc.ABCMeta):
                 )
 
     def increment_states(self):
-        for s in self.states.keys():
+        for s in self.states:
             # determine first index in the State
             # (function of solver's history)
             first_index = -len(self.states[s]) + 1
