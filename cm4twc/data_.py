@@ -19,7 +19,7 @@ class DataSet(MutableMapping):
                 `Field` objects.
 
                 *Parameter example:*
-                    ``dictionary={'rainfall': cf.Field()}``
+                    ``variables={'rainfall': cf.Field()}``
 
         **Examples**
 
