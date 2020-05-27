@@ -23,7 +23,7 @@ _supported_calendar_mapping = {
 }
 
 
-class TimeDomain(cf.Field):
+class TimeDomain(object):
     """TimeDomain characterise a temporal dimension that is needed by a
     `Component`.
 
@@ -87,14 +87,14 @@ class TimeDomain(cf.Field):
         ...                        calendar='standard')
 
         """
-        super(TimeDomain, self).__init__()
+        self.f = cf.Field()
 
         # get a cf.Units instance from units and calendar
         units = self._get_cf_units(units, calendar)
 
         # define the time construct of the cf.Field
-        axis = self.set_construct(cf.DomainAxis(size=0))
-        self.set_construct(
+        axis = self.f.set_construct(cf.DomainAxis(size=0))
+        self.f.set_construct(
             cf.DimensionCoordinate(
                 properties={'standard_name': 'time',
                             'units': units.units,
@@ -108,8 +108,8 @@ class TimeDomain(cf.Field):
 
         # determine timedelta
         self.timedelta = (
-                self.construct('time').datetime_array[1] -
-                self.construct('time').datetime_array[0]
+                self.f.construct('time').datetime_array[1] -
+                self.f.construct('time').datetime_array[0]
         )
 
     def _get_cf_units(self, units, calendar):
@@ -164,13 +164,13 @@ class TimeDomain(cf.Field):
         bounds[:, 1] = timestamps + span[1] * delta
 
         # add the timestamps
-        self.domain_axis('time').set_size(len(timestamps))
-        self.construct('time').set_data(cf.Data(timestamps))
-        self.construct('time').set_bounds(cf.Bounds(data=cf.Data(bounds)))
+        self.f.domain_axis('time').set_size(len(timestamps))
+        self.f.construct('time').set_data(cf.Data(timestamps))
+        self.f.construct('time').set_bounds(cf.Bounds(data=cf.Data(bounds)))
 
     def __eq__(self, other):
         if isinstance(other, TimeDomain):
-            return self.is_time_equal_to(other)
+            return self.is_time_equal_to(other.f)
         else:
             raise TypeError("The {} instance cannot be compared to "
                             "a {} instance.".format(self.__class__.__name__,
@@ -189,15 +189,15 @@ class TimeDomain(cf.Field):
                     field.__class__.__name__, self.__class__.__name__))
 
         # check that field calendar is a classic one for CF-convention
-        if field.construct('time').calendar.lower() \
-                not in _supported_calendar_mapping:
+        if (field.construct('time').calendar.lower()
+                not in _supported_calendar_mapping):
             raise ValueError("The calendar '{}' of the {} instance is not "
                              "supported.".format(field.calendar,
                                                  field.__class__.__name__))
 
         # map alternative names for given calendar to same name
         self_calendar = _supported_calendar_mapping[
-            self.construct('time').calendar.lower()
+            self.f.construct('time').calendar.lower()
         ]
         field_calendar = _supported_calendar_mapping[
             field.construct('time').calendar.lower()
@@ -211,9 +211,11 @@ class TimeDomain(cf.Field):
                     field.__class__.__name__, self.__class__.__name__))
 
         # check that the two instances have the same time series length
-        leading_size = _trailing_truncation_idx if _leading_truncation_idx else 0
-        trailing_size = - _trailing_truncation_idx if _trailing_truncation_idx else 0
-        if not (self.construct('time').data.size -
+        leading_size = (_trailing_truncation_idx if _leading_truncation_idx
+                        else 0)
+        trailing_size = (-_trailing_truncation_idx if _trailing_truncation_idx
+                         else 0)
+        if not (self.f.construct('time').data.size -
                 leading_size - trailing_size ==
                 field.construct('time').data.size):
             return False
@@ -222,14 +224,17 @@ class TimeDomain(cf.Field):
         # (__eq__ operator on cf.Data for reference time units will
         # convert data with different reftime as long as they are in
         # the same calendar)
-        match1 = self.construct('time').data[_leading_truncation_idx:
-                                             _trailing_truncation_idx] == \
+        match1 = (
+            self.f.construct('time').data[_leading_truncation_idx:
+                                          _trailing_truncation_idx] ==
             field.construct('time').data
+        )
 
-        match2 = \
-            self.construct('time').bounds.data[_leading_truncation_idx:
-                                               _trailing_truncation_idx] == \
+        match2 = (
+            self.f.construct('time').bounds.data[_leading_truncation_idx:
+                                                 _trailing_truncation_idx] ==
             field.construct('time').bounds.data
+        )
 
         # use a trick by checking the minimum value of the boolean arrays
         # (False if any value is False, i.e. at least one value is not equal
@@ -237,8 +242,8 @@ class TimeDomain(cf.Field):
         return match1.min(squeeze=True) and match2.min(squeeze=True)
 
     def spans_same_period_as(self, timedomain):
-        start, end = self.construct('time').data[[0, -1]] == \
-            timedomain.construct('time').data[[0, -1]]
+        start, end = (self.f.construct('time').data[[0, -1]] ==
+                      timedomain.f.construct('time').data[[0, -1]])
 
         return start and end
 
@@ -433,7 +438,7 @@ class TimeDomain(cf.Field):
                                           units, calendar)
 
     def as_datetime_array(self):
-        return self.construct('time').datetime_array
+        return self.f.construct('time').datetime_array
 
     def as_string_array(self, formatting=None):
         formatting = formatting if formatting else "%Y-%m-%d %H:%M:%S"
@@ -455,9 +460,9 @@ class Clock(object):
             openwater_timedomain.timedelta
         )
         supermesh_length = max(
-            surfacelayer_timedomain.construct('time').data.size,
-            subsurface_timedomain.construct('time').data.size,
-            openwater_timedomain.construct('time').data.size
+            surfacelayer_timedomain.f.construct('time').data.size,
+            subsurface_timedomain.f.construct('time').data.size,
+            openwater_timedomain.f.construct('time').data.size
         )
         supermesh_timestep = supermesh_timedelta.total_seconds()
 
@@ -509,9 +514,9 @@ class Clock(object):
 
         # set static time attributes
         self.start_datetime = \
-            surfacelayer_timedomain.construct('time').datetime_array[0]
+            surfacelayer_timedomain.f.construct('time').datetime_array[0]
         self.end_datetime = \
-            surfacelayer_timedomain.construct('time').datetime_array[-1]
+            surfacelayer_timedomain.f.construct('time').datetime_array[-1]
         self.timedelta = supermesh_timedelta
         self.start_timeindex = 0
         self.end_timeindex = supermesh_length - 1

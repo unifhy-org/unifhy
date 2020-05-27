@@ -2,14 +2,13 @@ import numpy as np
 import cf
 
 
-class SpaceDomain(cf.Field):
+class SpaceDomain(object):
     """
     Class to handle geospatial considerations.
     """
 
     def __init__(self):
-
-        super(SpaceDomain, self).__init__()
+        self.f = cf.Field()
 
 
 class Grid(SpaceDomain):
@@ -20,7 +19,9 @@ class Grid(SpaceDomain):
                  rotated=False, earth_radius_m=None,
                  grid_north_pole_latitude_deg=None,
                  grid_north_pole_longitude_deg=None):
-
+        """
+        DOCSTRING REQUIRED
+        """
         super(Grid, self).__init__()
 
         # initialise a list to store the shape of the domain
@@ -36,8 +37,8 @@ class Grid(SpaceDomain):
                                    "unidimensional".format(
                                         self.__class__.__name__))
 
-            axis_alt = self.set_construct(cf.DomainAxis(len(altitude_m)))
-            self.set_construct(
+            axis_alt = self.f.set_construct(cf.DomainAxis(len(altitude_m)))
+            self.f.set_construct(
                 cf.DimensionCoordinate(
                     properties={
                         'standard_name': 'altitude',
@@ -64,8 +65,8 @@ class Grid(SpaceDomain):
                                "compatible in size with the latitude "
                                "array given.".format(
                                     self.__class__.__name__))
-        axis_lat = self.set_construct(cf.DomainAxis(len(latitude_deg)))
-        self.set_construct(
+        axis_lat = self.f.set_construct(cf.DomainAxis(len(latitude_deg)))
+        self.f.set_construct(
             cf.DimensionCoordinate(
                 properties={
                     'standard_name':
@@ -95,8 +96,8 @@ class Grid(SpaceDomain):
                                "compatible in size with the latitude "
                                "array given.".format(
                                     self.__class__.__name__))
-        axis_lon = self.set_construct(cf.DomainAxis(len(longitude_deg)))
-        self.set_construct(
+        axis_lon = self.f.set_construct(cf.DomainAxis(len(longitude_deg)))
+        self.f.set_construct(
             cf.DimensionCoordinate(
                 properties={
                     'standard_name':
@@ -126,7 +127,7 @@ class Grid(SpaceDomain):
                                 grid_north_pole_latitude_deg,
                             'grid_north_pole_longitude':
                                 grid_north_pole_longitude_deg})
-            self.set_construct(
+            self.f.set_construct(
                 cf.CoordinateReference(
                     datum=cf.Datum(
                         parameters={'earth_radius': earth_radius_m}),
@@ -141,19 +142,17 @@ class Grid(SpaceDomain):
         self.shape_ = tuple(shape_)
 
     def __eq__(self, other):
-
         if isinstance(other, Grid):
-            return self.is_space_equal_to(other)
+            return self.is_space_equal_to(other.f)
         else:
             raise TypeError("The {} instance cannot be compared to "
                             "a {} instance.".format(self.__class__.__name__,
                                                     other.__class__.__name__))
 
     def __ne__(self, other):
-
         return not self.__eq__(other)
 
-    def is_space_equal_to(self, variable, ignore_altitude=False):
+    def is_space_equal_to(self, field, ignore_altitude=False):
 
         # check whether latitude and longitude constructs are identical
         if self.is_rotated:
@@ -163,30 +162,30 @@ class Grid(SpaceDomain):
             # coordinate_reference.equals() would also check the size of the
             # collections of coordinates)
             lat_lon = \
-                self.construct('grid_latitude').equals(
-                    variable.construct('grid_latitude', default=None),
+                self.f.construct('grid_latitude').equals(
+                    field.construct('grid_latitude', default=None),
                     ignore_data_type=True) \
-                and self.construct('grid_longitude').equals(
-                    variable.construct('grid_longitude', default=None),
+                and self.f.construct('grid_longitude').equals(
+                    field.construct('grid_longitude', default=None),
                     ignore_data_type=True) \
-                and self.coordinate_reference(
+                and self.f.coordinate_reference(
                     'rotated_latitude_longitude').coordinate_conversion.equals(
-                    variable.coordinate_reference(
+                    field.coordinate_reference(
                         'rotated_latitude_longitude',
                         default=None).coordinate_conversion) \
-                and self.coordinate_reference(
+                and self.f.coordinate_reference(
                     'rotated_latitude_longitude').datum.equals(
-                    variable.coordinate_reference(
+                    field.coordinate_reference(
                         'rotated_latitude_longitude',
                         default=None).datum)
         else:
             # check if latitude match, check if longitude
             lat_lon = \
-                self.construct('latitude').equals(
-                    variable.construct('latitude', default=None),
+                self.f.construct('latitude').equals(
+                    field.construct('latitude', default=None),
                     ignore_data_type=True) \
-                and self.construct('longitude').equals(
-                    variable.construct('longitude', default=None),
+                and self.f.construct('longitude').equals(
+                    field.construct('longitude', default=None),
                     ignore_data_type=True)
 
         # check whether altitude constructs are identical
@@ -194,8 +193,8 @@ class Grid(SpaceDomain):
             alt = True
         else:
             if self.has_altitude:
-                alt = self.construct('altitude').equals(
-                    variable.construct('altitude', default=None),
+                alt = self.f.construct('altitude').equals(
+                    field.construct('altitude', default=None),
                     ignore_data_type=True)
             else:
                 alt = True
