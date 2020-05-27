@@ -9,12 +9,12 @@ class DataSet(MutableMapping):
     them.
     """
 
-    def __init__(self, dictionary=None):
+    def __init__(self, variables=None):
         """**Initialisation**
 
         :Parameters:
 
-            dictionary: `dict`, optional
+            variables: `dict`, optional
                 A dictionary with the variable names as keys referencing
                 `Field` objects.
 
@@ -31,8 +31,8 @@ class DataSet(MutableMapping):
         }
         """
         self._variables = {}
-        if dictionary is not None:
-            self.update(dict(**dictionary))
+        if variables is not None:
+            self.update(dict(**variables))
 
     def __getitem__(self, key):
         return self._variables[key]
