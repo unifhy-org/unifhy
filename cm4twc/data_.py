@@ -25,16 +25,19 @@ class DataSet(MutableMapping):
 
         >>> import cf
         >>> ds = cm4twc.DataSet(dictionary={'rainfall': cf.Field()})
+        >>> print(ds)
+        DataSet {
+            rainfall: <CF Field: >
+        }
         """
-
         self._variables = {}
         if dictionary is not None:
             self.update(dict(**dictionary))
 
-    def __getitem__(self, key): return self._variables[key]
+    def __getitem__(self, key):
+        return self._variables[key]
 
     def __setitem__(self, key, value):
-
         if isinstance(value, cf.Field):
             self._variables[key] = value
         else:
@@ -42,11 +45,22 @@ class DataSet(MutableMapping):
                             "{}.".format(self.__class__.__name__,
                                          cf.Field.__name__))
 
-    def __delitem__(self, key): del self._variables[key]
+    def __delitem__(self, key):
+        del self._variables[key]
 
-    def __iter__(self): return iter(self._variables)
+    def __iter__(self):
+        return iter(self._variables)
 
-    def __len__(self): return len(self._variables)
+    def __len__(self):
+        return len(self._variables)
+
+    def __repr__(self):
+        return "\n".join(
+            ["DataSet{"] +
+            ["\t%s: %r" % (v, self._variables[v])
+             for v in sorted(self._variables.keys())] +
+            ["}"]
+        ) if self._variables else "DataSet{ }"
 
     def update_with_file(self, files, name_mapping=None,
                          squeeze=True, select=None, **kwargs):
@@ -61,10 +75,10 @@ class DataSet(MutableMapping):
                 from which to read the variables.
 
                 *Parameter example:*
-                    ``files='tests/dummy/data/dummy_driving_data.nc'``
+                    ``files='tests/dummy_data/dummy_driving_data.nc'``
                 *Parameter example:*
-                    ``files=['tests/dummy/data/dummy_driving_data.nc',
-                             'tests/dummy/data/dummy_ancillary_data.nc'`
+                    ``files=['tests/dummy_data/dummy_driving_data.nc',
+                             'tests/dummy_data/dummy_ancillary_data.nc'`
 
             select: (sequence of) `str`, optional
                 A string or sequence of strings providing the identities
@@ -88,12 +102,27 @@ class DataSet(MutableMapping):
         **Examples**
 
         >>> ds = cm4twc.DataSet()
+        >>> print(ds)
+        DataSet{ }
         >>> ds.update_with_file(
         ...     files='tests/dummy_data/dummy_driving_data.nc',
         ...     select='snowfall_flux'
         ...)
+        >>> print(ds)
+        DataSet{
+            snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+        }
+        >>> ds.update_with_file(
+        ...     files='tests/dummy_data/dummy_driving_data.nc',
+        ...     select=('rainfall_flux',),
+        ...     squeeze=False
+        ... )
+        >>> print(ds)
+        DataSet{
+            rainfall_flux: <CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+        }
         """
-
         return self.update(
             self._get_dict_variables_from_file(files, name_mapping,
                                                squeeze, select, **kwargs)
@@ -113,10 +142,10 @@ class DataSet(MutableMapping):
                 from which to read the variables.
 
                 *Parameter example:*
-                    ``files='tests/dummy/data/dummy_driving_data.nc'``
+                    ``files='tests/dummy_data/dummy_driving_data.nc'``
                 *Parameter example:*
-                    ``files=['tests/dummy/data/dummy_driving_data.nc',
-                             'tests/dummy/data/dummy_ancillary_data.nc'`
+                    ``files=['tests/dummy_data/dummy_driving_data.nc',
+                             'tests/dummy_data/dummy_ancillary_data.nc'`
 
             select: (sequence of) `str`, optional
                 A string or sequence of strings providing the identities
@@ -139,13 +168,27 @@ class DataSet(MutableMapping):
 
         **Examples**
 
-        >>> td = cm4twc.DataSet.from_file(
+        >>> ds = cm4twc.DataSet.from_file(
+        ...     files='tests/dummy_data/dummy_driving_data.nc'
+        ... )
+        >>> print(ds)
+        DataSet{
+            air_temperature: <CF Field: air_temperature(time(6), grid_latitude(10), grid_longitude(9)) K>
+            rainfall_flux: <CF Field: rainfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            soil_temperature: <CF Field: soil_temperature(time(6), grid_latitude(10), grid_longitude(9)) K>
+        }
+        >>> ds = cm4twc.DataSet.from_file(
         ...     files='tests/dummy_data/dummy_driving_data.nc',
         ...     select=['rainfall_flux', 'snowfall_flux'],
         ...     name_mapping={'rainfall_flux': 'rainfall'}
         ...)
+        >>> print(ds)
+        DataSet{
+            rainfall: <CF Field: rainfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+        }
         """
-
         return cls(
             cls._get_dict_variables_from_file(files, name_mapping,
                                               squeeze, select, **kwargs)
