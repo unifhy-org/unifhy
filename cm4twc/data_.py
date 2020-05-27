@@ -26,7 +26,7 @@ class DataSet(MutableMapping):
         >>> import cf
         >>> ds = cm4twc.DataSet(dictionary={'rainfall': cf.Field()})
         >>> print(ds)
-        DataSet {
+        DataSet{
             rainfall: <CF Field: >
         }
         """
