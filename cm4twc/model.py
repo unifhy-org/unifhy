@@ -8,7 +8,6 @@ class Model(object):
     """
     DOCSTRING REQUIRED
     """
-
     def __init__(self, surfacelayer, subsurface, openwater):
         self._surfacelayer = self._process_component_type(
             surfacelayer, SurfaceLayerComponent)
@@ -22,7 +21,7 @@ class Model(object):
         self._check_timedomain_compatibilities()
         self._check_spacedomain_compatibilities()
 
-        self._span_up = False
+        self._spun_up = False
 
     @staticmethod
     def _process_component_type(component, expected_component):
@@ -91,13 +90,13 @@ class Model(object):
                       subsurface_timedomain,
                       openwater_timedomain)
 
-        self._span_up = True
+        self._spun_up = True
 
     def simulate(self):
         """
         DOCSTRING REQUIRED
         """
-        if not self._span_up:
+        if not self._spun_up:
             self._initialise()
 
         interface = self._run(self._surfacelayer.timedomain,
