@@ -1,6 +1,7 @@
 import unittest
 from datetime import datetime, timedelta
 import numpy as np
+import cf
 import cftime
 
 import cm4twc
@@ -44,9 +45,22 @@ class TestTimeDomainAPI(unittest.TestCase):
                        datetime(2020, 3, 2, 9, 0, 0))
         )
 
+        f = cf.Field()
+        f.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': 'days since 2020-02-28 09:00:00Z',
+                            'calendar': 'standard',
+                            'axis': 'T'},
+                data=cf.Data([0, 1, 2, 3])
+            ),
+            axes=f.set_construct(cf.DomainAxis(size=4))
+        )
+        td4 = cm4twc.TimeDomain.from_field(f)
+
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
-        self.assertEqual(td2, td3)
+        self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_gregorian_cal_on_leap_year(self):
         td1 = cm4twc.TimeDomain(
@@ -68,9 +82,22 @@ class TestTimeDomainAPI(unittest.TestCase):
                        cftime.DatetimeGregorian(2020, 3, 2, 9, 0, 0))
         )
 
+        f = cf.Field()
+        f.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': 'days since 2020-02-28 09:00:00Z',
+                            'calendar': 'gregorian',
+                            'axis': 'T'},
+                data=cf.Data([0, 1, 2, 3])
+            ),
+            axes=f.set_construct(cf.DomainAxis(size=4))
+        )
+        td4 = cm4twc.TimeDomain.from_field(f)
+
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
-        self.assertEqual(td2, td3)
+        self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_julian_cal_on_leap_year(self):
         td1 = cm4twc.TimeDomain(
@@ -92,9 +119,22 @@ class TestTimeDomainAPI(unittest.TestCase):
                        cftime.DatetimeJulian(2020, 3, 2, 9, 0, 0))
         )
 
+        f = cf.Field()
+        f.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': 'days since 2020-02-28 09:00:00Z',
+                            'calendar': 'julian',
+                            'axis': 'T'},
+                data=cf.Data([0, 1, 2, 3])
+            ),
+            axes=f.set_construct(cf.DomainAxis(size=4))
+        )
+        td4 = cm4twc.TimeDomain.from_field(f)
+
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
-        self.assertEqual(td2, td3)
+        self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_noleap_cal_on_leap_year(self):
         # test on a leap year (e.g. 2020)
@@ -117,9 +157,22 @@ class TestTimeDomainAPI(unittest.TestCase):
                        cftime.DatetimeNoLeap(2020, 3, 3, 9, 0, 0))
         )
 
+        f = cf.Field()
+        f.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': 'days since 2020-02-28 09:00:00Z',
+                            'calendar': 'noleap',
+                            'axis': 'T'},
+                data=cf.Data([0, 1, 2, 3])
+            ),
+            axes=f.set_construct(cf.DomainAxis(size=4))
+        )
+        td4 = cm4twc.TimeDomain.from_field(f)
+
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
-        self.assertEqual(td2, td3)
+        self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_all_leap_cal_on_leap_year(self):
         # test on a leap year (e.g. 2020)
@@ -142,9 +195,22 @@ class TestTimeDomainAPI(unittest.TestCase):
                        cftime.DatetimeAllLeap(2020, 3, 2, 9, 0, 0))
         )
 
+        f = cf.Field()
+        f.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': 'days since 2020-02-28 09:00:00Z',
+                            'calendar': 'all_leap',
+                            'axis': 'T'},
+                data=cf.Data([0, 1, 2, 3])
+            ),
+            axes=f.set_construct(cf.DomainAxis(size=4))
+        )
+        td4 = cm4twc.TimeDomain.from_field(f)
+
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
-        self.assertEqual(td2, td3)
+        self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_360_day_cal_on_leap_year(self):
         # test on a leap year (e.g. 2020)
@@ -167,9 +233,22 @@ class TestTimeDomainAPI(unittest.TestCase):
                        cftime.Datetime360Day(2020, 3, 1, 9, 0, 0))
         )
 
+        f = cf.Field()
+        f.set_construct(
+            cf.DimensionCoordinate(
+                properties={'standard_name': 'time',
+                            'units': 'days since 2020-02-28 09:00:00Z',
+                            'calendar': '360_day',
+                            'axis': 'T'},
+                data=cf.Data([0, 1, 2, 3])
+            ),
+            axes=f.set_construct(cf.DomainAxis(size=4))
+        )
+        td4 = cm4twc.TimeDomain.from_field(f)
+
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
-        self.assertEqual(td2, td3)
+        self.assertEqual(td1, td4)
 
     @unittest.expectedFailure
     def test_timedomain_init_irregular_timestep_in_timestamp_sequence(self):
