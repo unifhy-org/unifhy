@@ -473,10 +473,72 @@ class TimeDomain(object):
         return cls.from_datetime_sequence(np.asarray(datetimes),
                                           units, calendar)
 
+    @classmethod
+    def from_field(cls, field):
+        """Initialise a `TimeDomain` from the time construct of
+        a cf.Field object.
+
+        :Parameters:
+
+            field: cf.Field object
+                The field object whose time construct will be used to
+                initialise a 'TimeDomain` instance.
+
+        **Examples**
+
+        >>> import cf
+        >>> f = cf.Field()
+        ... f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'time',
+        ...                     'units': 'days since 1970-01-01',
+        ...                     'calendar': 'gregorian',
+        ...                     'axis': 'T'},
+        ...         data=cf.Data([0, 1, 2, 3])
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=4))
+        ... )
+        >>> td = cm4twc.TimeDomain.from_field(f)
+        >>> print(td)
+        TimeDomain(
+            time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] gregorian
+            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] gregorian
+            time.calendar: gregorian
+            time.units: days since 1970-01-01
+            timedelta: 1 day, 0:00:00
+        )
+
+        """
+        if not field.has_construct('time'):
+            raise RuntimeError("Error when initialising a {} from a Field: no "
+                               "\'time' construct found.".format(cls.__name__))
+        t = field.construct('time')
+
+        if not t.has_property('units'):
+            raise RuntimeError("Error when initialising a {} from a Field: no "
+                               "\'units' property for the 'time' construct "
+                               "found.".format(cls.__name__))
+        if not t.has_property('calendar'):
+            raise RuntimeError("Error when initialising a {} from a Field: no "
+                               "\'calendar' property for the 'time' construct "
+                               "found.".format(cls.__name__))
+
+        return cls(t.array, t.units, t.calendar)
+
+    def to_field(self):
+        """Return the inner cf.Field used to characterise the TimeDomain."""
+        return self.f
+
     def as_datetime_array(self):
+        """Return the time series characterising the period covered by
+        the TimeDomain as an array of datetime objects.
+        """
         return self.f.construct('time').datetime_array
 
     def as_string_array(self, formatting=None):
+        """Return the time series characterising the period covered by
+        the TimeDomain as list of datetime strings.
+        """
         formatting = formatting if formatting else "%Y-%m-%d %H:%M:%S"
 
         return np.asarray(
