@@ -24,7 +24,7 @@ class DataSet(MutableMapping):
         **Examples**
 
         >>> import cf
-        >>> ds = cm4twc.DataSet(variables={'rainfall': cf.Field()})
+        >>> ds = DataSet(variables={'rainfall': cf.Field()})
         >>> print(ds)
         DataSet{
             rainfall: <CF Field: >
@@ -57,7 +57,7 @@ class DataSet(MutableMapping):
     def __repr__(self):
         return "\n".join(
             ["DataSet{"] +
-            ["\t%s: %r" % (v, self._variables[v])
+            ["    %s: %r" % (v, self._variables[v])
              for v in sorted(self._variables.keys())] +
             ["}"]
         ) if self._variables else "DataSet{ }"
@@ -101,11 +101,11 @@ class DataSet(MutableMapping):
 
         **Examples**
 
-        >>> ds = cm4twc.DataSet()
+        >>> ds = DataSet()
         >>> print(ds)
         DataSet{ }
         >>> ds.update_with_file(
-        ...     files='tests/dummy_data/dummy_driving_data.nc',
+        ...     files='dummy_data/dummy_driving_data.nc',
         ...     select='snowfall_flux'
         ... )
         >>> print(ds)
@@ -113,7 +113,7 @@ class DataSet(MutableMapping):
             snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
         }
         >>> ds.update_with_file(
-        ...     files='tests/dummy_data/dummy_driving_data.nc',
+        ...     files='dummy_data/dummy_driving_data.nc',
         ...     select=('rainfall_flux',),
         ...     squeeze=False
         ... )
@@ -168,8 +168,8 @@ class DataSet(MutableMapping):
 
         **Examples**
 
-        >>> ds = cm4twc.DataSet.from_file(
-        ...     files='tests/dummy_data/dummy_driving_data.nc'
+        >>> ds = DataSet.from_file(
+        ...     files='dummy_data/dummy_driving_data.nc'
         ... )
         >>> print(ds)
         DataSet{
@@ -178,8 +178,8 @@ class DataSet(MutableMapping):
             snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
             soil_temperature: <CF Field: soil_temperature(time(6), grid_latitude(10), grid_longitude(9)) K>
         }
-        >>> ds = cm4twc.DataSet.from_file(
-        ...     files='tests/dummy_data/dummy_driving_data.nc',
+        >>> ds = DataSet.from_file(
+        ...     files='dummy_data/dummy_driving_data.nc',
         ...     select=['rainfall_flux', 'snowfall_flux'],
         ...     name_mapping={'rainfall_flux': 'rainfall'}
         ... )

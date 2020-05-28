@@ -82,9 +82,9 @@ class TimeDomain(object):
 
         **Examples**
 
-        >>> td = cm4twc.TimeDomain(timestamps=[0, 1, 2, 3],
-        ...                        units='seconds since 1970-01-01 00:00:00',
-        ...                        calendar='standard')
+        >>> td = TimeDomain(timestamps=[0, 1, 2, 3],
+        ...                 units='seconds since 1970-01-01 00:00:00',
+        ...                 calendar='standard')
         >>> print(td)
         TimeDomain(
             time (4,): [1970-01-01 00:00:00, ..., 1970-01-01 00:00:03] standard
@@ -178,15 +178,15 @@ class TimeDomain(object):
     def __repr__(self):
         return "\n".join(
             ["TimeDomain("]
-            + ["\ttime %s: %s" %
+            + ["    time %s: %s" %
                (self.f.construct('time').data.shape,
                 self.f.construct('time').data)]
-            + ["\ttime.bounds %s: %s" %
+            + ["    time.bounds %s: %s" %
                (self.f.construct('time').bounds.data.shape,
                 self.f.construct('time').bounds.data)]
-            + ["\ttime.calendar: %s" % self.f.construct('time').calendar]
-            + ["\ttime.units: %s" % self.f.construct('time').units]
-            + ["\ttimedelta: %s" % self.timedelta]
+            + ["    time.calendar: %s" % self.f.construct('time').calendar]
+            + ["    time.units: %s" % self.f.construct('time').units]
+            + ["    timedelta: %s" % self.timedelta]
             + [")"]
         )
 
@@ -325,7 +325,7 @@ class TimeDomain(object):
         **Examples**
 
         >>> from datetime import datetime
-        >>> td = cm4twc.TimeDomain.from_datetime_sequence(
+        >>> td = TimeDomain.from_datetime_sequence(
         ...     datetimes=[datetime(1970, 1, 1), datetime(1970, 1, 2),
         ...                datetime(1970, 1, 3), datetime(1970, 1, 4)],
         ...     units='seconds since 1970-01-01 00:00:00',
@@ -435,7 +435,7 @@ class TimeDomain(object):
         **Examples**
 
         >>> from datetime import datetime, timedelta
-        >>> td = cm4twc.TimeDomain.from_start_end_step(
+        >>> td = TimeDomain.from_start_end_step(
         ...     start=datetime(1970, 1, 1),
         ...     end=datetime(1970, 1, 4),
         ...     step=timedelta(days=1),
@@ -488,7 +488,7 @@ class TimeDomain(object):
 
         >>> import cf
         >>> f = cf.Field()
-        ... f.set_construct(
+        >>> d = f.set_construct(
         ...     cf.DimensionCoordinate(
         ...         properties={'standard_name': 'time',
         ...                     'units': 'days since 1970-01-01',
@@ -498,7 +498,7 @@ class TimeDomain(object):
         ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=4))
         ... )
-        >>> td = cm4twc.TimeDomain.from_field(f)
+        >>> td = TimeDomain.from_field(f)
         >>> print(td)
         TimeDomain(
             time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] gregorian
