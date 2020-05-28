@@ -1,4 +1,5 @@
 import unittest
+import doctest
 from datetime import datetime, timedelta
 import numpy as np
 import cf
@@ -496,4 +497,14 @@ class TestClockAPI(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    test_loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainAPI))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainComparison))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestClockAPI))
+
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.time_))
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(test_suite)

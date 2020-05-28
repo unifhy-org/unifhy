@@ -123,4 +123,10 @@ class TestModelAPI(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    test_loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAPI))
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(test_suite)
