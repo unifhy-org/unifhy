@@ -107,7 +107,7 @@ class DataSet(MutableMapping):
         >>> ds.update_with_file(
         ...     files='tests/dummy_data/dummy_driving_data.nc',
         ...     select='snowfall_flux'
-        ...)
+        ... )
         >>> print(ds)
         DataSet{
             snowfall_flux: <CF Field: snowfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
@@ -182,7 +182,7 @@ class DataSet(MutableMapping):
         ...     files='tests/dummy_data/dummy_driving_data.nc',
         ...     select=['rainfall_flux', 'snowfall_flux'],
         ...     name_mapping={'rainfall_flux': 'rainfall'}
-        ...)
+        ... )
         >>> print(ds)
         DataSet{
             rainfall: <CF Field: rainfall_flux(time(6), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
