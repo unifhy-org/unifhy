@@ -261,7 +261,10 @@ class TimeDomain(object):
         # use a trick by checking the minimum value of the boolean arrays
         # (False if any value is False, i.e. at least one value is not equal
         # in the time series) and by squeezing the data to get a single boolean
-        return match1.min(squeeze=True) and match2.min(squeeze=True)
+        return (
+            match1.minimum(squeeze=True).array.item()
+            and match2.minimum(squeeze=True).array.item()
+        )
 
     def spans_same_period_as(self, timedomain):
         start, end = (self.f.construct('time').data[[0, -1]] ==
