@@ -85,7 +85,14 @@ class TimeDomain(object):
         >>> td = cm4twc.TimeDomain(timestamps=[0, 1, 2, 3],
         ...                        units='seconds since 1970-01-01 00:00:00',
         ...                        calendar='standard')
-
+        >>> print(td)
+        TimeDomain(
+            time (4,): [1970-01-01 00:00:00, ..., 1970-01-01 00:00:03] standard
+            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:04]] standard
+            time.calendar: standard
+            time.units: seconds since 1970-01-01 00:00:00
+            timedelta: 0:00:01
+        )
         """
         self.f = cf.Field()
 
@@ -167,6 +174,21 @@ class TimeDomain(object):
         self.f.domain_axis('time').set_size(len(timestamps))
         self.f.construct('time').set_data(cf.Data(timestamps))
         self.f.construct('time').set_bounds(cf.Bounds(data=cf.Data(bounds)))
+
+    def __repr__(self):
+        return "\n".join(
+            ["TimeDomain("]
+            + ["\ttime %s: %s" %
+               (self.f.construct('time').data.shape,
+                self.f.construct('time').data)]
+            + ["\ttime.bounds %s: %s" %
+               (self.f.construct('time').bounds.data.shape,
+                self.f.construct('time').bounds.data)]
+            + ["\ttime.calendar: %s" % self.f.construct('time').calendar]
+            + ["\ttime.units: %s" % self.f.construct('time').units]
+            + ["\ttimedelta: %s" % self.timedelta]
+            + [")"]
+        )
 
     def __eq__(self, other):
         if isinstance(other, TimeDomain):
@@ -308,7 +330,14 @@ class TimeDomain(object):
         ...                datetime(1970, 1, 3), datetime(1970, 1, 4)],
         ...     units='seconds since 1970-01-01 00:00:00',
         ...     calendar='standard')
-
+        >>> print(td)
+        TimeDomain(
+            time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] standard
+            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
+            time.calendar: standard
+            time.units: seconds since 1970-01-01 00:00:00
+            timedelta: 1 day, 0:00:00
+        )
         """
 
         # convert datetimes to np.array if not already one
@@ -410,9 +439,16 @@ class TimeDomain(object):
         ...     start=datetime(1970, 1, 1),
         ...     end=datetime(1970, 1, 4),
         ...     step=timedelta(days=1),
-        ...     span=(-1, 0),
         ...     units='seconds since 1970-01-01 00:00:00',
         ...     calendar='standard')
+        >>> print(td)
+        TimeDomain(
+            time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] standard
+            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
+            time.calendar: standard
+            time.units: seconds since 1970-01-01 00:00:00
+            timedelta: 1 day, 0:00:00
+        )
 
         """
         if not isinstance(start, (datetime, cftime.datetime)):
