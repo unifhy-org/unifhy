@@ -113,8 +113,9 @@ class TimeDomain(object):
         # set timestamps to construct
         self._set_time(timestamps, self._timestep_span)
 
-        # determine timedelta
-        self.timedelta = (
+    @property
+    def timedelta(self):
+        return (
                 self.f.construct('time').datetime_array[1] -
                 self.f.construct('time').datetime_array[0]
         )
