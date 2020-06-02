@@ -88,9 +88,9 @@ class TimeDomain(object):
         >>> print(td)
         TimeDomain(
             time (4,): [1970-01-01 00:00:00, ..., 1970-01-01 00:00:03] standard
-            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:04]] standard
-            time.calendar: standard
-            time.units: seconds since 1970-01-01 00:00:00
+            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:04]] standard
+            calendar: standard
+            units: seconds since 1970-01-01 00:00:00
             timedelta: 0:00:01
         )
         """
@@ -181,11 +181,11 @@ class TimeDomain(object):
             + ["    time %s: %s" %
                (self.f.construct('time').data.shape,
                 self.f.construct('time').data)]
-            + ["    time.bounds %s: %s" %
+            + ["    bounds %s: %s" %
                (self.f.construct('time').bounds.data.shape,
                 self.f.construct('time').bounds.data)]
-            + ["    time.calendar: %s" % self.f.construct('time').calendar]
-            + ["    time.units: %s" % self.f.construct('time').units]
+            + ["    calendar: %s" % self.f.construct('time').calendar]
+            + ["    units: %s" % self.f.construct('time').units]
             + ["    timedelta: %s" % self.timedelta]
             + [")"]
         )
@@ -336,9 +336,9 @@ class TimeDomain(object):
         >>> print(td)
         TimeDomain(
             time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] standard
-            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
-            time.calendar: standard
-            time.units: seconds since 1970-01-01 00:00:00
+            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
+            calendar: standard
+            units: seconds since 1970-01-01 00:00:00
             timedelta: 1 day, 0:00:00
         )
         """
@@ -447,9 +447,9 @@ class TimeDomain(object):
         >>> print(td)
         TimeDomain(
             time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] standard
-            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
-            time.calendar: standard
-            time.units: seconds since 1970-01-01 00:00:00
+            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
+            calendar: standard
+            units: seconds since 1970-01-01 00:00:00
             timedelta: 1 day, 0:00:00
         )
 
@@ -505,9 +505,9 @@ class TimeDomain(object):
         >>> print(td)
         TimeDomain(
             time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] gregorian
-            time.bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] gregorian
-            time.calendar: gregorian
-            time.units: days since 1970-01-01
+            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] gregorian
+            calendar: gregorian
+            units: days since 1970-01-01
             timedelta: 1 day, 0:00:00
         )
 
