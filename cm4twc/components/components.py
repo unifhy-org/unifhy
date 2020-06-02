@@ -210,8 +210,8 @@ class _Component(metaclass=abc.ABCMeta):
     def get_spin_up_timedomain(self, start, end):
         timedomain = TimeDomain.from_start_end_step(
             start, end, self.timedomain.timedelta,
-            self.timedomain.construct('time').units,
-            self.timedomain.construct('time').calendar
+            self.timedomain.f.construct('time').units,
+            self.timedomain.f.construct('time').calendar
         )
         return timedomain
 
