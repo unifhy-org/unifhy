@@ -526,8 +526,10 @@ class TimeDomain(object):
         :Parameters:
 
             field: cf.Field object
-                The field object whose time construct will be used to
-                initialise a 'TimeDomain` instance.
+                The field object who will be used to initialise a
+                'TimeDomain` instance. This field must feature a 'time'
+                construct, and this construct must feature a 'units' and
+                a 'calendar' property.
 
         **Examples**
 
