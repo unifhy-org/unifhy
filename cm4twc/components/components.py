@@ -141,7 +141,7 @@ class _Component(metaclass=abc.ABCMeta):
             # subspace in time
             dataset[data_name] = dataset[data_name].subspace(
                 T=cf.wi(
-                    *timedomain.f.construct('time').datetime_array[[0, -2]]
+                    *timedomain.time.datetime_array[[0, -2]]
                 )
             )
 
@@ -210,8 +210,8 @@ class _Component(metaclass=abc.ABCMeta):
     def get_spin_up_timedomain(self, start, end):
         timedomain = TimeDomain.from_start_end_step(
             start, end, self.timedomain.timedelta,
-            self.timedomain.f.construct('time').units,
-            self.timedomain.f.construct('time').calendar
+            self.timedomain.units,
+            self.timedomain.calendar
         )
         return timedomain
 

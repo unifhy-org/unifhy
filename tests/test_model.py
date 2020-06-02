@@ -84,7 +84,7 @@ class TestModelAPI(unittest.TestCase):
     def test_1_model_spin_up(self):
         # loop through all the possible combinations of components
         start, end = \
-            get_dummy_timedomain().f.construct('time').datetime_array[[0, -2]]
+            get_dummy_timedomain().time.datetime_array[[0, -2]]
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
                 self.doe_models:
             with self.subTest(surfacelayer=surfacelayer_kind,

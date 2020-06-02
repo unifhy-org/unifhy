@@ -114,7 +114,39 @@ class TimeDomain(object):
         self._set_time(timestamps, self._timestep_span)
 
     @property
+    def time(self):
+        """Return the time series of the TimeDomain
+        instance as a `cf.Data` instance.
+        """
+        return self.f.construct('time').data
+
+    @property
+    def bounds(self):
+        """Return the bounds of the time series of the TimeDomain
+        instance as a `cf.Data` instance.
+        """
+        return self.f.construct('time').bounds.data
+
+    @property
+    def units(self):
+        """Return the units of the time series of the TimeDomain
+        instance as a `str`.
+        """
+        return self.f.construct('time').units
+
+    @property
+    def calendar(self):
+        """Return the calendar of the time series of the TimeDomain
+        instance as a `str`.
+        """
+        return self.f.construct('time').calendar
+
+    @property
     def timedelta(self):
+        """Return the time duration separating time steps in the
+        time series of the TimeDomain instance as a `datetime.timedelta`
+        instance.
+        """
         return (
                 self.f.construct('time').datetime_array[1] -
                 self.f.construct('time').datetime_array[0]
@@ -180,13 +212,11 @@ class TimeDomain(object):
         return "\n".join(
             ["TimeDomain("]
             + ["    time %s: %s" %
-               (self.f.construct('time').data.shape,
-                self.f.construct('time').data)]
+               (self.time.shape, self.time)]
             + ["    bounds %s: %s" %
-               (self.f.construct('time').bounds.data.shape,
-                self.f.construct('time').bounds.data)]
-            + ["    calendar: %s" % self.f.construct('time').calendar]
-            + ["    units: %s" % self.f.construct('time').units]
+               (self.bounds.shape, self.bounds)]
+            + ["    calendar: %s" % self.calendar]
+            + ["    units: %s" % self.units]
             + ["    timedelta: %s" % self.timedelta]
             + [")"]
         )
