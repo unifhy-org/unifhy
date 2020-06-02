@@ -13,7 +13,10 @@ class SpaceDomain(object):
 
     def __init__(self):
         self.f = cf.Field()
-        self.shape_ = None
+
+    @property
+    def shape(self):
+        return None
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -45,6 +48,15 @@ class Grid(SpaceDomain):
     def __init__(self):
         super(Grid, self).__init__()
 
+    @property
+    def shape(self):
+        has_altitude = self.f.has_construct('altitude')
+        return (
+            (self.f.construct('Z').shape if has_altitude else ())
+            + self.f.construct('Y').shape
+            + self.f.construct('X').shape
+        )
+
     def _set_space(self, dimension, dimension_bounds, name, units, axis):
         if not isinstance(dimension, np.ndarray):
             dimension = np.asarray(dimension)
@@ -75,14 +87,12 @@ class Grid(SpaceDomain):
             axes=axis_lat
         )
 
-        return dimension.size
-
     def __repr__(self):
         has_altitude = self.f.has_construct('altitude')
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    shape {}: {}".format("{Z, Y, X}" if has_altitude
-                                         else "{Y, X}", self.shape_)]
+                                         else "{Y, X}", self.shape)]
             + (["    Z, %s %s: %s" %
                (self.f.construct('Z').standard_name,
                 self.f.construct('Z').data.shape,
@@ -250,21 +260,15 @@ class LatLonGrid(Grid):
         """
         super(LatLonGrid, self).__init__()
 
-        alt = ()
         if altitude is not None and altitude_bounds is not None:
-            alt = (self._set_space(altitude, altitude_bounds,
-                                   name='altitude', units='m',
-                                   axis='Z'),)
+            self._set_space(altitude, altitude_bounds,
+                            name='altitude', units='m', axis='Z')
             self.f.construct('Z').set_property('positive', 'up')
 
-        lat = self._set_space(latitude, latitude_bounds,
-                              name='latitude', units='degrees_north',
-                              axis='Y')
-        lon = self._set_space(longitude, longitude_bounds,
-                              name='longitude', units='degrees_east',
-                              axis='X')
-
-        self.shape_ = alt + (lat, lon)
+        self._set_space(latitude, latitude_bounds,
+                        name='latitude', units='degrees_north', axis='Y')
+        self._set_space(longitude, longitude_bounds,
+                        name='longitude', units='degrees_east', axis='X')
 
     def is_space_equal_to(self, field, ignore_altitude=False):
         # check if latitude match, check if longitude
@@ -415,24 +419,18 @@ class RotatedLatLonGrid(Grid):
         """
         super(RotatedLatLonGrid, self).__init__()
 
-        alt = ()
         if altitude is not None and altitude_bounds is not None:
-            alt = (self._set_space(altitude, altitude_bounds,
-                                   name='altitude', units='m',
-                                   axis='Z'),)
+            self._set_space(altitude, altitude_bounds,
+                            name='altitude', units='m', axis='Z')
             self.f.construct('Z').set_property('positive', 'up')
 
-        lat = self._set_space(grid_latitude, grid_latitude_bounds,
-                              name='grid_latitude', units='degrees',
-                              axis='Y')
-        lon = self._set_space(grid_longitude, grid_longitude_bounds,
-                              name='grid_longitude', units='degrees',
-                              axis='X')
+        self._set_space(grid_latitude, grid_latitude_bounds,
+                        name='grid_latitude', units='degrees', axis='Y')
+        self._set_space(grid_longitude, grid_longitude_bounds,
+                        name='grid_longitude', units='degrees', axis='X')
 
         self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
                                       grid_north_pole_longitude)
-
-        self.shape_ = alt + (lat, lon)
 
     def _set_rotation_parameters(self, earth_radius, grid_north_pole_latitude,
                                  grid_north_pole_longitude):

@@ -48,7 +48,7 @@ class _Component(metaclass=abc.ABCMeta):
         # space attributes
         self._check_spacedomain(spacedomain)
         self.spacedomain = spacedomain
-        self.spaceshape = self.spacedomain.shape_
+        self.spaceshape = self.spacedomain.shape
 
         # data attributes
         dataset = DataSet() if dataset is None else dataset
