@@ -11,6 +11,8 @@ from tests.test_components import (get_subsurface_component,
 
 
 class TestModelAPI(unittest.TestCase):
+    # dictionary to store the model once initialised
+    doe_models = {}
 
     def setUp(self):
         # full factorial design of experiment
@@ -51,8 +53,6 @@ class TestModelAPI(unittest.TestCase):
         self.spacedomain = get_dummy_spacedomain()
         # load dummy driving and ancillary data
         self.dataset = get_dummy_dataset()
-        # dictionary to store model instances
-        self.doe_models = {}
 
     def test_0_model_init(self):
         # loop through all the possible combinations of components
@@ -86,7 +86,7 @@ class TestModelAPI(unittest.TestCase):
         start, end = \
             get_dummy_timedomain().f.construct('time').datetime_array[[0, -2]]
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
-                self.doe_models.keys():
+                self.doe_models:
             with self.subTest(surfacelayer=surfacelayer_kind,
                               subsurface=subsurface_kind,
                               openwater=openwater_kind):
@@ -97,7 +97,7 @@ class TestModelAPI(unittest.TestCase):
     def test_2_model_simulate(self):
         # loop through all the possible combinations of components
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
-                self.doe_models.keys():
+                self.doe_models:
             with self.subTest(surfacelayer=surfacelayer_kind,
                               subsurface=subsurface_kind,
                               openwater=openwater_kind):
