@@ -6,7 +6,7 @@ from importlib import import_module
 from .version import __version__
 from .model import Model
 from .time_ import TimeDomain
-from .space_ import Grid
+from .space_ import LatLonGrid, RotatedLatLonGrid
 from .data_ import DataSet
 from .components import (surfacelayer, subsurface, openwater,
                          SurfaceLayerComponent, SubSurfaceComponent,
