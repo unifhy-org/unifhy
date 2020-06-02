@@ -24,7 +24,7 @@ _supported_calendar_mapping = {
 
 
 class TimeDomain(object):
-    """TimeDomain characterise a temporal dimension that is needed by a
+    """TimeDomain characterises a temporal dimension that is needed by a
     `Component`.
 
     The first timestamp of the sequence is the beginning of the first
@@ -531,6 +531,29 @@ class TimeDomain(object):
     def to_field(self):
         """Return the inner cf.Field used to characterise the TimeDomain."""
         return self.f
+
+    @classmethod
+    def from_config(cls, cfg):
+        for required_key in ['start', 'end', 'step']:
+            if required_key not in cfg:
+                raise KeyError("The {} property of time in missing in "
+                               "the configuration.")
+        return cls.from_start_end_step(
+            start=cfg['start'], end=cfg['end'],
+            step=timedelta(**cfg['step']),
+            units=cfg['units'] if 'units' in cfg else None,
+            calendar=cfg['units'] if 'units' in cfg else None
+        )
+
+    def to_config(self):
+        dts = self.as_string_array()
+        return {
+            'start': dts[0],
+            'end': dts[-1],
+            'step': {'seconds': self.timedelta.total_seconds()},
+            'units': self.f.construct('time').units,
+            'calendar': self.f.construct('time').calendar
+        }
 
     def as_datetime_array(self):
         """Return the time series characterising the period covered by
