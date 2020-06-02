@@ -147,8 +147,8 @@ class Grid(SpaceDomain):
                                          else "{Y, X}", self.shape)]
             + (["    Z, %s %s: %s" %
                 (self._f.construct('Z').standard_name,
-                self._f.construct('Z').data.shape,
-                self._f.construct('Z').data)] if has_altitude else [])
+                 self._f.construct('Z').data.shape,
+                 self._f.construct('Z').data)] if has_altitude else [])
             + ["    Y, %s %s: %s" %
                (self._f.construct('Y').standard_name,
                 self._f.construct('Y').data.shape,
@@ -345,6 +345,111 @@ class LatLonGrid(Grid):
 
         return lat_lon and alt
 
+    @classmethod
+    def from_field(cls, field):
+        """Initialise a `LatLonGrid` from a cf.Field instance.
+
+        :Parameters:
+
+            field: cf.Field object
+                The field object who will be used to initialise a
+                'LatLonGrid` instance. This field must feature a
+                'latitude' and a 'longitude' constructs, and these
+                constructs must feature bounds. This field may
+                optionally feature an 'altitude' construct alongside its
+                bounds (both required otherwise ignored).
+
+        **Examples**
+
+        >>> import cf
+        >>> f = cf.Field()
+        >>> lat = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'latitude',
+        ...                     'units': 'degrees_north',
+        ...                     'axis': 'Y'},
+        ...         data=cf.Data([15, 45, 75]),
+        ...         bounds=cf.Bounds(data=cf.Data([[0, 30], [30, 60], [60, 90]]))
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=3))
+        ... )
+        >>> lon = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'longitude',
+        ...                     'units': 'degrees_east',
+        ...                     'axis': 'X'},
+        ...         data=cf.Data([30, 90, 150]),
+        ...         bounds=cf.Bounds(data=cf.Data([[0, 60], [60, 120], [120, 180]]))
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=3))
+        ... )
+        >>> alt = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'altitude',
+        ...                     'units': 'm',
+        ...                     'axis': 'Z'},
+        ...         data=cf.Data([10]),
+        ...         bounds=cf.Bounds(data=cf.Data([[0, 20]]))
+        ...         ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=1))
+        ... )
+        >>> sd = LatLonGrid.from_field(f)
+        >>> print(sd)
+        LatLonGrid(
+            shape {Z, Y, X}: (1, 3, 3)
+            Z, altitude (1,): [10] m
+            Y, latitude (3,): [15, 45, 75] degrees_north
+            X, longitude (3,): [30, 90, 150] degrees_east
+            Z_bounds (1, 2): [[0, 20]] m
+            Y_bounds (3, 2): [[0, ..., 90]] degrees_north
+            X_bounds (3, 2): [[0, ..., 180]] degrees_east
+        )
+        """
+        # check constructs
+        if not field.has_construct('latitude'):
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no 'latitude' construct found.".format(
+                                   cls.__name__))
+        lat = field.construct('latitude')
+        if not field.has_construct('longitude'):
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no 'longitude' construct found.".format(
+                                   cls.__name__))
+        lon = field.construct('longitude')
+        alt = None
+        alt_bounds = None
+        if field.has_construct('altitude'):
+            if field.construct('altitude').has_bounds():
+                alt = field.construct('altitude').array
+                alt_bounds = field.construct('altitude').bounds.array
+
+        # check units
+        if lat.units not in ['degrees_north', 'degree_north', 'degrees_N',
+                             'degree_N', 'degreesN', 'degreeN']:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the units of 'latitude' construct are "
+                               "not in degrees north.".format(cls.__name__))
+        if lon.units not in ['degrees_east', 'degree_east', 'degrees_E',
+                             'degree_E', 'degreesE', 'degreeE']:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the units of 'longitude' construct are "
+                               "not in degrees east.".format(cls.__name__))
+
+        # check bounds
+        if not lat.has_bounds():
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the 'latitude' construct has "
+                               "no bounds.".format(cls.__name__))
+        if not lon.has_bounds():
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the 'longitude' construct has "
+                               "no bounds.".format(cls.__name__))
+
+        return cls(latitude=lat.array, longitude=lon.array,
+                   latitude_bounds=lat.bounds.array,
+                   longitude_bounds=lon.bounds.array, altitude=alt,
+                   altitude_bounds=alt_bounds)
+
 
 class RotatedLatLonGrid(Grid):
     """LatLonGrid characterises the spatial dimension for a `Component`
@@ -537,3 +642,159 @@ class RotatedLatLonGrid(Grid):
                 alt = True
 
         return lat_lon and alt
+
+    @classmethod
+    def from_field(cls, field):
+        """Initialise a `RotatedLatLonGrid` from a cf.Field instance.
+
+        :Parameters:
+
+            field: cf.Field object
+                The field object who will be used to initialise a
+                'RotatedLatLonGrid` instance. This field must feature a
+                'latitude' and a 'longitude' constructs, and these
+                constructs must feature bounds. In addition, the
+                parameters required for the conversion of the grid to a
+                true latitude-longitude reference system must be set
+                (i.e. earth_radius, grid_north_pole_latitude,
+                grid_north_pole_longitude). This field may optionally
+                feature an 'altitude' construct alongside its bounds
+                (both required otherwise ignored).
+
+        **Examples**
+
+        >>> import cf
+        >>> f = cf.Field()
+        >>> lat = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'grid_latitude',
+        ...                     'units': 'degrees',
+        ...                     'axis': 'Y'},
+        ...         data=cf.Data([0.88, 0.44, 0., -0.44, -0.88]),
+        ...         bounds=cf.Bounds(data=cf.Data([[1.1, 0.66], [0.66, 0.22],
+        ...                                        [0.22, -0.22], [-0.22, -0.66],
+        ...                                        [-0.66, -1.1]]))
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=5))
+        ... )
+        >>> lon = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'grid_longitude',
+        ...                     'units': 'degrees',
+        ...                     'axis': 'X'},
+        ...         data=cf.Data([-2.5, -2.06, -1.62, -1.18]),
+        ...         bounds=cf.Bounds(data=cf.Data([[-2.72, -2.28], [-2.28, -1.84],
+        ...                                        [-1.84, -1.4], [-1.4, -0.96]]))
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=4))
+        ... )
+        >>> alt = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'altitude',
+        ...                     'units': 'm',
+        ...                     'axis': 'Z'},
+        ...         data=cf.Data([10]),
+        ...         bounds=cf.Bounds(data=cf.Data([[0, 20]]))
+        ...         ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=1))
+        ... )
+        >>> crs = f.set_construct(
+        ...     cf.CoordinateReference(
+        ...         datum=cf.Datum(parameters={'earth_radius': 6371007.}),
+        ...         coordinate_conversion=cf.CoordinateConversion(
+        ...             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+        ...                         'grid_north_pole_latitude': 38.0,
+        ...                         'grid_north_pole_longitude': 190.0}),
+        ...         coordinates=(lat, lon)
+        ...     )
+        ... )
+        >>> sd = RotatedLatLonGrid.from_field(f)
+        >>> print(sd)
+        RotatedLatLonGrid(
+            shape {Z, Y, X}: (1, 5, 4)
+            Z, altitude (1,): [10] m
+            Y, grid_latitude (5,): [0.88, ..., -0.88] degrees
+            X, grid_longitude (4,): [-2.5, ..., -1.18] degrees
+            Z_bounds (1, 2): [[0, 20]] m
+            Y_bounds (5, 2): [[1.1, ..., -1.1]] degrees
+            X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
+        )
+        """
+        # check constructs
+        if not field.has_construct('grid_latitude'):
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no 'grid_latitude' construct found.".format(
+                                   cls.__name__))
+        grid_lat = field.construct('grid_latitude')
+        if not field.has_construct('grid_longitude'):
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no 'grid_longitude' construct found.".format(
+                                   cls.__name__))
+        grid_lon = field.construct('grid_longitude')
+        alt = None
+        alt_bounds = None
+        if field.has_construct('altitude'):
+            if field.construct('altitude').has_bounds():
+                alt = field.construct('altitude').array
+                alt_bounds = field.construct('altitude').bounds.array
+
+        # check units
+        if grid_lat.units not in ['degrees', 'degree']:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the units of 'grid_latitude' construct are "
+                               "not in degrees.".format(cls.__name__))
+        if grid_lon.units not in ['degrees', 'degree']:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the units of 'grid_longitude' construct are "
+                               "not in degrees.".format(cls.__name__))
+
+        # check bounds
+        if not grid_lat.has_bounds():
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the 'grid_latitude' construct has "
+                               "no bounds.".format(cls.__name__))
+        if not grid_lon.has_bounds():
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the 'grid_longitude' construct has "
+                               "no bounds.".format(cls.__name__))
+
+        # check conversion parameters
+        if field.has_construct('grid_mapping_name:rotated_latitude_longitude'):
+            crs = field.construct(
+                'grid_mapping_name:rotated_latitude_longitude')
+        else:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no coordinate reference found with coordinate "
+                               "conversion whose 'grid_mapping_name' is set as "
+                               "'rotated_latitude_longitude'.".format(
+                                   cls.__name__))
+        if crs.datum.has_parameter('earth_radius'):
+            earth_radius = crs.datum.get_parameter('earth_radius')
+        else:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "coordinate reference has no datum property "
+                               "named 'earth_radius'.".format(cls.__name__))
+        if crs.coordinate_conversion.has_parameter('grid_north_pole_latitude'):
+            north_pole_lat = crs.coordinate_conversion.get_parameter(
+                'grid_north_pole_latitude')
+        else:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "coordinate conversion has no property named "
+                               "'grid_north_pole_latitude'.".format(
+                                   cls.__name__))
+        if crs.coordinate_conversion.has_parameter('grid_north_pole_longitude'):
+            north_pole_lon = crs.coordinate_conversion.get_parameter(
+                'grid_north_pole_longitude')
+        else:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "coordinate conversion has no property named "
+                               "'grid_north_pole_longitude'.".format(
+                                   cls.__name__))
+
+        return cls(grid_latitude=grid_lat.array, grid_longitude=grid_lon.array,
+                   grid_latitude_bounds=grid_lat.bounds.array,
+                   grid_longitude_bounds=grid_lon.bounds.array,
+                   earth_radius=earth_radius,
+                   grid_north_pole_latitude=north_pole_lat,
+                   grid_north_pole_longitude=north_pole_lon,
+                   altitude=alt, altitude_bounds=alt_bounds)
