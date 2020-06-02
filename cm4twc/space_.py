@@ -12,7 +12,7 @@ class SpaceDomain(object):
     """
 
     def __init__(self):
-        self.f = cf.Field()
+        self._f = cf.Field()
 
     @property
     def shape(self):
@@ -20,7 +20,7 @@ class SpaceDomain(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.is_space_equal_to(other.f)
+            return self.is_space_equal_to(other._f)
         else:
             return False
 
@@ -36,7 +36,7 @@ class SpaceDomain(object):
         """Return the inner cf.Field used to characterise the
         SpaceDomain.
         """
-        return self.f
+        return self._f
 
 
 class Grid(SpaceDomain):
@@ -53,11 +53,11 @@ class Grid(SpaceDomain):
         """Return the size of each of the dimension coordinates of
          the SpaceDomain instance as a `tuple`, corresponding, in order,
          to {Z, Y, X} if the Z-axis exists, to {Y, X} otherwise."""
-        has_altitude = self.f.has_construct('altitude')
+        has_altitude = self._f.has_construct('altitude')
         return (
-            (self.f.construct('Z').shape if has_altitude else ())
-            + self.f.construct('Y').shape
-            + self.f.construct('X').shape
+            (self._f.construct('Z').shape if has_altitude else ())
+            + self._f.construct('Y').shape
+            + self._f.construct('X').shape
         )
 
     @property
@@ -65,8 +65,8 @@ class Grid(SpaceDomain):
         """Return the Z-axis of the SpaceDomain instance as a `cf.Data`
         instance if the Z-axis exists, otherwise return None.
         """
-        if self.f.has_construct('Z'):
-            return self.f.construct('Z').data
+        if self._f.has_construct('Z'):
+            return self._f.construct('Z').data
         else:
             return None
 
@@ -75,14 +75,14 @@ class Grid(SpaceDomain):
         """Return the Y-axis of the SpaceDomain instance as a `cf.Data`
         instance.
         """
-        return self.f.construct('Y').data
+        return self._f.construct('Y').data
 
     @property
     def X(self):
         """Return the X-axis of the SpaceDomain instance as a `cf.Data`
         instance.
         """
-        return self.f.construct('X').data
+        return self._f.construct('X').data
 
     @property
     def Z_bounds(self):
@@ -90,8 +90,8 @@ class Grid(SpaceDomain):
         as a `cf.Data` instance if the Z-axis exists, otherwise
         return None.
         """
-        if self.f.has_construct('Z'):
-            return self.f.construct('Z').bounds.data
+        if self._f.has_construct('Z'):
+            return self._f.construct('Z').bounds.data
         else:
             return None
 
@@ -100,14 +100,14 @@ class Grid(SpaceDomain):
         """Return the bounds of the Y-axis of the SpaceDomain instance
         as a `cf.Data` instance.
         """
-        return self.f.construct('Y').bounds.data
+        return self._f.construct('Y').bounds.data
 
     @property
     def X_bounds(self):
         """Return the bounds of the X-axis of the SpaceDomain instance
         as a `cf.Data` instance.
         """
-        return self.f.construct('X').bounds.data
+        return self._f.construct('X').bounds.data
 
     def _set_space(self, dimension, dimension_bounds, name, units, axis):
         if not isinstance(dimension, np.ndarray):
@@ -126,8 +126,8 @@ class Grid(SpaceDomain):
                                "array given is not compatible in size with "
                                "the {} array given.".format(
                                     self.__class__.__name__, name, name))
-        axis_lat = self.f.set_construct(cf.DomainAxis(dimension.size))
-        self.f.set_construct(
+        axis_lat = self._f.set_construct(cf.DomainAxis(dimension.size))
+        self._f.set_construct(
             cf.DimensionCoordinate(
                 properties={
                     'standard_name': name,
@@ -140,32 +140,32 @@ class Grid(SpaceDomain):
         )
 
     def __repr__(self):
-        has_altitude = self.f.has_construct('altitude')
+        has_altitude = self._f.has_construct('altitude')
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    shape {}: {}".format("{Z, Y, X}" if has_altitude
                                          else "{Y, X}", self.shape)]
             + (["    Z, %s %s: %s" %
-               (self.f.construct('Z').standard_name,
-                self.f.construct('Z').data.shape,
-                self.f.construct('Z').data)] if has_altitude else [])
+                (self._f.construct('Z').standard_name,
+                self._f.construct('Z').data.shape,
+                self._f.construct('Z').data)] if has_altitude else [])
             + ["    Y, %s %s: %s" %
-               (self.f.construct('Y').standard_name,
-                self.f.construct('Y').data.shape,
-                self.f.construct('Y').data)]
+               (self._f.construct('Y').standard_name,
+                self._f.construct('Y').data.shape,
+                self._f.construct('Y').data)]
             + ["    X, %s %s: %s" %
-               (self.f.construct('X').standard_name,
-                self.f.construct('X').data.shape,
-                self.f.construct('X').data)]
+               (self._f.construct('X').standard_name,
+                self._f.construct('X').data.shape,
+                self._f.construct('X').data)]
             + (["    Z_bounds %s: %s" %
-                (self.f.construct('Z').bounds.data.shape,
-                 self.f.construct('Z').bounds.data)] if has_altitude else [])
+                (self._f.construct('Z').bounds.data.shape,
+                 self._f.construct('Z').bounds.data)] if has_altitude else [])
             + ["    Y_bounds %s: %s" %
-               (self.f.construct('Y').bounds.data.shape,
-                self.f.construct('Y').bounds.data)]
+               (self._f.construct('Y').bounds.data.shape,
+                self._f.construct('Y').bounds.data)]
             + ["    X_bounds %s: %s" %
-               (self.f.construct('X').bounds.data.shape,
-                self.f.construct('X').bounds.data)]
+               (self._f.construct('X').bounds.data.shape,
+                self._f.construct('X').bounds.data)]
             + [")"]
         )
 
@@ -315,7 +315,7 @@ class LatLonGrid(Grid):
         if altitude is not None and altitude_bounds is not None:
             self._set_space(altitude, altitude_bounds,
                             name='altitude', units='m', axis='Z')
-            self.f.construct('Z').set_property('positive', 'up')
+            self._f.construct('Z').set_property('positive', 'up')
 
         self._set_space(latitude, latitude_bounds,
                         name='latitude', units='degrees_north', axis='Y')
@@ -325,10 +325,10 @@ class LatLonGrid(Grid):
     def is_space_equal_to(self, field, ignore_altitude=False):
         # check if latitude match, check if longitude
         lat_lon = (
-            self.f.construct('latitude').equals(
+            self._f.construct('latitude').equals(
                 field.construct('latitude', default=None),
                 ignore_data_type=True)
-            and self.f.construct('longitude').equals(
+            and self._f.construct('longitude').equals(
                 field.construct('longitude', default=None),
                 ignore_data_type=True)
         )
@@ -336,8 +336,8 @@ class LatLonGrid(Grid):
         if ignore_altitude:
             alt = True
         else:
-            if self.f.has_construct('altitude'):
-                alt = self.f.construct('altitude').equals(
+            if self._f.has_construct('altitude'):
+                alt = self._f.construct('altitude').equals(
                     field.construct('altitude', default=None),
                     ignore_data_type=True)
             else:
@@ -474,7 +474,7 @@ class RotatedLatLonGrid(Grid):
         if altitude is not None and altitude_bounds is not None:
             self._set_space(altitude, altitude_bounds,
                             name='altitude', units='m', axis='Z')
-            self.f.construct('Z').set_property('positive', 'up')
+            self._f.construct('Z').set_property('positive', 'up')
 
         self._set_space(grid_latitude, grid_latitude_bounds,
                         name='grid_latitude', units='degrees', axis='Y')
@@ -492,7 +492,7 @@ class RotatedLatLonGrid(Grid):
                             grid_north_pole_latitude,
                         'grid_north_pole_longitude':
                             grid_north_pole_longitude})
-        self.f.set_construct(
+        self._f.set_construct(
             cf.CoordinateReference(
                 datum=cf.Datum(
                     parameters={'earth_radius': earth_radius}),
@@ -508,18 +508,18 @@ class RotatedLatLonGrid(Grid):
         # coordinate_reference.equals() would also check the size of the
         # collections of coordinates)
         lat_lon = (
-            self.f.construct('grid_latitude').equals(
+            self._f.construct('grid_latitude').equals(
                 field.construct('grid_latitude', default=None),
                 ignore_data_type=True)
-            and self.f.construct('grid_longitude').equals(
+            and self._f.construct('grid_longitude').equals(
                 field.construct('grid_longitude', default=None),
                 ignore_data_type=True)
-            and self.f.coordinate_reference(
+            and self._f.coordinate_reference(
                 'rotated_latitude_longitude').coordinate_conversion.equals(
                 field.coordinate_reference(
                     'rotated_latitude_longitude',
                     default=None).coordinate_conversion)
-            and self.f.coordinate_reference(
+            and self._f.coordinate_reference(
                 'rotated_latitude_longitude').datum.equals(
                 field.coordinate_reference(
                     'rotated_latitude_longitude',
@@ -529,8 +529,8 @@ class RotatedLatLonGrid(Grid):
         if ignore_altitude:
             alt = True
         else:
-            if self.f.has_construct('altitude'):
-                alt = self.f.construct('altitude').equals(
+            if self._f.has_construct('altitude'):
+                alt = self._f.construct('altitude').equals(
                     field.construct('altitude', default=None),
                     ignore_data_type=True)
             else:
