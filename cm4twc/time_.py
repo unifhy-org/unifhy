@@ -520,8 +520,7 @@ class TimeDomain(object):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `TimeDomain` from the time construct of
-        a cf.Field object.
+        """Initialise a `TimeDomain` from a cf.Field instance.
 
         :Parameters:
 
