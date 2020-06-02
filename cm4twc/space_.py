@@ -50,12 +50,64 @@ class Grid(SpaceDomain):
 
     @property
     def shape(self):
+        """Return the size of each of the dimension coordinates of
+         the SpaceDomain instance as a `tuple`, corresponding, in order,
+         to {Z, Y, X} if the Z-axis exists, to {Y, X} otherwise."""
         has_altitude = self.f.has_construct('altitude')
         return (
             (self.f.construct('Z').shape if has_altitude else ())
             + self.f.construct('Y').shape
             + self.f.construct('X').shape
         )
+
+    @property
+    def Z(self):
+        """Return the Z-axis of the SpaceDomain instance as a `cf.Data`
+        instance if the Z-axis exists, otherwise return None.
+        """
+        if self.f.has_construct('Z'):
+            return self.f.construct('Z').data
+        else:
+            return None
+
+    @property
+    def Y(self):
+        """Return the Y-axis of the SpaceDomain instance as a `cf.Data`
+        instance.
+        """
+        return self.f.construct('Y').data
+
+    @property
+    def X(self):
+        """Return the X-axis of the SpaceDomain instance as a `cf.Data`
+        instance.
+        """
+        return self.f.construct('X').data
+
+    @property
+    def Z_bounds(self):
+        """Return the bounds of the Z-axis of the SpaceDomain instance
+        as a `cf.Data` instance if the Z-axis exists, otherwise
+        return None.
+        """
+        if self.f.has_construct('Z'):
+            return self.f.construct('Z').bounds.data
+        else:
+            return None
+
+    @property
+    def Y_bounds(self):
+        """Return the bounds of the Y-axis of the SpaceDomain instance
+        as a `cf.Data` instance.
+        """
+        return self.f.construct('Y').bounds.data
+
+    @property
+    def X_bounds(self):
+        """Return the bounds of the X-axis of the SpaceDomain instance
+        as a `cf.Data` instance.
+        """
+        return self.f.construct('X').bounds.data
 
     def _set_space(self, dimension, dimension_bounds, name, units, axis):
         if not isinstance(dimension, np.ndarray):
