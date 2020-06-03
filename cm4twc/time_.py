@@ -173,10 +173,10 @@ class TimeDomain(object):
         return units
 
     @staticmethod
-    def _check_timestep_consistency(timestamps):
-        time_diff = np.diff(timestamps)
+    def _check_dimension_regularity(dimension):
+        time_diff = np.diff(dimension)
         if np.amin(time_diff) != np.amax(time_diff):
-            raise RuntimeWarning("The timestep in the sequence is not "
+            raise RuntimeWarning("The time step in the sequence is not "
                                  "constant across the period.")
 
     def _set_time(self, timestamps, span):
@@ -195,7 +195,7 @@ class TimeDomain(object):
                 "numerical.".format(self.__class__.__name__))
 
         # check that the timestamps is regularly spaced
-        self._check_timestep_consistency(timestamps)
+        self._check_dimension_regularity(timestamps)
 
         # generate bounds from span and timedelta
         bounds = np.zeros((len(timestamps), 2), dtype=timestamps.dtype)
