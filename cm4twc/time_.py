@@ -235,7 +235,7 @@ class TimeDomain(object):
     def is_time_equal_to(self, field, _leading_truncation_idx=None,
                          _trailing_truncation_idx=None):
         """
-        DOCSTRING REQUIRED
+        TODO: DOCSTRING REQUIRED
         """
         # check that the field has a time construct
         if field.construct('time', default=None) is None:
@@ -302,7 +302,7 @@ class TimeDomain(object):
 
     def spans_same_period_as(self, timedomain):
         """
-        DOCSTRING REQUIRED
+        TODO: DOCSTRING REQUIRED
         """
         if isinstance(timedomain, self.__class__):
             start, end = (self._f.construct('time').data[[0, -1]] ==
@@ -634,24 +634,27 @@ class Clock(object):
         supermesh_timestep = supermesh_timedelta.total_seconds()
 
         # check that all timesteps are multiple integers of the supermesh step
-        surfacelayer_timedomain_timestep = \
+        surfacelayer_timedomain_timestep = (
             surfacelayer_timedomain.timedelta.total_seconds()
+        )
         if not surfacelayer_timedomain_timestep % supermesh_timestep == 0:
             raise ValueError(
                 "The timestep of the surfacelayer component ({}s) is not a "
                 "multiple integer of the timestep of the fastest component "
                 "({}s).".format(surfacelayer_timedomain_timestep,
                                 supermesh_timestep))
-        subsurface_timedomain_timestep = \
+        subsurface_timedomain_timestep = (
             subsurface_timedomain.timedelta.total_seconds()
+        )
         if not subsurface_timedomain_timestep % supermesh_timestep == 0:
             raise ValueError(
                 "The timestep of the subsurface component ({}s) is not a "
                 "multiple integer of the timestep of the fastest component "
                 "({}s).".format(subsurface_timedomain_timestep,
                                 supermesh_timestep))
-        openwater_timedomain_timestep = \
+        openwater_timedomain_timestep = (
             openwater_timedomain.timedelta.total_seconds()
+        )
         if not openwater_timedomain_timestep % supermesh_timestep == 0:
             raise ValueError(
                 "The timestep of the openwater component ({}s) is not a "
@@ -662,28 +665,33 @@ class Clock(object):
         # get boolean arrays (switches) to determine when to run a given
         # component on temporal supermesh
         self._surfacelayer_switch = np.zeros((supermesh_length,), dtype=bool)
-        surfacelayer_increment = \
+        surfacelayer_increment = (
             int(surfacelayer_timedomain_timestep // supermesh_timestep)
+        )
         self._surfacelayer_switch[0::surfacelayer_increment] = True
         self._surfacelayer_index_multiple = surfacelayer_increment
 
         self._subsurface_switch = np.zeros((supermesh_length,), dtype=bool)
-        subsurface_increment = \
+        subsurface_increment = (
             int(subsurface_timedomain_timestep // supermesh_timestep)
+        )
         self._subsurface_switch[0::subsurface_increment] = True
         self._subsurface_index_multiple = subsurface_increment
 
         self._openwater_switch = np.zeros((supermesh_length,), dtype=bool)
-        openwater_increment = \
+        openwater_increment = (
             int(openwater_timedomain_timestep // supermesh_timestep)
+        )
         self._openwater_switch[0::openwater_increment] = True
         self._openwater_index_multiple = openwater_increment
 
         # set static time attributes
-        self.start_datetime = \
+        self.start_datetime = (
             surfacelayer_timedomain.time.datetime_array[0]
-        self.end_datetime = \
+        )
+        self.end_datetime = (
             surfacelayer_timedomain.time.datetime_array[-1]
+        )
         self.timedelta = supermesh_timedelta
         self.start_timeindex = 0
         self.end_timeindex = supermesh_length - 1

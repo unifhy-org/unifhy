@@ -609,7 +609,6 @@ class LatLonGrid(Grid):
             X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
         )
         """
-
         return cls(
             **grid_from_extent_and_resolution(
                 latitude_extent, longitude_extent, latitude_resolution,
