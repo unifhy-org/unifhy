@@ -1026,43 +1026,41 @@ def grid_from_extent_and_resolution(latitude_extent, longitude_extent,
                          "resolution: location '{}' not "
                          "supported.".format(location))
 
-    # check compatibility between extent and resolution
-    # (i.e. need to produce a whole number of grid cells)
-    lat_start, lat_end = latitude_extent
-    lon_start, lon_end = longitude_extent
-
-    if not (lat_end - lat_start) % latitude_resolution == 0:
-        raise RuntimeError("Error when generating grid from extent and "
-                           "resolution: latitude extent and resolution "
-                           "do not define a whole number of grid cells.")
-    lat_size = (lat_end - lat_start) // latitude_resolution
-    if not (lon_end - lon_start) % longitude_resolution == 0:
-        raise RuntimeError("Error when generating grid from extent and "
-                           "resolution: longitude extent and resolution "
-                           "do not define a whole number of grid cells.")
-    lon_size = (lon_end - lon_start) // longitude_resolution
-
-    # determine latitude and longitude coordinates
-    lat = (
-        (np.arange(lat_size) + 0.5 - np.mean(lat_span))
-        * latitude_resolution + lat_start
+    # determine latitude and longitude coordinates and their bounds
+    lat, lat_bounds = dimension_from_extent_and_resolution(
+        latitude_extent, latitude_resolution, lat_span, 'latitude'
     )
-    lon = (
-        (np.arange(lon_size) + 0.5 - np.mean(lon_span))
-        * longitude_resolution + lon_start
-    )
-
-    # determine latitude and longitude coordinate bounds
-    lat_bounds = (
-        lat.reshape((lat.size, -1)) +
-        np.array(lat_span) * latitude_resolution
-    )
-    lon_bounds = (
-        lon.reshape((lon.size, -1)) +
-        np.array(lon_span) * longitude_resolution
+    lon, lon_bounds = dimension_from_extent_and_resolution(
+        longitude_extent, longitude_resolution, lon_span, 'longitude'
     )
 
     return {'latitude': lat,
             'longitude': lon,
             'latitude_bounds': lat_bounds,
             'longitude_bounds': lon_bounds}
+
+
+def dimension_from_extent_and_resolution(extent, resolution, span, name):
+    # check compatibility between extent and resolution
+    # (i.e. need to produce a whole number of grid cells)
+    dim_start, dim_end = extent
+
+    if not (dim_end - dim_start) % resolution == 0:
+        raise RuntimeError("Error when generating grid from extent and "
+                           "resolution: {} extent and resolution do not define "
+                           "a whole number of grid cells.".format(name))
+    dim_size = (dim_end - dim_start) // resolution
+
+    # determine dimension coordinates
+    dim = (
+            (np.arange(dim_size) + 0.5 - np.mean(span))
+            * resolution + dim_start
+    )
+
+    # determine dimension coordinate bounds
+    dim_bounds = (
+            dim.reshape((dim.size, -1)) +
+            np.array(span) * resolution
+    )
+
+    return dim, dim_bounds
