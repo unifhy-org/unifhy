@@ -543,34 +543,34 @@ class LatLonGrid(Grid):
                 label             index  description
                 ================  =====  ===============================
                 ``'centre'``      ``0``  The latitude and longitude
-                                         bounds span equally on both
+                                         bounds extend equally on both
                                          sides of the coordinate along
-                                         the two axes, of a length equal
-                                         to half the  resolution along
-                                         the given axis.
+                                         the two axes of a length equal
+                                         to half the resolution along
+                                         the given coordinate axis.
 
-                ``'lower left'``  ``1``  The latitude bounds extent
+                ``'lower left'``  ``1``  The latitude bounds extend
                                          northwards of a length equal to
                                          the latitude resolution. The
                                          longitude bounds extend
                                          eastwards of a length equal to
                                          the longitude resolution.
 
-                ``'upper left'``  ``2``  The latitude bounds extent
+                ``'upper left'``  ``2``  The latitude bounds extend
                                          southwards of a length equal to
                                          the latitude resolution. The
                                          longitude bounds extend
                                          eastwards of a length equal to
                                          the longitude resolution.
 
-                ``'lower right'`` ``3``  The latitude bounds extent
+                ``'lower right'`` ``3``  The latitude bounds extend
                                          northwards of a length equal to
                                          the latitude resolution. The
                                          longitude bounds extend
                                          westwards of a length equal to
                                          the longitude resolution.
 
-                ``'upper right'`` ``4``  The latitude bounds extent
+                ``'upper right'`` ``4``  The latitude bounds extend
                                          southwards of a length equal to
                                          the latitude resolution. The
                                          longitude bounds extend
