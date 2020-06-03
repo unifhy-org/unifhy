@@ -338,8 +338,9 @@ class LatLonGrid(Grid):
 
             altitude: one-dimensional array-like object, optional
                 The array of altitude coordinates in metres defining the
-                temporal dimension. May be any type that can be cast to
-                a `numpy.array`. Must contain numerical values. Ignored
+                temporal dimension (with upwards as the positive
+                direction). May be any type that can be cast to a
+                `numpy.array`. Must contain numerical values. Ignored
                 if `altitude_bounds` not also provided.
 
                 *Parameter example:*
@@ -348,11 +349,12 @@ class LatLonGrid(Grid):
             altitude_bounds: two-dimensional array-like object, optional
                 The array of altitude coordinate bounds in metres
                 defining the extent of the grid cell around the
-                coordinate. May be any type that can be cast to a
-                `numpy.array`. Must be two dimensional with the first
-                dimension equal to the size of `altitude` and the second
-                dimension equal to 2. Must contain numerical values.
-                Ignored if `altitude` not also provided.
+                coordinate (with upwards as the positive direction).
+                May be any type that can be cast to a `numpy.array`.
+                Must be two dimensional with the first dimension equal
+                to the size of `altitude` and the second dimension equal
+                to 2. Must contain numerical values. Ignored if
+                `altitude` not also provided.
 
                 *Parameter example:*
                     ``altitude=[[0, 20]]``
@@ -754,8 +756,9 @@ class RotatedLatLonGrid(Grid):
 
             altitude: one-dimensional array-like object, optional
                 The array of altitude coordinates in metres defining the
-                temporal dimension. May be any type that can be cast to
-                a `numpy.array`. Must contain numerical values. Ignored
+                temporal dimension (with upwards as the positive
+                direction). May be any type that can be cast to a
+                `numpy.array`. Must contain numerical values. Ignored
                 if `altitude_bounds` not also provided.
 
                 *Parameter example:*
@@ -764,11 +767,12 @@ class RotatedLatLonGrid(Grid):
             altitude_bounds: two-dimensional array-like object, optional
                 The array of altitude coordinate bounds in metres
                 defining the extent of the grid cell around the
-                coordinate. May be any type that can be cast to a
-                `numpy.array`. Must be two dimensional with the first
-                dimension equal to the size of `altitude` and the second
-                dimension equal to 2. Must contain numerical values.
-                Ignored if `altitude` not also provided.
+                coordinate (with upwards as the positive direction).
+                May be any type that can be cast to a `numpy.array`.
+                Must be two dimensional with the first dimension equal
+                to the size of `altitude` and the second dimension equal
+                to 2. Must contain numerical values. Ignored if
+                `altitude` not also provided.
 
                 *Parameter example:*
                     ``altitude=[[0, 20]]``
