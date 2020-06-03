@@ -600,10 +600,10 @@ class LatLonGrid(Grid):
         **Examples**
 
         >>> sd = LatLonGrid.from_extent_and_resolution(
-        ...     grid_latitude_extent=(30, 70),
-        ...     grid_longitude_extent=(0, 90),
-        ...     grid_latitude_resolution=5,
-        ...     grid_longitude_resolution=10
+        ...     latitude_extent=(30, 70),
+        ...     longitude_extent=(0, 90),
+        ...     latitude_resolution=5,
+        ...     longitude_resolution=10
         ... )
         >>> print(sd)
         LatLonGrid(
@@ -614,10 +614,10 @@ class LatLonGrid(Grid):
             X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
         )
         >>> sd = LatLonGrid.from_extent_and_resolution(
-        ...     grid_latitude_extent=(30, 70),
-        ...     grid_longitude_extent=(0, 90),
-        ...     grid_latitude_resolution=5,
-        ...     grid_longitude_resolution=10,
+        ...     latitude_extent=(30, 70),
+        ...     longitude_extent=(0, 90),
+        ...     latitude_resolution=5,
+        ...     longitude_resolution=10,
         ...     location='upper right'
         ... )
         >>> print(sd)
