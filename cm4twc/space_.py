@@ -996,11 +996,14 @@ class RotatedLatLonGrid(Grid):
         """Initialise a `RotatedLatLonGrid` from the extent and the
         resolution of grid_latitude and grid_longitude coordinates.
         """
-        return type(cls)(
-            **grid_from_extent_and_resolution(
-                grid_latitude_extent, grid_longitude_extent, grid_latitude_resolution,
-                grid_longitude_resolution, location
-            ),
+        grid = grid_from_extent_and_resolution(
+            grid_latitude_extent, grid_longitude_extent,
+            grid_latitude_resolution, grid_longitude_resolution, location
+        )
+        return cls(
+            grid_latitude=grid['latitude'], grid_longitude=grid['longitude'],
+            grid_latitude_bounds=grid['latitude_bounds'],
+            grid_longitude_bounds=grid['longitude_bounds'],
             earth_radius=earth_radius,
             grid_north_pole_latitude=grid_north_pole_latitude,
             grid_north_pole_longitude=grid_north_pole_longitude
