@@ -508,9 +508,12 @@ class LatLonGrid(Grid):
     @classmethod
     def from_extent_and_resolution(cls, latitude_extent, longitude_extent,
                                    latitude_resolution, longitude_resolution,
-                                   location='centre'):
+                                   latitude_longitude_location='centre',
+                                   altitude_extent=None,
+                                   altitude_resolution=None,
+                                   altitude_location='centre'):
         """Initialise a `LatLonGrid` from the extent and the resolution
-        of latitude and longitude coordinates.
+        of latitude, longitude (and optionally altitude) coordinates.
 
         :Parameters:
 
@@ -520,8 +523,8 @@ class LatLonGrid(Grid):
                 the location of the start of the extent along the
                 latitude coordinate, the second element of the pair is
                 the location of the end of the extent along the latitude
-                coordinate (included). May be any type that can be
-                unpacked (e.g. `tuple`, `list`, `numpy.array`).
+                coordinate. May be any type that can be unpacked (e.g.
+                `tuple`, `list`, `numpy.array`).
 
                 *Parameter example:*
                     ``latitude_extent=(30, 70)``
@@ -532,8 +535,8 @@ class LatLonGrid(Grid):
                 the location of the start of the extent along the
                 longitude coordinate, the second element of the pair is
                 the location of the end of the extent along the
-                longitude coordinate (included). May be any type that
-                can be unpacked (e.g. `tuple`, `list`, `numpy.array`).
+                longitude coordinate. May be any type that can be
+                unpacked (e.g. `tuple`, `list`, `numpy.array`).
 
                 *Parameter example:*
                     ``longitude_extent=(0, 90)``
@@ -552,18 +555,19 @@ class LatLonGrid(Grid):
                 *Parameter example:*
                     ``longitude_resolution=10``
 
-            location: `str` or `int`, optional
+            latitude_longitude_location: `str` or `int`, optional
                 The location of the latitude and longitude coordinates
                 in relation to their grid cells (i.e. their bounds).
                 This information is required to generate the latitude
                 and longitude bounds for each grid coordinate. If not
                 provided, set to default 'centre'.
 
-                The directions left and right are related to the
-                longitude coordinates(X-axis), while the directions
+                The locations left and right are related to the
+                longitude coordinates (X-axis), while the locations
                 lower and upper are related to the latitude coordinates
-                (X-axis). The orientation of the coordinate system
-                considered is detailed below.
+                (Y-axis). The orientation of the coordinate system
+                considered is detailed below (i.e. positive directions
+                are northwards and eastwards).
 
                     Y, latitude (degrees North)
                     ↑
@@ -629,8 +633,66 @@ class LatLonGrid(Grid):
                     1             3               southwards
 
                 *Parameter example:*
-                    ``location='centre``
-                    ``location=0`
+                    ``latitude_longitude_location='centre'``
+                    ``latitude_longitude_location=0`
+
+            altitude_extent: pair of `float` or `int`, optional
+                The extent of altitude coordinate in metres for the
+                desired grid. The first element of the pair is the
+                location of the start of the extent along the altitude
+                coordinate, the second element of the pair is the
+                location of the end of the extent along the altitude
+                coordinate. May be any type that can be unpacked (e.g.
+                `tuple`, `list`, `numpy.array`).
+
+                *Parameter example:*
+                    ``altitude_extent=(0, 20)``
+
+            altitude_resolution: `float` or `int`, optional
+                The spacing between two consecutive altitude coordinates
+                in metres for the desired grid.
+
+                *Parameter example:*
+                    ``altitude_resolution=20``
+
+            altitude_location: `str` or `int`, optional
+                The location of the altitude coordinates in relation to
+                their grid cells (i.e. their bounds). This information
+                is required to generate the altitude bounds for each
+                grid coordinate. If not provided, set to default
+                'centre'.
+
+                The locations top and bottom are related to the
+                altitude coordinate (Z-axis). The orientation of the
+                coordinate system considered is such that the positive
+                direction is upwards.
+
+                This parameter can be set using the labels (as a `str`)
+                or the indices (as an `int`) detailed in the table
+                below.
+
+                ================  =====  ===============================
+                label             index  description
+                ================  =====  ===============================
+                ``'centre'``      ``0``  The altitude bounds extend
+                                         equally upwards and downwards
+                                         of a length equal to half the
+                                         resolution along the altitude
+                                         axis.
+
+                ``'bottom'``      ``1``  The altitude bounds extend
+                                         upwards of a length equal to
+                                         the resolution along the
+                                         altitude axis.
+
+                ``'top'``         ``2``  The altitude bounds extend
+                                         downwards of a length equal to
+                                         the resolution along the
+                                         altitude axis.
+                ================  =====  ===============================
+
+                *Parameter example:*
+                    ``altitude_location='centre'``
 
         **Examples**
 
@@ -638,13 +700,17 @@ class LatLonGrid(Grid):
         ...     latitude_extent=(30, 70),
         ...     longitude_extent=(0, 90),
         ...     latitude_resolution=5,
-        ...     longitude_resolution=10
+        ...     longitude_resolution=10,
+        ...     altitude_extent=(0, 20),
+        ...     altitude_resolution=20
         ... )
         >>> print(sd)
         LatLonGrid(
-            shape {Y, X}: (8, 9)
+            shape {Z, Y, X}: (1, 8, 9)
+            Z, altitude (1,): [10.0] m
             Y, latitude (8,): [32.5, ..., 67.5] degrees_north
             X, longitude (9,): [5.0, ..., 85.0] degrees_east
+            Z_bounds (1, 2): [[0.0, 20.0]] m
             Y_bounds (8, 2): [[30.0, ..., 70.0]] degrees_north
             X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
         )
@@ -653,7 +719,7 @@ class LatLonGrid(Grid):
         ...     longitude_extent=(0, 90),
         ...     latitude_resolution=5,
         ...     longitude_resolution=10,
-        ...     location='upper right'
+        ...     latitude_longitude_location='upper right'
         ... )
         >>> print(sd)
         LatLonGrid(
@@ -667,7 +733,8 @@ class LatLonGrid(Grid):
         return cls(
             **grid_from_extent_and_resolution(
                 latitude_extent, longitude_extent, latitude_resolution,
-                longitude_resolution, location
+                longitude_resolution, latitude_longitude_location,
+                altitude_extent, altitude_resolution, altitude_location
             )
         )
 
@@ -1008,13 +1075,18 @@ class RotatedLatLonGrid(Grid):
                                     grid_longitude_resolution,
                                     earth_radius, grid_north_pole_latitude,
                                     grid_north_pole_longitude,
-                                    location='centre'):
+                                    latitude_longitude_location='centre',
+                                    altitude_extent=None,
+                                    altitude_resolution=None,
+                                    altitude_location='centre'):
         """Initialise a `RotatedLatLonGrid` from the extent and the
-        resolution of grid_latitude and grid_longitude coordinates.
+        resolution of grid_latitude and grid_longitude coordinates (and
+        optionally altitude coordinate).
         """
         grid = grid_from_extent_and_resolution(
             grid_latitude_extent, grid_longitude_extent,
-            grid_latitude_resolution, grid_longitude_resolution, location
+            grid_latitude_resolution, grid_longitude_resolution, latitude_longitude_location,
+            altitude_extent, altitude_resolution, altitude_location
         )
         return cls(
             grid_latitude=grid['latitude'], grid_longitude=grid['longitude'],
@@ -1022,28 +1094,31 @@ class RotatedLatLonGrid(Grid):
             grid_longitude_bounds=grid['longitude_bounds'],
             earth_radius=earth_radius,
             grid_north_pole_latitude=grid_north_pole_latitude,
-            grid_north_pole_longitude=grid_north_pole_longitude
+            grid_north_pole_longitude=grid_north_pole_longitude,
+            altitude=grid['altitude'], altitude_bounds=grid['altitude_bounds']
         )
 
 
 def grid_from_extent_and_resolution(latitude_extent, longitude_extent,
                                     latitude_resolution, longitude_resolution,
-                                    location='centre'):
+                                    latitude_longitude_location,
+                                    altitude_extent, altitude_resolution,
+                                    altitude_location):
     # infer grid span in relation to coordinate from location
-    if location in ('centre', 'center', '0', 0):
+    if latitude_longitude_location in ('centre', 'center', '0', 0):
         lon_span, lat_span = [[-0.5, 0.5]], [[-0.5, 0.5]]
-    elif location in ('lower_left', 'lower left', '1', 1):
+    elif latitude_longitude_location in ('lower_left', 'lower left', '1', 1):
         lon_span, lat_span = [[0, 1]], [[0, 1]]
-    elif location in ('upper_left', 'upper left', '2', 2):
+    elif latitude_longitude_location in ('upper_left', 'upper left', '2', 2):
         lon_span, lat_span = [[0, 1]], [[-1, 0]]
-    elif location in ('lower_right', 'lower right', '3', 3):
+    elif latitude_longitude_location in ('lower_right', 'lower right', '3', 3):
         lon_span, lat_span = [[-1, 0]], [[0, 1]]
-    elif location in ('upper_right', 'upper right', '4', 4):
+    elif latitude_longitude_location in ('upper_right', 'upper right', '4', 4):
         lon_span, lat_span = [[-1, 0]], [[-1, 0]]
     else:
         raise ValueError("Error when generating grid from extent and "
-                         "resolution: location '{}' not "
-                         "supported.".format(location))
+                         "resolution: latitude-longitude location '{}' not "
+                         "supported.".format(latitude_longitude_location))
 
     # determine latitude and longitude coordinates and their bounds
     lat, lat_bounds = dimension_from_extent_and_resolution(
@@ -1053,10 +1128,33 @@ def grid_from_extent_and_resolution(latitude_extent, longitude_extent,
         longitude_extent, longitude_resolution, lon_span, 'longitude'
     )
 
+    # infer altitude span in relation to coordinate from location
+    if altitude_extent is not None and altitude_resolution is not None:
+        if altitude_location in ('centre', 'center', '0', 0):
+            alt_span = [[-0.5, 0.5]]
+        elif altitude_location in ('bottom', '1', 1):
+            alt_span = [[0, 1]]
+        elif altitude_location in ('top', '2', 2):
+            alt_span = [[-1, 0]]
+        else:
+            raise ValueError("Error when generating grid from extent and "
+                             "resolution: altitude location '{}' not "
+                             "supported.".format(altitude_location))
+
+        # determine latitude and longitude coordinates and their bounds
+        alt, alt_bounds = dimension_from_extent_and_resolution(
+            altitude_extent, altitude_resolution, alt_span, 'altitude'
+        )
+    else:
+        alt = None
+        alt_bounds = None
+
     return {'latitude': lat,
             'longitude': lon,
+            'altitude': alt,
             'latitude_bounds': lat_bounds,
-            'longitude_bounds': lon_bounds}
+            'longitude_bounds': lon_bounds,
+            'altitude_bounds': alt_bounds}
 
 
 def dimension_from_extent_and_resolution(extent, resolution, span, name):
