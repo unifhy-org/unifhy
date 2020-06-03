@@ -44,6 +44,12 @@ class Grid(SpaceDomain):
     a regular grid. Any supported regular grid for a `Component` is a
     subclass of Grid.
     """
+    _Z_name = None
+    _Y_name = None
+    _X_name = None
+    _Z_units = []
+    _Y_units = []
+    _X_units = []
 
     def __init__(self):
         super(Grid, self).__init__()
@@ -53,9 +59,9 @@ class Grid(SpaceDomain):
         """Return the size of each of the dimension coordinates of
          the SpaceDomain instance as a `tuple`, corresponding, in order,
          to {Z, Y, X} if the Z-axis exists, to {Y, X} otherwise."""
-        has_altitude = self._f.has_construct('altitude')
+        has_z = self._f.has_construct(self._Z_name)
         return (
-            (self._f.construct('Z').shape if has_altitude else ())
+            (self._f.construct('Z').shape if has_z else ())
             + self._f.construct('Y').shape
             + self._f.construct('X').shape
         )
@@ -159,16 +165,71 @@ class Grid(SpaceDomain):
             axes=axis_lat
         )
 
+    @classmethod
+    def _extract_xyz_from_field(cls, field):
+        # check constructs
+        if not field.has_construct(cls._Y_name):
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no '{}' construct found.".format(
+                                   cls.__name__, cls._Y_name))
+        y = field.construct(cls._Y_name)
+        if not field.has_construct(cls._X_name):
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "no '{}' construct found.".format(
+                                   cls.__name__, cls._X_name))
+        x = field.construct(cls._X_name)
+        z_array = None
+        z_bounds_array = None
+        if field.has_construct(cls._Z_name):
+            if field.construct(cls._Z_name).has_bounds():
+                z_array = field.construct(cls._Z_name).array
+                z_units = field.construct(cls._Z_name).units
+                z_bounds_array = field.construct(cls._Z_name).bounds.array
+                if z_units not in cls._Z_units:
+                    raise RuntimeError("Error when initialising a {} from a "
+                                       "Field: the units of '{}' construct are "
+                                       "not in {}.".format(cls.__name__,
+                                                           cls._Z_name,
+                                                           cls._Z_units[0]))
+
+        # check units
+        if y.units not in cls._Y_units:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the units of '{}' construct are not in "
+                               "{}.".format(cls.__name__, cls._Y_name,
+                                            cls._Y_units[0]))
+        if x.units not in cls._X_units:
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the units of '{}' construct are not in "
+                               "{}.".format(cls.__name__, cls._X_name,
+                                            cls._X_units[0]))
+
+        # check bounds
+        if not y.has_bounds():
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the '{}' construct has no bounds.".format(
+                                   cls.__name__, cls._Y_name))
+        if not x.has_bounds():
+            raise RuntimeError("Error when initialising a {} from a Field: "
+                               "the '{}' construct has no bounds.".format(
+                                   cls.__name__, cls._X_name))
+
+        return {
+            'X': x.array, 'X_bounds': x.bounds.array,
+            'Y': y.array, 'Y_bounds': y.bounds.array,
+            'Z': z_array, 'Z_bounds': z_bounds_array
+        }
+
     def __repr__(self):
-        has_altitude = self._f.has_construct('altitude')
+        has_z = self._f.has_construct(self._Z_name)
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
-            + ["    shape {}: {}".format("{Z, Y, X}" if has_altitude
+            + ["    shape {}: {}".format("{Z, Y, X}" if has_z
                                          else "{Y, X}", self.shape)]
             + (["    Z, %s %s: %s" %
                 (self._f.construct('Z').standard_name,
                  self._f.construct('Z').data.shape,
-                 self._f.construct('Z').data)] if has_altitude else [])
+                 self._f.construct('Z').data)] if has_z else [])
             + ["    Y, %s %s: %s" %
                (self._f.construct('Y').standard_name,
                 self._f.construct('Y').data.shape,
@@ -179,7 +240,7 @@ class Grid(SpaceDomain):
                 self._f.construct('X').data)]
             + (["    Z_bounds %s: %s" %
                 (self._f.construct('Z').bounds.data.shape,
-                 self._f.construct('Z').bounds.data)] if has_altitude else [])
+                 self._f.construct('Z').bounds.data)] if has_z else [])
             + ["    Y_bounds %s: %s" %
                (self._f.construct('Y').bounds.data.shape,
                 self._f.construct('Y').bounds.data)]
@@ -196,6 +257,14 @@ class LatLonGrid(Grid):
     latitudes and longitudes, and whose rotation axis is aligned with
     the North pole.
     """
+    _Z_name = 'altitude'
+    _Y_name = 'latitude'
+    _X_name = 'longitude'
+    _Z_units = ['m', 'metre', 'meter', 'metres', 'meters']
+    _Y_units = ['degrees_north', 'degree_north', 'degrees_N', 'degree_N',
+                'degreesN', 'degreeN']
+    _X_units = ['degrees_east', 'degree_east', 'degrees_E',
+                'degree_E', 'degreesE', 'degreeE']
 
     def __init__(self, latitude, longitude, latitude_bounds,
                  longitude_bounds, altitude=None, altitude_bounds=None):
@@ -333,32 +402,32 @@ class LatLonGrid(Grid):
         super(LatLonGrid, self).__init__()
 
         if altitude is not None and altitude_bounds is not None:
-            self._set_space(altitude, altitude_bounds,
-                            name='altitude', units='m', axis='Z')
+            self._set_space(altitude, altitude_bounds, name=self._Z_name,
+                            units=self._Z_units[0], axis='Z')
             self._f.construct('Z').set_property('positive', 'up')
 
         self._set_space(latitude, latitude_bounds,
-                        name='latitude', units='degrees_north', axis='Y')
+                        name=self._Y_name, units=self._Y_units[0], axis='Y')
         self._set_space(longitude, longitude_bounds,
-                        name='longitude', units='degrees_east', axis='X')
+                        name=self._X_name, units=self._X_units[0], axis='X')
 
     def is_space_equal_to(self, field, ignore_altitude=False):
         # check if latitude match, check if longitude
         lat_lon = (
-            self._f.construct('latitude').equals(
-                field.construct('latitude', default=None),
+            self._f.construct(self._Y_name).equals(
+                field.construct(self._Y_name, default=None),
                 ignore_data_type=True)
-            and self._f.construct('longitude').equals(
-                field.construct('longitude', default=None),
+            and self._f.construct(self._X_name).equals(
+                field.construct(self._X_name, default=None),
                 ignore_data_type=True)
         )
         # check whether altitude constructs are identical
         if ignore_altitude:
             alt = True
         else:
-            if self._f.has_construct('altitude'):
-                alt = self._f.construct('altitude').equals(
-                    field.construct('altitude', default=None),
+            if self._f.has_construct(self._Z_name):
+                alt = self._f.construct(self._Z_name).equals(
+                    field.construct(self._Z_name, default=None),
                     ignore_data_type=True)
             else:
                 alt = True
@@ -425,50 +494,14 @@ class LatLonGrid(Grid):
             X_bounds (3, 2): [[0, ..., 180]] degrees_east
         )
         """
-        # check constructs
-        if not field.has_construct('latitude'):
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no 'latitude' construct found.".format(
-                                   cls.__name__))
-        lat = field.construct('latitude')
-        if not field.has_construct('longitude'):
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no 'longitude' construct found.".format(
-                                   cls.__name__))
-        lon = field.construct('longitude')
-        alt = None
-        alt_bounds = None
-        if field.has_construct('altitude'):
-            if field.construct('altitude').has_bounds():
-                alt = field.construct('altitude').array
-                alt_bounds = field.construct('altitude').bounds.array
+        extraction = cls._extract_xyz_from_field(field)
 
-        # check units
-        if lat.units not in ['degrees_north', 'degree_north', 'degrees_N',
-                             'degree_N', 'degreesN', 'degreeN']:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the units of 'latitude' construct are "
-                               "not in degrees north.".format(cls.__name__))
-        if lon.units not in ['degrees_east', 'degree_east', 'degrees_E',
-                             'degree_E', 'degreesE', 'degreeE']:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the units of 'longitude' construct are "
-                               "not in degrees east.".format(cls.__name__))
-
-        # check bounds
-        if not lat.has_bounds():
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the 'latitude' construct has "
-                               "no bounds.".format(cls.__name__))
-        if not lon.has_bounds():
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the 'longitude' construct has "
-                               "no bounds.".format(cls.__name__))
-
-        return cls(latitude=lat.array, longitude=lon.array,
-                   latitude_bounds=lat.bounds.array,
-                   longitude_bounds=lon.bounds.array, altitude=alt,
-                   altitude_bounds=alt_bounds)
+        return cls(latitude=extraction['Y'],
+                   longitude=extraction['X'],
+                   altitude=extraction['Z'],
+                   latitude_bounds=extraction['Y_bounds'],
+                   longitude_bounds=extraction['X_bounds'],
+                   altitude_bounds=extraction['Z_bounds'])
 
     @classmethod
     def from_extent_and_resolution(cls, latitude_extent, longitude_extent,
@@ -643,6 +676,12 @@ class RotatedLatLonGrid(Grid):
     latitudes and longitudes, and whose rotation axis is not aligned
     with the North pole.
     """
+    _Z_name = 'altitude'
+    _Y_name = 'grid_latitude'
+    _X_name = 'grid_longitude'
+    _Z_units = ['m', 'metre', 'meter', 'metres', 'meters']
+    _Y_units = ['degrees', 'degree']
+    _X_units = ['degrees', 'degree']
 
     def __init__(self, grid_latitude, grid_longitude, grid_latitude_bounds,
                  grid_longitude_bounds, earth_radius, grid_north_pole_latitude,
@@ -764,13 +803,13 @@ class RotatedLatLonGrid(Grid):
 
         if altitude is not None and altitude_bounds is not None:
             self._set_space(altitude, altitude_bounds,
-                            name='altitude', units='m', axis='Z')
+                            name=self._Z_name, units=self._Z_units[0], axis='Z')
             self._f.construct('Z').set_property('positive', 'up')
 
         self._set_space(grid_latitude, grid_latitude_bounds,
-                        name='grid_latitude', units='degrees', axis='Y')
+                        name=self._Y_name, units=self._Y_units[0], axis='Y')
         self._set_space(grid_longitude, grid_longitude_bounds,
-                        name='grid_longitude', units='degrees', axis='X')
+                        name=self._X_name, units=self._X_units[0], axis='X')
 
         self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
                                       grid_north_pole_longitude)
@@ -788,7 +827,7 @@ class RotatedLatLonGrid(Grid):
                 datum=cf.Datum(
                     parameters={'earth_radius': earth_radius}),
                 coordinate_conversion=coord_conversion,
-                coordinates=['grid_latitude', 'grid_longitude'])
+                coordinates=[self._Y_name, self._X_name])
         )
 
     def is_space_equal_to(self, field, ignore_altitude=False):
@@ -799,11 +838,11 @@ class RotatedLatLonGrid(Grid):
         # coordinate_reference.equals() would also check the size of the
         # collections of coordinates)
         lat_lon = (
-            self._f.construct('grid_latitude').equals(
-                field.construct('grid_latitude', default=None),
+            self._f.construct(self._Y_name).equals(
+                field.construct(self._Y_name, default=None),
                 ignore_data_type=True)
-            and self._f.construct('grid_longitude').equals(
-                field.construct('grid_longitude', default=None),
+            and self._f.construct(self._X_name).equals(
+                field.construct(self._X_name, default=None),
                 ignore_data_type=True)
             and self._f.coordinate_reference(
                 'rotated_latitude_longitude').coordinate_conversion.equals(
@@ -820,9 +859,9 @@ class RotatedLatLonGrid(Grid):
         if ignore_altitude:
             alt = True
         else:
-            if self._f.has_construct('altitude'):
-                alt = self._f.construct('altitude').equals(
-                    field.construct('altitude', default=None),
+            if self._f.has_construct(self._Z_name):
+                alt = self._f.construct(self._Z_name).equals(
+                    field.construct(self._Z_name, default=None),
                     ignore_data_type=True)
             else:
                 alt = True
@@ -906,44 +945,19 @@ class RotatedLatLonGrid(Grid):
             X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
         )
         """
-        # check constructs
-        if not field.has_construct('grid_latitude'):
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no 'grid_latitude' construct found.".format(
-                                   cls.__name__))
-        grid_lat = field.construct('grid_latitude')
-        if not field.has_construct('grid_longitude'):
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no 'grid_longitude' construct found.".format(
-                                   cls.__name__))
-        grid_lon = field.construct('grid_longitude')
-        alt = None
-        alt_bounds = None
-        if field.has_construct('altitude'):
-            if field.construct('altitude').has_bounds():
-                alt = field.construct('altitude').array
-                alt_bounds = field.construct('altitude').bounds.array
+        extraction_xyz = cls._extract_xyz_from_field(field)
+        extraction_param = cls._extract_rotation_parameters_from_field(field)
 
-        # check units
-        if grid_lat.units not in ['degrees', 'degree']:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the units of 'grid_latitude' construct are "
-                               "not in degrees.".format(cls.__name__))
-        if grid_lon.units not in ['degrees', 'degree']:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the units of 'grid_longitude' construct are "
-                               "not in degrees.".format(cls.__name__))
+        return cls(grid_latitude=extraction_xyz['Y'],
+                   grid_longitude=extraction_xyz['X'],
+                   grid_latitude_bounds=extraction_xyz['Y_bounds'],
+                   grid_longitude_bounds=extraction_xyz['X_bounds'],
+                   altitude=extraction_xyz['Z'],
+                   altitude_bounds=extraction_xyz['Z_bounds'],
+                   **extraction_param)
 
-        # check bounds
-        if not grid_lat.has_bounds():
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the 'grid_latitude' construct has "
-                               "no bounds.".format(cls.__name__))
-        if not grid_lon.has_bounds():
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the 'grid_longitude' construct has "
-                               "no bounds.".format(cls.__name__))
-
+    @classmethod
+    def _extract_rotation_parameters_from_field(cls, field):
         # check conversion parameters
         if field.has_construct('grid_mapping_name:rotated_latitude_longitude'):
             crs = field.construct(
@@ -977,13 +991,11 @@ class RotatedLatLonGrid(Grid):
                                "'grid_north_pole_longitude'.".format(
                                    cls.__name__))
 
-        return cls(grid_latitude=grid_lat.array, grid_longitude=grid_lon.array,
-                   grid_latitude_bounds=grid_lat.bounds.array,
-                   grid_longitude_bounds=grid_lon.bounds.array,
-                   earth_radius=earth_radius,
-                   grid_north_pole_latitude=north_pole_lat,
-                   grid_north_pole_longitude=north_pole_lon,
-                   altitude=alt, altitude_bounds=alt_bounds)
+        return {
+            'earth_radius': earth_radius,
+            'grid_north_pole_latitude': north_pole_lat,
+            'grid_north_pole_longitude': north_pole_lon
+        }
 
     @classmethod
     def _from_extent_and_resolution(cls, grid_latitude_extent,
