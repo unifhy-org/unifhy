@@ -349,6 +349,28 @@ class Grid(SpaceDomain):
             + [")"]
         )
 
+    def is_space_equal_to(self, field, ignore_z=False):
+        # check whether X/Y(/Z if not ignored) constructs are identical
+        y_x = (
+            self._f.construct(self._Y_name).equals(
+                field.construct(self._Y_name, default=None),
+                ignore_data_type=True)
+            and self._f.construct(self._X_name).equals(
+                field.construct(self._X_name, default=None),
+                ignore_data_type=True)
+        )
+        if ignore_z:
+            z = True
+        else:
+            if self._f.has_construct(self._Z_name):
+                z = self._f.construct(self._Z_name).equals(
+                    field.construct(self._Z_name, default=None),
+                    ignore_data_type=True)
+            else:
+                z = True
+
+        return y_x and z
+
 
 class LatLonGrid(Grid):
     """LatLonGrid characterises the spatial dimension for a `Component`
@@ -512,29 +534,6 @@ class LatLonGrid(Grid):
                         name=self._Y_name, units=self._Y_units[0], axis='Y')
         self._set_space(longitude, longitude_bounds,
                         name=self._X_name, units=self._X_units[0], axis='X')
-
-    def is_space_equal_to(self, field, ignore_z=False):
-        # check if Y constructs match, check if X constructs match
-        y_x = (
-            self._f.construct(self._Y_name).equals(
-                field.construct(self._Y_name, default=None),
-                ignore_data_type=True)
-            and self._f.construct(self._X_name).equals(
-                field.construct(self._X_name, default=None),
-                ignore_data_type=True)
-        )
-        # check whether Z constructs match
-        if ignore_z:
-            z = True
-        else:
-            if self._f.has_construct(self._Z_name):
-                z = self._f.construct(self._Z_name).equals(
-                    field.construct(self._Z_name, default=None),
-                    ignore_data_type=True)
-            else:
-                z = True
-
-        return y_x and z
 
     @classmethod
     def from_extent_and_resolution(cls, latitude_extent, longitude_extent,
@@ -1003,19 +1002,16 @@ class RotatedLatLonGrid(Grid):
         )
 
     def is_space_equal_to(self, field, ignore_z=False):
-        # check whether Y and X constructs are identical by checking if
-        # Y match, if X match and if coordinate_reference  match (by
-        # checking its coordinate_conversion and its datum separately,
-        # because coordinate_reference.equals() would also check the
-        # size of the collections of coordinates)
-        y_x = (
-            self._f.construct(self._Y_name).equals(
-                field.construct(self._Y_name, default=None),
-                ignore_data_type=True)
-            and self._f.construct(self._X_name).equals(
-                field.construct(self._X_name, default=None),
-                ignore_data_type=True)
-            and self._f.coordinate_reference(
+        # check whether X/Y(/Z if not ignored) constructs are identical
+        # and if coordinate_reference match (by checking its
+        # coordinate_conversion and its datum separately, because
+        # coordinate_reference.equals() would also check the size of
+        # the collections of coordinates, which may be rightfully
+        # different if Z is ignored)
+        y_x_z = super(RotatedLatLonGrid, self).is_space_equal_to(field,
+                                                                 ignore_z)
+        conversion = (
+            self._f.coordinate_reference(
                 'rotated_latitude_longitude').coordinate_conversion.equals(
                 field.coordinate_reference(
                     'rotated_latitude_longitude',
@@ -1026,18 +1022,8 @@ class RotatedLatLonGrid(Grid):
                     'rotated_latitude_longitude',
                     default=None).datum)
         )
-        # check whether altitude constructs are identical
-        if ignore_z:
-            z = True
-        else:
-            if self._f.has_construct(self._Z_name):
-                z = self._f.construct(self._Z_name).equals(
-                    field.construct(self._Z_name, default=None),
-                    ignore_data_type=True)
-            else:
-                z = True
 
-        return y_x and z
+        return y_x_z and conversion
 
     @classmethod
     def from_field(cls, field):
