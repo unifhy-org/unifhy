@@ -135,20 +135,28 @@ class Grid(SpaceDomain):
     @staticmethod
     def _check_dimension_regularity(dimension, name):
         space_diff = np.diff(dimension) if dimension.ndim > 0 else 0
-        if not np.isclose(np.amin(space_diff), np.amax(space_diff)):
+        if not np.isclose(np.amin(space_diff), np.amax(space_diff),
+                          RTOL(), ATOL()):
             raise RuntimeWarning("The space gap in the {} coordinates is not "
                                  "constant across the region.".format(name))
 
     @staticmethod
     def _check_dimension_bounds_regularity(bounds, name):
+        rtol = RTOL()
+        atol = ATOL()
+
         space_diff = np.diff(bounds, axis=0) if bounds.ndim > 0 else 0
-        if not np.isclose(np.amin(space_diff), np.amax(space_diff)):
-            raise RuntimeWarning("The space gap in the {} coordinate bounds is "
-                                 "not constant across the region.".format(name))
+        if not np.isclose(np.amin(space_diff), np.amax(space_diff),
+                          rtol, atol):
+            raise RuntimeWarning("The space gap in the {} coordinate "
+                                 "bounds is not constant across the "
+                                 "region.".format(name))
         space_diff = np.diff(bounds, axis=1) if bounds.ndim > 1 else 0
-        if not np.isclose(np.amin(space_diff), np.amax(space_diff)):
-            raise RuntimeWarning("The space gap in the {} coordinate bounds is "
-                                 "not constant across the region.".format(name))
+        if not np.isclose(np.amin(space_diff), np.amax(space_diff),
+                          rtol, atol):
+            raise RuntimeWarning("The space gap in the {} coordinate "
+                                 "bounds is not constant across the "
+                                 "region.".format(name))
 
     def _set_space(self, dimension, dimension_bounds, name, units, axis):
         if not isinstance(dimension, np.ndarray):
@@ -267,10 +275,115 @@ class Grid(SpaceDomain):
         )
 
         # round the arrays and return them
+        decr = DECR()
         return (
-            np.around(dim, decimals=DECR()),
-            np.around(dim_bounds, decimals=DECR())
+            np.around(dim, decimals=decr),
+            np.around(dim_bounds, decimals=decr)
         )
+
+    def _get_dimension_resolution(self, axis):
+        # return dimension extent (i.e. (start, end) for dimension)
+
+        # try to use _resolution attribute
+        # (available if instantiated via method from_extent_and_resolution)
+        if hasattr(self, '_resolution'):
+            return self._resolution[axis]
+        # infer from first and second coordinates along dimension
+        else:
+            dim = getattr(self, axis).array
+            dim_bnds = getattr(self, axis + '_bounds').array
+            return np.around(
+                dim[1] - dim[0] if dim.size > 1
+                else dim_bnds[0, 1] - dim_bnds[0, 0],
+                DECR()
+            )
+
+    def _get_dimension_extent(self, axis):
+        # return dimension extent (i.e. (start, end) for dimension)
+
+        # try to use _extent attribute
+        # (available if instantiated via method from_extent_and_resolution)
+        if hasattr(self, '_extent'):
+            return self._extent[axis]
+        # infer from first coordinate lower/upper bounds along dimension
+        else:
+            decr = DECR()
+            dim_bnds = getattr(self, axis + '_bounds').array
+            return (np.around(dim_bnds[0, 0], decr),
+                    np.around(dim_bnds[-1, -1], decr))
+
+    def _get_dimension_span(self, axis):
+        # infer dimension span from first coordinate and its bounds
+        # (i.e. relative location of bounds around coordinate)
+        dim = getattr(self, axis).array
+        dim_bnds = getattr(self, axis + '_bounds').array
+        dim_res = self._get_dimension_resolution(axis)
+
+        left_wing = (dim_bnds[0, 0] - dim[0]) / dim_res
+        right_wing = (dim_bnds[0, 1] - dim[0]) / dim_res
+
+        decr = DECR()
+        return np.around(left_wing, decr), np.around(right_wing, decr)
+
+    def _get_xy_location(self):
+        # return location of Y/X coordinates relative to their grid cell
+
+        # try to use _location attribute
+        # (available if instantiated via method from_extent_and_resolution)
+        if hasattr(self, '_location'):
+            return self._location['YX']
+        # infer YX location from spans
+        else:
+            x_span = self._get_dimension_span('X')
+            y_span = self._get_dimension_span('Y')
+
+            rtol = RTOL()
+            atol = ATOL()
+
+            if (np.allclose(x_span, [-0.5, 0.5], rtol, atol)
+                    and np.allclose(y_span, [-0.5, 0.5], rtol, atol)):
+                yx_loc = 'centre'
+            elif (np.allclose(x_span, [0, 1], rtol, atol)
+                  and np.allclose(y_span, [0, 1], rtol, atol)):
+                yx_loc = 'lower_left'
+            elif (np.allclose(x_span, [0, 1], rtol, atol)
+                  and np.allclose(y_span, [-1, 0], rtol, atol)):
+                yx_loc = 'upper_left'
+            elif (np.allclose(x_span, [-1, 0], rtol, atol)
+                  and np.allclose(y_span, [0, 1], rtol, atol)):
+                yx_loc = 'lower_right'
+            elif (np.allclose(x_span, [-1, 0], rtol, atol)
+                  and np.allclose(y_span, [-1, 0], rtol, atol)):
+                yx_loc = 'upper_right'
+            else:
+                yx_loc = None
+
+            return yx_loc
+
+    def _get_z_location(self):
+        # return location of Z coordinate relative to its grid cell
+
+        # try to use _location attribute
+        # (available if instantiated via method from_extent_and_resolution)
+        if hasattr(self, '_location'):
+            return self._location['Z']
+        # infer Z location from span
+        else:
+            z_span = self._get_dimension_span('Z')
+
+            rtol = RTOL()
+            atol = ATOL()
+
+            if np.allclose(z_span, [-0.5, 0.5], rtol, atol):
+                z_loc = 'centre'
+            elif np.allclose(z_span, [0, 1], rtol, atol):
+                z_loc = 'bottom'
+            elif np.allclose(z_span, [-1, 0], rtol, atol):
+                z_loc = 'top'
+            else:
+                z_loc = None
+
+            return z_loc
 
     @classmethod
     def _extract_xyz_from_field(cls, field):
@@ -768,13 +881,24 @@ class LatLonGrid(Grid):
             X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
         )
         """
-        return cls(
+        inst = cls(
             **cls._grid_from_extent_and_resolution(
                 latitude_extent, longitude_extent, latitude_resolution,
                 longitude_resolution, latitude_longitude_location,
                 altitude_extent, altitude_resolution, altitude_location
             )
         )
+
+        inst._extent = {'Z': altitude_extent,
+                        'Y': latitude_extent,
+                        'X': longitude_extent}
+        inst._resolution = {'Z': altitude_resolution,
+                            'Y': latitude_resolution,
+                            'X': longitude_resolution}
+        inst._location = {'Z': altitude_location,
+                          'YX': latitude_longitude_location}
+
+        return inst
 
     @classmethod
     def from_field(cls, field):
