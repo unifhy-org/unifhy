@@ -1,6 +1,8 @@
 import numpy as np
 import cf
 
+from .settings import ATOL, RTOL, DECR
+
 
 class SpaceDomain(object):
     """SpaceDomain characterises a spatial dimension that is needed by a
@@ -244,10 +246,12 @@ class Grid(SpaceDomain):
         # (i.e. need to produce a whole number of grid cells)
         dim_start, dim_end = extent
 
-        if not (dim_end - dim_start) % resolution == 0:
+        if not np.isclose((dim_end - dim_start) % resolution, 0,
+                          RTOL(), ATOL()):
             raise RuntimeError("Error when generating grid from extent and "
-                               "resolution: {} extent and resolution do not define "
-                               "a whole number of grid cells.".format(name))
+                               "resolution: {} extent and resolution do not "
+                               "define a whole number of grid cells.".format(
+                                   name))
         dim_size = (dim_end - dim_start) // resolution
 
         # determine dimension coordinates
@@ -262,7 +266,11 @@ class Grid(SpaceDomain):
                 np.array(span) * resolution
         )
 
-        return dim, dim_bounds
+        # round the arrays and return them
+        return (
+            np.around(dim, decimals=DECR()),
+            np.around(dim_bounds, decimals=DECR())
+        )
 
     @classmethod
     def _extract_xyz_from_field(cls, field):
