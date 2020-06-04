@@ -1,5 +1,3 @@
-import sys
-import cf
 
 
 # SETTINGS FOR PRECISION OF NUMERICAL OPERATIONS
@@ -12,7 +10,6 @@ def ATOL(atol=None):
     # absolute numerical tolerance parameter for equality
     if atol is not None:
         PRECISION['ATOL'] = float(atol)
-        cf.ATOL(atol)
     return PRECISION['ATOL']
 
 
@@ -21,7 +18,6 @@ def RTOL(rtol=None):
     # relative numerical tolerance parameter for equality
     if rtol is not None:
         PRECISION['RTOL'] = float(rtol)
-        cf.RTOL(rtol)
     return PRECISION['RTOL']
 
 
@@ -33,6 +29,6 @@ def DECR(decr=None):
     return PRECISION['DECR']
 
 
-ATOL(sys.float_info.epsilon)
-RTOL(sys.float_info.epsilon)
+ATOL(1e-8)
+RTOL(1e-5)
 DECR(12)
