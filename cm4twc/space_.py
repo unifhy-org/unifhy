@@ -43,8 +43,8 @@ class SpaceDomain(object):
 
 class Grid(SpaceDomain):
     """Grid is a `SpaceDomain` subclass which represents space as
-    a regular grid. Any supported regular grid for a `Component` is a
-    subclass of Grid.
+    a regular grid made of contiguous grid cells. Any supported regular
+    grid for a `Component` is a subclass of Grid.
     """
     # characteristics of the dimension coordinates
     _Z_name = None
