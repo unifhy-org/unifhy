@@ -137,8 +137,8 @@ class Grid(SpaceDomain):
         space_diff = np.diff(dimension) if dimension.ndim > 0 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           RTOL(), ATOL()):
-            raise RuntimeWarning("The space gap in the {} coordinates is not "
-                                 "constant across the region.".format(name))
+            raise RuntimeError("The space gap in the {} coordinates is not "
+                               "constant across the region.".format(name))
 
     @staticmethod
     def _check_dimension_bounds_regularity(bounds, name):
@@ -148,36 +148,51 @@ class Grid(SpaceDomain):
         space_diff = np.diff(bounds, axis=0) if bounds.ndim > 0 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol, atol):
-            raise RuntimeWarning("The space gap in the {} coordinate "
-                                 "bounds is not constant across the "
-                                 "region.".format(name))
+            raise RuntimeError("The space gap in the {} coordinate "
+                               "bounds is not constant across the "
+                               "region.".format(name))
         space_diff = np.diff(bounds, axis=1) if bounds.ndim > 1 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol, atol):
-            raise RuntimeWarning("The space gap in the {} coordinate "
-                                 "bounds is not constant across the "
-                                 "region.".format(name))
+            raise RuntimeError("The space gap in the {} coordinate "
+                               "bounds is not constant across the "
+                               "region.".format(name))
+
+    @staticmethod
+    def _check_dimension_bounds_contiguity(bounds, name):
+        prev_to_next = bounds[1:, 0] - bounds[:-1, 1] \
+            if bounds.ndim > 1 else 0
+        if not np.allclose(prev_to_next, 0, RTOL(), ATOL()):
+            raise RuntimeError("The space gap in the {} coordinate "
+                               "bounds is not contiguous across the "
+                               "region.".format(name))
 
     def _set_space(self, dimension, dimension_bounds, name, units, axis):
+        # checks on dimension
         if not isinstance(dimension, np.ndarray):
             dimension = np.asarray(dimension)
         dimension = np.squeeze(dimension)
-        if not isinstance(dimension_bounds, np.ndarray):
-            dimension_bounds = np.asarray(dimension_bounds)
-        dimension_bounds = np.squeeze(dimension_bounds)
         if dimension.ndim > 1:
             raise RuntimeError("Error when initialising a {}: the "
                                "{} array given is not convertible to a "
                                "1D-array.".format(
                                     name, self.__class__.__name__))
         self._check_dimension_regularity(dimension, name)
+
+        # checks on dimension bounds
+        if not isinstance(dimension_bounds, np.ndarray):
+            dimension_bounds = np.asarray(dimension_bounds)
+        dimension_bounds = np.squeeze(dimension_bounds)
         if dimension_bounds.shape != (*dimension.shape, 2):
             raise RuntimeError("Error when initialising a {}: the {} bounds "
                                "array given is not compatible in size with "
                                "the {} array given.".format(
                                     self.__class__.__name__, name, name))
         self._check_dimension_bounds_regularity(dimension_bounds, name)
-        axis_lat = self._f.set_construct(cf.DomainAxis(dimension.size))
+        self._check_dimension_bounds_contiguity(dimension_bounds, name)
+
+        # set construct
+        axis_ = self._f.set_construct(cf.DomainAxis(dimension.size))
         self._f.set_construct(
             cf.DimensionCoordinate(
                 properties={
@@ -187,7 +202,7 @@ class Grid(SpaceDomain):
                 },
                 data=cf.Data(dimension),
                 bounds=cf.Bounds(data=cf.Data(dimension_bounds))),
-            axes=axis_lat
+            axes=axis_
         )
 
     @classmethod
