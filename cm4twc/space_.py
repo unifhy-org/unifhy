@@ -558,6 +558,26 @@ class Grid(SpaceDomain):
 
         return y_x and z
 
+    def to_config(self):
+        return {
+            '{}_extent'.format(self._Y_name):
+                self._get_dimension_extent('Y'),
+            '{}_resolution'.format(self._Y_name):
+                self._get_dimension_resolution('Y'),
+            '{}_extent'.format(self._X_name):
+                self._get_dimension_extent('X'),
+            '{}_resolution'.format(self._X_name):
+                self._get_dimension_resolution('X'),
+            '{}_{}_location'.format(self._Y_name, self._X_name):
+                self._get_xy_location(),
+            '{}_extent'.format(self._Z_name):
+                self._get_dimension_extent('Z'),
+            '{}_resolution'.format(self._Z_name):
+                self._get_dimension_resolution('Z'),
+            '{}_location'.format(self._Z_name):
+                self._get_z_location()
+        }
+
 
 class LatLonGrid(Grid):
     """LatLonGrid characterises the spatial dimension for a `Component`
@@ -1035,6 +1055,10 @@ class LatLonGrid(Grid):
                    longitude_bounds=extraction['X_bounds'],
                    altitude_bounds=extraction['Z_bounds'])
 
+    @classmethod
+    def from_config(cls, cfg):
+        cls.from_extent_and_resolution(**cfg)
+
 
 class RotatedLatLonGrid(Grid):
     """LatLonGrid characterises the spatial dimension for a `Component`
@@ -1354,7 +1378,7 @@ class RotatedLatLonGrid(Grid):
                                     grid_longitude_resolution,
                                     earth_radius, grid_north_pole_latitude,
                                     grid_north_pole_longitude,
-                                    latitude_longitude_location='centre',
+                                    grid_latitude_grid_longitude_location='centre',
                                     altitude_extent=None,
                                     altitude_resolution=None,
                                     altitude_location='centre'):
@@ -1366,9 +1390,20 @@ class RotatedLatLonGrid(Grid):
             **cls._get_grid_from_extent_and_resolution(
                 grid_latitude_extent, grid_longitude_extent,
                 grid_latitude_resolution, grid_longitude_resolution,
-                latitude_longitude_location, altitude_extent,
+                grid_latitude_grid_longitude_location, altitude_extent,
                 altitude_resolution, altitude_location),
             earth_radius=earth_radius,
             grid_north_pole_latitude=grid_north_pole_latitude,
             grid_north_pole_longitude=grid_north_pole_longitude
         )
+
+    def to_config(self):
+        cfg = super(RotatedLatLonGrid, self).to_config()
+        cfg.update(
+            self._extract_rotation_parameters_from_field(self._f)
+        )
+        return cfg
+
+    @classmethod
+    def from_config(cls, cfg):
+        cls._from_extent_and_resolution(**cfg)
