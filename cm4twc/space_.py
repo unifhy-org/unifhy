@@ -345,47 +345,54 @@ class Grid(SpaceDomain):
 
     def _get_dimension_resolution(self, axis):
         # return dimension extent (i.e. (start, end) for dimension)
-
-        # try to use _resolution attribute
-        # (available if instantiated via method from_extent_and_resolution)
-        if hasattr(self, '_resolution'):
-            return self._resolution[axis]
-        # infer from first and second coordinates along dimension
+        if getattr(self, axis) is None:
+            return None
         else:
-            dim = getattr(self, axis).array
-            dim_bnds = getattr(self, axis + '_bounds').array
-            return np.around(
-                dim[1] - dim[0] if dim.size > 1
-                else dim_bnds[0, 1] - dim_bnds[0, 0],
-                DECR()
-            )
+            # try to use _resolution attribute
+            # (available if instantiated via method from_extent_and_resolution)
+            if hasattr(self, '_resolution'):
+                return self._resolution[axis]
+            # infer from first and second coordinates along dimension
+            else:
+                dim = getattr(self, axis).array
+                dim_bnds = getattr(self, axis + '_bounds').array
+                return np.around(
+                    dim[1] - dim[0] if dim.size > 1
+                    else dim_bnds[0, 1] - dim_bnds[0, 0],
+                    DECR()
+                )
 
     def _get_dimension_extent(self, axis):
         # return dimension extent (i.e. (start, end) for dimension)
-
-        # try to use _extent attribute
-        # (available if instantiated via method from_extent_and_resolution)
-        if hasattr(self, '_extent'):
-            return self._extent[axis]
-        # infer from first coordinate lower/upper bounds along dimension
+        if getattr(self, axis) is None:
+            return None
         else:
-            decr = DECR()
-            dim_bnds = getattr(self, axis + '_bounds').array
-            return (np.around(dim_bnds[0, 0], decr),
-                    np.around(dim_bnds[-1, -1], decr))
+            # try to use _extent attribute
+            # (available if instantiated via method from_extent_and_resolution)
+            if hasattr(self, '_extent'):
+                return self._extent[axis]
+            # infer from first coordinate lower/upper bounds along dimension
+            else:
+                decr = DECR()
+                dim_bnds = getattr(self, axis + '_bounds').array
+                return (np.around(dim_bnds[0, 0], decr),
+                        np.around(dim_bnds[-1, -1], decr))
 
     def _get_dimension_span(self, axis):
-        # infer dimension span from first coordinate and its bounds
-        # (i.e. relative location of bounds around coordinate)
-        dim = getattr(self, axis).array
-        dim_bnds = getattr(self, axis + '_bounds').array
-        dim_res = self._get_dimension_resolution(axis)
+        if getattr(self, axis) is None:
+            return None
+        else:
+            # infer dimension span from first coordinate and its bounds
+            # (i.e. relative location of bounds around coordinate)
+            dim = getattr(self, axis).array
+            dim_bnds = getattr(self, axis + '_bounds').array
+            dim_res = self._get_dimension_resolution(axis)
 
-        left_wing = (dim_bnds[0, 0] - dim[0]) / dim_res
-        right_wing = (dim_bnds[0, 1] - dim[0]) / dim_res
+            left_wing = (dim_bnds[0, 0] - dim[0]) / dim_res
+            right_wing = (dim_bnds[0, 1] - dim[0]) / dim_res
 
-        decr = DECR()
-        return np.around(left_wing, decr), np.around(right_wing, decr)
+            decr = DECR()
+            return np.around(left_wing, decr), np.around(right_wing, decr)
 
     def _get_xy_location(self):
         # return location of Y/X coordinates relative to their grid cell
@@ -424,28 +431,30 @@ class Grid(SpaceDomain):
 
     def _get_z_location(self):
         # return location of Z coordinate relative to its grid cell
-
-        # try to use _location attribute
-        # (available if instantiated via method from_extent_and_resolution)
-        if hasattr(self, '_location'):
-            return self._location['Z']
-        # infer Z location from span
+        if self.Z is None:
+            return None
         else:
-            z_span = self._get_dimension_span('Z')
-
-            rtol = RTOL()
-            atol = ATOL()
-
-            if np.allclose(z_span, [-0.5, 0.5], rtol, atol):
-                z_loc = 'centre'
-            elif np.allclose(z_span, [0, 1], rtol, atol):
-                z_loc = 'bottom'
-            elif np.allclose(z_span, [-1, 0], rtol, atol):
-                z_loc = 'top'
+            # try to use _location attribute
+            # (available if instantiated via method from_extent_and_resolution)
+            if hasattr(self, '_location'):
+                return self._location['Z']
+            # infer Z location from span
             else:
-                z_loc = None
+                z_span = self._get_dimension_span('Z')
 
-            return z_loc
+                rtol = RTOL()
+                atol = ATOL()
+
+                if np.allclose(z_span, [-0.5, 0.5], rtol, atol):
+                    z_loc = 'centre'
+                elif np.allclose(z_span, [0, 1], rtol, atol):
+                    z_loc = 'bottom'
+                elif np.allclose(z_span, [-1, 0], rtol, atol):
+                    z_loc = 'top'
+                else:
+                    z_loc = None
+
+                return z_loc
 
     @classmethod
     def _extract_xyz_from_field(cls, field):
