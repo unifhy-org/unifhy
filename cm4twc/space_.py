@@ -134,49 +134,102 @@ class Grid(SpaceDomain):
 
     @staticmethod
     def _check_dimension_regularity(dimension, name):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_regularity(numpy.array([0., 1., 2.]), 'test')
+        >>> Grid._check_dimension_regularity(numpy.array([0., .9, 1.]), 'test')
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test space gap not constant across region
+        """
         space_diff = np.diff(dimension) if dimension.ndim > 0 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           RTOL(), ATOL()):
-            raise RuntimeError("The space gap in the {} coordinates is not "
-                               "constant across the region.".format(name))
+            raise RuntimeError(
+                "{} space gap not constant across region".format(name))
 
     @staticmethod
     def _check_dimension_bounds_regularity(bounds, name):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_bounds_regularity(
+        ...     numpy.array([0., 1.]), 'test')
+        >>> Grid._check_dimension_bounds_regularity(
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]), 'test')
+        >>> Grid._check_dimension_bounds_regularity(
+        ...     numpy.array([[0., .9], [.9, 2.], [2., 3.]]), 'test')
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds space gap not constant across region
+        >>> Grid._check_dimension_bounds_regularity(
+        ...     numpy.array([[0., 1.], [2., 3.], [2., 3.]]), 'test')
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds space gap not constant across region
+        """
         rtol = RTOL()
         atol = ATOL()
 
         space_diff = np.diff(bounds, axis=0) if bounds.ndim > 0 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol, atol):
-            raise RuntimeError("The space gap in the {} coordinate "
-                               "bounds is not constant across the "
-                               "region.".format(name))
+            raise RuntimeError(
+                "{} bounds space gap not constant across region".format(name))
         space_diff = np.diff(bounds, axis=1) if bounds.ndim > 1 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol, atol):
-            raise RuntimeError("The space gap in the {} coordinate "
-                               "bounds is not constant across the "
-                               "region.".format(name))
+            raise RuntimeError(
+                "{} bounds space gap not constant across region".format(name))
 
     @staticmethod
     def _check_dimension_bounds_contiguity(bounds, name):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_bounds_contiguity(
+        ...     numpy.array([0., 1.]), 'test')
+        >>> Grid._check_dimension_bounds_contiguity(
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]), 'test')
+        >>> Grid._check_dimension_bounds_contiguity(
+        ...     numpy.array([[0.0, 0.9], [1.0, 1.9], [2.0, 2.9]]), 'test')
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds not contiguous across region
+        """
         prev_to_next = bounds[1:, 0] - bounds[:-1, 1] \
             if bounds.ndim > 1 else 0
         if not np.allclose(prev_to_next, 0, RTOL(), ATOL()):
-            raise RuntimeError("The space gap in the {} coordinate "
-                               "bounds is not contiguous across the "
-                               "region.".format(name))
+            raise RuntimeError(
+                "{} bounds not contiguous across region".format(name))
 
     def _set_space(self, dimension, dimension_bounds, name, units, axis):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid()._set_space([[0.5]], [0., 1.], 'test', '1', 'I')
+        >>> Grid()._set_space([[0, 1], [1, 2]], [[0., 1.], [1., 2.], [2., 3.]],
+        ...                   'test', '1', 'I')
+        Traceback (most recent call last):
+            ...
+        RuntimeError: Grid test not convertible to 1D-array
+        >>> Grid()._set_space([0.5, 1.5, 2.5], [[0., 1.], [1., 2.], [2., 3.]],
+        ...                   'test', '1', 'I')
+        >>> Grid()._set_space([0.5, 1.5], [[0., 1.], [1., 2.], [2., 3.]],
+        ...                   'test', '1', 'I')
+        Traceback (most recent call last):
+            ...
+        RuntimeError: Grid test bounds not compatible in size with test
+        """
         # checks on dimension
         if not isinstance(dimension, np.ndarray):
             dimension = np.asarray(dimension)
         dimension = np.squeeze(dimension)
         if dimension.ndim > 1:
-            raise RuntimeError("Error when initialising a {}: the "
-                               "{} array given is not convertible to a "
-                               "1D-array.".format(
-                                    name, self.__class__.__name__))
+            raise RuntimeError(
+                "{} {} not convertible to 1D-array".format(
+                    self.__class__.__name__, name))
         self._check_dimension_regularity(dimension, name)
 
         # checks on dimension bounds
@@ -184,10 +237,9 @@ class Grid(SpaceDomain):
             dimension_bounds = np.asarray(dimension_bounds)
         dimension_bounds = np.squeeze(dimension_bounds)
         if dimension_bounds.shape != (*dimension.shape, 2):
-            raise RuntimeError("Error when initialising a {}: the {} bounds "
-                               "array given is not compatible in size with "
-                               "the {} array given.".format(
-                                    self.__class__.__name__, name, name))
+            raise RuntimeError(
+                "{} {} bounds not compatible in size with {}".format(
+                    self.__class__.__name__, name, name))
         self._check_dimension_bounds_regularity(dimension_bounds, name)
         self._check_dimension_bounds_contiguity(dimension_bounds, name)
 
@@ -222,10 +274,9 @@ class Grid(SpaceDomain):
         elif yx_location in cls._YX_loc_map['upper_right']:
             x_span, y_span = [[-1, 0]], [[-1, 0]]
         else:
-            raise ValueError("Error when generating grid from extent and "
-                             "resolution: {}-{} location '{}' not "
-                             "supported.".format(yx_location, cls._Y_name,
-                                                 cls._X_name))
+            raise ValueError(
+                "{} {}-{} location '{}' not supported".format(
+                    cls.__name__, cls._Y_name, cls._X_name, yx_location))
 
         # determine Y and X coordinates and their bounds
         y, y_bounds = cls._dimension_from_extent_and_resolution(
@@ -244,9 +295,9 @@ class Grid(SpaceDomain):
             elif z_location in cls._Z_loc_map['top']:
                 z_span = [[-1, 0]]
             else:
-                raise ValueError("Error when generating grid from extent and "
-                                 "resolution: {} location '{}' not "
-                                 "supported.".format(z_location, cls._Z_name))
+                raise ValueError(
+                    "{} {} location '{}' not supported".format(
+                        cls.__name__, cls._Z_name, z_location))
 
             # determine latitude and longitude coordinates and their bounds
             z, z_bounds = cls._dimension_from_extent_and_resolution(
@@ -271,10 +322,9 @@ class Grid(SpaceDomain):
 
         if not np.isclose((dim_end - dim_start) % resolution, 0,
                           RTOL(), ATOL()):
-            raise RuntimeError("Error when generating grid from extent and "
-                               "resolution: {} extent and resolution do not "
-                               "define a whole number of grid cells.".format(
-                                   name))
+            raise RuntimeError(
+                "{} extent and resolution do not define a whole number "
+                "of grid cells.".format(name))
         dim_size = (dim_end - dim_start) // resolution
 
         # determine dimension coordinates
@@ -404,14 +454,12 @@ class Grid(SpaceDomain):
     def _extract_xyz_from_field(cls, field):
         # check constructs
         if not field.has_construct(cls._Y_name):
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no '{}' construct found.".format(
-                                   cls.__name__, cls._Y_name))
+            raise RuntimeError("{} field missing '{}' construct".format(
+                               cls.__name__, cls._Y_name))
         y = field.construct(cls._Y_name)
         if not field.has_construct(cls._X_name):
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no '{}' construct found.".format(
-                                   cls.__name__, cls._X_name))
+            raise RuntimeError("{} field missing '{}' construct".format(
+                               cls.__name__, cls._X_name))
         x = field.construct(cls._X_name)
         z_array = None
         z_bounds_array = None
@@ -421,32 +469,28 @@ class Grid(SpaceDomain):
                 z_units = field.construct(cls._Z_name).units
                 z_bounds_array = field.construct(cls._Z_name).bounds.array
                 if z_units not in cls._Z_units:
-                    raise RuntimeError("Error when initialising a {} from a "
-                                       "Field: the units of '{}' construct are "
-                                       "not in {}.".format(cls.__name__,
-                                                           cls._Z_name,
-                                                           cls._Z_units[0]))
+                    raise RuntimeError(
+                        "{} field construct '{}' units are not in {}.".format(
+                            cls.__name__, cls._Z_name, cls._Z_units[0]))
 
         # check units
         if y.units not in cls._Y_units:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the units of '{}' construct are not in "
-                               "{}.".format(cls.__name__, cls._Y_name,
-                                            cls._Y_units[0]))
+            raise RuntimeError(
+                "{} field construct '{}' units are not in {}.".format(
+                    cls.__name__, cls._Y_name, cls._Y_units[0])
+            )
         if x.units not in cls._X_units:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the units of '{}' construct are not in "
-                               "{}.".format(cls.__name__, cls._X_name,
-                                            cls._X_units[0]))
+            raise RuntimeError(
+                "{} field construct '{}' units are not in {}.".format(
+                    cls.__name__, cls._X_name, cls._X_units[0])
+            )
 
         # check bounds
         if not y.has_bounds():
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the '{}' construct has no bounds.".format(
+            raise RuntimeError("{} field construct '{}' has no bounds".format(
                                    cls.__name__, cls._Y_name))
         if not x.has_bounds():
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "the '{}' construct has no bounds.".format(
+            raise RuntimeError("{} field construct '{}' has no bounds".format(
                                    cls.__name__, cls._X_name))
 
         return {
@@ -1267,33 +1311,28 @@ class RotatedLatLonGrid(Grid):
             crs = field.construct(
                 'grid_mapping_name:rotated_latitude_longitude')
         else:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "no coordinate reference found with coordinate "
-                               "conversion whose 'grid_mapping_name' is set as "
-                               "'rotated_latitude_longitude'.".format(
-                                   cls.__name__))
+            raise RuntimeError(
+                "{} field missing coordinate conversion 'grid_mapping_name:"
+                "rotated_latitude_longitude".format(cls.__name__))
         if crs.datum.has_parameter('earth_radius'):
             earth_radius = crs.datum.get_parameter('earth_radius')
         else:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "coordinate reference has no datum property "
-                               "named 'earth_radius'.".format(cls.__name__))
+            raise RuntimeError("{} field coordinate reference missing "
+                               "datum 'earth_radius'".format(cls.__name__))
         if crs.coordinate_conversion.has_parameter('grid_north_pole_latitude'):
             north_pole_lat = crs.coordinate_conversion.get_parameter(
                 'grid_north_pole_latitude')
         else:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "coordinate conversion has no property named "
-                               "'grid_north_pole_latitude'.".format(
-                                   cls.__name__))
+            raise RuntimeError(
+                "{} field coordinate conversion missing property "
+                "'grid_north_pole_latitude'".format(cls.__name__))
         if crs.coordinate_conversion.has_parameter('grid_north_pole_longitude'):
             north_pole_lon = crs.coordinate_conversion.get_parameter(
                 'grid_north_pole_longitude')
         else:
-            raise RuntimeError("Error when initialising a {} from a Field: "
-                               "coordinate conversion has no property named "
-                               "'grid_north_pole_longitude'.".format(
-                                   cls.__name__))
+            raise RuntimeError(
+                "{} field coordinate conversion missing property"
+                "'grid_north_pole_longitude'".format(cls.__name__))
 
         return {
             'earth_radius': earth_radius,
