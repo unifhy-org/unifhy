@@ -255,10 +255,10 @@ class Grid(SpaceDomain):
         )
 
     @classmethod
-    def _grid_from_extent_and_resolution(cls, y_extent, x_extent,
-                                         y_resolution, x_resolution,
-                                         yx_location, z_extent, z_resolution,
-                                         z_location):
+    def _get_grid_from_extent_and_resolution(cls, y_extent, x_extent,
+                                             y_resolution, x_resolution,
+                                             yx_location, z_extent,
+                                             z_resolution, z_location):
         # infer grid span in relation to coordinate from location
         if yx_location in cls._YX_loc_map['centre']:
             x_span, y_span = [[-0.5, 0.5]], [[-0.5, 0.5]]
@@ -276,10 +276,10 @@ class Grid(SpaceDomain):
                     cls.__name__, cls._Y_name, cls._X_name, yx_location))
 
         # determine Y and X coordinates and their bounds
-        y, y_bounds = cls._dimension_from_extent_and_resolution(
+        y, y_bounds = cls._get_dimension_from_extent_and_resolution(
             y_extent, y_resolution, y_span, cls._Y_name
         )
-        x, x_bounds = cls._dimension_from_extent_and_resolution(
+        x, x_bounds = cls._get_dimension_from_extent_and_resolution(
             x_extent, x_resolution, x_span, cls._X_name
         )
 
@@ -297,7 +297,7 @@ class Grid(SpaceDomain):
                         cls.__name__, cls._Z_name, z_location))
 
             # determine latitude and longitude coordinates and their bounds
-            z, z_bounds = cls._dimension_from_extent_and_resolution(
+            z, z_bounds = cls._get_dimension_from_extent_and_resolution(
                 z_extent, z_resolution, z_span, cls._Z_name
             )
         else:
@@ -312,7 +312,8 @@ class Grid(SpaceDomain):
                 cls._Z_name + '_bounds': z_bounds}
 
     @staticmethod
-    def _dimension_from_extent_and_resolution(extent, resolution, span, name):
+    def _get_dimension_from_extent_and_resolution(extent, resolution, span,
+                                                  name):
         # check compatibility between extent and resolution
         # (i.e. need to produce a whole number of grid cells)
         dim_start, dim_end = extent
@@ -947,7 +948,7 @@ class LatLonGrid(Grid):
         )
         """
         inst = cls(
-            **cls._grid_from_extent_and_resolution(
+            **cls._get_grid_from_extent_and_resolution(
                 latitude_extent, longitude_extent, latitude_resolution,
                 longitude_resolution, latitude_longitude_location,
                 altitude_extent, altitude_resolution, altitude_location
@@ -1362,7 +1363,7 @@ class RotatedLatLonGrid(Grid):
         optionally altitude coordinate).
         """
         return cls(
-            **cls._grid_from_extent_and_resolution(
+            **cls._get_grid_from_extent_and_resolution(
                 grid_latitude_extent, grid_longitude_extent,
                 grid_latitude_resolution, grid_longitude_resolution,
                 latitude_longitude_location, altitude_extent,
