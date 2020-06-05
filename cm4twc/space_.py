@@ -68,9 +68,6 @@ class Grid(SpaceDomain):
         'top': ('top', '2', 2)
     }
 
-    def __init__(self):
-        super(Grid, self).__init__()
-
     @property
     def shape(self):
         """Return the size of each of the dimension coordinates of
