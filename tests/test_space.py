@@ -18,7 +18,9 @@ def get_dummy_spacedomain():
                                [-3.6,  -3.16], [-3.16, -2.72], [-2.72, -2.28],
                                [-2.28, -1.84], [-1.84, -1.4], [-1.4, -0.96]],
         earth_radius=6371007., grid_north_pole_latitude=38.0,
-        grid_north_pole_longitude=190.0
+        grid_north_pole_longitude=190.0,
+        altitude=1.5,
+        altitude_bounds=[1.0, 2.0]
     )
 
 

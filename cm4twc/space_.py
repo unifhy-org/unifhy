@@ -1,4 +1,5 @@
 import numpy as np
+import re
 import cf
 
 from .settings import ATOL, RTOL, DECR
@@ -540,19 +541,34 @@ class Grid(SpaceDomain):
         # check whether X/Y(/Z if not ignored) constructs are identical
         y_x = (
             self._f.construct(self._Y_name).equals(
-                field.construct(self._Y_name, default=None),
-                ignore_data_type=True)
+                field.construct(re.compile(r'name={}$'.format(self._Y_name)),
+                                default=None),
+                ignore_data_type=True,
+                ignore_properties=('standard_name',
+                                   'long_name',
+                                   'computed_standard_name'))
             and self._f.construct(self._X_name).equals(
-                field.construct(self._X_name, default=None),
-                ignore_data_type=True)
+                field.construct(re.compile(r'name={}$'.format(self._X_name)),
+                                default=None),
+                ignore_data_type=True,
+                ignore_properties=('standard_name',
+                                   'long_name',
+                                   'computed_standard_name'))
         )
         if ignore_z:
             z = True
         else:
-            if self._f.has_construct(self._Z_name):
-                z = self._f.construct(self._Z_name).equals(
-                    field.construct(self._Z_name, default=None),
-                    ignore_data_type=True)
+            if self._f.has_construct('Z'):
+                z = self._f.construct('Z').equals(
+                    field.construct(
+                        re.compile(r'name={}$'.format(self._Z_name)),
+                        default=None),
+                    ignore_data_type=True,
+                    ignore_properties=('standard_name',
+                                       'long_name',
+                                       'computed_standard_name'))
+            elif field.has_construct('Z'):
+                z = False
             else:
                 z = True
 
