@@ -341,8 +341,8 @@ class Grid(SpaceDomain):
         # round the arrays and return them
         decr = DECR()
         return (
-            np.around(dim, decimals=decr),
-            np.around(dim_bounds, decimals=decr)
+            np.around(dim, decimals=decr).tolist(),
+            np.around(dim_bounds, decimals=decr).tolist()
         )
 
     def _get_dimension_resolution(self, axis):
@@ -358,11 +358,9 @@ class Grid(SpaceDomain):
             else:
                 dim = getattr(self, axis).array
                 dim_bnds = getattr(self, axis + '_bounds').array
-                return np.around(
-                    dim[1] - dim[0] if dim.size > 1
-                    else dim_bnds[0, 1] - dim_bnds[0, 0],
-                    DECR()
-                )
+                return np.around(dim[1] - dim[0] if dim.size > 1
+                                 else dim_bnds[0, 1] - dim_bnds[0, 0],
+                                 DECR()).tolist()
 
     def _get_dimension_extent(self, axis):
         # return dimension extent (i.e. (start, end) for dimension)
@@ -377,8 +375,8 @@ class Grid(SpaceDomain):
             else:
                 decr = DECR()
                 dim_bnds = getattr(self, axis + '_bounds').array
-                return (np.around(dim_bnds[0, 0], decr),
-                        np.around(dim_bnds[-1, -1], decr))
+                return (np.around(dim_bnds[0, 0], decr).tolist(),
+                        np.around(dim_bnds[-1, -1], decr).tolist())
 
     def _get_dimension_span(self, axis):
         if getattr(self, axis) is None:
@@ -394,7 +392,8 @@ class Grid(SpaceDomain):
             right_wing = (dim_bnds[0, 1] - dim[0]) / dim_res
 
             decr = DECR()
-            return np.around(left_wing, decr), np.around(right_wing, decr)
+            return (np.around(left_wing, decr).tolist(),
+                    np.around(right_wing, decr).tolist())
 
     def _get_xy_location(self):
         # return location of Y/X coordinates relative to their grid cell

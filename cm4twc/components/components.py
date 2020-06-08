@@ -16,9 +16,10 @@ class _Component(metaclass=abc.ABCMeta):
 
     def __init__(self, category,
                  timedomain, spacedomain, dataset, parameters, constants,
-                 driving_data_info, ancil_data_info,
-                 parameters_info, constants_info, states_info, solver_history,
-                 inwards, outwards):
+                 solver_history=None, driving_data_info=None,
+                 ancil_data_info=None, parameters_info=None,
+                 constants_info=None, states_info=None,
+                 inwards=None, outwards=None):
 
         # category attribute
         self.category = category
@@ -135,8 +136,8 @@ class _Component(metaclass=abc.ABCMeta):
                 raise AttributeError("The variable '{}' in the {} for "
                                      "the {} component is missing a 'units' "
                                      "attribute.".format(
-                                        data_name, DataSet.__name__,
-                                        self.category))
+                                         data_name, DataSet.__name__,
+                                         self.category))
 
             # subspace in time
             dataset[data_name] = dataset[data_name].subspace(
@@ -185,8 +186,8 @@ class _Component(metaclass=abc.ABCMeta):
                 raise AttributeError("The variable '{}' in the {} for "
                                      "the {} component is missing a 'units' "
                                      "attribute.".format(
-                                        data_name, DataSet.__name__,
-                                        self.category))
+                                         data_name, DataSet.__name__,
+                                         self.category))
             # check that the data and component space domains are compatible
             if not spacedomain.is_space_equal_to(dataset[data_name]):
                 raise ValueError(
@@ -206,6 +207,17 @@ class _Component(metaclass=abc.ABCMeta):
                 "{} are all required.".format(
                     self.category, self.__class__.__name__,
                     self.parameters_info))
+
+    def to_config(self):
+        return {
+            'module': self.__module__,
+            'class': self.__class__.__name__,
+            'time': self.timedomain.to_config(),
+            'space': self.spacedomain.to_config(),
+            'data': self.dataset.to_config(),
+            'parameters': self.parameters if self.parameters else None,
+            'constants': self.constants if self.constants else None
+        }
 
     def get_spin_up_timedomain(self, start, end):
         timedomain = TimeDomain.from_start_end_step(
@@ -315,8 +327,8 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
         super(SurfaceLayerComponent, self).__init__(
             self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
-            driving_data_info, ancil_data_info,
-            parameters_info, constants_info, states_info, solver_history,
+            solver_history, driving_data_info, ancil_data_info,
+            parameters_info, constants_info, states_info,
             self._ins, self._outs)
 
 
@@ -344,8 +356,8 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
         super(SubSurfaceComponent, self).__init__(
             self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
-            driving_data_info, ancil_data_info,
-            parameters_info, constants_info, states_info, solver_history,
+            solver_history, driving_data_info, ancil_data_info,
+            parameters_info, constants_info, states_info,
             self._ins, self._outs)
 
 
@@ -368,8 +380,8 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
         super(OpenWaterComponent, self).__init__(
             self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
-            driving_data_info, ancil_data_info,
-            parameters_info, constants_info, states_info, solver_history,
+            solver_history, driving_data_info, ancil_data_info,
+            parameters_info, constants_info, states_info,
             self._ins, self._outs)
 
 
@@ -385,8 +397,8 @@ class DataComponent(_Component):
         super(DataComponent, self).__init__(
             substituting_class.get_class_kind(),
             timedomain, spacedomain, dataset, None, None,
-            substituting_class.get_class_outwards(), None,
-            None, None, None, 0,
+            0, substituting_class.get_class_outwards(), None,
+            None, None, None,
             self._ins, self._outs)
 
     def initialise(self, **kwargs):
@@ -411,8 +423,8 @@ class NullComponent(_Component):
         super(NullComponent, self).__init__(
             substituting_class.get_class_kind(),
             timedomain, spacedomain, None, None, None,
-            None, None,
-            None, None, None, 0,
+            0, None, None,
+            None, None, None,
             self._ins, substituting_class.get_class_outwards())
 
     def initialise(self, **kwargs):

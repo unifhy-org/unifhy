@@ -582,37 +582,21 @@ class TimeDomain(object):
                 raise KeyError("The {} property of time in missing in "
                                "the configuration.")
         return cls.from_start_end_step(
-            start=cfg['start'], end=cfg['end'],
+            start=datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S'),
+            end=datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S'),
             step=timedelta(**cfg['step']),
             units=cfg['units'] if 'units' in cfg else None,
             calendar=cfg['units'] if 'units' in cfg else None
         )
 
     def to_config(self):
-        dts = self.as_string_array()
         return {
-            'start': dts[0],
-            'end': dts[-1],
+            'start': self.time.datetime_array[0].strftime('%Y-%m-%d %H:%M:%S'),
+            'end': self.time.datetime_array[-1].strftime('%Y-%m-%d %H:%M:%S'),
             'step': {'seconds': self.timedelta.total_seconds()},
-            'units': self._f.construct('time').units,
-            'calendar': self._f.construct('time').calendar
+            'units': self.units,
+            'calendar': self.calendar
         }
-
-    def as_datetime_array(self):
-        """Return the time series characterising the period covered by
-        the TimeDomain as an array of datetime objects.
-        """
-        return self._f.construct('time').datetime_array
-
-    def as_string_array(self, formatting=None):
-        """Return the time series characterising the period covered by
-        the TimeDomain as list of datetime strings.
-        """
-        formatting = formatting if formatting else "%Y-%m-%d %H:%M:%S"
-
-        return np.asarray(
-            [dt.strftime(format=formatting) for dt in self.as_datetime_array()]
-        )
 
 
 class Clock(object):
