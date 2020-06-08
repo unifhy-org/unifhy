@@ -586,7 +586,7 @@ class TimeDomain(object):
             end=datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S'),
             step=timedelta(**cfg['step']),
             units=cfg['units'] if 'units' in cfg else None,
-            calendar=cfg['units'] if 'units' in cfg else None
+            calendar=cfg['calendar'] if 'calendar' in cfg else None
         )
 
     def to_config(self):
