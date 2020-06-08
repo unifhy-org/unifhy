@@ -167,3 +167,22 @@ class DataSet(MutableMapping):
             else field.standard_name: cf.Field(source=field, copy=False)
             for field in cf.read(files, select=select)
         }
+
+    @classmethod
+    def from_config(cls, cfg):
+        inst = cls()
+        for var in cfg:
+            inst.load_from_file(
+                files=cfg[var]['files'],
+                select=cfg[var]['select'],
+                name_mapping={cfg[var]['select']: var}
+            )
+        return inst
+
+    def to_config(self):
+        return {
+            var: {
+                'files': self[var].data.get_filenames(),
+                'select': self[var].standard_name
+            } for var in self
+        }
