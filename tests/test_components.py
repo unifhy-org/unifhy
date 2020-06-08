@@ -3,6 +3,7 @@ import cm4twc
 from tests.dummy_components.surfacelayer import Dummy as SurfaceLayerDummy
 from tests.dummy_components.subsurface import Dummy as SubSurfaceDummy
 from tests.dummy_components.openwater import Dummy as OpenWaterDummy
+from tests.test_data import get_dummy_component_substitute_dataset
 
 
 def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
@@ -18,8 +19,7 @@ def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
         surfacelayer = cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_file(
-                'dummy_data/dummy_surfacelayer_substitute_data.nc'),
+            dataset=get_dummy_component_substitute_dataset('surfacelayer'),
             substituting_class=cm4twc.SurfaceLayerComponent
         )
     else:  # i.e. 'n'
@@ -44,8 +44,7 @@ def get_subsurface_component(kind, timedomain, spacedomain, dataset):
         subsurface = cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_file(
-                'dummy_data/dummy_subsurface_substitute_data.nc'),
+            dataset=get_dummy_component_substitute_dataset('subsurface'),
             substituting_class=cm4twc.SubSurfaceComponent
         )
     else:  # i.e. 'n'
@@ -70,8 +69,7 @@ def get_openwater_component(kind, timedomain, spacedomain, dataset):
         openwater = cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=cm4twc.DataSet.from_file(
-                'dummy_data/dummy_openwater_substitute_data.nc'),
+            dataset=get_dummy_component_substitute_dataset('openwater'),
             substituting_class=cm4twc.OpenWaterComponent
         )
     else:  # i.e. 'n'

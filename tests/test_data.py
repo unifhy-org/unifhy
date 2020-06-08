@@ -5,13 +5,19 @@ import cm4twc
 
 
 def get_dummy_dataset():
-    return cm4twc.DataSet.from_file(
+    return cm4twc.DataSet(
         ['dummy_data/dummy_driving_data.nc',
          'dummy_data/dummy_ancillary_data.nc'],
         name_mapping={'rainfall_flux': 'rainfall',
                       'snowfall_flux': 'snowfall',
                       'air_temperature': 'air_temperature',
                       'soil_temperature': 'soil_temperature'}
+    )
+
+
+def get_dummy_component_substitute_dataset(component_category):
+    return cm4twc.DataSet(
+        'dummy_data/dummy_{}_substitute_data.nc'.format(component_category)
     )
 
 
