@@ -9,13 +9,13 @@ class Model(object):
     DOCSTRING REQUIRED
     """
     def __init__(self, surfacelayer, subsurface, openwater):
-        self._surfacelayer = self._process_component_type(
+        self.surfacelayer = self._process_component_type(
             surfacelayer, SurfaceLayerComponent)
 
-        self._subsurface = self._process_component_type(
+        self.subsurface = self._process_component_type(
             subsurface, SubSurfaceComponent)
 
-        self._openwater = self._process_component_type(
+        self.openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
         self._check_timedomain_compatibilities()
@@ -48,17 +48,17 @@ class Model(object):
 
     def _check_timedomain_compatibilities(self):
         # check that components' timedomains start/end on same datetime
-        if (not self._surfacelayer.timedomain.spans_same_period_as(
-                self._subsurface.timedomain)) or \
-            (not self._surfacelayer.timedomain.spans_same_period_as(
-                self._openwater.timedomain)):
+        if (not self.surfacelayer.timedomain.spans_same_period_as(
+                self.subsurface.timedomain)) or \
+            (not self.surfacelayer.timedomain.spans_same_period_as(
+                self.openwater.timedomain)):
             raise ValueError(
                 "The Timedomains of the Components do not span "
                 "the same period.")
         # check that components' timedomains are equal
         # (to stay until temporal supermesh supported)
-        if (self._surfacelayer.timedomain != self._subsurface.timedomain) or \
-                (self._surfacelayer.timedomain != self._openwater.timedomain):
+        if (self.surfacelayer.timedomain != self.subsurface.timedomain) or \
+                (self.surfacelayer.timedomain != self.openwater.timedomain):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different TimeDomains.")
@@ -66,8 +66,8 @@ class Model(object):
     def _check_spacedomain_compatibilities(self):
         # check that components' spacedomains are equal
         # (to stay until spatial supermesh supported)
-        if (self._surfacelayer.spacedomain != self._subsurface.spacedomain) or \
-                (self._surfacelayer.spacedomain != self._openwater.spacedomain):
+        if (self.surfacelayer.spacedomain != self.subsurface.spacedomain) or \
+                (self.surfacelayer.spacedomain != self.openwater.spacedomain):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
@@ -79,11 +79,11 @@ class Model(object):
         self._initialise()
 
         surfacelayer_timedomain = \
-            self._surfacelayer.get_spin_up_timedomain(start, end)
+            self.surfacelayer.get_spin_up_timedomain(start, end)
         subsurface_timedomain = \
-            self._subsurface.get_spin_up_timedomain(start, end)
+            self.subsurface.get_spin_up_timedomain(start, end)
         openwater_timedomain = \
-            self._openwater.get_spin_up_timedomain(start, end)
+            self.openwater.get_spin_up_timedomain(start, end)
 
         for cycle in range(cycles):
             self._run(surfacelayer_timedomain,
@@ -99,9 +99,9 @@ class Model(object):
         if not self._spun_up:
             self._initialise()
 
-        interface = self._run(self._surfacelayer.timedomain,
-                              self._subsurface.timedomain,
-                              self._openwater.timedomain)
+        interface = self._run(self.surfacelayer.timedomain,
+                              self.subsurface.timedomain,
+                              self.openwater.timedomain)
 
         self._finalise()
 
@@ -109,9 +109,9 @@ class Model(object):
 
     def _initialise(self):
         # initialise components' states
-        self._surfacelayer.initialise_states()
-        self._subsurface.initialise_states()
-        self._openwater.initialise_states()
+        self.surfacelayer.initialise_states()
+        self.subsurface.initialise_states()
+        self.openwater.initialise_states()
 
     def _run(self, surfacelayer_timedomain, subsurface_timedomain,
              openwater_timedomain):
@@ -126,7 +126,7 @@ class Model(object):
             # only once because dictionary keys are unique
             fluxes={
                 f: None for c in
-                [self._surfacelayer, self._subsurface, self._openwater]
+                [self.surfacelayer, self.subsurface, self.openwater]
                 for f in list(c.inwards.keys()) + list(c.outwards.keys())
             }
         )
@@ -138,7 +138,7 @@ class Model(object):
 
             if run_surfacelayer:
                 interface.update(
-                    self._surfacelayer(
+                    self.surfacelayer(
                         timeindex=clock.get_current_timeindex('surfacelayer'),
                         datetime=datetime,
                         **interface
@@ -147,7 +147,7 @@ class Model(object):
 
             if run_subsurface:
                 interface.update(
-                    self._subsurface(
+                    self.subsurface(
                         timeindex=clock.get_current_timeindex('subsurface'),
                         datetime=datetime,
                         **interface
@@ -156,7 +156,7 @@ class Model(object):
 
             if run_openwater:
                 interface.update(
-                    self._openwater(
+                    self.openwater(
                         timeindex=clock.get_current_timeindex('openwater'),
                         datetime=datetime,
                         **interface
@@ -164,16 +164,16 @@ class Model(object):
                 )
 
             if run_surfacelayer:
-                self._surfacelayer.increment_states()
+                self.surfacelayer.increment_states()
             if run_subsurface:
-                self._subsurface.increment_states()
+                self.subsurface.increment_states()
             if run_openwater:
-                self._openwater.increment_states()
+                self.openwater.increment_states()
 
         return interface
 
     def _finalise(self):
         # finalise components
-        self._surfacelayer.finalise_states()
-        self._subsurface.finalise_states()
-        self._openwater.finalise_states()
+        self.surfacelayer.finalise_states()
+        self.subsurface.finalise_states()
+        self.openwater.finalise_states()
