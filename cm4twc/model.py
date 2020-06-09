@@ -78,40 +78,38 @@ class Model(object):
     def from_config(cls, cfg):
         surfacelayer = (
             getattr(
-                import_module(cfg['components']['surfacelayer']['module']),
-                cfg['components']['surfacelayer']['class']
+                import_module(cfg['surfacelayer']['module']),
+                cfg['surfacelayer']['class']
             )
         )
         subsurface = (
             getattr(
-                import_module(cfg['components']['subsurface']['module']),
-                cfg['components']['subsurface']['class']
+                import_module(cfg['subsurface']['module']),
+                cfg['subsurface']['class']
             )
         )
         openwater = (
             getattr(
-                import_module(cfg['components']['openwater']['module']),
-                cfg['components']['openwater']['class']
+                import_module(cfg['openwater']['module']),
+                cfg['openwater']['class']
             )
         )
 
         return cls(
             surfacelayer=surfacelayer.from_config(
-                cfg['components']['surfacelayer']),
+                cfg['surfacelayer']),
             subsurface=subsurface.from_config(
-                cfg['components']['subsurface']),
+                cfg['subsurface']),
             openwater=openwater.from_config(
-                cfg['components']['openwater'])
+                cfg['openwater'])
         )
 
     def to_config(self):
         return {
-            'components': {
-                'surfacelayer': self.surfacelayer.to_config(),
-                'subsurface': self.subsurface.to_config(),
-                'openwater': self.openwater.to_config()
+            'surfacelayer': self.surfacelayer.to_config(),
+            'subsurface': self.subsurface.to_config(),
+            'openwater': self.openwater.to_config()
             }
-        }
 
     def spin_up(self, start, end, cycles=1):
         """
