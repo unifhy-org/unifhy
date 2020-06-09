@@ -209,9 +209,9 @@ class _Component(metaclass=abc.ABCMeta):
         return cls(
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
-            dataset=DataSet.from_config(cfg['dataset']),
-            parameters=cfg['parameters'],
-            constants=cfg['constants']
+            dataset=DataSet.from_config(cfg.get('dataset')),
+            parameters=cfg.get('parameters'),
+            constants=cfg.get('constants')
         )
 
     def to_config(self):
