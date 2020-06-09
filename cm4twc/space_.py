@@ -319,12 +319,17 @@ class Grid(SpaceDomain):
         # (i.e. need to produce a whole number of grid cells)
         dim_start, dim_end = extent
 
-        if not np.isclose((dim_end - dim_start) % resolution, 0,
-                          RTOL(), ATOL()):
+        rtol = RTOL()
+        atol = ATOL()
+        if np.isclose((dim_end - dim_start) % resolution, 0, rtol, atol):
+            dim_size = (dim_end - dim_start) // resolution
+        elif np.isclose((dim_end - dim_start) % resolution, resolution,
+                        rtol, atol):
+            dim_size = ((dim_end - dim_start) // resolution) + 1
+        else:
             raise RuntimeError(
                 "{} extent and resolution do not define a whole number "
-                "of grid cells.".format(name))
-        dim_size = (dim_end - dim_start) // resolution
+                "of grid cells".format(name))
 
         # determine dimension coordinates
         dim = (
