@@ -69,30 +69,25 @@ class _Component(metaclass=abc.ABCMeta):
         self.states = {}
 
     def _check_timedomain(self, timedomain):
-        """
-        The purpose of this method is to check that the timedomain is
+        """The purpose of this method is to check that the timedomain is
         of the right type.
         """
         if not isinstance(timedomain, TimeDomain):
-            raise TypeError("The 1st domain item for the '{}' component "
-                            "must be an instance of {}.".format(
-                self.category, TimeDomain.__name__))
+            raise TypeError("not an instance of {} for {}".format(
+                TimeDomain.__name__, self.category))
 
     def _check_spacedomain(self, spacedomain):
-        """
-        The purpose of this method is to check that the spacedomain is
+        """The purpose of this method is to check that the spacedomain is
         of the right type.
         """
         if not isinstance(spacedomain, SpaceDomain):
-            raise TypeError("The 2nd domain item for the '{}' component "
-                            "must be an instance of {}.".format(
-                self.category, TimeDomain.__name__))
-        else:
-            if not isinstance(spacedomain, Grid):
-                raise NotImplementedError("The only {} subclass currently "
-                                          "supported by the framework is "
-                                          "{}.".format(SpaceDomain.__name__,
-                                                       Grid.__name__))
+            raise TypeError("not an instance of {} for {}".format(
+                SpaceDomain.__name__, self.category))
+
+        if not isinstance(spacedomain, Grid):
+            raise NotImplementedError(
+                "only {} currently supported by the framework "
+                "for spacedomain".format(Grid.__name__))
 
     def _check_dataset(self, dataset, timedomain, spacedomain):
         """
