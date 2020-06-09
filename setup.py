@@ -51,6 +51,7 @@ setup(
         'numpy>=1.16',
         'cf-python>=3.4.0',
         'cftime',
-        'cfunits'
+        'cfunits',
+        'pyyaml>=5.3'
     ]
 )

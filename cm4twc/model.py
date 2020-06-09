@@ -1,4 +1,5 @@
 from importlib import import_module
+import yaml
 
 from .time_ import Clock
 from .interface import Interface
@@ -110,6 +111,26 @@ class Model(object):
             'subsurface': self.subsurface.to_config(),
             'openwater': self.openwater.to_config()
             }
+
+    @classmethod
+    def from_yaml(cls, yaml_file):
+        with open(yaml_file, 'r') as f:
+            cfg = yaml.load(f, yaml.FullLoader)
+        return cls.from_config(cfg)
+
+    def to_yaml(self, yaml_file):
+        # configure the dumping format for sequences
+        for type_ in (list, tuple, set):
+            yaml.add_representer(
+                type_,
+                lambda dumper, data:
+                dumper.represent_sequence(u'tag:yaml.org,2002:seq',
+                                          data, flow_style=True),
+                Dumper=yaml.Dumper
+            )
+        # dump configuration in yaml file
+        with open(yaml_file, 'w') as f:
+            yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def spin_up(self, start, end, cycles=1):
         """
