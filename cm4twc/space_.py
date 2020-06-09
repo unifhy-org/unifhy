@@ -580,6 +580,7 @@ class Grid(SpaceDomain):
 
     def to_config(self):
         return {
+            'class': self.__class__.__name__,
             '{}_extent'.format(self._Y_name):
                 self._get_dimension_extent('Y'),
             '{}_resolution'.format(self._Y_name):
@@ -1077,6 +1078,7 @@ class LatLonGrid(Grid):
 
     @classmethod
     def from_config(cls, cfg):
+        cfg.pop('class')
         cls.from_extent_and_resolution(**cfg)
 
 
@@ -1426,4 +1428,5 @@ class RotatedLatLonGrid(Grid):
 
     @classmethod
     def from_config(cls, cfg):
+        cfg.pop('class')
         cls._from_extent_and_resolution(**cfg)
