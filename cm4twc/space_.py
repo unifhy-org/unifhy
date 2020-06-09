@@ -1078,6 +1078,7 @@ class LatLonGrid(Grid):
 
     @classmethod
     def from_config(cls, cfg):
+        cfg = cfg.copy()
         cfg.pop('class')
         return cls.from_extent_and_resolution(**cfg)
 
@@ -1428,5 +1429,6 @@ class RotatedLatLonGrid(Grid):
 
     @classmethod
     def from_config(cls, cfg):
+        cfg = cfg.copy()
         cfg.pop('class')
         return cls._from_extent_and_resolution(**cfg)
