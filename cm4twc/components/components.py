@@ -4,6 +4,7 @@ import cf
 from cfunits import Units
 
 from ..time_ import TimeDomain
+from .. import space_
 from ..space_ import SpaceDomain, Grid
 from ..data_ import DataSet
 
@@ -14,15 +15,14 @@ class _Component(metaclass=abc.ABCMeta):
     _ins = None
     _outs = None
 
-    def __init__(self, category,
-                 timedomain, spacedomain, dataset, parameters, constants,
+    def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
                  solver_history=None, driving_data_info=None,
                  ancil_data_info=None, parameters_info=None,
                  constants_info=None, states_info=None,
                  inwards=None, outwards=None):
 
         # category attribute
-        self.category = category
+        self.category = self._kind
 
         # definition attributes
         self.driving_data_info = \
@@ -208,16 +208,28 @@ class _Component(metaclass=abc.ABCMeta):
                     self.category, self.__class__.__name__,
                     self.parameters_info))
 
+    @classmethod
+    def from_config(cls, cfg):
+        spacedomain = getattr(space_, cfg['spacedomain']['class'])
+        return cls(
+            timedomain=TimeDomain.from_config(cfg['timedomain']),
+            spacedomain=spacedomain.from_config(cfg['spacedomain']),
+            dataset=DataSet.from_config(cfg['dataset']),
+            parameters=cfg['parameters'],
+            constants=cfg['constants']
+        )
+
     def to_config(self):
-        return {
+        cfg = {
             'module': self.__module__,
             'class': self.__class__.__name__,
-            'time': self.timedomain.to_config(),
-            'space': self.spacedomain.to_config(),
-            'data': self.dataset.to_config(),
+            'timedomain': self.timedomain.to_config(),
+            'spacedomain': self.spacedomain.to_config(),
+            'dataset': self.dataset.to_config(),
             'parameters': self.parameters if self.parameters else None,
             'constants': self.constants if self.constants else None
         }
+        return cfg
 
     def get_spin_up_timedomain(self, start, end):
         timedomain = TimeDomain.from_start_end_step(
@@ -325,7 +337,6 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
                  solver_history, driving_data_info=None, ancil_data_info=None,
                  parameters_info=None, constants_info=None, states_info=None):
         super(SurfaceLayerComponent, self).__init__(
-            self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
             solver_history, driving_data_info, ancil_data_info,
             parameters_info, constants_info, states_info,
@@ -354,7 +365,6 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
                  parameters_info=None, constants_info=None, states_info=None):
 
         super(SubSurfaceComponent, self).__init__(
-            self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
             solver_history, driving_data_info, ancil_data_info,
             parameters_info, constants_info, states_info,
@@ -378,7 +388,6 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
                  solver_history, driving_data_info=None, ancil_data_info=None,
                  parameters_info=None, constants_info=None, states_info=None):
         super(OpenWaterComponent, self).__init__(
-            self._kind,
             timedomain, spacedomain, dataset, parameters, constants,
             solver_history, driving_data_info, ancil_data_info,
             parameters_info, constants_info, states_info,
@@ -395,11 +404,11 @@ class DataComponent(_Component):
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
         super(DataComponent, self).__init__(
-            substituting_class.get_class_kind(),
             timedomain, spacedomain, dataset, None, None,
             0, substituting_class.get_class_outwards(), None,
             None, None, None,
             self._ins, self._outs)
+        self.category = substituting_class.get_class_kind()
 
     def initialise(self, **kwargs):
         return {}
@@ -421,11 +430,11 @@ class NullComponent(_Component):
 
     def __init__(self, timedomain, spacedomain, substituting_class):
         super(NullComponent, self).__init__(
-            substituting_class.get_class_kind(),
             timedomain, spacedomain, None, None, None,
             0, None, None,
             None, None, None,
             self._ins, substituting_class.get_class_outwards())
+        self.category = substituting_class.get_class_kind()
 
     def initialise(self, **kwargs):
         return {}
