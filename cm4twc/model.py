@@ -1,3 +1,5 @@
+from importlib import import_module
+
 from .time_ import Clock
 from .interface import Interface
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
@@ -71,6 +73,45 @@ class Model(object):
             raise NotImplementedError(
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
+
+    @classmethod
+    def from_config(cls, cfg):
+        surfacelayer = (
+            getattr(
+                import_module(cfg['components']['surfacelayer']['module']),
+                cfg['components']['surfacelayer']['class']
+            )
+        )
+        subsurface = (
+            getattr(
+                import_module(cfg['components']['subsurface']['module']),
+                cfg['components']['subsurface']['class']
+            )
+        )
+        openwater = (
+            getattr(
+                import_module(cfg['components']['openwater']['module']),
+                cfg['components']['openwater']['class']
+            )
+        )
+
+        return cls(
+            surfacelayer=surfacelayer.from_config(
+                cfg['components']['surfacelayer']),
+            subsurface=subsurface.from_config(
+                cfg['components']['subsurface']),
+            openwater=openwater.from_config(
+                cfg['components']['openwater'])
+        )
+
+    def to_config(self):
+        return {
+            'components': {
+                'surfacelayer': self.surfacelayer.to_config(),
+                'subsurface': self.subsurface.to_config(),
+                'openwater': self.openwater.to_config()
+            }
+        }
 
     def spin_up(self, start, end, cycles=1):
         """
