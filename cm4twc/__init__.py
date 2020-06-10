@@ -14,20 +14,20 @@ from .components import (surfacelayer, subsurface, openwater,
 from .settings import ATOL, RTOL, DECR
 
 # import the modelling components defined in the configuration file
-cfg = ConfigParser()
-cfg.read(path.join(path.abspath(path.dirname(__file__)),
-         'components', 'components.ini'))
+_cfg = ConfigParser()
+_cfg.read(path.join(path.abspath(path.dirname(__file__)),
+          'components', 'components.ini'))
 
-for component_type in ['surfacelayer', 'subsurface', 'openwater']:
-    if component_type in cfg:
-        for path_ in cfg[component_type]:
-            cls_name = cfg[component_type][path_]
+for _component_type in ['surfacelayer', 'subsurface', 'openwater']:
+    if _component_type in _cfg:
+        for path_ in _cfg[_component_type]:
+            cls_name = _cfg[_component_type][path_]
             # import the module defined as a key in the configuration file
             try:
                 mod_ = import_module(path_, package=__name__)
             except ImportError:
                 raise ImportError("The {} component '{}' could not be "
-                                  "imported.".format(component_type, cls_name))
+                                  "imported.".format(_component_type, cls_name))
             # get the class defined as a value in the configuration file
             try:
                 cls_ = getattr(mod_, cls_name)
@@ -37,5 +37,5 @@ for component_type in ['surfacelayer', 'subsurface', 'openwater']:
                                                                mod_.__name__))
             # assign the class to the relevant component module
             setattr(sys.modules['.'.join([__name__, 'components',
-                                          component_type])],
+                                          _component_type])],
                     cls_name, cls_)
