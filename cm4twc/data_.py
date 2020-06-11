@@ -96,7 +96,7 @@ class DataSet(MutableMapping):
         return "\n".join(
             ["DataSet{"] +
             ["    %s: %r" % (v, self._variables[v])
-             for v in sorted(self._variables.keys())] +
+             for v in sorted(self._variables)] +
             ["}"]
         ) if self._variables else "DataSet{ }"
 
