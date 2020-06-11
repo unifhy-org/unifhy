@@ -400,7 +400,7 @@ class Grid(SpaceDomain):
             return (np.around(left_wing, decr).tolist(),
                     np.around(right_wing, decr).tolist())
 
-    def _get_xy_location(self):
+    def _get_yx_location(self):
         # return location of Y/X coordinates relative to their grid cell
 
         # try to use _location attribute
@@ -590,7 +590,7 @@ class Grid(SpaceDomain):
             '{}_resolution'.format(self._X_name):
                 self._get_dimension_resolution('X'),
             '{}_{}_location'.format(self._Y_name, self._X_name):
-                self._get_xy_location(),
+                self._get_yx_location(),
             '{}_extent'.format(self._Z_name):
                 self._get_dimension_extent('Z'),
             '{}_resolution'.format(self._Z_name):
