@@ -75,6 +75,15 @@ class Model(object):
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
+    def __repr__(self):
+        return "\n".join(
+            ["Model(".format(self.__class__.__name__)] +
+            ["    surfacelayer: %s" % self.surfacelayer.__class__.__name__] +
+            ["    subsurface: %s" % self.subsurface.__class__.__name__] +
+            ["    openwater: %s" % self.openwater.__class__.__name__] +
+            [")"]
+        )
+
     @classmethod
     def from_config(cls, cfg):
         surfacelayer = (
