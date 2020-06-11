@@ -17,9 +17,9 @@ class _Component(metaclass=abc.ABCMeta):
 
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
                  solver_history=None, driving_data_info=None,
-                 ancil_data_info=None, parameters_info=None,
+                 ancillary_data_info=None, parameters_info=None,
                  constants_info=None, states_info=None,
-                 inwards=None, outwards=None):
+                 inwards_info=None, outwards_info=None):
 
         # category attribute
         self.category = self._kind
@@ -27,8 +27,8 @@ class _Component(metaclass=abc.ABCMeta):
         # definition attributes
         self.driving_data_info = \
             driving_data_info if driving_data_info else {}
-        self.ancil_data_info = \
-            ancil_data_info if ancil_data_info else {}
+        self.ancillary_data_info = \
+            ancillary_data_info if ancillary_data_info else {}
         self.parameters_info = \
             parameters_info if parameters_info else {}
         self.constants_info = \
@@ -38,8 +38,8 @@ class _Component(metaclass=abc.ABCMeta):
         self.solver_history = solver_history
 
         # interface attributes
-        self.inwards = inwards
-        self.outwards = outwards
+        self.inwards_info = inwards_info
+        self.outwards_info = outwards_info
 
         # time attributes
         self._check_timedomain(timedomain)
@@ -158,7 +158,7 @@ class _Component(metaclass=abc.ABCMeta):
                         data_name, self.category, self.__class__.__name__))
 
         # check ancillary data for space compatibility with component
-        for data_name, data_unit in self.ancil_data_info.items():
+        for data_name, data_unit in self.ancillary_data_info.items():
             # check that all ancillary data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
@@ -234,9 +234,29 @@ class _Component(metaclass=abc.ABCMeta):
         )
         return timedomain
 
+    def __repr__(self):
+        info = [
+            "\n".join(
+                (["    %s:" % t.replace('_', ' ')] +
+                 ["        %s [%s]" % (n, getattr(self, t + '_info')[n])
+                  for n in getattr(self, t + '_info')]
+                 if getattr(self, t + '_info') else [])
+            )
+            for t in ['inwards', 'outwards', 'driving_data', 'ancillary_data',
+                      'parameters', 'constants', 'states']
+            if getattr(self, t + '_info')
+        ]
+        return "\n".join(
+            ["{}(".format(self.__class__.__name__)] +
+            ["    category: %s" % self.category] +
+            info +
+            ["    solver history: %s" % self.solver_history] +
+            [")"]
+        )
+
     def __call__(self, timeindex, datetime, **kwargs):
         # collect required ancillary data from dataset
-        for data in self.ancil_data_info:
+        for data in self.ancillary_data_info:
             kwargs[data] = self.dataset[data].array[...]
 
         # collect required driving data from dataset
@@ -329,11 +349,12 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, constants_info=None, states_info=None):
+                 solver_history, driving_data_info=None,
+                 ancillary_data_info=None, parameters_info=None,
+                 constants_info=None, states_info=None):
         super(SurfaceLayerComponent, self).__init__(
             timedomain, spacedomain, dataset, parameters, constants,
-            solver_history, driving_data_info, ancil_data_info,
+            solver_history, driving_data_info, ancillary_data_info,
             parameters_info, constants_info, states_info,
             self._ins, self._outs)
 
@@ -356,12 +377,13 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, constants_info=None, states_info=None):
+                 solver_history, driving_data_info=None,
+                 ancillary_data_info=None, parameters_info=None,
+                 constants_info=None, states_info=None):
 
         super(SubSurfaceComponent, self).__init__(
             timedomain, spacedomain, dataset, parameters, constants,
-            solver_history, driving_data_info, ancil_data_info,
+            solver_history, driving_data_info, ancillary_data_info,
             parameters_info, constants_info, states_info,
             self._ins, self._outs)
 
@@ -380,11 +402,12 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
     }
 
     def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history, driving_data_info=None, ancil_data_info=None,
-                 parameters_info=None, constants_info=None, states_info=None):
+                 solver_history, driving_data_info=None,
+                 ancillary_data_info=None, parameters_info=None,
+                 constants_info=None, states_info=None):
         super(OpenWaterComponent, self).__init__(
             timedomain, spacedomain, dataset, parameters, constants,
-            solver_history, driving_data_info, ancil_data_info,
+            solver_history, driving_data_info, ancillary_data_info,
             parameters_info, constants_info, states_info,
             self._ins, self._outs)
 
@@ -404,6 +427,16 @@ class DataComponent(_Component):
             None, None, None,
             self._ins, self._outs)
         self.category = substituting_class.get_class_kind()
+
+    def __repr__(self):
+        return "\n".join(
+            ["{}(".format(self.__class__.__name__)] +
+            ["    category: %s" % self.category] +
+            ["    outwards:"] +
+            ["        %s [%s]" % (n, self.driving_data_info[n])
+             for n in self.driving_data_info] +
+            [")"]
+        )
 
     def initialise(self, **kwargs):
         return {}
@@ -431,12 +464,22 @@ class NullComponent(_Component):
             self._ins, substituting_class.get_class_outwards())
         self.category = substituting_class.get_class_kind()
 
+    def __repr__(self):
+        return "\n".join(
+            ["{}(".format(self.__class__.__name__)] +
+            ["    category: %s" % self.category] +
+            ["    outwards:"] +
+            ["        %s [%s]" % (n, self.outwards_info[n])
+             for n in self.outwards_info] +
+            [")"]
+        )
+
     def initialise(self, **kwargs):
         return {}
 
     def run(self, **kwargs):
         null_array = np.zeros(self.spaceshape, np.float32)
-        return {n: null_array for n in self.outwards}
+        return {n: null_array for n in self.outwards_info}
 
     def finalise(self, **kwargs):
         pass

@@ -10,7 +10,7 @@ class Dummy(OpenWaterComponent):
         super().__init__(
             timedomain, spacedomain, dataset, parameters, constants,
             driving_data_info={},
-            ancil_data_info={},
+            ancillary_data_info={},
             parameters_info={
                 'residence_time': 's',
             },

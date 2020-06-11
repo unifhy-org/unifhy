@@ -14,7 +14,7 @@ class Dummy(SurfaceLayerComponent):
                 'snowfall': 'kg m-2 s-1',
                 'air_temperature': 'K',
             },
-            ancil_data_info={
+            ancillary_data_info={
                 'vegetation_fraction': '1'
             },
             parameters_info={},
