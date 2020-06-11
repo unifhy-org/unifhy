@@ -234,7 +234,7 @@ class _Component(metaclass=abc.ABCMeta):
         )
         return timedomain
 
-    def __repr__(self):
+    def __str__(self):
         info = [
             "\n".join(
                 (["    %s:" % t.replace('_', ' ')] +
@@ -428,7 +428,7 @@ class DataComponent(_Component):
             self._ins, self._outs)
         self.category = substituting_class.get_class_kind()
 
-    def __repr__(self):
+    def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
             ["    category: %s" % self.category] +
@@ -464,7 +464,7 @@ class NullComponent(_Component):
             self._ins, substituting_class.get_class_outwards())
         self.category = substituting_class.get_class_kind()
 
-    def __repr__(self):
+    def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
             ["    category: %s" % self.category] +

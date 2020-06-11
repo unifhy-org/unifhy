@@ -75,7 +75,7 @@ class Model(object):
                 "Currently, the modelling framework does not allow "
                 "for components to work on different SpaceDomains.")
 
-    def __repr__(self):
+    def __str__(self):
         return "\n".join(
             ["Model(".format(self.__class__.__name__)] +
             ["    surfacelayer: %s" % self.surfacelayer.__class__.__name__] +

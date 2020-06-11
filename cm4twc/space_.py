@@ -511,7 +511,7 @@ class Grid(SpaceDomain):
             'Z': z_array, 'Z_bounds': z_bounds_array
         }
 
-    def __repr__(self):
+    def __str__(self):
         has_z = self._f.has_construct(self._Z_name)
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]

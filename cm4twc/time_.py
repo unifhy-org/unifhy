@@ -208,7 +208,7 @@ class TimeDomain(object):
         self._f.construct('time').set_data(cf.Data(timestamps))
         self._f.construct('time').set_bounds(cf.Bounds(data=cf.Data(bounds)))
 
-    def __repr__(self):
+    def __str__(self):
         return "\n".join(
             ["TimeDomain("]
             + ["    time %s: %s" %

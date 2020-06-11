@@ -92,7 +92,7 @@ class DataSet(MutableMapping):
     def __len__(self):
         return len(self._variables)
 
-    def __repr__(self):
+    def __str__(self):
         return "\n".join(
             ["DataSet{"] +
             ["    %s: %r" % (v, self._variables[v])
