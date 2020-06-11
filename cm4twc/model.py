@@ -123,6 +123,28 @@ class Model(object):
 
     @classmethod
     def from_yaml(cls, yaml_file):
+        """Initialise a `Model` from a YAML configuration file.
+
+        :Parameters:
+
+            yaml_file: `str`
+                A string providing the path to the YAML file to be used
+                to initialise `Model`.
+
+                *Parameter example:*
+                    ``yaml_file='dummy_config/dummy.yaml'``
+
+        **Examples**
+
+        >>> m = Model.from_yaml('dummy_config/dummy.yaml')
+        >>> print(m)
+        Model(
+            surfacelayer: Dummy
+            subsurface: Dummy
+            openwater: Dummy
+        )
+
+        """
         with open(yaml_file, 'r') as f:
             cfg = yaml.load(f, yaml.FullLoader)
         return cls.from_config(cfg)

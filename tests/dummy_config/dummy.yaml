@@ -1,0 +1,95 @@
+surfacelayer:
+  module: tests.dummy_components.surfacelayer.dummy
+  class: Dummy
+  timedomain:
+    start: '2019-01-01 09:00:00'
+    end: '2019-01-07 09:00:00'
+    step:
+      seconds: 86400.0
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: RotatedLatLonGrid
+    grid_latitude_extent: [2.42, -1.98]
+    grid_latitude_resolution: -0.44
+    grid_longitude_extent: [-4.92, -0.96]
+    grid_longitude_resolution: 0.44
+    grid_latitude_grid_longitude_location: centre
+    altitude_extent: [1, 2]
+    altitude_resolution: 1
+    altitude_location: centre
+    earth_radius: 6371007.0
+    grid_north_pole_latitude: 38.0
+    grid_north_pole_longitude: 190.0
+  dataset:
+    air_temperature:
+      files: [dummy_data/dummy_driving_data.nc]
+      select: air_temperature
+    rainfall:
+      files: [dummy_data/dummy_driving_data.nc]
+      select: rainfall_flux
+    snowfall:
+      files: [dummy_data/dummy_driving_data.nc]
+      select: snowfall_flux
+    vegetation_fraction:
+      files: [dummy_data/dummy_ancillary_data.nc]
+      select: vegetation_fraction
+  parameters: null
+  constants: null
+subsurface:
+  module: tests.dummy_components.subsurface.dummy
+  class: Dummy
+  timedomain:
+    start: '2019-01-01 09:00:00'
+    end: '2019-01-07 09:00:00'
+    step:
+      seconds: 86400.0
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: RotatedLatLonGrid
+    grid_latitude_extent: [2.42, -1.98]
+    grid_latitude_resolution: -0.44
+    grid_longitude_extent: [-4.92, -0.96]
+    grid_longitude_resolution: 0.44
+    grid_latitude_grid_longitude_location: centre
+    altitude_extent: [1, 2]
+    altitude_resolution: 1
+    altitude_location: centre
+    earth_radius: 6371007.0
+    grid_north_pole_latitude: 38.0
+    grid_north_pole_longitude: 190.0
+  dataset:
+    soil_temperature:
+      files: [dummy_data/dummy_driving_data.nc]
+      select: soil_temperature
+  parameters:
+    saturated_hydraulic_conductivity: 2
+  constants: null
+openwater:
+  module: tests.dummy_components.openwater.dummy
+  class: Dummy
+  timedomain:
+    start: '2019-01-01 09:00:00'
+    end: '2019-01-07 09:00:00'
+    step:
+      seconds: 86400.0
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: RotatedLatLonGrid
+    grid_latitude_extent: [2.42, -1.98]
+    grid_latitude_resolution: -0.44
+    grid_longitude_extent: [-4.92, -0.96]
+    grid_longitude_resolution: 0.44
+    grid_latitude_grid_longitude_location: centre
+    altitude_extent: [1, 2]
+    altitude_resolution: 1
+    altitude_location: centre
+    earth_radius: 6371007.0
+    grid_north_pole_latitude: 38.0
+    grid_north_pole_longitude: 190.0
+  dataset: {}
+  parameters:
+    residence_time: 1
+  constants: null

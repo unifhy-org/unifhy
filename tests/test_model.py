@@ -1,4 +1,5 @@
 import unittest
+import doctest
 
 import cm4twc
 from tests.test_time import (get_dummy_timedomain,
@@ -127,6 +128,8 @@ if __name__ == '__main__':
     test_suite = unittest.TestSuite()
 
     test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAPI))
+
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)
