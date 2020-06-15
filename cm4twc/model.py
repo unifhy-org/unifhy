@@ -219,8 +219,7 @@ class Model(object):
             fluxes={
                 f: None for c in
                 [self.surfacelayer, self.subsurface, self.openwater]
-                for f in list(c.inwards_info.keys())
-                         + list(c.outwards_info.keys())
+                for f in list(c.inwards_info) + list(c.outwards_info)
             }
         )
 
