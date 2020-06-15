@@ -11,8 +11,8 @@ import cfunits
 # note: 'none' calendar is not supported, unlike CF-convention, because you
 # cannot yield a datetime_array from it
 _supported_calendar_mapping = {
-    'standard': 'standard',
-    'gregorian': 'standard',
+    'standard': 'gregorian',
+    'gregorian': 'gregorian',
     'proleptic_gregorian': 'proleptic_gregorian',
     '365_day': '365_day',
     'noleap': '365_day',
@@ -20,6 +20,18 @@ _supported_calendar_mapping = {
     'all_leap': '366_day',
     '360_day': '360_day',
     'julian': 'julian'
+}
+
+_calendar_to_cftime_datetime = {
+    'standard': cftime.DatetimeGregorian,
+    'gregorian': cftime.DatetimeGregorian,
+    'proleptic_gregorian': cftime.DatetimeProlepticGregorian,
+    '365_day': cftime.DatetimeNoLeap,
+    'noleap': cftime.DatetimeNoLeap,
+    '366_day': cftime.DatetimeAllLeap,
+    'all_leap': cftime.DatetimeAllLeap,
+    '360_day': cftime.Datetime360Day,
+    'julian': cftime.DatetimeJulian
 }
 
 
@@ -502,16 +514,32 @@ class TimeDomain(object):
 
         >>> from datetime import datetime, timedelta
         >>> td = TimeDomain.from_start_end_step(
-        ...     start=datetime(1970, 1, 1),
-        ...     end=datetime(1970, 1, 4),
+        ...     start=datetime(2020, 1, 1),
+        ...     end=datetime(2021, 3, 1),
         ...     step=timedelta(days=1),
         ...     units='seconds since 1970-01-01 00:00:00',
         ...     calendar='standard')
         >>> print(td)
         TimeDomain(
-            time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] standard
-            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
+            time (426,): [2020-01-01 00:00:00, ..., 2021-03-01 00:00:00] standard
+            bounds (426, 2): [[2020-01-01 00:00:00, ..., 2021-03-02 00:00:00]] standard
             calendar: standard
+            units: seconds since 1970-01-01 00:00:00
+            timedelta: 1 day, 0:00:00
+        )
+
+        >>> from datetime import datetime, timedelta
+        >>> td = TimeDomain.from_start_end_step(
+        ...     start=datetime(2020, 1, 1),
+        ...     end=datetime(2021, 3, 1),
+        ...     step=timedelta(days=1),
+        ...     units='seconds since 1970-01-01 00:00:00',
+        ...     calendar='noleap')
+        >>> print(td)
+        TimeDomain(
+            time (425,): [2020-01-01 00:00:00, ..., 2021-03-01 00:00:00] noleap
+            bounds (425, 2): [[2020-01-01 00:00:00, ..., 2021-03-02 00:00:00]] noleap
+            calendar: noleap
             units: seconds since 1970-01-01 00:00:00
             timedelta: 1 day, 0:00:00
         )
@@ -530,9 +558,20 @@ class TimeDomain(object):
         if start >= end:
             raise ValueError("End date is not later than start date.")
 
+        # convert datetimes to expected calendar before generating sequence
+        if calendar is not None:
+            start = _calendar_to_cftime_datetime[calendar](
+                start.year, start.month, start.day,
+                start.hour, start.minute, start.second, start.microsecond)
+            end = _calendar_to_cftime_datetime[calendar](
+                end.year, end.month, end.day,
+                end.hour, end.minute, end.second, end.microsecond)
+
+        # determine whole number of timesteps to loop over
         (divisor, remainder) = divmod(int((end - start).total_seconds()),
                                       int(step.total_seconds()))
 
+        # generate sequence of datetimes
         datetimes = [start + timedelta(seconds=td * step.total_seconds())
                      for td in range(divisor + 1)]
 
