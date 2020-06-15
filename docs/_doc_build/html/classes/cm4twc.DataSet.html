@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DataSet &#8212; cm4twc 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cm4twc.DataSet.load_from_file" href="../methods/cm4twc.DataSet.load_from_file.html" />
+    <link rel="prev" title="RotatedLatLonGrid" href="cm4twc.RotatedLatLonGrid.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="dataset">
+<h1>DataSet<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="cm4twc.DataSet">
+<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">DataSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">files</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.DataSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataSet is a dictionary-like data structure which maps variable
+names to <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> objects. Namely, it allows to use custom
+variable names instead of the standard_name attribute of <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
+to identify them.</p>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>files: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A string or sequence of strings providing the netCDF
+file names or directory names containing netCDF files
+from which to read the variables.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="o">=</span><span class="s1">&#39;tests/dummy_data/dummy_driving_data.nc&#39;</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tests/dummy_data/dummy_driving_data.nc&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;tests/dummy_data/dummy_ancillary_data.nc&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd>
+<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A string or sequence of strings providing the identities
+of the variables to read in the netCDF file. By default,
+all variables in the netCDF file are read.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">select</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rainfall_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;snowfall_flux&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd>
+<dt>name_mapping: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>A dictionary with the Field identities as keys and the
+desired new name variables as values. If a Field is read
+from the netCDF file, and its identity is not a key in
+<em>name_mapping</em> (if provided), its ‘standard_name’
+attribute is used instead.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="go">DataSet{ }</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;dummy_data/dummy_driving_data.nc&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="go">DataSet{</span>
+<span class="go">    air_temperature: &lt;CF Field: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="go">    rainfall_flux: &lt;CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
+<span class="go">    snowfall_flux: &lt;CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
+<span class="go">    soil_temperature: &lt;CF Field: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;dummy_data/dummy_driving_data.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">select</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rainfall_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;snowfall_flux&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;rainfall_flux&#39;</span><span class="p">:</span> <span class="s1">&#39;rainfall&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="go">DataSet{</span>
+<span class="go">    rainfall: &lt;CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
+<span class="go">    snowfall_flux: &lt;CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.DataSet.load_from_file.html#cm4twc.DataSet.load_from_file" title="cm4twc.DataSet.load_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_from_file</span></code></a></p></td>
+<td><p>Append to the <a class="reference internal" href="#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> the variables that are contained in the file(s) provided.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">cm4twc</a></h1>
+
+
+
+<p class="blurb">A Community Model for the Terrestrial Water Cycle</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ThibHlln&repo=cm4twc&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+      <li>Previous: <a href="cm4twc.RotatedLatLonGrid.html" title="previous chapter">RotatedLatLonGrid</a></li>
+      <li>Next: <a href="../methods/cm4twc.DataSet.load_from_file.html" title="next chapter">cm4twc.DataSet.load_from_file</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, HydroJULES | Page built on 2020-06-15.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/classes/cm4twc.DataSet.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

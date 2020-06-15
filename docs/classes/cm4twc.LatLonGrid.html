@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LatLonGrid &#8212; cm4twc 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cm4twc.LatLonGrid.from_extent_and_resolution" href="../methods/cm4twc.LatLonGrid.from_extent_and_resolution.html" />
+    <link rel="prev" title="cm4twc.TimeDomain.timedelta" href="../attributes/cm4twc.TimeDomain.timedelta.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="latlongrid">
+<h1>LatLonGrid<a class="headerlink" href="#latlongrid" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="cm4twc.LatLonGrid">
+<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">LatLonGrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">latitude</span></em>, <em class="sig-param"><span class="n">longitude</span></em>, <em class="sig-param"><span class="n">latitude_bounds</span></em>, <em class="sig-param"><span class="n">longitude_bounds</span></em>, <em class="sig-param"><span class="n">altitude</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">altitude_bounds</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.LatLonGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>LatLonGrid characterises the spatial dimension for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
+as a regular grid on a spherical domain whose coordinates are
+latitudes and longitudes, and whose rotation axis is aligned with
+the North pole.</p>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>latitude: one-dimensional array-like object</dt><dd><p>The array of latitude coordinates in degrees North
+defining the temporal dimension. May be any type that
+can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical
+values.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">75</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">latitude</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">89.5</span><span class="p">,</span> <span class="mf">90.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>longitude: one-dimensional array-like object</dt><dd><p>The array of longitude coordinates in degrees East
+defining the temporal dimension. May be any type that
+can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical
+values.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">longitude</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">longitude</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">179.5</span><span class="p">,</span> <span class="mf">180.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>latitude_bounds: two-dimensional array-like object</dt><dd><p>The array of latitude coordinate bounds in degrees North
+defining the extent of the grid cell around the
+coordinate. May be any type that can be cast to a
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must be two dimensional with the first
+dimension equal to the size of <em>latitude</em> and the second
+dimension equal to 2. Must contain numerical values.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">latitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">latitude_bounds</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">89</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>longitude_bounds: two-dimensional array-like object</dt><dd><p>The array of longitude coordinate bounds in degrees
+East defining the extent of the grid cell around the
+coordinate. May be any type that can be cast to a
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must feature two dimensional with the
+first dimension equal to the size of <em>longitude</em> and the
+second dimension equal to 2. Must contain numerical
+values.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">longitude_bounds</span><span class="o">=</span><span class="p">((</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">120</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                  <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">longitude_bounds</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+     <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">179</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>altitude: one-dimensional array-like object, optional</dt><dd><p>The array of altitude coordinates in metres defining the
+temporal dimension (with upwards as the positive
+direction). May be any type that can be cast to a
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values. Ignored
+if <em>altitude_bounds</em> not also provided.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd>
+<dt>altitude_bounds: two-dimensional array-like object, optional</dt><dd><p>The array of altitude coordinate bounds in metres
+defining the extent of the grid cell around the
+coordinate (with upwards as the positive direction).
+May be any type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.
+Must be two dimensional with the first dimension equal
+to the size of <code class="xref py py-obj docutils literal notranslate"><span class="pre">altitude</span></code> and the second dimension equal
+to 2. Must contain numerical values. Ignored if
+<em>altitude</em> not also provided.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">]]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">75</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">latitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">]],</span>
+<span class="gp">... </span>    <span class="n">longitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">]]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span>
+<span class="go">LatLonGrid(</span>
+<span class="go">    shape {Y, X}: (3, 3)</span>
+<span class="go">    Y, latitude (3,): [15, 45, 75] degrees_north</span>
+<span class="go">    X, longitude (3,): [30, 90, 150] degrees_east</span>
+<span class="go">    Y_bounds (3, 2): [[0, ..., 90]] degrees_north</span>
+<span class="go">    X_bounds (3, 2): [[0, ..., 180]] degrees_east</span>
+<span class="go">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">89.5</span><span class="p">,</span> <span class="mf">90.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">longitude</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">179.5</span><span class="p">,</span> <span class="mf">180.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">latitude_bounds</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>         <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">89</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">longitude_bounds</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>         <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">179</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">altitude</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">altitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">]]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span>
+<span class="go">LatLonGrid(</span>
+<span class="go">    shape {Z, Y, X}: (1, 180, 360)</span>
+<span class="go">    Z, altitude (1,): [10] m</span>
+<span class="go">    Y, latitude (180,): [-89.5, ..., 89.5] degrees_north</span>
+<span class="go">    X, longitude (360,): [-179.5, ..., 179.5] degrees_east</span>
+<span class="go">    Z_bounds (1, 2): [[0, 10]] m</span>
+<span class="go">    Y_bounds (180, 2): [[-90, ..., 90]] degrees_north</span>
+<span class="go">    X_bounds (360, 2): [[-180, ..., 180]] degrees_east</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Construction</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.LatLonGrid.from_extent_and_resolution.html#cm4twc.LatLonGrid.from_extent_and_resolution" title="cm4twc.LatLonGrid.from_extent_and_resolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_extent_and_resolution</span></code></a></p></td>
+<td><p>Initialise a <a class="reference internal" href="#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> from the extent and the resolution of latitude, longitude (and optionally altitude) coordinates.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.LatLonGrid.is_space_equal_to.html#cm4twc.LatLonGrid.is_space_equal_to" title="cm4twc.LatLonGrid.is_space_equal_to"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_space_equal_to</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.LatLonGrid.X.html#cm4twc.LatLonGrid.X" title="cm4twc.LatLonGrid.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
+<td><p>Return the X-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.LatLonGrid.Y.html#cm4twc.LatLonGrid.Y" title="cm4twc.LatLonGrid.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
+<td><p>Return the Y-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.LatLonGrid.Z.html#cm4twc.LatLonGrid.Z" title="cm4twc.LatLonGrid.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
+<td><p>Return the Z-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance if the Z-axis exists, otherwise return None.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.LatLonGrid.X_bounds.html#cm4twc.LatLonGrid.X_bounds" title="cm4twc.LatLonGrid.X_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X_bounds</span></code></a></p></td>
+<td><p>Return the bounds of the X-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.LatLonGrid.Y_bounds.html#cm4twc.LatLonGrid.Y_bounds" title="cm4twc.LatLonGrid.Y_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y_bounds</span></code></a></p></td>
+<td><p>Return the bounds of the Y-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.LatLonGrid.Z_bounds.html#cm4twc.LatLonGrid.Z_bounds" title="cm4twc.LatLonGrid.Z_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_bounds</span></code></a></p></td>
+<td><p>Return the bounds of the Z-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance if the Z-axis exists, otherwise return None.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">cm4twc</a></h1>
+
+
+
+<p class="blurb">A Community Model for the Terrestrial Water Cycle</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ThibHlln&repo=cm4twc&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+      <li>Previous: <a href="../attributes/cm4twc.TimeDomain.timedelta.html" title="previous chapter">cm4twc.TimeDomain.timedelta</a></li>
+      <li>Next: <a href="../methods/cm4twc.LatLonGrid.from_extent_and_resolution.html" title="next chapter">cm4twc.LatLonGrid.from_extent_and_resolution</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, HydroJULES | Page built on 2020-06-15.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/classes/cm4twc.LatLonGrid.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
