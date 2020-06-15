@@ -4,9 +4,9 @@ import cf
 
 class DataSet(MutableMapping):
     """DataSet is a dictionary-like data structure which maps variable
-    names to `Field` objects. Namely, it allows to use custom variable
-    names instead of the standard_name attribute of `Field` to identify
-    them.
+    names to `cf.Field` objects. Namely, it allows to use custom
+    variable names instead of the standard_name attribute of `cf.Field`
+    to identify them.
     """
 
     def __init__(self, files=None, name_mapping=None, select=None):
@@ -19,25 +19,29 @@ class DataSet(MutableMapping):
                 file names or directory names containing netCDF files
                 from which to read the variables.
 
-                *Parameter example:*
-                    ``files='tests/dummy_data/dummy_driving_data.nc'``
-                *Parameter example:*
-                    ``files=['tests/dummy_data/dummy_driving_data.nc',
-                             'tests/dummy_data/dummy_ancillary_data.nc'`
+                *Parameter example:* ::
+
+                    files='tests/dummy_data/dummy_driving_data.nc'
+
+                *Parameter example:* ::
+
+                    files=['tests/dummy_data/dummy_driving_data.nc',
+                           'tests/dummy_data/dummy_ancillary_data.nc']
 
             select: (sequence of) `str`, optional
                 A string or sequence of strings providing the identities
                 of the variables to read in the netCDF file. By default,
                 all variables in the netCDF file are read.
 
-                *Parameter example:*
-                    ``select=['rainfall_flux', 'snowfall_flux']``
+                *Parameter example:* ::
+
+                    select=['rainfall_flux', 'snowfall_flux']
 
             name_mapping: `dict`, optional
                 A dictionary with the Field identities as keys and the
                 desired new name variables as values. If a Field is read
                 from the netCDF file, and its identity is not a key in
-                *name_mapping* (if provided), its standard_name
+                *name_mapping* (if provided), its 'standard_name'
                 attribute is used instead.
 
         **Examples**
@@ -111,25 +115,29 @@ class DataSet(MutableMapping):
                 file names or directory names containing netCDF files
                 from which to read the variables.
 
-                *Parameter example:*
-                    ``files='tests/dummy_data/dummy_driving_data.nc'``
-                *Parameter example:*
-                    ``files=['tests/dummy_data/dummy_driving_data.nc',
-                             'tests/dummy_data/dummy_ancillary_data.nc'`
+                *Parameter example:* ::
+
+                    files='tests/dummy_data/dummy_driving_data.nc'
+
+                *Parameter example:* ::
+
+                    files=['tests/dummy_data/dummy_driving_data.nc',
+                           'tests/dummy_data/dummy_ancillary_data.nc'
 
             select: (sequence of) `str`, optional
                 A string or sequence of strings providing the identities
                 of the variables to read in the netCDF file. By default,
                 all variables in the netCDF file are read.
 
-                *Parameter example:*
-                    ``select=['rainfall_flux', 'snowfall_flux']``
+                *Parameter example:* ::
+
+                    select=['rainfall_flux', 'snowfall_flux']
 
             name_mapping: `dict`, optional
                 A dictionary with the Field identities as keys and the
                 desired new name variables as values. If a Field is read
                 from the netCDF file, and its identity is not a key in
-                *name_mapping* (if provided), its standard_name
+                *name_mapping* (if provided), its 'standard_name'
                 attribute is used instead.
 
         **Examples**

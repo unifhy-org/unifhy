@@ -29,7 +29,7 @@ class TimeDomain(object):
 
     The first timestamp of the sequence is the beginning of the first
     Component timestep, and the last timestamp is the end of the last
-    timestep (not its start). The `timedelta` attribute corresponds
+    timestep (not its start). The *timedelta* attribute corresponds
     to the length of a timestep (i.e. the gap between two consecutive
     timestamps in the sequence).
     """
@@ -46,39 +46,45 @@ class TimeDomain(object):
 
             timestamps: one-dimensional array-like object
                 The array of timestamps defining the temporal dimension.
-                May be any type that can be cast to a `numpy.array`.
+                May be any type that can be cast to a `numpy.ndarray`.
                 Must contain numerical values.
 
-                *Parameter example:*
-                    ``timestamps=[0, 1, 2, 3]``
-                *Parameter example:*
-                    ``timestamps=(5, 7, 9)``
-                *Parameter example:*
-                    ``timestamps=numpy.arange(0, 10, 3)``
+                *Parameter example:* ::
+
+                    timestamps=[0, 1, 2, 3]
+
+                *Parameter example:* ::
+
+                    timestamps=(5, 7, 9)
+
+                *Parameter example:* ::
+
+                    timestamps=numpy.arange(0, 10, 3)
 
             units: `str`
-                Reference in time for the *timestamps* and *bounds*
-                following the format 'unit_of_time since
-                reference_datetime'.
+                Reference in time for the *timestamps* following the
+                format 'unit_of_time since reference_datetime'.
 
-                *Parameter example:*
-                    ``units='seconds since 1970-01-01'``
-                *Parameter example:*
-                    ``units='days since 2000-01-01 00:00:00'``
-                *Parameter example:*
-                    ``units='days since 1970-01-01 09:00:00'``
+                *Parameter example:* ::
+
+                    units='seconds since 1970-01-01'
+
+                *Parameter example:* ::
+
+                    units='days since 2000-01-01 09:00:00'
 
             calendar: `str`, optional
                 Calendar to be used for the reference in time of
                 *units*. If not provided, set to default value
                 'gregorian'.
 
-                *Parameter example:*
-                    ``calendar='standard'``
-                *Parameter example:*
-                    ``calendar='all_leap'``
-                *Parameter example:*
-                    ``calendar='365_day'``
+                *Parameter example:* ::
+
+                    calendar='all_leap'
+
+                *Parameter example:* ::
+
+                    calendar='365_day'
 
         **Examples**
 
@@ -323,49 +329,59 @@ class TimeDomain(object):
             datetimes: one-dimensional array-like object
                 The array of datetime objects defining the temporal
                 dimension. May be any type that can be cast to a
-                `numpy.array`. Must contain datetime objects.
+                `numpy.ndarray`. Must contain datetime objects (i.e.
+                `datetime.datetime`, `cftime.datetime`,
+                `numpy.datetime64`).
 
-                *Parameter example:*
-                    ``datetimes=[datetime.datetime(1970, 1, 1, 0, 0, 1),
-                                 datetime.datetime(1970, 1, 1, 0, 0, 2),
-                                 datetime.datetime(1970, 1, 1, 0, 0, 3),
-                                 datetime.datetime(1970, 1, 1, 0, 0, 4)]``
-                *Parameter example:*
-                    ``datetimes=(cftime.DatetimeAllLeap(2000, 1, 6),
-                                 cftime.DatetimeAllLeap(2000, 1, 8),
-                                 cftime.DatetimeAllLeap(2000, 1, 10))``
-                *Parameter example:*
-                    ``datetimes=numpy.arange(
+                *Parameter example:* ::
+
+                    datetimes=[datetime.datetime(1970, 1, 1, 0, 0, 1),
+                               datetime.datetime(1970, 1, 1, 0, 0, 2),
+                               datetime.datetime(1970, 1, 1, 0, 0, 3),
+                               datetime.datetime(1970, 1, 1, 0, 0, 4)]
+
+                *Parameter example:* ::
+
+                    datetimes=(cftime.DatetimeAllLeap(2000, 1, 6),
+                               cftime.DatetimeAllLeap(2000, 1, 8),
+                               cftime.DatetimeAllLeap(2000, 1, 10))
+
+                *Parameter example:* ::
+
+                    datetimes=numpy.arange(
                         numpy.datetime64('1970-01-01 09:00:00'),
                         numpy.datetime64('1970-01-11 09:00:00'),
-                        datetime.timedelta(days=3))``
+                        datetime.timedelta(days=3))
 
             units: `str`, optional
-                Reference in time for the *timestamps* and *bounds*
-                following the format 'unit_of_time since
+                Reference in time for the *timestamps* that will be
+                generated, following the format 'unit_of_time since
                 reference_datetime'. If not provided, set to default
                 value 'seconds since 1970-01-01 00:00:00Z'.
 
+                *Parameter example:* ::
+
+                    units='seconds since 1970-01-01'
+
                 *Parameter example:*
-                    ``units='seconds since 1970-01-01'``
-                *Parameter example:*
-                    ``units='days since 2000-01-01 00:00:00'``
-                *Parameter example:*
-                    ``units='days since 1970-01-01 09:00:00'``
+
+                    units='days since 2000-01-01 00:00:00'
+
 
             calendar: `str`, optional
                 Calendar to be used for the reference in time of
                 *units*. If not provided, inference from datetime object
-                is attempted on the calendar attribute (if it exists)
-                of the first datetime, otherwise set to default
-                'gregorian'.
+                is attempted on the 'calendar' attribute (if it exists)
+                of the first item in *datetimes*, otherwise set to
+                default 'gregorian'.
 
-                *Parameter example:*
-                    ``calendar='standard'``
-                *Parameter example:*
-                    ``calendar='all_leap'``
-                *Parameter example:*
-                    ``calendar='365_day'``
+                *Parameter example:* ::
+
+                    calendar='all_leap'
+
+                *Parameter example:* ::
+
+                    calendar='365_day'
 
         **Examples**
 
@@ -421,61 +437,66 @@ class TimeDomain(object):
                 initialisation of the `TimeDomain`. Must be any datetime
                 object (except `numpy.datetime64`).
 
-                *Parameter example:*
-                    ``start=datetime.datetime(1970, 1, 1, 0, 0, 0)``
-                *Parameter example:*
-                    ``start=cftime.DatetimeAllLeap(2000, 1, 6)``
-                *Parameter example:*
-                    ``start=datetime.datetime(1970, 1, 1, 9)``
+                *Parameter example:* ::
+
+                    start=datetime.datetime(1970, 1, 1, 9, 0, 0)
+
+                *Parameter example:* ::
+
+                    start=cftime.DatetimeAllLeap(2000, 1, 6)
 
             end: datetime object
                 The end of the sequence to be generated for the
                 initialisation of the `TimeDomain`. Must be any datetime
                 object (except `numpy.datetime64`).
 
-                *Parameter example:*
-                    ``end=datetime.datetime(1970, 1, 1, 0, 0, 4)``
-                *Parameter example:*
-                    ``end=cftime.DatetimeAllLeap(2000, 1, 10)``
-                *Parameter example:*
-                    ``end=datetime.datetime(1970, 1, 10, 9)``
+                *Parameter example:* ::
+
+                    end=datetime.datetime(1970, 1, 1, 0, 0, 4)
+
+                *Parameter example:* ::
+
+                    end=cftime.DatetimeAllLeap(2000, 1, 10)
 
             step: timedelta object
                 The step separating items in the sequence to be
                 generated for the initialisation of the `TimeDomain`.
                 Must be `datetime.timedelta` object.
 
-                *Parameter example:*
-                    ``step=datetime.timedelta(seconds=1)``
-                *Parameter example:*
-                    ``step=datetime.timedelta(days=1)``
-                *Parameter example:*
-                    ``step=datetime.timedelta(seconds=86400)``
+                *Parameter example:* ::
+
+                    step=datetime.timedelta(seconds=1)
+
+                *Parameter example:* ::
+
+                    step=datetime.timedelta(days=1)
 
             units: `str`, optional
-                Reference in time for the *timestamps* and *bounds*
-                that will be generated. Must follow the format
-                'unit_of_time since reference_datetime'. If not
-                provided, set to default value 'seconds since
-                1970-01-01 00:00:00Z'.
+                Reference in time for the *timestamps* that will be
+                generated. Must follow the format 'unit_of_time since
+                reference_datetime'. If not provided, set to default
+                value 'seconds since 1970-01-01 00:00:00Z'.
 
-                *Parameter example:*
-                    ``units='seconds since 1970-01-01'``
-                *Parameter example:*
-                    ``units='days since 2000-01-01 00:00:00'``
-                *Parameter example:*
-                    ``units='days since 1970-01-01 09:00:00'``
+                *Parameter example:* ::
+
+                    units='seconds since 1970-01-01'
+
+                *Parameter example:* ::
+
+                    units='days since 2000-01-01 00:00:00'
 
             calendar: `str`, optional
                 Calendar to be used for the reference in time of
                 *units*. If not provided, set to default 'gregorian'.
 
-                *Parameter example:*
-                    ``calendar='standard'``
-                *Parameter example:*
-                    ``calendar='all_leap'``
-                *Parameter example:*
-                    ``calendar='365_day'``
+                *Parameter example:* ::
+
+                    calendar='standard'
+
+                *Parameter example:* ::
+
+                    calendar='all_leap'
+
 
         **Examples**
 
@@ -520,13 +541,13 @@ class TimeDomain(object):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `TimeDomain` from a cf.Field instance.
+        """Initialise a `TimeDomain` from a `cf.Field` instance.
 
         :Parameters:
 
-            field: cf.Field object
+            field: `cf.Field` object
                 The field object who will be used to initialise a
-                'TimeDomain` instance. This field must feature a 'time'
+                `TimeDomain` instance. This field must feature a 'time'
                 construct, and this construct must feature a 'units' and
                 a 'calendar' property.
 

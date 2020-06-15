@@ -131,8 +131,9 @@ class Model(object):
                 A string providing the path to the YAML file to be used
                 to initialise `Model`.
 
-                *Parameter example:*
-                    ``yaml_file='dummy_config/dummy.yaml'``
+                *Parameter example:* ::
+
+                    yaml_file='dummy_config/dummy.yaml'
 
         **Examples**
 

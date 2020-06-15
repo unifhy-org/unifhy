@@ -625,89 +625,94 @@ class LatLonGrid(Grid):
             latitude: one-dimensional array-like object
                 The array of latitude coordinates in degrees North
                 defining the temporal dimension. May be any type that
-                can be cast to a `numpy.array`. Must contain numerical
+                can be cast to a `numpy.ndarray`. Must contain numerical
                 values.
 
-                *Parameter example:*
-                    ``latitude=[15, 45, 75]``
-                *Parameter example:*
-                    ``latitude=(-60, 0, 60)``
-                *Parameter example:*
-                    ``latitude=numpy.arange(-89.5, 90.5, 1)``
+                *Parameter example:* ::
+
+                    latitude=[15, 45, 75]
+
+                *Parameter example:* ::
+
+                    latitude=numpy.arange(-89.5, 90.5, 1)
 
             longitude: one-dimensional array-like object
                 The array of longitude coordinates in degrees East
                 defining the temporal dimension. May be any type that
-                can be cast to a `numpy.array`. Must contain numerical
+                can be cast to a `numpy.ndarray`. Must contain numerical
                 values.
 
-                *Parameter example:*
-                    ``longitude=[30, 90, 150]``
-                *Parameter example:*
-                    ``longitude=(-150, -90, -30, 30, 90, 150)``
-                *Parameter example:*
-                    ``longitude=numpy.arange(-179.5, 180.5, 1)``
+                *Parameter example:* ::
+
+                    longitude=(-150, -90, -30, 30, 90, 150)
+
+                *Parameter example:* ::
+
+                    longitude=numpy.arange(-179.5, 180.5, 1)
 
             latitude_bounds: two-dimensional array-like object
                 The array of latitude coordinate bounds in degrees North
                 defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
-                `numpy.array`. Must be two dimensional with the first
-                dimension equal to the size of `latitude` and the second
+                `numpy.ndarray`. Must be two dimensional with the first
+                dimension equal to the size of *latitude* and the second
                 dimension equal to 2. Must contain numerical values.
 
-                *Parameter example:*
-                    ``latitude_bounds=[[0, 30], [30, 60], [60, 90]]``
-                *Parameter example:*
-                    ``latitude_bounds=((-90, -30), (-30, 30), (30, 90))``
-                *Parameter example:*
-                    ``latitude_bounds=numpy.column_stack(
-                        (numpy.arange(-90, 90, 1),
-                         numpy.arange(-89, 91, 1))
-                    )``
+                *Parameter example:* ::
+
+                    latitude_bounds=[[0, 30], [30, 60], [60, 90]]
+
+                *Parameter example:* ::
+
+                    latitude_bounds=numpy.column_stack(
+                        (numpy.arange(-90, 90, 1), numpy.arange(-89, 91, 1))
+                    )
 
             longitude_bounds: two-dimensional array-like object
                 The array of longitude coordinate bounds in degrees
                 East defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
-                `numpy.array`. Must feature two dimensional with the
-                first dimension equal to the size of `longitude` and the
+                `numpy.ndarray`. Must feature two dimensional with the
+                first dimension equal to the size of *longitude* and the
                 second dimension equal to 2. Must contain numerical
                 values.
 
-                *Parameter example:*
-                    ``longitude_bounds=[[0, 60], [60, 120], [120, 180]]``
-                *Parameter example:*
-                    ``longitude_bounds=((-180, -120), (-120, -60), (-60, 0)
-                                        (0, 60), (60, 120), (120, 180))``
-                *Parameter example:*
-                    ``longitude_bounds=numpy.column_stack(
+                *Parameter example:* ::
+
+                    longitude_bounds=((-180, -120), (-120, -60), (-60, 0)
+                                      (0, 60), (60, 120), (120, 180))
+
+                *Parameter example:* ::
+
+                    longitude_bounds=numpy.column_stack(
                         (numpy.arange(-180, 180, 1),
                          numpy.arange(-179, 181, 1))
-                    )``
+                    )
 
             altitude: one-dimensional array-like object, optional
                 The array of altitude coordinates in metres defining the
                 temporal dimension (with upwards as the positive
                 direction). May be any type that can be cast to a
-                `numpy.array`. Must contain numerical values. Ignored
-                if `altitude_bounds` not also provided.
+                `numpy.ndarray`. Must contain numerical values. Ignored
+                if *altitude_bounds* not also provided.
 
-                *Parameter example:*
-                    ``altitude=[10]``
+                *Parameter example:* ::
+
+                    altitude=[10]
 
             altitude_bounds: two-dimensional array-like object, optional
                 The array of altitude coordinate bounds in metres
                 defining the extent of the grid cell around the
                 coordinate (with upwards as the positive direction).
-                May be any type that can be cast to a `numpy.array`.
+                May be any type that can be cast to a `numpy.ndarray`.
                 Must be two dimensional with the first dimension equal
                 to the size of `altitude` and the second dimension equal
                 to 2. Must contain numerical values. Ignored if
-                `altitude` not also provided.
+                *altitude* not also provided.
 
-                *Parameter example:*
-                    ``altitude=[[0, 20]]``
+                *Parameter example:* ::
+
+                    altitude_bounds=[[0, 20]]
 
         **Examples**
 
@@ -782,10 +787,11 @@ class LatLonGrid(Grid):
                 latitude coordinate, the second element of the pair is
                 the location of the end of the extent along the latitude
                 coordinate. May be any type that can be unpacked (e.g.
-                `tuple`, `list`, `numpy.array`).
+                `tuple`, `list`, `numpy.ndarray`).
 
-                *Parameter example:*
-                    ``latitude_extent=(30, 70)``
+                *Parameter example:* ::
+
+                    latitude_extent=(30, 70)
 
             longitude_extent: pair of `float` or `int`
                 The extent of longitude coordinates in degrees East
@@ -794,24 +800,27 @@ class LatLonGrid(Grid):
                 longitude coordinate, the second element of the pair is
                 the location of the end of the extent along the
                 longitude coordinate. May be any type that can be
-                unpacked (e.g. `tuple`, `list`, `numpy.array`).
+                unpacked (e.g. `tuple`, `list`, `numpy.ndarray`).
 
-                *Parameter example:*
-                    ``longitude_extent=(0, 90)``
+                *Parameter example:* ::
+
+                    longitude_extent=(0, 90)
 
             latitude_resolution: `float` or `int`
                 The spacing between two consecutive latitude coordinates
                 in degrees North for the desired grid.
 
-                *Parameter example:*
-                    ``latitude_resolution=10``
+                *Parameter example:* ::
+
+                    latitude_resolution=10
 
             longitude_resolution: `float` or `int`
                 The spacing between two consecutive longitude
                 coordinates in degrees East for the desired grid.
 
-                *Parameter example:*
-                    ``longitude_resolution=10``
+                *Parameter example:* ::
+
+                    longitude_resolution=10
 
             latitude_longitude_location: `str` or `int`, optional
                 The location of the latitude and longitude coordinates
@@ -826,6 +835,7 @@ class LatLonGrid(Grid):
                 (Y-axis). The orientation of the coordinate system
                 considered is detailed below (i.e. positive directions
                 are northwards and eastwards).
+                ::
 
                     Y, latitude (degrees North)
                     ↑
@@ -836,44 +846,44 @@ class LatLonGrid(Grid):
                 or the indices (as an `int`) detailed in the table
                 below.
 
-                ================  =====  ===============================
-                label             index  description
-                ================  =====  ===============================
-                ``'centre'``      ``0``  The latitude and longitude
-                                         bounds extend equally on both
-                                         sides of the coordinate along
-                                         the two axes of a length equal
-                                         to half the resolution along
-                                         the given coordinate axis.
+                =================  =====  ==============================
+                label              idx    description
+                =================  =====  ==============================
+                ``'centre'``       ``0``  The latitude and longitude
+                                          bounds extend equally on both
+                                          sides of the coordinate along
+                                          the two axes of a length equal
+                                          to half the resolution along
+                                          the given coordinate axis.
 
-                ``'lower left'``  ``1``  The latitude bounds extend
-                                         northwards of a length equal to
-                                         the latitude resolution. The
-                                         longitude bounds extend
-                                         eastwards of a length equal to
-                                         the longitude resolution.
+                ``'lower left'``   ``1``  The latitude bounds extend
+                                          northwards of a length equal
+                                          to the latitude resolution.
+                                          The longitude bounds extend
+                                          eastwards of a length equal to
+                                          the longitude resolution.
 
-                ``'upper left'``  ``2``  The latitude bounds extend
-                                         southwards of a length equal to
-                                         the latitude resolution. The
-                                         longitude bounds extend
-                                         eastwards of a length equal to
-                                         the longitude resolution.
+                ``'upper left'``   ``2``  The latitude bounds extend
+                                          southwards of a length equal
+                                          to the latitude resolution.
+                                          The longitude bounds extend
+                                          eastwards of a length equal to
+                                          the longitude resolution.
 
-                ``'lower right'`` ``3``  The latitude bounds extend
-                                         northwards of a length equal to
-                                         the latitude resolution. The
-                                         longitude bounds extend
-                                         westwards of a length equal to
-                                         the longitude resolution.
+                ``'lower right'``  ``3``  The latitude bounds extend
+                                          northwards of a length equal
+                                          to the latitude resolution.
+                                          The longitude bounds extend
+                                          westwards of a length equal to
+                                          the longitude resolution.
 
-                ``'upper right'`` ``4``  The latitude bounds extend
-                                         southwards of a length equal to
-                                         the latitude resolution. The
-                                         longitude bounds extend
-                                         westwards of a length equal to
-                                         the longitude resolution.
-                ================  =====  ===============================
+                ``'upper right'``  ``4``  The latitude bounds extend
+                                          southwards of a length equal
+                                          to the latitude resolution.
+                                          The longitude bounds extend
+                                          westwards of a length equal to
+                                          the longitude resolution.
+                =================  =====  ==============================
 
                 The indices defining the location of the coordinate in
                 relation to its grid cell are made explicit below, where
@@ -881,6 +891,7 @@ class LatLonGrid(Grid):
                 characters delineate the relative location of the grid
                 cell whose height and width are determined using the
                 latitude and longitude resolutions, respectively.
+                ::
 
                     2             4               northwards
                      +  ·  ·  ·  +                    ↑
@@ -890,9 +901,13 @@ class LatLonGrid(Grid):
                      +  ·  ·  ·  +                    ↓
                     1             3               southwards
 
-                *Parameter example:*
-                    ``latitude_longitude_location='centre'``
-                    ``latitude_longitude_location=0`
+                *Parameter example:* ::
+
+                    latitude_longitude_location='centre'
+
+                *Parameter example:* ::
+
+                    latitude_longitude_location=0
 
             altitude_extent: pair of `float` or `int`, optional
                 The extent of altitude coordinate in metres for the
@@ -901,17 +916,19 @@ class LatLonGrid(Grid):
                 coordinate, the second element of the pair is the
                 location of the end of the extent along the altitude
                 coordinate. May be any type that can be unpacked (e.g.
-                `tuple`, `list`, `numpy.array`).
+                `tuple`, `list`, `numpy.ndarray`).
 
-                *Parameter example:*
-                    ``altitude_extent=(0, 20)``
+                *Parameter example:* ::
+
+                    altitude_extent=(0, 20)
 
             altitude_resolution: `float` or `int`, optional
                 The spacing between two consecutive altitude coordinates
                 in metres for the desired grid.
 
-                *Parameter example:*
-                    ``altitude_resolution=20``
+                *Parameter example:* ::
+
+                    altitude_resolution=20
 
             altitude_location: `str` or `int`, optional
                 The location of the altitude coordinates in relation to
@@ -930,7 +947,7 @@ class LatLonGrid(Grid):
                 below.
 
                 ================  =====  ===============================
-                label             index  description
+                label             idx    description
                 ================  =====  ===============================
                 ``'centre'``      ``0``  The altitude bounds extend
                                          equally upwards and downwards
@@ -949,8 +966,9 @@ class LatLonGrid(Grid):
                                          altitude axis.
                 ================  =====  ===============================
 
-                *Parameter example:*
-                    ``altitude_location='centre'``
+                *Parameter example:* ::
+
+                    altitude_location='centre'
 
         **Examples**
 
@@ -1015,7 +1033,7 @@ class LatLonGrid(Grid):
 
             field: cf.Field object
                 The field object who will be used to initialise a
-                'LatLonGrid` instance. This field must feature a
+                `LatLonGrid` instance. This field must feature a
                 'latitude' and a 'longitude' constructs, and these
                 constructs must feature bounds. This field may
                 optionally feature an 'altitude' construct alongside its
@@ -1108,45 +1126,49 @@ class RotatedLatLonGrid(Grid):
             grid_latitude: one-dimensional array-like object
                 The array of latitude coordinates in degrees defining
                 the temporal dimension. May be any type that can be cast
-                to a `numpy.array`. Must contain numerical values.
+                to a `numpy.ndarray`. Must contain numerical values.
 
-                *Parameter example:*
-                    ``grid_latitude=[0.88, 0.44, 0., -0.44, -0.88]``
+                *Parameter example:* ::
+
+                    grid_latitude=[0.88, 0.44, 0., -0.44, -0.88]
 
             grid_longitude: one-dimensional array-like object
                 The array of longitude coordinates in degrees defining
                 the temporal dimension. May be any type that can be cast
-                to a `numpy.array`. Must contain numerical values.
+                to a `numpy.ndarray`. Must contain numerical values.
 
-                *Parameter example:*
-                    ``grid_longitude=[-2.5, -2.06, -1.62, -1.18]``
+                *Parameter example:* ::
+
+                    grid_longitude=[-2.5, -2.06, -1.62, -1.18]
 
             grid_latitude_bounds: two-dimensional array-like object
                 The array of latitude coordinate bounds in degrees
                 defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
-                `numpy.array`. Must be two dimensional with the first
+                `numpy.ndarray`. Must be two dimensional with the first
                 dimension equal to the size of `grid_latitude` and the
                 second dimension equal to 2. Must contain numerical
                 values.
 
-                *Parameter example:*
-                    ``grid_latitude_bounds=[[1.1, 0.66], [0.66, 0.22],
+                *Parameter example:* ::
+
+                    grid_latitude_bounds=[[1.1, 0.66], [0.66, 0.22],
                                             [0.22, -0.22], [-0.22, -0.66],
-                                            [-0.66, -1.1]]``
+                                            [-0.66, -1.1]]
 
             grid_longitude_bounds: two-dimensional array-like object
                 The array of longitude coordinate bounds in degrees
                 defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
-                `numpy.array`. Must feature two dimensional with the
+                `numpy.ndarray`. Must feature two dimensional with the
                 first dimension equal to the size of `grid_longitude`
                 and the second dimension equal to 2. Must contain
                 numerical values.
 
-                *Parameter example:*
-                    ``grid_longitude_bounds=[[-2.72, -2.28], [-2.28, -1.84],
-                                             [-1.84, -1.4], [-1.4, -0.96]]```
+                *Parameter example:* ::
+
+                    grid_longitude_bounds=[[-2.72, -2.28], [-2.28, -1.84],
+                                           [-1.84, -1.4], [-1.4, -0.96]]
 
             earth_radius: `int` or `float`
                 The radius of the spherical figure used to approximate
@@ -1170,24 +1192,26 @@ class RotatedLatLonGrid(Grid):
                 The array of altitude coordinates in metres defining the
                 temporal dimension (with upwards as the positive
                 direction). May be any type that can be cast to a
-                `numpy.array`. Must contain numerical values. Ignored
+                `numpy.ndarray`. Must contain numerical values. Ignored
                 if `altitude_bounds` not also provided.
 
-                *Parameter example:*
-                    ``altitude=[10]``
+                *Parameter example:* ::
+
+                    altitude=[10]
 
             altitude_bounds: two-dimensional array-like object, optional
                 The array of altitude coordinate bounds in metres
                 defining the extent of the grid cell around the
                 coordinate (with upwards as the positive direction).
-                May be any type that can be cast to a `numpy.array`.
+                May be any type that can be cast to a `numpy.ndarray`.
                 Must be two dimensional with the first dimension equal
                 to the size of `altitude` and the second dimension equal
                 to 2. Must contain numerical values. Ignored if
                 `altitude` not also provided.
 
-                *Parameter example:*
-                    ``altitude=[[0, 20]]``
+                *Parameter example:* ::
+
+                    altitude_bounds=[[0, 20]]
 
         **Examples**
 
@@ -1278,7 +1302,7 @@ class RotatedLatLonGrid(Grid):
 
             field: cf.Field object
                 The field object who will be used to initialise a
-                'RotatedLatLonGrid` instance. This field must feature a
+                `RotatedLatLonGrid` instance. This field must feature a
                 'latitude' and a 'longitude' constructs, and these
                 constructs must feature bounds. In addition, the
                 parameters required for the conversion of the grid to a
