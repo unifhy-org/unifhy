@@ -20,7 +20,31 @@ class Component(metaclass=abc.ABCMeta):
                  ancillary_data_info=None, parameters_info=None,
                  constants_info=None, states_info=None,
                  inwards_info=None, outwards_info=None):
+        """**Initialisation**
 
+        :Parameters:
+
+            timedomain: `TimeDomain` object
+                The temporal dimension of the `Component`.
+
+            spacedomain: `SpaceDomain` object
+                The spatial dimension of the `Component`.
+
+            dataset: `DataSet` object
+                The dataset containing the substitute data substituting
+                the `Component`\'s simulated time series. The data is
+                dataset must be compatible in time with *timedomain* and
+                compatible in space with *spacedomain*.
+
+            parameters: `dict`
+                The parameter values for the `Component`. Must be
+                provided in the units expected by the `Component`.
+
+            constants: `dict`
+                The parameter values for the `Component`. Must be
+                provided in the required units.
+
+        """
         # category attribute
         self.category = self._kind
 
@@ -168,9 +192,8 @@ class Component(metaclass=abc.ABCMeta):
             self._dataset[data_name] = self.dataset[data_name]
 
     def _check_parameters(self, parameters):
-        """
-        The purpose of this method is to check that parameter values are given
-        for the corresponding component.
+        """The purpose of this method is to check that parameter values
+        are given for the corresponding component.
         """
         # check that all parameters are provided
         if not all([i in parameters for i in self.parameters_info]):
@@ -309,8 +332,9 @@ class Component(metaclass=abc.ABCMeta):
 
 
 class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
-    """
-    DOCSTRING REQUIRED
+    """The SurfaceLayerComponent is simulating the hydrological
+    processes in the surface layer compartment of the hydrological
+    cycle.
     """
     _kind = 'surfacelayer'
     _ins = {
@@ -337,8 +361,8 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
 
 
 class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
-    """
-    DOCSTRING REQUIRED
+    """The SubSurfaceComponent is simulating the hydrological processes
+    in the subsurface compartment of the hydrological cycle.
     """
     _kind = 'subsurface'
     _ins = {
@@ -366,8 +390,8 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
 
 
 class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
-    """
-    DOCSTRING REQUIRED
+    """The OpenWaterComponent is simulating the hydrological processes
+    in the open water compartment of the hydrological cycle.
     """
     _kind = 'openwater'
     _ins = {
@@ -390,14 +414,39 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
 
 
 class DataComponent(Component):
-    """
-    DOCSTRING REQUIRED
+    """The DataComponent is a `Component` substituting simulations with
+    data.
+
+    Its intended use is to replace a compartment of the hydrological
+    cycle with measurements or with previous simulation runs.
     """
     _kind = 'data'
     _ins = {}
     _outs = {}
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
+        """**Initialisation**
+
+        :Parameters:
+
+            timedomain: `TimeDomain` object
+                The temporal dimension of the `Component`.
+
+            spacedomain: `SpaceDomain` object
+                The spatial dimension of the `Component`.
+
+            dataset: `DataSet` object
+                The dataset containing the substitute data substituting
+                the `Component`\'s simulated time series. The data is
+                dataset must be compatible in time with *timedomain* and
+                compatible in space with *spacedomain*.
+
+            substituting_class: `Component` object
+                The subclass of `Component` that the DataComponent is
+                substituting its simulated time series with the ones in
+                *dataset*.
+
+        """
         super(DataComponent, self).__init__(
             timedomain, spacedomain, dataset, None, None,
             0, substituting_class.get_class_outwards(), None,
@@ -426,14 +475,33 @@ class DataComponent(Component):
 
 
 class NullComponent(Component):
-    """
-    DOCSTRING REQUIRED
+    """The NullComponent mimics a `Component` and returns time series of
+    zeros.
+
+    Its intended use is to ignore a compartment of the hydrological
+    cycle.
     """
     _kind = 'null'
     _ins = {}
     _outs = {}
 
     def __init__(self, timedomain, spacedomain, substituting_class):
+        """**Initialisation**
+
+        :Parameters:
+
+            timedomain: `TimeDomain` object
+                The temporal dimension of the `Component`.
+
+            spacedomain: `SpaceDomain` object
+                The spatial dimension of the `Component`.
+
+            substituting_class: `Component` object
+                The subclass of `Component` that the NullComponent is
+                substituting its simulated time series with time series
+                of zeros.
+
+        """
         super(NullComponent, self).__init__(
             timedomain, spacedomain, None, None, None,
             0, None, None,

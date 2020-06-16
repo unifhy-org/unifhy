@@ -39,7 +39,26 @@
 <dl class="py class">
 <dt id="cm4twc.Model">
 <em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">surfacelayer</span></em>, <em class="sig-param"><span class="n">subsurface</span></em>, <em class="sig-param"><span class="n">openwater</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.Model" title="Permalink to this definition">¶</a></dt>
-<dd><p>DOCSTRING REQUIRED</p>
+<dd><p>Model is the core element of the modelling framework.</p>
+<p>It is responsible for configuring the simulating, checking the
+compatibility between <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>s, and controlling the simulation
+workflow.</p>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>surfacelayer: <a class="reference internal" href="cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> object</dt><dd><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> responsible for the surface layer
+compartment of the hydrological cycle.</p>
+</dd>
+<dt>subsurface: <a class="reference internal" href="cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a> object</dt><dd><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> responsible for the subsurface
+compartment of the hydrological cycle.</p>
+</dd>
+<dt>openwater: <a class="reference internal" href="cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> object</dt><dd><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> responsible for the open water
+compartment of the hydrological cycle.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <div class="section" id="methods">
@@ -64,10 +83,10 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.Model.spin_up.html#cm4twc.Model.spin_up" title="cm4twc.Model.spin_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spin_up</span></code></a></p></td>
-<td><p>DOCSTRING REQUIRED</p></td>
+<td><p>Run model spin-up simulation to initialise model states.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../methods/cm4twc.Model.simulate.html#cm4twc.Model.simulate" title="cm4twc.Model.simulate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate</span></code></a></p></td>
-<td><p>DOCSTRING REQUIRED</p></td>
+<td><p>Run model simulation over period defined in its components’ timedomains.</p></td>
 </tr>
 </tbody>
 </table>
@@ -140,7 +159,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020, HydroJULES | Page built on 2020-06-15.
+      &copy;2020, HydroJULES | Page built on 2020-06-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>

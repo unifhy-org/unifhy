@@ -18,6 +18,8 @@ API
    classes/cm4twc.SurfaceLayerComponent.rst
    classes/cm4twc.SubSurfaceComponent.rst
    classes/cm4twc.OpenWaterComponent.rst
+   classes/cm4twc.DataComponent.rst
+   classes/cm4twc.NullComponent.rst
 
 .. rubric:: Time
 

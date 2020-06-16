@@ -39,7 +39,30 @@
 <dl class="py method">
 <dt id="cm4twc.Model.spin_up">
 <code class="sig-prename descclassname">Model.</code><code class="sig-name descname">spin_up</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em>, <em class="sig-param"><span class="n">cycles</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.Model.spin_up" title="Permalink to this definition">¶</a></dt>
-<dd><p>DOCSTRING REQUIRED</p>
+<dd><p>Run model spin-up simulation to initialise model states.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>start, end: datetime object</dt><dd><p>The start and the end of the spin-up simulation. Their
+calendar and units are assumed to be the ones of the
+model <code class="xref py py-obj docutils literal notranslate"><span class="pre">Components</span></code> that will be spun up. Note, the <em>end</em>
+parameter refers to the end of the last timestep in the
+spin-up period.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>cycles: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The number of repetitions of the spin-up simulation. If
+not provided, set to default 1 (cycle).</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -112,7 +135,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020, HydroJULES | Page built on 2020-06-15.
+      &copy;2020, HydroJULES | Page built on 2020-06-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>

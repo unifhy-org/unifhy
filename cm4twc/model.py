@@ -185,7 +185,7 @@ class Model(object):
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def spin_up(self, start, end, cycles=1):
-        """Run model spin-up simulation to initialise model states
+        """Run model spin-up simulation to initialise model states.
 
         :Parameters:
 
@@ -226,7 +226,8 @@ class Model(object):
         self._spun_up = True
 
     def simulate(self):
-        """Run model simulation over period defined in components' timedomains
+        """Run model simulation over period defined in its components'
+        timedomains.
         """
         if not self._spun_up:
             self._initialise()
