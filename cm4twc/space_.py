@@ -1146,7 +1146,7 @@ class RotatedLatLonGrid(Grid):
                 defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
                 `numpy.ndarray`. Must be two dimensional with the first
-                dimension equal to the size of `grid_latitude` and the
+                dimension equal to the size of *grid_latitude* and the
                 second dimension equal to 2. Must contain numerical
                 values.
 
@@ -1161,7 +1161,7 @@ class RotatedLatLonGrid(Grid):
                 defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
                 `numpy.ndarray`. Must feature two dimensional with the
-                first dimension equal to the size of `grid_longitude`
+                first dimension equal to the size of *grid_longitude*
                 and the second dimension equal to 2. Must contain
                 numerical values.
 
@@ -1193,7 +1193,7 @@ class RotatedLatLonGrid(Grid):
                 temporal dimension (with upwards as the positive
                 direction). May be any type that can be cast to a
                 `numpy.ndarray`. Must contain numerical values. Ignored
-                if `altitude_bounds` not also provided.
+                if *altitude_bounds* not also provided.
 
                 *Parameter example:* ::
 
@@ -1205,9 +1205,9 @@ class RotatedLatLonGrid(Grid):
                 coordinate (with upwards as the positive direction).
                 May be any type that can be cast to a `numpy.ndarray`.
                 Must be two dimensional with the first dimension equal
-                to the size of `altitude` and the second dimension equal
+                to the size of *altitude* and the second dimension equal
                 to 2. Must contain numerical values. Ignored if
-                `altitude` not also provided.
+                *altitude* not also provided.
 
                 *Parameter example:* ::
 

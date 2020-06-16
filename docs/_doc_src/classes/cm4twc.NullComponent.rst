@@ -5,5 +5,6 @@ NullComponent
 =============
 
 .. autoclass:: NullComponent
+   :show-inheritance:
    :members:
    :inherited-members:

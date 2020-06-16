@@ -5,5 +5,6 @@ OpenWaterComponent
 ==================
 
 .. autoclass:: OpenWaterComponent
+   :show-inheritance:
    :members:
    :inherited-members:

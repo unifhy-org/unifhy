@@ -1,3 +1,4 @@
+<!-- just to remove the period after show_copyright -->
 
 <!DOCTYPE html>
 
@@ -39,7 +40,8 @@
 <dl class="py class">
 <dt id="cm4twc.RotatedLatLonGrid">
 <em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">RotatedLatLonGrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid_latitude</span></em>, <em class="sig-param"><span class="n">grid_longitude</span></em>, <em class="sig-param"><span class="n">grid_latitude_bounds</span></em>, <em class="sig-param"><span class="n">grid_longitude_bounds</span></em>, <em class="sig-param"><span class="n">earth_radius</span></em>, <em class="sig-param"><span class="n">grid_north_pole_latitude</span></em>, <em class="sig-param"><span class="n">grid_north_pole_longitude</span></em>, <em class="sig-param"><span class="n">altitude</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">altitude_bounds</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.RotatedLatLonGrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>LatLonGrid characterises the spatial dimension for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cm4twc.space_.Grid</span></code></p>
+<p>LatLonGrid characterises the spatial dimension for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
 as a regular grid on a spherical domain whose coordinates are
 latitudes and longitudes, and whose rotation axis is not aligned
 with the North pole.</p>
@@ -67,7 +69,7 @@ to a <a class="reference external" href="https://numpy.org/doc/stable/reference/
 defining the extent of the grid cell around the
 coordinate. May be any type that can be cast to a
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must be two dimensional with the first
-dimension equal to the size of <code class="xref py py-obj docutils literal notranslate"><span class="pre">grid_latitude</span></code> and the
+dimension equal to the size of <em>grid_latitude</em> and the
 second dimension equal to 2. Must contain numerical
 values.</p>
 <p><em>Parameter example:</em></p>
@@ -81,7 +83,7 @@ values.</p>
 defining the extent of the grid cell around the
 coordinate. May be any type that can be cast to a
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must feature two dimensional with the
-first dimension equal to the size of <code class="xref py py-obj docutils literal notranslate"><span class="pre">grid_longitude</span></code>
+first dimension equal to the size of <em>grid_longitude</em>
 and the second dimension equal to 2. Must contain
 numerical values.</p>
 <p><em>Parameter example:</em></p>
@@ -109,7 +111,7 @@ coordinate system.</p>
 temporal dimension (with upwards as the positive
 direction). May be any type that can be cast to a
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values. Ignored
-if <code class="xref py py-obj docutils literal notranslate"><span class="pre">altitude_bounds</span></code> not also provided.</p>
+if <em>altitude_bounds</em> not also provided.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
@@ -120,9 +122,9 @@ defining the extent of the grid cell around the
 coordinate (with upwards as the positive direction).
 May be any type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.
 Must be two dimensional with the first dimension equal
-to the size of <code class="xref py py-obj docutils literal notranslate"><span class="pre">altitude</span></code> and the second dimension equal
+to the size of <em>altitude</em> and the second dimension equal
 to 2. Must contain numerical values. Ignored if
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">altitude</span></code> not also provided.</p>
+<em>altitude</em> not also provided.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">]]</span>
 </pre></div>
@@ -211,8 +213,9 @@ to 2. Must contain numerical values. Ignored if
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">cm4twc</a></h1>
+        <div class="sphinxsidebarwrapper"><!-- from https://github.com/bitprophet/alabaster/blob/master/alabaster/about.html -->
+
+<h1 class="logo"><a href="../index.html">cm4twc 0.0.1</a></h1>
 
 
 
@@ -230,6 +233,7 @@ to 2. Must contain numerical values. Ignored if
 
 
 
+<!-- from https://github.com/bitprophet/alabaster/blob/master/alabaster/about.html -->
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
@@ -237,17 +241,7 @@ to 2. Must contain numerical values. Ignored if
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
 </ul>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">API</a><ul>
-      <li>Previous: <a href="../attributes/cm4twc.LatLonGrid.Z_bounds.html" title="previous chapter">cm4twc.LatLonGrid.Z_bounds</a></li>
-      <li>Next: <a href="cm4twc.DataSet.html" title="next chapter">DataSet</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -258,20 +252,12 @@ to 2. Must contain numerical values. Ignored if
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020, HydroJULES | Page built on 2020-06-16.
+      &copy;2020, NCAS–UKCEH–BGS
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>

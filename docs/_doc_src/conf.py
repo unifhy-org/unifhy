@@ -10,7 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-from datetime import datetime, date
+from datetime import datetime
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
@@ -21,8 +21,8 @@ with open('../../cm4twc/version.py') as fv:
 
 # -- Project information -----------------------------------------------------
 project = 'cm4twc'
-copyright = '{}, HydroJULES | Page built on {}'.format(
-    datetime.now().year, date.today()
+copyright = '{}, NCAS–UKCEH–BGS'.format(
+    datetime.now().year
 )
 author = 'Thibault Hallouin'
 
@@ -126,6 +126,13 @@ htmlhelp_basename = 'cm4twcdoc'
 html_css_files = [
     'customise-alabaster.css',
 ]
+
+# Custom sidebar templates, maps document names to template names.
+html_sidebars = {
+    '**': ['about.html',
+           'navigation.html',
+           'searchbox.html']
+}
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf

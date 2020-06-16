@@ -1,3 +1,4 @@
+<!-- just to remove the period after show_copyright -->
 
 <!DOCTYPE html>
 
@@ -39,7 +40,8 @@
 <dl class="py class">
 <dt id="cm4twc.LatLonGrid">
 <em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">LatLonGrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">latitude</span></em>, <em class="sig-param"><span class="n">longitude</span></em>, <em class="sig-param"><span class="n">latitude_bounds</span></em>, <em class="sig-param"><span class="n">longitude_bounds</span></em>, <em class="sig-param"><span class="n">altitude</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">altitude_bounds</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.LatLonGrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>LatLonGrid characterises the spatial dimension for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cm4twc.space_.Grid</span></code></p>
+<p>LatLonGrid characterises the spatial dimension for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
 as a regular grid on a spherical domain whose coordinates are
 latitudes and longitudes, and whose rotation axis is aligned with
 the North pole.</p>
@@ -244,8 +246,9 @@ to 2. Must contain numerical values. Ignored if
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">cm4twc</a></h1>
+        <div class="sphinxsidebarwrapper"><!-- from https://github.com/bitprophet/alabaster/blob/master/alabaster/about.html -->
+
+<h1 class="logo"><a href="../index.html">cm4twc 0.0.1</a></h1>
 
 
 
@@ -263,6 +266,7 @@ to 2. Must contain numerical values. Ignored if
 
 
 
+<!-- from https://github.com/bitprophet/alabaster/blob/master/alabaster/about.html -->
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
@@ -270,17 +274,7 @@ to 2. Must contain numerical values. Ignored if
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
 </ul>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">API</a><ul>
-      <li>Previous: <a href="../attributes/cm4twc.TimeDomain.timedelta.html" title="previous chapter">cm4twc.TimeDomain.timedelta</a></li>
-      <li>Next: <a href="../methods/cm4twc.LatLonGrid.from_extent_and_resolution.html" title="next chapter">cm4twc.LatLonGrid.from_extent_and_resolution</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -291,20 +285,12 @@ to 2. Must contain numerical values. Ignored if
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020, HydroJULES | Page built on 2020-06-16.
+      &copy;2020, NCAS–UKCEH–BGS
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>

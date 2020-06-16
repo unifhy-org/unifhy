@@ -5,6 +5,7 @@ RotatedLatLonGrid
 =================
 
 .. autoclass:: RotatedLatLonGrid
+   :show-inheritance:
 
 
 Methods

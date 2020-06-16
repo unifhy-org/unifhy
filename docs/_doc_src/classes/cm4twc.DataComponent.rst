@@ -5,5 +5,6 @@ DataComponent
 =============
 
 .. autoclass:: DataComponent
+   :show-inheritance:
    :members:
    :inherited-members:

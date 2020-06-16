@@ -5,6 +5,7 @@ LatLonGrid
 ==========
 
 .. autoclass:: LatLonGrid
+   :show-inheritance:
 
 
 Methods

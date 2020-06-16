@@ -5,5 +5,6 @@ SurfaceLayerComponent
 =====================
 
 .. autoclass:: SurfaceLayerComponent
+   :show-inheritance:
    :members:
    :inherited-members:

@@ -5,5 +5,6 @@ SubSurfaceComponent
 ===================
 
 .. autoclass:: SubSurfaceComponent
+   :show-inheritance:
    :members:
    :inherited-members:
