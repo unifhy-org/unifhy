@@ -10,7 +10,7 @@ from .components import (SurfaceLayerComponent, SubSurfaceComponent,
 class Model(object):
     r"""Model is the core element of the modelling framework.
 
-    It is responsible for configuring the simulating, checking the
+    It is responsible for configuring the simulation, checking the
     compatibility between `Component`\s, and controlling the simulation
     workflow.
     """
