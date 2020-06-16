@@ -329,7 +329,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td2, td3)
 
     def test_timedomain_equal_with_different_alias_calendars(self):
-        for cal, alias in cm4twc.time_._supported_calendar_mapping.items():
+        for cal, alias in cm4twc.time._supported_calendar_mapping.items():
             if not cal == alias:
 
                 td1 = cm4twc.TimeDomain(
@@ -469,18 +469,18 @@ class TestClockAPI(unittest.TestCase):
         self.exp_idx_c = [0, 1]
 
     def test_clock_init(self):
-        clock = cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
-                                   subsurface_timedomain=self.td_b,
-                                   openwater_timedomain=self.td_c)
+        clock = cm4twc.time.Clock(surfacelayer_timedomain=self.td_a,
+                                  subsurface_timedomain=self.td_b,
+                                  openwater_timedomain=self.td_c)
 
         self.assertEqual(clock._surfacelayer_switch.tolist(), self.exp_bool_a)
         self.assertEqual(clock._subsurface_switch.tolist(), self.exp_bool_b)
         self.assertEqual(clock._openwater_switch.tolist(), self.exp_bool_c)
 
     def test_clock_iteration(self):
-        clock = cm4twc.time_.Clock(surfacelayer_timedomain=self.td_a,
-                                   subsurface_timedomain=self.td_b,
-                                   openwater_timedomain=self.td_c)
+        clock = cm4twc.time.Clock(surfacelayer_timedomain=self.td_a,
+                                  subsurface_timedomain=self.td_b,
+                                  openwater_timedomain=self.td_c)
 
         out_bool_a, out_bool_b, out_bool_c = list(), list(), list()
         out_idx_a, out_idx_b, out_idx_c = list(), list(), list()
@@ -513,7 +513,7 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainComparison))
     test_suite.addTests(test_loader.loadTestsFromTestCase(TestClockAPI))
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.time_))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.time))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.data_))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.data))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

@@ -1,7 +1,7 @@
 from importlib import import_module
 import yaml
 
-from .time_ import Clock
+from .time import Clock
 from .interface import Interface
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)

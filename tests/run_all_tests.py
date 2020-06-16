@@ -11,9 +11,9 @@ if __name__ == '__main__':
     all_tests = test_loader.discover('.', pattern='test_*.py')
     test_suite.addTests(all_tests)
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.data_))
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.time_))
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.space_))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.data))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.time))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc.space))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
 
     runner = unittest.TextTestRunner(verbosity=2)

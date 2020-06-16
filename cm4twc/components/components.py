@@ -3,10 +3,10 @@ import numpy as np
 import cf
 from cfunits import Units
 
-from ..time_ import TimeDomain
-from .. import space_
-from ..space_ import SpaceDomain, Grid
-from ..data_ import DataSet
+from ..time import TimeDomain
+from .. import space
+from ..space import SpaceDomain, Grid
+from ..data import DataSet
 
 
 class Component(metaclass=abc.ABCMeta):
@@ -205,7 +205,7 @@ class Component(metaclass=abc.ABCMeta):
 
     @classmethod
     def from_config(cls, cfg):
-        spacedomain = getattr(space_, cfg['spacedomain']['class'])
+        spacedomain = getattr(space, cfg['spacedomain']['class'])
         return cls(
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),

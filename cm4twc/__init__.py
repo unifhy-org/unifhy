@@ -5,9 +5,9 @@ from importlib import import_module
 
 from .version import __version__
 from .model import Model
-from .time_ import TimeDomain
-from .space_ import LatLonGrid, RotatedLatLonGrid
-from .data_ import DataSet
+from .time import TimeDomain
+from .space import LatLonGrid, RotatedLatLonGrid
+from .data import DataSet
 from .components import (surfacelayer, subsurface, openwater,
                          SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
