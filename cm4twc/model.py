@@ -8,10 +8,30 @@ from .components import (SurfaceLayerComponent, SubSurfaceComponent,
 
 
 class Model(object):
-    """
-    DOCSTRING REQUIRED
+    r"""Model is the core element of the modelling framework.
+
+    It is responsible for configuring the simulating, checking the
+    compatibility between `Component`\s, and controlling the simulation
+    workflow.
     """
     def __init__(self, surfacelayer, subsurface, openwater):
+        """**Initialisation**
+
+        :Parameters:
+
+            surfacelayer: `SurfaceLayerComponent` object
+                The `Component` responsible for the surface layer
+                compartment of the hydrological cycle.
+
+            subsurface: `SubSurfaceComponent` object
+                The `Component` responsible for the subsurface
+                compartment of the hydrological cycle.
+
+            openwater: `OpenWaterComponent` object
+                The `Component` responsible for the open water
+                compartment of the hydrological cycle.
+
+        """
         self.surfacelayer = self._process_component_type(
             surfacelayer, SurfaceLayerComponent)
 
@@ -165,8 +185,29 @@ class Model(object):
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def spin_up(self, start, end, cycles=1):
-        """
-        DOCSTRING REQUIRED
+        """Run model spin-up simulation to initialise model states
+
+        :Parameters:
+
+            start, end: datetime object
+                The start and the end of the spin-up simulation. Their
+                calendar and units are assumed to be the ones of the
+                model `Components` that will be spun up. Note, the *end*
+                parameter refers to the end of the last timestep in the
+                spin-up period.
+
+                *Parameter example:* ::
+
+                    start=datetime.datetime(2019, 1, 1)
+
+                *Parameter example:* ::
+
+                    end=datetime.datetime(2020, 1, 1)
+
+            cycles: `int`, optional
+                The number of repetitions of the spin-up simulation. If
+                not provided, set to default 1 (cycle).
+
         """
         self._initialise()
 
@@ -185,8 +226,7 @@ class Model(object):
         self._spun_up = True
 
     def simulate(self):
-        """
-        DOCSTRING REQUIRED
+        """Run model simulation over period defined in components' timedomains
         """
         if not self._spun_up:
             self._initialise()
@@ -222,6 +262,11 @@ class Model(object):
                 for f in list(c.inwards_info) + list(c.outwards_info)
             }
         )
+
+        # check time compatibility with data and subspace data in time
+        self.surfacelayer.check_dataset_time(surfacelayer_timedomain)
+        self.subsurface.check_dataset_time(subsurface_timedomain)
+        self.openwater.check_dataset_time(openwater_timedomain)
 
         # run components
         for run_surfacelayer, run_subsurface, run_openwater in clock:

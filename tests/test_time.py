@@ -10,7 +10,7 @@ import cm4twc
 
 def get_dummy_timedomain():
     return cm4twc.TimeDomain(
-        timestamps=[0, 1, 2, 3],
+        timestamps=[3, 4, 5, 6],
         units='days since 2019-01-01 09:00:00Z',
         calendar='gregorian'
     )
@@ -18,10 +18,19 @@ def get_dummy_timedomain():
 
 def get_dummy_timedomain_different_end():
     return cm4twc.TimeDomain(
-        timestamps=[0, 1, 2, 3, 4],
+        timestamps=[0, 1, 2, 3, 4, 5, 6],
         units='days since 2019-01-01 09:00:00Z',
         calendar='gregorian'
     )
+
+
+def get_dummy_spin_up_start_end():
+    td = cm4twc.TimeDomain(
+        timestamps=[0, 1, 2, 3],
+        units='days since 2019-01-01 09:00:00Z',
+        calendar='gregorian'
+    )
+    return td.time.datetime_array[[0, -1]]
 
 
 class TestTimeDomainAPI(unittest.TestCase):

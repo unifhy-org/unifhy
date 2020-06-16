@@ -9,7 +9,7 @@ from ..space_ import SpaceDomain, Grid
 from ..data_ import DataSet
 
 
-class _Component(metaclass=abc.ABCMeta):
+class Component(metaclass=abc.ABCMeta):
 
     _kind = None
     _ins = None
@@ -53,8 +53,12 @@ class _Component(metaclass=abc.ABCMeta):
 
         # data attributes
         dataset = DataSet() if dataset is None else dataset
-        self._check_dataset(dataset, timedomain, spacedomain)
+        self._check_dataset(dataset)
+        self._check_dataset_space(dataset, spacedomain)
+        # # dataset to keep whole data period pristine
         self.dataset = dataset
+        # # dataset to subset whole data for given period
+        self._dataset = DataSet()
 
         # parameters attribute
         parameters = {} if parameters is None else parameters
@@ -89,26 +93,21 @@ class _Component(metaclass=abc.ABCMeta):
                 "only {} currently supported by the framework "
                 "for spacedomain".format(Grid.__name__))
 
-    def _check_dataset(self, dataset, timedomain, spacedomain):
-        """
-        The purpose of this method is to check that:
-            - the object given for the dataset is an instance of
-              [DataSet]
-            - the dataset contains [Variable] instances for all the
-              driving and ancillary data the component requires
-            - the domain of each variable complies with the component's
-              domain
-        """
+    def _check_dataset(self, dataset):
+        # checks for both driving and ancillary data
+
         # check that the dataset is an instance of DataSet
         if not isinstance(dataset, DataSet):
+
             raise TypeError(
                 "The dataset object given for the {} component '{}' must "
                 "be an instance of {}.".format(
                     self.category, self.__class__.__name__,
                     DataSet.__name__))
 
-        # check driving data for time and space compatibility with component
-        for data_name, data_unit in self.driving_data_info.items():
+        # check data units compatibility with component
+        for data_name, data_unit in {**self.driving_data_info,
+                                     **self.ancillary_data_info}.items():
             # check that all driving data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
@@ -134,8 +133,22 @@ class _Component(metaclass=abc.ABCMeta):
                                          data_name, DataSet.__name__,
                                          self.category))
 
+    def _check_dataset_space(self, dataset, spacedomain):
+        # check space compatibility for both driving and ancillary data
+        for data_name, data_unit in {**self.driving_data_info,
+                                     **self.ancillary_data_info}.items():
+            # check that the data and component space domains are compatible
+            if not spacedomain.is_space_equal_to(dataset[data_name]):
+                raise ValueError(
+                    "The space domain of the data '{}' is not compatible with "
+                    "the space domain of the {} component '{}'.".format(
+                        data_name, self.category, self.__class__.__name__))
+
+    def check_dataset_time(self, timedomain):
+        # check time compatibility for driving data
+        for data_name in self.driving_data_info:
             # subspace in time
-            dataset[data_name] = dataset[data_name].subspace(
+            self._dataset[data_name] = self.dataset[data_name].subspace(
                 T=cf.wi(
                     *timedomain.time.datetime_array[[0, -2]]
                 )
@@ -144,51 +157,15 @@ class _Component(metaclass=abc.ABCMeta):
             # check that the data and component time domains are compatible
             # using _truncation=-1 to remove requirement for last datetime
             # of TimeDomain to be available which is not required
-            if not timedomain.is_time_equal_to(dataset[data_name],
+            if not timedomain.is_time_equal_to(self._dataset[data_name],
                                                _trailing_truncation_idx=-1):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
                         data_name, self.category, self.__class__.__name__))
-            # check that the data and component space domains are compatible
-            if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise ValueError(
-                    "The space domain of the data '{}' is not compatible with "
-                    "the space domain of the {} component '{}'.".format(
-                        data_name, self.category, self.__class__.__name__))
-
-        # check ancillary data for space compatibility with component
-        for data_name, data_unit in self.ancillary_data_info.items():
-            # check that all ancillary data are available in DataSet
-            if data_name not in dataset:
-                raise KeyError(
-                    "There is no data '{}' available in the {} "
-                    "for the {} component '{}'.".format(
-                        data_name, DataSet.__name__, self.category,
-                        self.__class__.__name__))
-            # check that driving data units are compliant with component units
-            if hasattr(dataset[data_name], 'units'):
-                if not Units(data_unit).equals(
-                        Units(dataset[data_name].units)):
-                    raise ValueError(
-                        "The units of the variable '{}' in the {} {} "
-                        "are not equal to the units required by the {} "
-                        "component '{}': {} are required.".format(
-                            data_name, self.category, DataSet.__name__,
-                            self.category, self.__class__.__name__,
-                            data_unit))
-            else:
-                raise AttributeError("The variable '{}' in the {} for "
-                                     "the {} component is missing a 'units' "
-                                     "attribute.".format(
-                                         data_name, DataSet.__name__,
-                                         self.category))
-            # check that the data and component space domains are compatible
-            if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise ValueError(
-                    "The space domain of the data '{}' is not compatible with "
-                    "the space domain of the {} component '{}'.".format(
-                        data_name, self.category, self.__class__.__name__))
+        # copy reference for ancillary data
+        for data_name in self.ancillary_data_info:
+            self._dataset[data_name] = self.dataset[data_name]
 
     def _check_parameters(self, parameters):
         """
@@ -257,11 +234,11 @@ class _Component(metaclass=abc.ABCMeta):
     def __call__(self, timeindex, datetime, **kwargs):
         # collect required ancillary data from dataset
         for data in self.ancillary_data_info:
-            kwargs[data] = self.dataset[data].array[...]
+            kwargs[data] = self._dataset[data].array[...]
 
         # collect required driving data from dataset
         for data in self.driving_data_info:
-            kwargs[data] = self.dataset[data].array[timeindex, ...]
+            kwargs[data] = self._dataset[data].array[timeindex, ...]
 
         # run simulation for the component
         return self.run(datetime=datetime, **self.parameters, **self.constants,
@@ -331,7 +308,7 @@ class _Component(metaclass=abc.ABCMeta):
             "method.".format(self.category, self.__class__.__name__))
 
 
-class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
+class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     """
     DOCSTRING REQUIRED
     """
@@ -359,7 +336,7 @@ class SurfaceLayerComponent(_Component, metaclass=abc.ABCMeta):
             self._ins, self._outs)
 
 
-class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
+class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """
     DOCSTRING REQUIRED
     """
@@ -388,7 +365,7 @@ class SubSurfaceComponent(_Component, metaclass=abc.ABCMeta):
             self._ins, self._outs)
 
 
-class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
+class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """
     DOCSTRING REQUIRED
     """
@@ -412,7 +389,7 @@ class OpenWaterComponent(_Component, metaclass=abc.ABCMeta):
             self._ins, self._outs)
 
 
-class DataComponent(_Component):
+class DataComponent(Component):
     """
     DOCSTRING REQUIRED
     """
@@ -448,7 +425,7 @@ class DataComponent(_Component):
         pass
 
 
-class NullComponent(_Component):
+class NullComponent(Component):
     """
     DOCSTRING REQUIRED
     """

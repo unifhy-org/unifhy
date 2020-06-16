@@ -3,7 +3,8 @@ import doctest
 
 import cm4twc
 from tests.test_time import (get_dummy_timedomain,
-                             get_dummy_timedomain_different_end)
+                             get_dummy_timedomain_different_end,
+                             get_dummy_spin_up_start_end)
 from tests.test_space import get_dummy_spacedomain
 from tests.test_data import get_dummy_dataset
 from tests.test_components import (get_subsurface_component,
@@ -85,7 +86,7 @@ class TestModelAPI(unittest.TestCase):
     def test_1_model_spin_up(self):
         # loop through all the possible combinations of components
         start, end = \
-            get_dummy_timedomain().time.datetime_array[[0, -2]]
+            get_dummy_spin_up_start_end()
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
                 self.doe_models:
             with self.subTest(surfacelayer=surfacelayer_kind,
