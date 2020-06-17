@@ -1,4 +1,4 @@
 
 
-from .components import (SurfaceLayerComponent, SubSurfaceComponent,
-                         OpenWaterComponent, DataComponent, NullComponent)
+from .component import (SurfaceLayerComponent, SubSurfaceComponent,
+                        OpenWaterComponent, DataComponent, NullComponent)
