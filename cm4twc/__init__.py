@@ -1,10 +1,10 @@
-# import python built-in packages
+# import python built-in packages, modules, classes, functions
 import sys
 from os import path
 from configparser import ConfigParser
 from importlib import import_module
 
-# import package's own modules
+# import package's own modules, classes, functions
 from .version import __version__
 from .model import Model
 from .time import TimeDomain
