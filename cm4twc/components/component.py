@@ -16,11 +16,16 @@ class Component(metaclass=abc.ABCMeta):
     _ins = None
     _outs = None
 
-    def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history=None, driving_data_info=None,
-                 ancillary_data_info=None, parameters_info=None,
-                 constants_info=None, states_info=None,
-                 inwards_info=None, outwards_info=None):
+    # definition attributes (set to default)
+    driving_data_info = {}
+    ancillary_data_info = {}
+    parameters_info = {}
+    constants_info = {}
+    states_info = {}
+    solver_history = 0
+
+    def __init__(self, timedomain, spacedomain, dataset=None,
+                 parameters=None, constants=None):
         """**Initialisation**
 
         :Parameters:
@@ -31,17 +36,17 @@ class Component(metaclass=abc.ABCMeta):
             spacedomain: `SpaceDomain` object
                 The spatial dimension of the `Component`.
 
-            dataset: `DataSet` object
+            dataset: `DataSet` object, optional
                 The dataset containing the substitute data substituting
                 the `Component`\'s simulated time series. The data is
                 dataset must be compatible in time with *timedomain* and
                 compatible in space with *spacedomain*.
 
-            parameters: `dict`
+            parameters: `dict`, optional
                 The parameter values for the `Component`. Must be
                 provided in the units expected by the `Component`.
 
-            constants: `dict`
+            constants: `dict`, optional
                 The parameter values for the `Component`. Must be
                 provided in the required units.
 
@@ -49,22 +54,9 @@ class Component(metaclass=abc.ABCMeta):
         # category attribute
         self.category = self._kind
 
-        # definition attributes
-        self.driving_data_info = \
-            driving_data_info if driving_data_info else {}
-        self.ancillary_data_info = \
-            ancillary_data_info if ancillary_data_info else {}
-        self.parameters_info = \
-            parameters_info if parameters_info else {}
-        self.constants_info = \
-            constants_info if constants_info else {}
-        self.states_info = \
-            states_info if states_info else {}
-        self.solver_history = solver_history
-
         # interface attributes
-        self.inwards_info = inwards_info
-        self.outwards_info = outwards_info
+        self.inwards_info = self._ins
+        self.outwards_info = self._outs
 
         # time attributes
         self._check_timedomain(timedomain)
@@ -350,16 +342,6 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
         'evaporation_openwater': 'kg m-2 s-1'
     }
 
-    def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history, driving_data_info=None,
-                 ancillary_data_info=None, parameters_info=None,
-                 constants_info=None, states_info=None):
-        super(SurfaceLayerComponent, self).__init__(
-            timedomain, spacedomain, dataset, parameters, constants,
-            solver_history, driving_data_info, ancillary_data_info,
-            parameters_info, constants_info, states_info,
-            self._ins, self._outs)
-
 
 class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """The SubSurfaceComponent is simulating the hydrological processes
@@ -378,17 +360,6 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
         'soil_water_stress': '1'
     }
 
-    def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history, driving_data_info=None,
-                 ancillary_data_info=None, parameters_info=None,
-                 constants_info=None, states_info=None):
-
-        super(SubSurfaceComponent, self).__init__(
-            timedomain, spacedomain, dataset, parameters, constants,
-            solver_history, driving_data_info, ancillary_data_info,
-            parameters_info, constants_info, states_info,
-            self._ins, self._outs)
-
 
 class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """The OpenWaterComponent is simulating the hydrological processes
@@ -402,16 +373,6 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     _outs = {
         'discharge': 'kg m-2 s-1'
     }
-
-    def __init__(self, timedomain, spacedomain, dataset, parameters, constants,
-                 solver_history, driving_data_info=None,
-                 ancillary_data_info=None, parameters_info=None,
-                 constants_info=None, states_info=None):
-        super(OpenWaterComponent, self).__init__(
-            timedomain, spacedomain, dataset, parameters, constants,
-            solver_history, driving_data_info, ancillary_data_info,
-            parameters_info, constants_info, states_info,
-            self._ins, self._outs)
 
 
 class DataComponent(Component):
@@ -448,11 +409,9 @@ class DataComponent(Component):
                 *dataset*.
 
         """
-        super(DataComponent, self).__init__(
-            timedomain, spacedomain, dataset, None, None,
-            0, substituting_class.get_class_outwards(), None,
-            None, None, None,
-            self._ins, self._outs)
+        super(DataComponent, self).__init__(timedomain, spacedomain, dataset)
+
+        # override category to the one of substituting component
         self.category = substituting_class.get_class_kind()
 
     def __str__(self):
@@ -503,12 +462,13 @@ class NullComponent(Component):
                 of zeros.
 
         """
-        super(NullComponent, self).__init__(
-            timedomain, spacedomain, None, None, None,
-            0, None, None,
-            None, None, None,
-            self._ins, substituting_class.get_class_outwards())
+        super(NullComponent, self).__init__(timedomain, spacedomain)
+
+        # override category with the one of component being substituted
         self.category = substituting_class.get_class_kind()
+
+        # override outwards with the ones of component being substituted
+        self.outwards_info = substituting_class.get_class_outwards()
 
     def __str__(self):
         return "\n".join(

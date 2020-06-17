@@ -5,26 +5,21 @@ from cm4twc.components import SurfaceLayerComponent
 
 class Dummy(SurfaceLayerComponent):
 
-    def __init__(self, timedomain, spacedomain,
-                 dataset=None, parameters=None, constants=None):
-        super().__init__(
-            timedomain, spacedomain, dataset, parameters, constants,
-            driving_data_info={
-                'rainfall': 'kg m-2 s-1',
-                'snowfall': 'kg m-2 s-1',
-                'air_temperature': 'K',
-            },
-            ancillary_data_info={
-                'vegetation_fraction': '1'
-            },
-            parameters_info={},
-            constants_info={},
-            states_info={
-                'canopy': 'kg m-2',
-                'snowpack': 'kg m-2'
-            },
-            solver_history=1
-        )
+    driving_data_info = {
+        'rainfall': 'kg m-2 s-1',
+        'snowfall': 'kg m-2 s-1',
+        'air_temperature': 'K',
+    }
+    ancillary_data_info = {
+        'vegetation_fraction': '1'
+    }
+    # parameters_info = {}
+    # constants_info = {}
+    states_info = {
+        'canopy': 'kg m-2',
+        'snowpack': 'kg m-2'
+    }
+    solver_history = 1
 
     def initialise(self, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
