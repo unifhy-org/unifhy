@@ -257,7 +257,7 @@ class Model(object):
             # fluxes that are both inwards and outwards will exist
             # only once because dictionary keys are unique
             fluxes={
-                f: None for c in
+                f: 0.0 for c in
                 [self.surfacelayer, self.subsurface, self.openwater]
                 for f in list(c.inwards_info) + list(c.outwards_info)
             }
