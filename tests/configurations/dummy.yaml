@@ -1,5 +1,5 @@
 surfacelayer:
-  module: tests.dummy_components.surfacelayer.dummy
+  module: tests.components.surfacelayer.dummy
   class: Dummy
   timedomain:
     start: '2019-01-01 09:00:00'
@@ -23,21 +23,21 @@ surfacelayer:
     grid_north_pole_longitude: 190.0
   dataset:
     air_temperature:
-      files: [dummy_data/dummy_driving_data.nc]
+      files: [data/dummy_driving_data.nc]
       select: air_temperature
     rainfall:
-      files: [dummy_data/dummy_driving_data.nc]
+      files: [data/dummy_driving_data.nc]
       select: rainfall_flux
     snowfall:
-      files: [dummy_data/dummy_driving_data.nc]
+      files: [data/dummy_driving_data.nc]
       select: snowfall_flux
     vegetation_fraction:
-      files: [dummy_data/dummy_ancillary_data.nc]
+      files: [data/dummy_ancillary_data.nc]
       select: vegetation_fraction
   parameters: null
   constants: null
 subsurface:
-  module: tests.dummy_components.subsurface.dummy
+  module: tests.components.subsurface.dummy
   class: Dummy
   timedomain:
     start: '2019-01-01 09:00:00'
@@ -61,13 +61,13 @@ subsurface:
     grid_north_pole_longitude: 190.0
   dataset:
     soil_temperature:
-      files: [dummy_data/dummy_driving_data.nc]
+      files: [data/dummy_driving_data.nc]
       select: soil_temperature
   parameters:
     saturated_hydraulic_conductivity: 2
   constants: null
 openwater:
-  module: tests.dummy_components.openwater.dummy
+  module: tests.components.openwater.dummy
   class: Dummy
   timedomain:
     start: '2019-01-01 09:00:00'

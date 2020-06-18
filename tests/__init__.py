@@ -1,3 +1,3 @@
 
 
-from .dummy_components import surfacelayer, subsurface, openwater
+from .components import surfacelayer, subsurface, openwater

@@ -1,8 +1,8 @@
 import cm4twc
 
-from tests.dummy_components.surfacelayer import Dummy as SurfaceLayerDummy
-from tests.dummy_components.subsurface import Dummy as SubSurfaceDummy
-from tests.dummy_components.openwater import Dummy as OpenWaterDummy
+from tests.components.surfacelayer import Dummy as SurfaceLayerDummy
+from tests.components.subsurface import Dummy as SubSurfaceDummy
+from tests.components.openwater import Dummy as OpenWaterDummy
 from tests.test_data import get_dummy_component_substitute_dataset
 
 

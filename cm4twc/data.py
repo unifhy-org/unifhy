@@ -21,12 +21,12 @@ class DataSet(MutableMapping):
 
                 *Parameter example:* ::
 
-                    files='tests/dummy_data/dummy_driving_data.nc'
+                    files='tests/data/dummy_driving_data.nc'
 
                 *Parameter example:* ::
 
-                    files=['tests/dummy_data/dummy_driving_data.nc',
-                           'tests/dummy_data/dummy_ancillary_data.nc']
+                    files=['tests/data/dummy_driving_data.nc',
+                           'tests/data/dummy_ancillary_data.nc']
 
             select: (sequence of) `str`, optional
                 A string or sequence of strings providing the identities
@@ -50,7 +50,7 @@ class DataSet(MutableMapping):
         >>> print(ds)
         DataSet{ }
         >>> ds = DataSet(
-        ...     files='dummy_data/dummy_driving_data.nc'
+        ...     files='data/dummy_driving_data.nc'
         ... )
         >>> print(ds)
         DataSet{
@@ -60,7 +60,7 @@ class DataSet(MutableMapping):
             soil_temperature: <CF Field: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
         }
         >>> ds = DataSet(
-        ...     files='dummy_data/dummy_driving_data.nc',
+        ...     files='data/dummy_driving_data.nc',
         ...     select=['rainfall_flux', 'snowfall_flux'],
         ...     name_mapping={'rainfall_flux': 'rainfall'}
         ... )
@@ -117,12 +117,12 @@ class DataSet(MutableMapping):
 
                 *Parameter example:* ::
 
-                    files='tests/dummy_data/dummy_driving_data.nc'
+                    files='tests/data/dummy_driving_data.nc'
 
                 *Parameter example:* ::
 
-                    files=['tests/dummy_data/dummy_driving_data.nc',
-                           'tests/dummy_data/dummy_ancillary_data.nc'
+                    files=['tests/data/dummy_driving_data.nc',
+                           'tests/data/dummy_ancillary_data.nc'
 
             select: (sequence of) `str`, optional
                 A string or sequence of strings providing the identities
@@ -146,7 +146,7 @@ class DataSet(MutableMapping):
         >>> print(ds)
         DataSet{ }
         >>> ds.load_from_file(
-        ...     files='dummy_data/dummy_driving_data.nc',
+        ...     files='data/dummy_driving_data.nc',
         ...     select='snowfall_flux'
         ... )
         >>> print(ds)
@@ -154,7 +154,7 @@ class DataSet(MutableMapping):
             snowfall_flux: <CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
         }
         >>> ds.load_from_file(
-        ...     files='dummy_data/dummy_driving_data.nc',
+        ...     files='data/dummy_driving_data.nc',
         ...     select=('rainfall_flux',)
         ... )
         >>> print(ds)
