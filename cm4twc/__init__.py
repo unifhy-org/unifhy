@@ -1,3 +1,7 @@
+"""
+a Community Model for the Terrestrial Water Cycle
+"""
+
 # import python built-in packages, modules, classes, functions
 import sys
 from os import path
