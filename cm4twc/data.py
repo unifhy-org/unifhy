@@ -54,10 +54,10 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            air_temperature: <CF Field: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-            rainfall_flux: <CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
-            snowfall_flux: <CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
-            soil_temperature: <CF Field: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+            air_temperature: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+            rainfall_flux: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            soil_temperature: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
         }
         >>> ds = DataSet(
         ...     files='data/sciencish_driving_data_daily.nc',
@@ -66,8 +66,8 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            rainfall: <CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
-            snowfall_flux: <CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            rainfall: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         """
         self._variables = {}
@@ -99,7 +99,8 @@ class DataSet(MutableMapping):
     def __str__(self):
         return "\n".join(
             ["DataSet{"] +
-            ["    %s: %r" % (v, self._variables[v])
+            ["    {!s}: {!r}".format(v, self._variables[v]).replace(
+                '<CF Field: ', '').replace('>', '')
              for v in sorted(self._variables)] +
             ["}"]
         ) if self._variables else "DataSet{ }"
@@ -151,7 +152,7 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            snowfall_flux: <CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         >>> ds.load_from_file(
         ...     files='data/sciencish_driving_data_daily.nc',
@@ -159,8 +160,8 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            rainfall_flux: <CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
-            snowfall_flux: <CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
+            rainfall_flux: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         """
         self.update(
