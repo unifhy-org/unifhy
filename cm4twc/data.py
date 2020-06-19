@@ -99,7 +99,7 @@ class DataSet(MutableMapping):
     def __str__(self):
         return "\n".join(
             ["DataSet{"] +
-            ["    {!s}: {!r}".format(v, self._variables[v]).replace(
+            ["    {}: {!r}".format(v, self._variables[v]).replace(
                 '<CF Field: ', '').replace('>', '')
              for v in sorted(self._variables)] +
             ["}"]

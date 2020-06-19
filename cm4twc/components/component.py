@@ -230,8 +230,9 @@ class Component(metaclass=abc.ABCMeta):
     def __str__(self):
         info = [
             "\n".join(
-                (["    %s:" % t.replace('_', ' ')] +
-                 ["        %s [%s]" % (n, getattr(self, t + '_info')[n])
+                (["    {}:".format(t.replace('_', ' '))] +
+                 ["        {} [{}]".format(
+                     n, getattr(self, t + '_info')[n])
                   for n in getattr(self, t + '_info')]
                  if getattr(self, t + '_info') else [])
             )
@@ -241,9 +242,9 @@ class Component(metaclass=abc.ABCMeta):
         ]
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
-            ["    category: %s" % self.category] +
+            ["    category: {}".format(self.category)] +
             info +
-            ["    solver history: %s" % self.solver_history] +
+            ["    solver history: {}".format(self.solver_history)] +
             [")"]
         )
 

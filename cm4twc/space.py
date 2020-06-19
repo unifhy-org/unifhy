@@ -517,26 +517,26 @@ class Grid(SpaceDomain):
             ["{}(".format(self.__class__.__name__)]
             + ["    shape {}: {}".format("{Z, Y, X}" if has_z
                                          else "{Y, X}", self.shape)]
-            + (["    Z, %s %s: %s" %
-                (self._f.construct('Z').standard_name,
-                 self._f.construct('Z').data.shape,
-                 self._f.construct('Z').data)] if has_z else [])
-            + ["    Y, %s %s: %s" %
-               (self._f.construct('Y').standard_name,
+            + (["    Z, {} {}: {}".format(
+                self._f.construct('Z').standard_name,
+                self._f.construct('Z').data.shape,
+                self._f.construct('Z').data)] if has_z else [])
+            + ["    Y, {} {}: {}".format(
+                self._f.construct('Y').standard_name,
                 self._f.construct('Y').data.shape,
                 self._f.construct('Y').data)]
-            + ["    X, %s %s: %s" %
-               (self._f.construct('X').standard_name,
+            + ["    X, {} {}: {}".format(
+                self._f.construct('X').standard_name,
                 self._f.construct('X').data.shape,
                 self._f.construct('X').data)]
-            + (["    Z_bounds %s: %s" %
-                (self._f.construct('Z').bounds.data.shape,
+            + (["    Z_bounds {}: {}".format(
+                 self._f.construct('Z').bounds.data.shape,
                  self._f.construct('Z').bounds.data)] if has_z else [])
-            + ["    Y_bounds %s: %s" %
-               (self._f.construct('Y').bounds.data.shape,
+            + ["    Y_bounds {}: {}".format(
+                self._f.construct('Y').bounds.data.shape,
                 self._f.construct('Y').bounds.data)]
-            + ["    X_bounds %s: %s" %
-               (self._f.construct('X').bounds.data.shape,
+            + ["    X_bounds {}: {}".format(
+                self._f.construct('X').bounds.data.shape,
                 self._f.construct('X').bounds.data)]
             + [")"]
         )

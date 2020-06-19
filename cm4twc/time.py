@@ -229,13 +229,11 @@ class TimeDomain(object):
     def __str__(self):
         return "\n".join(
             ["TimeDomain("]
-            + ["    time %s: %s" %
-               (self.time.shape, self.time)]
-            + ["    bounds %s: %s" %
-               (self.bounds.shape, self.bounds)]
-            + ["    calendar: %s" % self.calendar]
-            + ["    units: %s" % self.units]
-            + ["    timedelta: %s" % self.timedelta]
+            + ["    time {}: {}".format(self.time.shape, self.time)]
+            + ["    bounds {}: {}".format(self.bounds.shape, self.bounds)]
+            + ["    calendar: {}".format(self.calendar)]
+            + ["    units: {}".format(self.units)]
+            + ["    timedelta: {}".format(self.timedelta)]
             + [")"]
         )
 

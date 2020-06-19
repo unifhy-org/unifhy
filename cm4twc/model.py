@@ -96,10 +96,13 @@ class Model(object):
 
     def __str__(self):
         return "\n".join(
-            ["Model(".format(self.__class__.__name__)] +
-            ["    surfacelayer: %s" % self.surfacelayer.__class__.__name__] +
-            ["    subsurface: %s" % self.subsurface.__class__.__name__] +
-            ["    openwater: %s" % self.openwater.__class__.__name__] +
+            ["{}(".format(self.__class__.__name__)] +
+            ["    surfacelayer: {}".format(
+                self.surfacelayer.__class__.__name__)] +
+            ["    subsurface: {}".format(
+                self.subsurface.__class__.__name__)] +
+            ["    openwater: {}".format(
+                self.openwater.__class__.__name__)] +
             [")"]
         )
 
