@@ -10,11 +10,37 @@ from ..space import SpaceDomain, Grid
 from ..data import DataSet
 
 
-class Component(metaclass=abc.ABCMeta):
+class MetaComponent(abc.ABCMeta):
+    """MetaComponent is a metaclass for `Component` which provides a
+    custom method `__str__` to display its class attributes.
+    """
+    def __str__(self):
+        info = [
+            "\n".join(
+                (["    {}:".format(t.replace('_', ' '))] +
+                 ["        {} [{}]".format(
+                     n, getattr(self, t + '_info')[n])
+                     for n in getattr(self, t + '_info')]
+                 if getattr(self, t + '_info') else [])
+            )
+            for t in ['_inwards', '_outwards', 'driving_data',
+                      'ancillary_data', 'parameters', 'constants', 'states']
+            if getattr(self, t + '_info')
+        ]
+        return "\n".join(
+            ["{}(".format(self.__name__)]
+            + ["    category: {}".format(getattr(self, '_category'))]
+            + info
+            + ["    solver history: {}".format(getattr(self, 'solver_history'))]
+            + [")"]
+        )
 
-    _kind = None
-    _ins = None
-    _outs = None
+
+class Component(metaclass=MetaComponent):
+
+    _category = None
+    _inwards_info = None
+    _outwards_info = None
 
     # definition attributes (set to default)
     driving_data_info = {}
@@ -51,12 +77,6 @@ class Component(metaclass=abc.ABCMeta):
                 provided in the required units.
 
         """
-        # category attribute
-        self.category = self._kind
-
-        # interface attributes
-        self.inwards_info = self._ins
-        self.outwards_info = self._outs
 
         # time attributes
         self._check_timedomain(timedomain)
@@ -95,7 +115,7 @@ class Component(metaclass=abc.ABCMeta):
         """
         if not isinstance(timedomain, TimeDomain):
             raise TypeError("not an instance of {} for {}".format(
-                TimeDomain.__name__, self.category))
+                TimeDomain.__name__, self._category))
 
     def _check_spacedomain(self, spacedomain):
         """The purpose of this method is to check that the spacedomain is
@@ -103,7 +123,7 @@ class Component(metaclass=abc.ABCMeta):
         """
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("not an instance of {} for {}".format(
-                SpaceDomain.__name__, self.category))
+                SpaceDomain.__name__, self._category))
 
         if not isinstance(spacedomain, Grid):
             raise NotImplementedError(
@@ -119,7 +139,7 @@ class Component(metaclass=abc.ABCMeta):
             raise TypeError(
                 "The dataset object given for the {} component '{}' must "
                 "be an instance of {}.".format(
-                    self.category, self.__class__.__name__,
+                    self._category, self.__class__.__name__,
                     DataSet.__name__))
 
         # check data units compatibility with component
@@ -130,7 +150,7 @@ class Component(metaclass=abc.ABCMeta):
                 raise KeyError(
                     "There is no data '{}' available in the {} "
                     "for the {} component '{}'.".format(
-                        data_name, DataSet.__name__, self.category,
+                        data_name, DataSet.__name__, self._category,
                         self.__class__.__name__))
             # check that driving data units are compliant with component units
             if hasattr(dataset[data_name], 'units'):
@@ -140,15 +160,15 @@ class Component(metaclass=abc.ABCMeta):
                         "The units of the variable '{}' in the {} {} "
                         "are not equal to the units required by the {} "
                         "component '{}': {} are required.".format(
-                            data_name, self.category, DataSet.__name__,
-                            self.category, self.__class__.__name__,
+                            data_name, self._category, DataSet.__name__,
+                            self._category, self.__class__.__name__,
                             data_unit))
             else:
                 raise AttributeError("The variable '{}' in the {} for "
                                      "the {} component is missing a 'units' "
                                      "attribute.".format(
                                          data_name, DataSet.__name__,
-                                         self.category))
+                                         self._category))
 
     def _check_dataset_space(self, dataset, spacedomain):
         # check space compatibility for both driving and ancillary data
@@ -159,7 +179,7 @@ class Component(metaclass=abc.ABCMeta):
                 raise ValueError(
                     "The space domain of the data '{}' is not compatible with "
                     "the space domain of the {} component '{}'.".format(
-                        data_name, self.category, self.__class__.__name__))
+                        data_name, self._category, self.__class__.__name__))
 
     def check_dataset_time(self, timedomain):
         # check time compatibility for driving data
@@ -179,7 +199,7 @@ class Component(metaclass=abc.ABCMeta):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
-                        data_name, self.category, self.__class__.__name__))
+                        data_name, self._category, self.__class__.__name__))
         # copy reference for ancillary data
         for data_name in self.ancillary_data_info:
             self._dataset[data_name] = self.dataset[data_name]
@@ -193,8 +213,23 @@ class Component(metaclass=abc.ABCMeta):
             raise RuntimeError(
                 "One or more parameters are missing in {} component '{}': "
                 "{} are all required.".format(
-                    self.category, self.__class__.__name__,
+                    self._category, self.__class__.__name__,
                     self.parameters_info))
+
+    @property
+    def category(self):
+        """Return the part of the water cycle the `Component` represents."""
+        return self._category
+
+    @property
+    def inwards_info(self):
+        """Return the incoming information expected by the `Component`."""
+        return self._inwards_info
+
+    @property
+    def outwards_info(self):
+        """Return the outgoing information provided by the `Component`."""
+        return self._outwards_info
 
     @classmethod
     def from_config(cls, cfg):
@@ -228,24 +263,24 @@ class Component(metaclass=abc.ABCMeta):
         return timedomain
 
     def __str__(self):
-        info = [
-            "\n".join(
-                (["    {}:".format(t.replace('_', ' '))] +
-                 ["        {} [{}]".format(
-                     n, getattr(self, t + '_info')[n])
-                  for n in getattr(self, t + '_info')]
-                 if getattr(self, t + '_info') else [])
-            )
-            for t in ['inwards', 'outwards', 'driving_data', 'ancillary_data',
-                      'parameters', 'constants', 'states']
-            if getattr(self, t + '_info')
-        ]
+        shape = ("(Z: {}, Y: {}, X: {})".format(*self.spaceshape)
+                 if self.spacedomain.Z
+                 else "(Y: {}, X: {})".format(*self.spaceshape))
+        parameters = ["        {}: {} {}".format(
+            p, self.parameters[p], self.parameters_info[p])
+            for p in self.parameters] if self.parameters else []
+        constants = ["        {}: {} {}".format(
+            p, self.constants[p], self.constants_info[p])
+            for p in self.constants] if self.constants else []
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)] +
-            ["    category: {}".format(self.category)] +
-            info +
-            ["    solver history: {}".format(self.solver_history)] +
-            [")"]
+            ["{}(".format(self.__class__.__name__)]
+            + ["    category: {}".format(self._category)]
+            + ["    timedomain: period: {}".format(self.timedomain.period)]
+            + ["    spacedomain: shape: {}".format(shape)]
+            + ["    dataset: {} variable(s)".format(len(self.dataset))]
+            + (["    parameters:"] if parameters else []) + parameters
+            + (["    constants:"] if constants else []) + constants
+            + [")"]
         )
 
     def __call__(self, timeindex, datetime, **kwargs):
@@ -269,7 +304,7 @@ class Component(metaclass=abc.ABCMeta):
             else:
                 raise KeyError(
                     "The state '{}' of the {} component was "
-                    "not initialised.".format(s, self._kind)
+                    "not initialised.".format(s, self._category)
                 )
 
     def increment_states(self):
@@ -296,33 +331,33 @@ class Component(metaclass=abc.ABCMeta):
 
     @classmethod
     def get_class_kind(cls):
-        return cls._kind
+        return cls._category
 
     @classmethod
     def get_class_inwards(cls):
-        return cls._ins
+        return cls._inwards_info
 
     @classmethod
     def get_class_outwards(cls):
-        return cls._outs
+        return cls._outwards_info
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
         raise NotImplementedError(
             "The {} class '{}' does not feature an 'initialise' "
-            "method.".format(self.category, self.__class__.__name__))
+            "method.".format(self._category, self.__class__.__name__))
 
     @abc.abstractmethod
     def run(self, **kwargs):
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'run' "
-            "method.".format(self.category, self.__class__.__name__))
+            "method.".format(self._category, self.__class__.__name__))
 
     @abc.abstractmethod
     def finalise(self, **kwargs):
         raise NotImplementedError(
             "The {} class '{}' does not feature a 'finalise' "
-            "method.".format(self.category, self.__class__.__name__))
+            "method.".format(self._category, self.__class__.__name__))
 
 
 class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
@@ -330,11 +365,11 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     processes in the surface layer compartment of the hydrological
     cycle.
     """
-    _kind = 'surfacelayer'
-    _ins = {
+    _category = 'surfacelayer'
+    _inwards_info = {
         'soil_water_stress': '1'
     }
-    _outs = {
+    _outwards_info = {
         'throughfall': 'kg m-2 s-1',
         'snowmelt': 'kg m-2 s-1',
         'transpiration': 'kg m-2 s-1',
@@ -348,15 +383,15 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """The SubSurfaceComponent is simulating the hydrological processes
     in the subsurface compartment of the hydrological cycle.
     """
-    _kind = 'subsurface'
-    _ins = {
+    _category = 'subsurface'
+    _inwards_info = {
         'evaporation_soil_surface': 'kg m-2 s-1',
         'evaporation_ponded_water': 'kg m-2 s-1',
         'transpiration': 'kg m-2 s-1',
         'throughfall': 'kg m-2 s-1',
         'snowmelt': 'kg m-2 s-1'
     }
-    _outs = {
+    _outwards_info = {
         'runoff': 'kg m-2 s-1',
         'soil_water_stress': '1'
     }
@@ -366,12 +401,12 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """The OpenWaterComponent is simulating the hydrological processes
     in the open water compartment of the hydrological cycle.
     """
-    _kind = 'openwater'
-    _ins = {
+    _category = 'openwater'
+    _inwards_info = {
         'evaporation_openwater': 'kg m-2 s-1',
         'runoff': 'kg m-2 s-1'
     }
-    _outs = {
+    _outwards_info = {
         'discharge': 'kg m-2 s-1'
     }
 
@@ -383,9 +418,9 @@ class DataComponent(Component):
     Its intended use is to replace a compartment of the hydrological
     cycle with measurements or with previous simulation runs.
     """
-    _kind = 'data'
-    _ins = {}
-    _outs = {}
+    _category = 'data'
+    _inwards_info = {}
+    _outwards_info = {}
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
         """**Initialisation**
@@ -413,12 +448,12 @@ class DataComponent(Component):
         super(DataComponent, self).__init__(timedomain, spacedomain, dataset)
 
         # override category to the one of substituting component
-        self.category = substituting_class.get_class_kind()
+        self._category = substituting_class.get_class_kind()
 
     def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
-            ["    category: %s" % self.category] +
+            ["    category: %s" % self._category] +
             ["    outwards:"] +
             ["        %s [%s]" % (n, self.driving_data_info[n])
              for n in self.driving_data_info] +
@@ -442,9 +477,9 @@ class NullComponent(Component):
     Its intended use is to ignore a compartment of the hydrological
     cycle.
     """
-    _kind = 'null'
-    _ins = {}
-    _outs = {}
+    _category = 'null'
+    _inwards_info = {}
+    _outwards_info = {}
 
     def __init__(self, timedomain, spacedomain, substituting_class):
         """**Initialisation**
@@ -466,18 +501,18 @@ class NullComponent(Component):
         super(NullComponent, self).__init__(timedomain, spacedomain)
 
         # override category with the one of component being substituted
-        self.category = substituting_class.get_class_kind()
+        self._category = substituting_class.get_class_kind()
 
         # override outwards with the ones of component being substituted
-        self.outwards_info = substituting_class.get_class_outwards()
+        self._outwards_info = substituting_class.get_class_outwards()
 
     def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
-            ["    category: %s" % self.category] +
+            ["    category: %s" % self._category] +
             ["    outwards:"] +
-            ["        %s [%s]" % (n, self.outwards_info[n])
-             for n in self.outwards_info] +
+            ["        %s [%s]" % (n, self._outwards_info[n])
+             for n in self._outwards_info] +
             [")"]
         )
 
@@ -486,7 +521,7 @@ class NullComponent(Component):
 
     def run(self, **kwargs):
         null_array = np.zeros(self.spaceshape, np.float32)
-        return {n: null_array for n in self.outwards_info}
+        return {n: null_array for n in self._outwards_info}
 
     def finalise(self, **kwargs):
         pass
