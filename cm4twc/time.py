@@ -109,6 +109,7 @@ class TimeDomain(object):
             bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:04]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
+            period: 0:00:03
             timedelta: 0:00:01
         )
         """
@@ -160,14 +161,22 @@ class TimeDomain(object):
         return self._f.construct('time').calendar
 
     @property
+    def period(self):
+        """Return the period that the TimeDomain is covering as a
+        `datetime.timedelta`.
+        """
+        return (self._f.construct('time').datetime_array[-1]
+                - self._f.construct('time').datetime_array[0])
+
+    @property
     def timedelta(self):
         """Return the time duration separating time steps in the
         time series of the TimeDomain instance as a `datetime.timedelta`
         instance.
         """
         return (
-                self._f.construct('time').datetime_array[1] -
-                self._f.construct('time').datetime_array[0]
+                self._f.construct('time').datetime_array[1]
+                - self._f.construct('time').datetime_array[0]
         )
 
     def _get_cf_units(self, units, calendar):
@@ -233,6 +242,7 @@ class TimeDomain(object):
             + ["    bounds {}: {}".format(self.bounds.shape, self.bounds)]
             + ["    calendar: {}".format(self.calendar)]
             + ["    units: {}".format(self.units)]
+            + ["    period: {}".format(self.period)]
             + ["    timedelta: {}".format(self.timedelta)]
             + [")"]
         )
@@ -407,6 +417,7 @@ class TimeDomain(object):
             bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
+            period: 3 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
         """
@@ -523,6 +534,7 @@ class TimeDomain(object):
             bounds (426, 2): [[2020-01-01 00:00:00, ..., 2021-03-02 00:00:00]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
+            period: 425 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
@@ -539,6 +551,7 @@ class TimeDomain(object):
             bounds (425, 2): [[2020-01-01 00:00:00, ..., 2021-03-02 00:00:00]] noleap
             calendar: noleap
             units: seconds since 1970-01-01 00:00:00
+            period: 424 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
@@ -609,6 +622,7 @@ class TimeDomain(object):
             bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] gregorian
             calendar: gregorian
             units: days since 1970-01-01
+            period: 3 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
