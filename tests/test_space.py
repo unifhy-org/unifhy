@@ -8,6 +8,17 @@ import cm4twc
 
 
 def get_dummy_spacedomain():
+    return cm4twc.LatLonGrid(
+        latitude=[51.5, 52.5, 53.5, 54.5],
+        latitude_bounds=[[51, 52], [52, 53], [53, 54], [54, 55]],
+        longitude=[-1.5, -0.5, 0.5],
+        longitude_bounds=[[-2, -1], [-1, 0], [0, 1]],
+        altitude=[2],
+        altitude_bounds=[[0, 4]]
+    )
+
+
+def get_sciencish_spacedomain():
     return cm4twc.RotatedLatLonGrid(
         grid_latitude=[2.2, 1.76, 1.32, 0.88, 0.44, 0., -0.44, -0.88, -1.32, -1.76],
         grid_longitude=[-4.7, -4.26, -3.82, -3.38, -2.94, -2.5, -2.06, -1.62, -1.18],

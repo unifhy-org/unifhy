@@ -1,9 +1,9 @@
 surfacelayer:
-  module: tests.components.surfacelayer.dummy
-  class: Dummy
+  module: tests.components.surfacelayer.sciencish
+  class: Sciencish
   timedomain:
-    start: '2019-01-01 09:00:00'
-    end: '2019-01-07 09:00:00'
+    start: 2019-01-01 09:00:00
+    end: 2019-01-07 09:00:00
     step:
       seconds: 86400.0
     units: days since 2019-01-01 09:00:00Z
@@ -23,25 +23,25 @@ surfacelayer:
     grid_north_pole_longitude: 190.0
   dataset:
     air_temperature:
-      files: [data/dummy_driving_data.nc]
+      files: [data/sciencish_driving_data_daily.nc]
       select: air_temperature
     rainfall:
-      files: [data/dummy_driving_data.nc]
+      files: [data/sciencish_driving_data_daily.nc]
       select: rainfall_flux
     snowfall:
-      files: [data/dummy_driving_data.nc]
+      files: [data/sciencish_driving_data_daily.nc]
       select: snowfall_flux
     vegetation_fraction:
-      files: [data/dummy_ancillary_data.nc]
+      files: [data/sciencish_ancillary_data.nc]
       select: vegetation_fraction
   parameters: null
   constants: null
 subsurface:
-  module: tests.components.subsurface.dummy
-  class: Dummy
+  module: tests.components.subsurface.sciencish
+  class: Sciencish
   timedomain:
-    start: '2019-01-01 09:00:00'
-    end: '2019-01-07 09:00:00'
+    start: 2019-01-01 09:00:00
+    end: 2019-01-07 09:00:00
     step:
       seconds: 86400.0
     units: days since 2019-01-01 09:00:00Z
@@ -61,17 +61,17 @@ subsurface:
     grid_north_pole_longitude: 190.0
   dataset:
     soil_temperature:
-      files: [data/dummy_driving_data.nc]
+      files: [data/sciencish_driving_data_daily.nc]
       select: soil_temperature
   parameters:
-    saturated_hydraulic_conductivity: 2
+    saturation_capacity: 600
   constants: null
 openwater:
-  module: tests.components.openwater.dummy
-  class: Dummy
+  module: tests.components.openwater.sciencish
+  class: Sciencish
   timedomain:
-    start: '2019-01-01 09:00:00'
-    end: '2019-01-07 09:00:00'
+    start: 2019-01-01 09:00:00
+    end: 2019-01-07 09:00:00
     step:
       seconds: 86400.0
     units: days since 2019-01-01 09:00:00Z
@@ -91,5 +91,5 @@ openwater:
     grid_north_pole_longitude: 190.0
   dataset: {}
   parameters:
-    residence_time: 1
+    residence_time: 2400
   constants: null

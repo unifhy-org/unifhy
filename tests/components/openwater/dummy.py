@@ -6,20 +6,24 @@ from cm4twc.components import OpenWaterComponent
 class Dummy(OpenWaterComponent):
 
     # driving_data_info = {}
-    # ancillary_data_info = {}
-    parameters_info = {
-        'residence_time': 's',
+    ancillary_data_info = {
+        'ancillary_a': '1'
     }
-    # constants_info = {},
+    parameters_info = {
+        'parameter_a': '1',
+    }
+    constants_info = {
+        'constant_a': '1'
+    },
     states_info = {
-        'river_channel': 'kg m-2'
+        'state_a': '1'
     }
     solver_history = 1
 
     def initialise(self, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         return {
-            'river_channel': (
+            'state_a': (
                 np.zeros(self.spaceshape, np.float32),  # for t-1
                 np.zeros(self.spaceshape, np.float32)  # for t
             )
@@ -30,23 +34,25 @@ class Dummy(OpenWaterComponent):
             evaporation_openwater, runoff,
             # component driving data
             # component ancillary data
+            ancillary_a,
             # component parameters
-            residence_time,
+            parameter_a,
             # component states
-            river_channel,
+            state_a,
             # component constants
+            constant_a=1,
             **kwargs):
 
         dummy_array = np.ones(self.spaceshape, np.float32)
 
-        river_channel[0][:] = river_channel[-1] + 1
+        state_a[0][:] = state_a[-1] + 1
 
         return {
             # interface fluxes out
-            'discharge': dummy_array
+            'discharge': ancillary_a * parameter_a * constant_a
         }
 
-    def finalise(self, river_channel,
+    def finalise(self, state_a,
                  **kwargs):
 
         pass

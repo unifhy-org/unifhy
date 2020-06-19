@@ -2,14 +2,11 @@ import unittest
 import doctest
 
 import cm4twc
-from tests.test_time import (get_dummy_timedomain,
-                             get_dummy_timedomain_different_end,
+from tests.test_time import (get_dummy_timedomain_different_end,
                              get_dummy_spin_up_start_end)
-from tests.test_space import get_dummy_spacedomain
-from tests.test_data import get_dummy_dataset
-from tests.test_components import (get_subsurface_component,
-                                   get_surfacelayer_component,
-                                   get_openwater_component)
+from tests.test_components import (get_dummy_subsurface_component,
+                                   get_dummy_surfacelayer_component,
+                                   get_dummy_openwater_component)
 
 
 class TestModelAPI(unittest.TestCase):
@@ -50,11 +47,6 @@ class TestModelAPI(unittest.TestCase):
             ('d', 'n', 'n'),
             ('n', 'n', 'n')
         )
-        # instantiate dummy TimeDomain and SpaceDomain
-        self.timedomain = get_dummy_timedomain()
-        self.spacedomain = get_dummy_spacedomain()
-        # load dummy driving and ancillary data
-        self.dataset = get_dummy_dataset()
 
     def test_0_model_init(self):
         # loop through all the possible combinations of components
@@ -63,17 +55,14 @@ class TestModelAPI(unittest.TestCase):
                               subsurface=subsurface_kind,
                               openwater=openwater_kind):
                 # for surfacelayer component
-                surfacelayer = get_surfacelayer_component(
-                    surfacelayer_kind, self.timedomain, self.spacedomain,
-                    self.dataset)
+                surfacelayer = get_dummy_surfacelayer_component(
+                    surfacelayer_kind)
                 # for subsurface component
-                subsurface = get_subsurface_component(
-                    subsurface_kind, self.timedomain, self.spacedomain,
-                    self.dataset)
+                subsurface = get_dummy_subsurface_component(
+                    subsurface_kind)
                 # for openwater
-                openwater = get_openwater_component(
-                    openwater_kind, self.timedomain, self.spacedomain,
-                    self.dataset)
+                openwater = get_dummy_openwater_component(
+                    openwater_kind)
 
                 # try to get an instance of model with the given combination
                 self.doe_models[(surfacelayer_kind, subsurface_kind,
@@ -85,8 +74,7 @@ class TestModelAPI(unittest.TestCase):
 
     def test_1_model_spin_up(self):
         # loop through all the possible combinations of components
-        start, end = \
-            get_dummy_spin_up_start_end()
+        start, end = get_dummy_spin_up_start_end()
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
                 self.doe_models:
             with self.subTest(surfacelayer=surfacelayer_kind,
@@ -110,12 +98,10 @@ class TestModelAPI(unittest.TestCase):
     @unittest.expectedFailure
     def test_init_with_different_component_timedomains(self):
         # use NullComponents to test this
-        surfacelayer = get_surfacelayer_component(
-            'n', self.timedomain, self.spacedomain, None)
-        subsurface = get_subsurface_component(
-            'n', self.timedomain, self.spacedomain, None)
-        openwater = get_openwater_component(
-            'n', get_dummy_timedomain_different_end(), self.spacedomain, None)
+        surfacelayer = get_dummy_surfacelayer_component('n')
+        subsurface = get_dummy_subsurface_component('n')
+        openwater = get_dummy_openwater_component(
+            'n', timedomain=get_dummy_timedomain_different_end())
 
         cm4twc.Model(
             surfacelayer=surfacelayer,

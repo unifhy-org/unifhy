@@ -4,7 +4,7 @@ import doctest
 import cm4twc
 
 
-def get_dummy_dataset():
+def get_sciencish_dataset():
     return cm4twc.DataSet(
         ['data/dummy_driving_data.nc',
          'data/dummy_ancillary_data.nc'],
@@ -15,9 +15,15 @@ def get_dummy_dataset():
     )
 
 
+def get_dummy_dataset(component_category):
+    return cm4twc.DataSet(
+        'data/dummy_{}_data_daily.nc'.format(component_category)
+    )
+
+
 def get_dummy_component_substitute_dataset(component_category):
     return cm4twc.DataSet(
-        'data/dummy_{}_substitute_data.nc'.format(component_category)
+        'data/dummy_{}_substitute_data_daily.nc'.format(component_category)
     )
 
 

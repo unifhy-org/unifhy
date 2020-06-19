@@ -3,10 +3,21 @@ import cm4twc
 from tests.components.surfacelayer import Dummy as SurfaceLayerDummy
 from tests.components.subsurface import Dummy as SubSurfaceDummy
 from tests.components.openwater import Dummy as OpenWaterDummy
-from tests.test_data import get_dummy_component_substitute_dataset
+from tests.test_time import get_dummy_timedomain
+from tests.test_space import get_dummy_spacedomain
+from tests.test_data import (get_dummy_dataset,
+                             get_dummy_component_substitute_dataset)
 
 
-def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
+def get_dummy_surfacelayer_component(kind, timedomain=None, spacedomain=None,
+                                     dataset=None):
+    if timedomain is None:
+        timedomain = get_dummy_timedomain()
+    if spacedomain is None:
+        spacedomain = get_dummy_spacedomain()
+    if dataset is None:
+        dataset = get_dummy_dataset('surfacelayer')
+
     if kind == 'c':
         surfacelayer = SurfaceLayerDummy(
             timedomain=timedomain,
@@ -31,13 +42,21 @@ def get_surfacelayer_component(kind, timedomain, spacedomain, dataset):
     return surfacelayer
 
 
-def get_subsurface_component(kind, timedomain, spacedomain, dataset):
+def get_dummy_subsurface_component(kind, timedomain=None, spacedomain=None,
+                                   dataset=None):
+    if timedomain is None:
+        timedomain = get_dummy_timedomain()
+    if spacedomain is None:
+        spacedomain = get_dummy_spacedomain()
+    if dataset is None:
+        dataset = get_dummy_dataset('surfacelayer')
+
     if kind == 'c':
         subsurface = SubSurfaceDummy(
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
-            parameters={'saturated_hydraulic_conductivity': 2},
+            parameters={'parameter_a': 2},
             constants={}
         )
     elif kind == 'd':
@@ -56,13 +75,21 @@ def get_subsurface_component(kind, timedomain, spacedomain, dataset):
     return subsurface
 
 
-def get_openwater_component(kind, timedomain, spacedomain, dataset):
+def get_dummy_openwater_component(kind, timedomain=None, spacedomain=None,
+                                  dataset=None):
+    if timedomain is None:
+        timedomain = get_dummy_timedomain()
+    if spacedomain is None:
+        spacedomain = get_dummy_spacedomain()
+    if dataset is None:
+        dataset = get_dummy_dataset('surfacelayer')
+
     if kind == 'c':
         openwater = OpenWaterDummy(
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
-            parameters={'residence_time': 1},
+            parameters={'parameter_a': 3},
             constants={}
         )
     elif kind == 'd':

@@ -152,11 +152,11 @@ class Model(object):
 
                 *Parameter example:* ::
 
-                    yaml_file='configurations/dummy.yaml'
+                    yaml_file='configurations/dummy.yml'
 
         **Examples**
 
-        >>> m = Model.from_yaml('configurations/dummy.yaml')
+        >>> m = Model.from_yaml('configurations/dummy.yml')
         >>> print(m)
         Model(
             surfacelayer: Dummy

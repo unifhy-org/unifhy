@@ -6,18 +6,18 @@ from cm4twc.components import SurfaceLayerComponent
 class Dummy(SurfaceLayerComponent):
 
     driving_data_info = {
-        'rainfall': 'kg m-2 s-1',
-        'snowfall': 'kg m-2 s-1',
-        'air_temperature': 'K',
+        'driving_a': '1',
+        'driving_b': '1',
+        'driving_c': '1',
     }
     ancillary_data_info = {
-        'vegetation_fraction': '1'
+        'ancillary_a': '1'
     }
     # parameters_info = {}
     # constants_info = {}
     states_info = {
-        'canopy': 'kg m-2',
-        'snowpack': 'kg m-2'
+        'state_a': '1',
+        'state_b': '1'
     }
     solver_history = 1
 
@@ -25,11 +25,11 @@ class Dummy(SurfaceLayerComponent):
         # component has a history of 1, so needs states for t-1 and t
         return {
             # component states
-            'canopy': (  # in chronological order
+            'state_a': (  # in chronological order
                 np.zeros(self.spaceshape, np.float32),  # for t-1
                 np.zeros(self.spaceshape, np.float32)  # for t
             ),
-            'snowpack': (  # in chronological order
+            'state_b': (  # in chronological order
                 np.zeros(self.spaceshape, np.float32),  # for t-1
                 np.zeros(self.spaceshape, np.float32)  # for t
             )
@@ -39,31 +39,37 @@ class Dummy(SurfaceLayerComponent):
             # interface fluxes in
             soil_water_stress,
             # component driving data
-            rainfall, snowfall, air_temperature,
+            driving_a, driving_b, driving_c,
             # component ancillary data
-            vegetation_fraction,
+            ancillary_a,
             # component parameters
             # component states
-            canopy, snowpack,
+            state_a, state_b,
             # component constants
             **kwargs):
 
         dummy_array = np.ones(self.spaceshape, np.float32)
 
-        canopy[0][:] = canopy[-1] + 1
-        snowpack[0][:] = snowpack[-1] + 1
+        state_a[0][:] = state_a[-1] + 1
+        state_b[0][:] = state_b[-1] + 2
 
         return {
             # interface fluxes out
-            'throughfall': dummy_array,
-            'snowmelt': dummy_array,
-            'transpiration': dummy_array,
-            'evaporation_soil_surface': dummy_array,
-            'evaporation_ponded_water': dummy_array,
-            'evaporation_openwater': dummy_array
+            'throughfall':
+                driving_a + driving_b + driving_c,
+            'snowmelt':
+                driving_a + driving_b + driving_c,
+            'transpiration':
+                driving_a + driving_b + driving_c,
+            'evaporation_soil_surface':
+                driving_a + driving_b + driving_c,
+            'evaporation_ponded_water':
+                driving_a + driving_b + driving_c,
+            'evaporation_openwater':
+                driving_a + driving_b + driving_c
         }
 
-    def finalise(self, canopy, snowpack,
+    def finalise(self, state_a, state_b,
                  **kwargs):
 
         pass

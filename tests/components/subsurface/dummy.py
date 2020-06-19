@@ -6,27 +6,27 @@ from cm4twc.components import SubSurfaceComponent
 class Dummy(SubSurfaceComponent):
 
     driving_data_info = {
-        'soil_temperature': 'K',
+        'driving_a': '1',
     }
     # ancillary_data_info = {},
     parameters_info = {
-        'saturated_hydraulic_conductivity': 'kg m-2 s-1',
+        'parameter_a': '1',
     }
     # constants_info = {},
     states_info = {
-        'soil_moisture': 'kg m-2',
-        'aquifer': 'kg m-2'
+        'state_a': '1',
+        'state_b': '1'
     }
     solver_history = 1
 
     def initialise(self, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         return {
-            'soil_moisture': (
+            'state_a': (
                 np.zeros(self.spaceshape, np.float32),  # for t-1
                 np.zeros(self.spaceshape, np.float32)  # for t
             ),
-            'aquifer': (
+            'state_b': (
                 np.zeros(self.spaceshape, np.float32),  # for t-1
                 np.zeros(self.spaceshape, np.float32)  # for t
             )
@@ -37,27 +37,27 @@ class Dummy(SubSurfaceComponent):
             evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             # component driving data
-            soil_temperature,
+            driving_a,
             # component ancillary data
             # component parameters
-            saturated_hydraulic_conductivity,
+            parameter_a,
             # component states
-            soil_moisture, aquifer,
+            state_a, state_b,
             # component constants
             **kwargs):
 
         dummy_array = np.ones(self.spaceshape, np.float32)
 
-        soil_moisture[0][:] = soil_moisture[-1] + 1
-        aquifer[0][:] = soil_moisture[-1] + 1
+        state_a[0][:] = state_a[-1] + 1
+        state_b[0][:] = state_b[-1] + 2
 
         return {
             # interface fluxes out
-            'runoff': dummy_array,
-            'soil_water_stress': dummy_array
+            'runoff': driving_a * parameter_a,
+            'soil_water_stress': driving_a * parameter_a
         }
 
-    def finalise(self, soil_moisture, aquifer,
+    def finalise(self, state_a, state_b,
                  **kwargs):
 
         pass
