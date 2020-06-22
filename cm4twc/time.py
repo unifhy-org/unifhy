@@ -38,12 +38,6 @@ _calendar_to_cftime_datetime = {
 class TimeDomain(object):
     """TimeDomain characterises a temporal dimension that is needed by a
     `Component`.
-
-    The first timestamp of the sequence is the beginning of the first
-    Component timestep, and the last timestamp is the end of the last
-    timestep (not its start). The *timedelta* attribute corresponds
-    to the length of a timestep (i.e. the gap between two consecutive
-    timestamps in the sequence).
     """
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
     _calendar = 'gregorian'
@@ -60,6 +54,10 @@ class TimeDomain(object):
                 The array of timestamps defining the temporal dimension.
                 May be any type that can be cast to a `numpy.ndarray`.
                 Must contain numerical values.
+
+                Note: the first timestamp of the array is the beginning
+                of the first timestep, and the last timestamp is the end
+                of the last timestep (not its start).
 
                 *Parameter example:* ::
 
@@ -105,11 +103,11 @@ class TimeDomain(object):
         ...                 calendar='standard')
         >>> print(td)
         TimeDomain(
-            time (4,): [1970-01-01 00:00:00, ..., 1970-01-01 00:00:03] standard
-            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:04]] standard
+            time (3,): [1970-01-01 00:00:00, 1970-01-01 00:00:01, 1970-01-01 00:00:02] standard
+            bounds (3, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:03]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
-            period: 0:00:03
+            period: 0:00:02
             timedelta: 0:00:01
         )
         """
@@ -203,26 +201,27 @@ class TimeDomain(object):
     def _check_dimension_regularity(dimension):
         time_diff = np.diff(dimension)
         if np.amin(time_diff) != np.amax(time_diff):
-            raise RuntimeWarning("The time step in the sequence is not "
-                                 "constant across the period.")
+            raise RuntimeWarning("timestep in sequence not constant "
+                                 "across period")
 
     def _set_time(self, timestamps, span):
         # convert timestamps to np.array if not already
         timestamps = np.asarray(timestamps)
         if not timestamps.ndim == 1:
             raise ValueError(
-                "Error when initialising a {} from a sequence of timestamps: "
-                "the timestamps provided are not contained in a uni-"
-                "dimensional structure.".format(self.__class__.__name__))
+                "timestamps array provided is not uni-dimensional".format(
+                    self.__class__.__name__))
 
         if not np.issubdtype(timestamps.dtype, np.number):
             raise TypeError(
-                "Error when initialising a {} from a sequence of timestamps: "
-                "the values contained in the sequence must be "
-                "numerical.".format(self.__class__.__name__))
+                "items in timestamps array must be numerical.".format(
+                    self.__class__.__name__))
 
         # check that the timestamps is regularly spaced
         self._check_dimension_regularity(timestamps)
+
+        # eliminate last timestamp (because it is end of last time step)
+        timestamps = timestamps[0:-1]
 
         # generate bounds from span and timedelta
         bounds = np.zeros((len(timestamps), 2), dtype=timestamps.dtype)
@@ -234,6 +233,36 @@ class TimeDomain(object):
         self._f.domain_axis('time').set_size(len(timestamps))
         self._f.construct('time').set_data(cf.Data(timestamps))
         self._f.construct('time').set_bounds(cf.Bounds(data=cf.Data(bounds)))
+
+    @classmethod
+    def _extract_time_from_field(cls, field):
+        # check construct
+        if not field.has_construct('time'):
+            raise RuntimeError("no 'time' construct found in field".format(
+                cls.__name__))
+        t = field.construct('time')
+        cls._check_dimension_regularity(t.array)
+        if not field.construct('time').has_bounds():
+            raise RuntimeError("no 'time' bounds found in field".format(
+                cls.__name__))
+        t_bnds = field.construct('time').bounds
+        cls._check_dimension_regularity(t_bnds.array[:, 0])
+        cls._check_dimension_regularity(t_bnds.array[:, 1])
+
+        if not t.has_property('units'):
+            raise RuntimeError("no 'units' property in field".format(
+                cls.__name__))
+        if not t.has_property('calendar'):
+            raise RuntimeError("no 'calendar' property in field".format(
+                cls.__name__))
+
+        return {
+            'start': t_bnds.datetime_array[0, 0],
+            'end': t_bnds.datetime_array[-1, -1],
+            'step': t.datetime_array[1] - t.datetime_array[0],
+            'units': t.units,
+            'calendar': t.calendar
+        }
 
     def __str__(self):
         return "\n".join(
@@ -248,34 +277,54 @@ class TimeDomain(object):
         )
 
     def __eq__(self, other):
+        """Compare equality between the TimeDomain and another instance
+        of TimeDomain.
+
+        Their time dimension, their bounds, their units, and their
+        calendars are compared against one another.
+        """
+
         if isinstance(other, self.__class__):
             return self.is_time_equal_to(other._f)
         else:
-            raise TypeError("The {} instance cannot be compared to "
-                            "a {} instance.".format(self.__class__.__name__,
-                                                    other.__class__.__name__))
+            raise TypeError("{} cannot be compared to {}".format(
+                self.__class__.__name__, other.__class__.__name__))
 
     def __ne__(self, other):
+        """Compare inequality between the TimeDomain and another
+        instance of TimeDomain.
+
+        Their time dimension, their bounds, their units, and their
+        calendars are compared against one another.
+        """
+
         return not self.__eq__(other)
 
     def is_time_equal_to(self, field, _leading_truncation_idx=None,
                          _trailing_truncation_idx=None):
-        """
-        TODO: DOCSTRING REQUIRED
+        """Compare equality between the TimeDomain and the 'time'
+        dimension  coordinate in a `cf.Field`.
+
+        The time dimension, the bounds, the units, and the calendar
+        of the field are compared against those of the TimeDomain.
+
+        :Parameters:
+
+            field: `cf.Field`
+                The field that needs to be compared against TimeDomain.
+
         """
         # check that the field has a time construct
         if field.construct('time', default=None) is None:
             return RuntimeError(
-                "The {} instance cannot be compared to a {} instance because "
-                "it does not feature a 'time' construct.".format(
+                "{} cannot be compared to {} because no time construct".format(
                     field.__class__.__name__, self.__class__.__name__))
 
         # check that field calendar is a classic one for CF-convention
         if (field.construct('time').calendar.lower()
                 not in _supported_calendar_mapping):
-            raise ValueError("The calendar '{}' of the {} instance is not "
-                             "supported.".format(field.calendar,
-                                                 field.__class__.__name__))
+            raise ValueError("{} calendar '{}' is not supported".format(
+                field.__class__.__name__, field.calendar))
 
         # map alternative names for given calendar to same name
         self_calendar = _supported_calendar_mapping[
@@ -288,17 +337,16 @@ class TimeDomain(object):
         # check that the two instances have the same calendar
         if not self_calendar == field_calendar:
             raise ValueError(
-                "The {} instance cannot be compared to a {} instance because "
-                "they do not have the same calendar.".format(
-                    field.__class__.__name__, self.__class__.__name__))
+                "{} cannot be compared to {} instance due to different "
+                "calendars".format(field.__class__.__name__,
+                                   self.__class__.__name__))
 
         # check that the two instances have the same time series length
         leading_size = (_trailing_truncation_idx if _leading_truncation_idx
                         else 0)
         trailing_size = (-_trailing_truncation_idx if _trailing_truncation_idx
                          else 0)
-        if not (self._f.construct('time').data.size -
-                leading_size - trailing_size ==
+        if not (self.time.size - leading_size - trailing_size ==
                 field.construct('time').data.size):
             return False
 
@@ -306,15 +354,13 @@ class TimeDomain(object):
         # (__eq__ operator on cf.Data for reference time units will
         # convert data with different reftime as long as they are in
         # the same calendar)
-        match1 = (
-            self._f.construct('time').data[_leading_truncation_idx:
-                                           _trailing_truncation_idx] ==
+        time_match = (
+            self.time[_leading_truncation_idx:_trailing_truncation_idx] ==
             field.construct('time').data
         )
 
-        match2 = (
-            self._f.construct('time').bounds.data[_leading_truncation_idx:
-                                                  _trailing_truncation_idx] ==
+        bounds_match = (
+            self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
             field.construct('time').bounds.data
         )
 
@@ -322,23 +368,32 @@ class TimeDomain(object):
         # (False if any value is False, i.e. at least one value is not equal
         # in the time series) and by squeezing the data to get a single boolean
         return (
-            match1.minimum(squeeze=True).array.item()
-            and match2.minimum(squeeze=True).array.item()
+            time_match.minimum(squeeze=True).array.item()
+            and bounds_match.minimum(squeeze=True).array.item()
         )
 
     def spans_same_period_as(self, timedomain):
-        """
-        TODO: DOCSTRING REQUIRED
+        """Compare equality in period spanned between the TimeDomain
+        and another instance of TimeDomain.
+
+        The lower bound of their first timestamps and the upper bound of
+        their last timestamps are compared.
+
+        :Parameters:
+
+            timedomain: `TimeDomain`
+                The other TimeDomain to be compared against TimeDomain.
+
         """
         if isinstance(timedomain, self.__class__):
-            start, end = (self._f.construct('time').data[[0, -1]] ==
-                          timedomain.time[[0, -1]])
+            start = self.bounds[[0], [0]] == timedomain.bounds[[0], [0]]
+            end = self.bounds[[-1], [-1]] == timedomain.bounds[[-1], [-1]]
 
-            return start and end
+            return start.array.item() and end.array.item()
         else:
-            raise TypeError("The {} instance cannot be compared to a {} "
-                            "instance.".format(self.__class__.__name__,
-                                               timedomain.__class__.__name__))
+            raise TypeError("{} instance cannot be compared to {} "
+                            "instance".format(self.__class__.__name__,
+                                              timedomain.__class__.__name__))
 
     @classmethod
     def from_datetime_sequence(cls, datetimes, units=None, calendar=None):
@@ -352,6 +407,10 @@ class TimeDomain(object):
                 `numpy.ndarray`. Must contain datetime objects (i.e.
                 `datetime.datetime`, `cftime.datetime`,
                 `numpy.datetime64`).
+
+                Note: the first datetime of the array is the beginning
+                of the first timestep, and the last datetime is the end
+                of the last timestep (not its start).
 
                 *Parameter example:* ::
 
@@ -413,11 +472,11 @@ class TimeDomain(object):
         ...     calendar='standard')
         >>> print(td)
         TimeDomain(
-            time (4,): [1970-01-01 00:00:00, ..., 1970-01-04 00:00:00] standard
-            bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] standard
+            time (3,): [1970-01-01 00:00:00, 1970-01-02 00:00:00, 1970-01-03 00:00:00] standard
+            bounds (3, 2): [[1970-01-01 00:00:00, ..., 1970-01-04 00:00:00]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
-            period: 3 days, 0:00:00
+            period: 2 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
         """
@@ -458,6 +517,8 @@ class TimeDomain(object):
                 initialisation of the `TimeDomain`. Must be any datetime
                 object (except `numpy.datetime64`).
 
+                Note: this is the start of the first timestep.
+
                 *Parameter example:* ::
 
                     start=datetime.datetime(1970, 1, 1, 9, 0, 0)
@@ -470,6 +531,9 @@ class TimeDomain(object):
                 The end of the sequence to be generated for the
                 initialisation of the `TimeDomain`. Must be any datetime
                 object (except `numpy.datetime64`).
+
+                Note: this is the end of the last timestep (not its
+                start).
 
                 *Parameter example:* ::
 
@@ -524,50 +588,49 @@ class TimeDomain(object):
         >>> from datetime import datetime, timedelta
         >>> td = TimeDomain.from_start_end_step(
         ...     start=datetime(2020, 1, 1),
-        ...     end=datetime(2021, 3, 1),
+        ...     end=datetime(2020, 3, 1),
         ...     step=timedelta(days=1),
         ...     units='seconds since 1970-01-01 00:00:00',
         ...     calendar='standard')
         >>> print(td)
         TimeDomain(
-            time (426,): [2020-01-01 00:00:00, ..., 2021-03-01 00:00:00] standard
-            bounds (426, 2): [[2020-01-01 00:00:00, ..., 2021-03-02 00:00:00]] standard
+            time (60,): [2020-01-01 00:00:00, ..., 2020-02-29 00:00:00] standard
+            bounds (60, 2): [[2020-01-01 00:00:00, ..., 2020-03-01 00:00:00]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
-            period: 425 days, 0:00:00
+            period: 59 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
         >>> from datetime import datetime, timedelta
         >>> td = TimeDomain.from_start_end_step(
         ...     start=datetime(2020, 1, 1),
-        ...     end=datetime(2021, 3, 1),
+        ...     end=datetime(2020, 3, 1),
         ...     step=timedelta(days=1),
         ...     units='seconds since 1970-01-01 00:00:00',
         ...     calendar='noleap')
         >>> print(td)
         TimeDomain(
-            time (425,): [2020-01-01 00:00:00, ..., 2021-03-01 00:00:00] noleap
-            bounds (425, 2): [[2020-01-01 00:00:00, ..., 2021-03-02 00:00:00]] noleap
+            time (59,): [2020-01-01 00:00:00, ..., 2020-02-28 00:00:00] noleap
+            bounds (59, 2): [[2020-01-01 00:00:00, ..., 2020-03-01 00:00:00]] noleap
             calendar: noleap
             units: seconds since 1970-01-01 00:00:00
-            period: 424 days, 0:00:00
+            period: 58 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
         """
         if not isinstance(start, (datetime, cftime.datetime)):
-            raise TypeError("Start date must be an instance of "
-                            "datetime.datetime or cftime.datetime.")
+            raise TypeError("start date must be of type datetime.datetime "
+                            "or cftime.datetime")
         if not isinstance(end, (datetime, cftime.datetime)):
-            raise TypeError("End date must be an instance of "
-                            "datetime.datetime or cftime.datetime.")
+            raise TypeError("end date must be of type datetime.datetime "
+                            "or cftime.datetime")
         if not isinstance(step, timedelta):
-            raise TypeError("Step must be an instance of the "
-                            "datetime.timedelta.")
+            raise TypeError("step must be of type datetime.timedelta")
 
         if start >= end:
-            raise ValueError("End date is not later than start date.")
+            raise ValueError("end date is not later than start date")
 
         # convert datetimes to expected calendar before generating sequence
         if calendar is not None:
@@ -598,8 +661,8 @@ class TimeDomain(object):
             field: `cf.Field` object
                 The field object who will be used to initialise a
                 `TimeDomain` instance. This field must feature a 'time'
-                construct, and this construct must feature a 'units' and
-                a 'calendar' property.
+                construct with bounds, and this construct must feature
+                'units' and 'calendar' properties.
 
         **Examples**
 
@@ -611,7 +674,9 @@ class TimeDomain(object):
         ...                     'units': 'days since 1970-01-01',
         ...                     'calendar': 'gregorian',
         ...                     'axis': 'T'},
-        ...         data=cf.Data([0, 1, 2, 3])
+        ...         data=cf.Data([0, 1, 2, 3]),
+        ...         bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2],
+        ...                                        [2, 3], [3, 4]]))
         ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=4))
         ... )
@@ -627,32 +692,30 @@ class TimeDomain(object):
         )
 
         """
-        if not field.has_construct('time'):
-            raise RuntimeError("Error when initialising a {} from a Field: no "
-                               "\'time' construct found.".format(cls.__name__))
-        t = field.construct('time')
-
-        if not t.has_property('units'):
-            raise RuntimeError("Error when initialising a {} from a Field: no "
-                               "\'units' property for the 'time' construct "
-                               "found.".format(cls.__name__))
-        if not t.has_property('calendar'):
-            raise RuntimeError("Error when initialising a {} from a Field: no "
-                               "\'calendar' property for the 'time' construct "
-                               "found.".format(cls.__name__))
-
-        return cls(t.array, t.units, t.calendar)
+        return cls.from_start_end_step(**cls._extract_time_from_field(field))
 
     def to_field(self):
-        """Return the inner cf.Field used to characterise the TimeDomain."""
+        """Return the inner cf.Field used to characterise the TimeDomain.
+
+        **Examples**
+        >>> td = TimeDomain.from_start_end_step(
+        ...     start=datetime(2020, 1, 1),
+        ...     end=datetime(2020, 3, 1),
+        ...     step=timedelta(days=1)
+        ... )
+        >>> f = td.to_field()
+        >>> td_ = TimeDomain.from_field(f)
+        >>> td == td_
+        True
+
+        """
         return self._f
 
     @classmethod
     def from_config(cls, cfg):
         for required_key in ['start', 'end', 'step']:
             if required_key not in cfg:
-                raise KeyError("The {} property of time in missing in "
-                               "the configuration.")
+                raise KeyError("no {} property of time found in configuration")
         return cls.from_start_end_step(
             start=datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S'),
             end=datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S'),
@@ -662,9 +725,10 @@ class TimeDomain(object):
         )
 
     def to_config(self):
+        t_bnds = self.bounds.datetime_array
         return {
-            'start': self.time.datetime_array[0].strftime('%Y-%m-%d %H:%M:%S'),
-            'end': self.time.datetime_array[-1].strftime('%Y-%m-%d %H:%M:%S'),
+            'start': t_bnds[0, 0].strftime('%Y-%m-%d %H:%M:%S'),
+            'end': t_bnds[-1, -1].strftime('%Y-%m-%d %H:%M:%S'),
             'step': {'seconds': self.timedelta.total_seconds()},
             'units': self.units,
             'calendar': self.calendar

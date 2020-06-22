@@ -186,16 +186,11 @@ class Component(metaclass=MetaComponent):
         for data_name in self.driving_data_info:
             # subspace in time
             self._dataset[data_name] = self.dataset[data_name].subspace(
-                T=cf.wi(
-                    *timedomain.time.datetime_array[[0, -2]]
-                )
+                T=cf.wi(*timedomain.time.datetime_array[[0, -1]])
             )
 
             # check that the data and component time domains are compatible
-            # using _truncation=-1 to remove requirement for last datetime
-            # of TimeDomain to be available which is not required
-            if not timedomain.is_time_equal_to(self._dataset[data_name],
-                                               _trailing_truncation_idx=-1):
+            if not timedomain.is_time_equal_to(self._dataset[data_name]):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(

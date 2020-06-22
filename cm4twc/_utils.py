@@ -136,10 +136,9 @@ class Clock(object):
         return self
 
     def __next__(self):
-        # loop until it hits the second to last index (because the last index
-        # corresponds to the end of the last timestep, so that it should not
-        # be used as the start of another iteration
-        if self._current_timeindex < self.end_timeindex - 1:
+        # loop until it hits to last index (because the last index
+        # corresponds to the start of the last timestep)
+        if self._current_timeindex < self.end_timeindex:
             self._current_timeindex += 1
             self._current_datetime += self.timedelta
 

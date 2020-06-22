@@ -62,9 +62,10 @@ class TestTimeDomainAPI(unittest.TestCase):
                             'units': 'days since 2020-02-28 09:00:00Z',
                             'calendar': 'standard',
                             'axis': 'T'},
-                data=cf.Data([0, 1, 2, 3])
+                data=cf.Data([0, 1, 2]),
+                bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2], [2, 3]]))
             ),
-            axes=f.set_construct(cf.DomainAxis(size=4))
+            axes=f.set_construct(cf.DomainAxis(size=3))
         )
         td4 = cm4twc.TimeDomain.from_field(f)
 
@@ -99,9 +100,10 @@ class TestTimeDomainAPI(unittest.TestCase):
                             'units': 'days since 2020-02-28 09:00:00Z',
                             'calendar': 'gregorian',
                             'axis': 'T'},
-                data=cf.Data([0, 1, 2, 3])
+                data=cf.Data([0, 1, 2]),
+                bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2], [2, 3]]))
             ),
-            axes=f.set_construct(cf.DomainAxis(size=4))
+            axes=f.set_construct(cf.DomainAxis(size=3))
         )
         td4 = cm4twc.TimeDomain.from_field(f)
 
@@ -136,9 +138,10 @@ class TestTimeDomainAPI(unittest.TestCase):
                             'units': 'days since 2020-02-28 09:00:00Z',
                             'calendar': 'julian',
                             'axis': 'T'},
-                data=cf.Data([0, 1, 2, 3])
+                data=cf.Data([0, 1, 2]),
+                bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2], [2, 3]]))
             ),
-            axes=f.set_construct(cf.DomainAxis(size=4))
+            axes=f.set_construct(cf.DomainAxis(size=3))
         )
         td4 = cm4twc.TimeDomain.from_field(f)
 
@@ -174,9 +177,10 @@ class TestTimeDomainAPI(unittest.TestCase):
                             'units': 'days since 2020-02-28 09:00:00Z',
                             'calendar': 'noleap',
                             'axis': 'T'},
-                data=cf.Data([0, 1, 2, 3])
+                data=cf.Data([0, 1, 2]),
+                bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2], [2, 3]]))
             ),
-            axes=f.set_construct(cf.DomainAxis(size=4))
+            axes=f.set_construct(cf.DomainAxis(size=3))
         )
         td4 = cm4twc.TimeDomain.from_field(f)
 
@@ -212,9 +216,10 @@ class TestTimeDomainAPI(unittest.TestCase):
                             'units': 'days since 2020-02-28 09:00:00Z',
                             'calendar': 'all_leap',
                             'axis': 'T'},
-                data=cf.Data([0, 1, 2, 3])
+                data=cf.Data([0, 1, 2]),
+                bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2], [2, 3]]))
             ),
-            axes=f.set_construct(cf.DomainAxis(size=4))
+            axes=f.set_construct(cf.DomainAxis(size=3))
         )
         td4 = cm4twc.TimeDomain.from_field(f)
 
@@ -250,9 +255,10 @@ class TestTimeDomainAPI(unittest.TestCase):
                             'units': 'days since 2020-02-28 09:00:00Z',
                             'calendar': '360_day',
                             'axis': 'T'},
-                data=cf.Data([0, 1, 2, 3])
+                data=cf.Data([0, 1, 2]),
+                bounds=cf.Bounds(data=cf.Data([[0, 1], [1, 2], [2, 3]]))
             ),
-            axes=f.set_construct(cf.DomainAxis(size=4))
+            axes=f.set_construct(cf.DomainAxis(size=3))
         )
         td4 = cm4twc.TimeDomain.from_field(f)
 

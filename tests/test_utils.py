@@ -25,13 +25,13 @@ class TestClockAPI(unittest.TestCase):
             calendar='gregorian'
         )
 
-        self.exp_bool_a = [True, True, True, True, True, True, True]
+        self.exp_bool_a = [True, True, True, True, True, True]
         self.exp_idx_a = [0, 1, 2, 3, 4, 5]
 
-        self.exp_bool_b = [True, False, True, False, True, False, True]
+        self.exp_bool_b = [True, False, True, False, True, False]
         self.exp_idx_b = [0, 1, 2]
 
-        self.exp_bool_c = [True, False, False, True, False, False, True]
+        self.exp_bool_c = [True, False, False, True, False, False]
         self.exp_idx_c = [0, 1]
 
     def test_clock_init(self):
@@ -62,9 +62,9 @@ class TestClockAPI(unittest.TestCase):
             if c:
                 out_idx_c.append(clock.get_current_timeindex('openwater'))
 
-        self.assertEqual(out_bool_a, self.exp_bool_a[:-1])
-        self.assertEqual(out_bool_b, self.exp_bool_b[:-1])
-        self.assertEqual(out_bool_c, self.exp_bool_c[:-1])
+        self.assertEqual(out_bool_a, self.exp_bool_a)
+        self.assertEqual(out_bool_b, self.exp_bool_b)
+        self.assertEqual(out_bool_c, self.exp_bool_c)
 
         self.assertEqual(out_idx_a, self.exp_idx_a)
         self.assertEqual(out_idx_b, self.exp_idx_b)
