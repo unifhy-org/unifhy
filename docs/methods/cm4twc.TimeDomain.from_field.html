@@ -46,8 +46,8 @@
 <dd class="field-odd"><dl class="simple">
 <dt>field: <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> object</dt><dd><p>The field object who will be used to initialise a
 <a class="reference internal" href="../classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> instance. This field must feature a ‘time’
-construct, and this construct must feature a ‘units’ and
-a ‘calendar’ property.</p>
+construct with bounds, and this construct must feature
+‘units’ and ‘calendar’ properties.</p>
 </dd>
 </dl>
 </dd>
@@ -61,7 +61,9 @@ a ‘calendar’ property.</p>
 <span class="gp">... </span>                    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;days since 1970-01-01&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                    <span class="s1">&#39;calendar&#39;</span><span class="p">:</span> <span class="s1">&#39;gregorian&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                    <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">},</span>
-<span class="gp">... </span>        <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">... </span>        <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+<span class="gp">... </span>        <span class="n">bounds</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>                                       <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]))</span>
 <span class="gp">... </span>    <span class="p">),</span>
 <span class="gp">... </span>    <span class="n">axes</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 <span class="gp">... </span><span class="p">)</span>
@@ -72,6 +74,7 @@ a ‘calendar’ property.</p>
 <span class="go">    bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] gregorian</span>
 <span class="go">    calendar: gregorian</span>
 <span class="go">    units: days since 1970-01-01</span>
+<span class="go">    period: 3 days, 0:00:00</span>
 <span class="go">    timedelta: 1 day, 0:00:00</span>
 <span class="go">)</span>
 </pre></div>

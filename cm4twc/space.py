@@ -542,6 +542,23 @@ class Grid(SpaceDomain):
         )
 
     def is_space_equal_to(self, field, ignore_z=False):
+        """Compare equality between the Grid and the spatial (X, Y,
+        and Z) dimension coordinate in a `cf.Field`.
+
+        The coordinate values, the bounds, and the units of the field
+        are compared against those of the Grid.
+
+        :Parameters:
+
+            field: `cf.Field`
+                The field that needs to be compared against TimeDomain.
+
+            ignore_z: `bool`, optional
+                Option to ignore the dimension coordinate along the Z
+                axis. If not provided, set to default False (i.e. Z is
+                not ignored).
+
+        """
         # check whether X/Y(/Z if not ignored) constructs are identical
         y_x = (
             self._f.construct(self._Y_name).equals(
@@ -1271,6 +1288,24 @@ class RotatedLatLonGrid(Grid):
         )
 
     def is_space_equal_to(self, field, ignore_z=False):
+        """Compare equality between the RotatedLatLonGrid and the
+        spatial (X, Y, and Z) dimension coordinate in a `cf.Field`.
+
+        The coordinate values, the bounds, the units, and the coordinate
+        conversion and its datum of the field are compared against those
+        of the Grid.
+
+        :Parameters:
+
+            field: `cf.Field`
+                The field that needs to be compared against TimeDomain.
+
+            ignore_z: `bool`, optional
+                Option to ignore the dimension coordinate along the Z
+                axis. If not provided, set to default False (i.e. Z is
+                not ignored).
+
+        """
         # check whether X/Y(/Z if not ignored) constructs are identical
         # and if coordinate_reference match (by checking its
         # coordinate_conversion and its datum separately, because

@@ -52,12 +52,12 @@ to identify them.</p>
 file names or directory names containing netCDF files
 from which to read the variables.</p>
 <p><em>Parameter example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="o">=</span><span class="s1">&#39;tests/dummy_data/dummy_driving_data.nc&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="o">=</span><span class="s1">&#39;tests/data/sciencish_driving_data_daily.nc&#39;</span>
 </pre></div>
 </div>
 <p><em>Parameter example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tests/dummy_data/dummy_driving_data.nc&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;tests/dummy_data/dummy_ancillary_data.nc&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tests/data/sciencish_driving_data_daily.nc&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;tests/data/sciencish_ancillary_data.nc&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </dd>
@@ -83,24 +83,24 @@ attribute is used instead.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">DataSet{ }</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;dummy_data/dummy_driving_data.nc&#39;</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;data/sciencish_driving_data_daily.nc&#39;</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">DataSet{</span>
-<span class="go">    air_temperature: &lt;CF Field: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
-<span class="go">    rainfall_flux: &lt;CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
-<span class="go">    snowfall_flux: &lt;CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
-<span class="go">    soil_temperature: &lt;CF Field: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="go">    air_temperature: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">    rainfall_flux: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1</span>
+<span class="go">    snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1</span>
+<span class="go">    soil_temperature: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
 <span class="go">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;dummy_data/dummy_driving_data.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;data/sciencish_driving_data_daily.nc&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">select</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rainfall_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;snowfall_flux&#39;</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;rainfall_flux&#39;</span><span class="p">:</span> <span class="s1">&#39;rainfall&#39;</span><span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">DataSet{</span>
-<span class="go">    rainfall: &lt;CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
-<span class="go">    snowfall_flux: &lt;CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
+<span class="go">    rainfall: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1</span>
+<span class="go">    snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1</span>
 <span class="go">}</span>
 </pre></div>
 </div>

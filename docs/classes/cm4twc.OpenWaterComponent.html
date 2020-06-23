@@ -39,7 +39,7 @@
 <h1>OpenWaterComponent<a class="headerlink" href="#openwatercomponent" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="cm4twc.OpenWaterComponent">
-<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">OpenWaterComponent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timedomain</span></em>, <em class="sig-param"><span class="n">spacedomain</span></em>, <em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">constants</span></em>, <em class="sig-param"><span class="n">solver_history</span></em>, <em class="sig-param"><span class="n">driving_data_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ancillary_data_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">constants_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">states_info</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.OpenWaterComponent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">OpenWaterComponent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timedomain</span></em>, <em class="sig-param"><span class="n">spacedomain</span></em>, <em class="sig-param"><span class="n">dataset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">constants</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.OpenWaterComponent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cm4twc.components.component.Component</span></code></p>
 <p>The OpenWaterComponent is simulating the hydrological processes
 in the open water compartment of the hydrological cycle.</p>
@@ -51,20 +51,38 @@ in the open water compartment of the hydrological cycle.</p>
 </dd>
 <dt>spacedomain: <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> object</dt><dd><p>The spatial dimension of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
 </dd>
-<dt>dataset: <a class="reference internal" href="cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> object</dt><dd><p>The dataset containing the substitute data substituting
+<dt>dataset: <a class="reference internal" href="cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> object, optional</dt><dd><p>The dataset containing the substitute data substituting
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>’s simulated time series. The data is
 dataset must be compatible in time with <em>timedomain</em> and
 compatible in space with <em>spacedomain</em>.</p>
 </dd>
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Must be
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Must be
 provided in the units expected by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
 </dd>
-<dt>constants: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Must be
+<dt>constants: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Must be
 provided in the required units.</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<dl class="py method">
+<dt id="cm4twc.OpenWaterComponent.category">
+<em class="property">property </em><code class="sig-name descname">category</code><a class="headerlink" href="#cm4twc.OpenWaterComponent.category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the part of the water cycle the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> represents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.OpenWaterComponent.inwards_info">
+<em class="property">property </em><code class="sig-name descname">inwards_info</code><a class="headerlink" href="#cm4twc.OpenWaterComponent.inwards_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the incoming information expected by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.OpenWaterComponent.outwards_info">
+<em class="property">property </em><code class="sig-name descname">outwards_info</code><a class="headerlink" href="#cm4twc.OpenWaterComponent.outwards_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the outgoing information provided by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
