@@ -50,16 +50,17 @@ This class characterises the time dimension of a `Component`.
 
    >>> from datetime import datetime, timedelta
    >>> timedomain2 = cm4twc.TimeDomain.from_start_end_step(
-   ...    start=datetime(2019, 1, 1, 9, 0, 0),
-   ...    end=datetime(2020, 1, 1, 9, 0, 0),
+   ...    start=datetime(2019, 1, 3, 9, 0, 0),
+   ...    end=datetime(2020, 1, 7, 9, 0, 0),
    ...    step=timedelta(days=1)
    ... )
    >>> print(timedomain2)
    TimeDomain(
-       time (367,): [2020-01-01 09:00:00, ..., 2021-01-01 09:00:00] gregorian
-       bounds (367, 2): [[2020-01-01 09:00:00, ..., 2021-01-02 09:00:00]] gregorian
+       time (4,): [2019-01-03 09:00:00, ..., 2019-01-06 09:00:00] gregorian
+       bounds (4, 2): [[2019-01-03 09:00:00, ..., 2019-01-07 09:00:00]] gregorian
        calendar: gregorian
        units: seconds since 1970-01-01 00:00:00Z
+       period: 3 days, 0:00:00
        timedelta: 1 day, 0:00:00
    )
 
@@ -100,23 +101,24 @@ A first subclass available is the `Grid`, itself discretised into `LatLonGrid` a
    :caption: *Instantiating a LatLonGrid object from its dimensions' extents and resolutions.*
 
    >>> spacedomain2 = cm4twc.LatLonGrid.from_extent_and_resolution(
-   ...    latitude_extent=(30, 70),
-   ...    latitude_resolution=5,
-   ...    longitude_extent=(0, 90),
-   ...    longitude_resolution=10,
-   ...    altitude_extent=(0, 10),
-   ...    altitude_resolution=10
+   ...    latitude_extent=(51, 55),
+   ...    latitude_resolution=1,
+   ...    longitude_extent=(-2, 1),
+   ...    longitude_resolution=1,
+   ...    altitude_extent=(0, 4),
+   ...    altitude_resolution=4
    ... )
    >>> print(spacedomain2)
    LatLonGrid(
-      shape {Y, X}: (8, 9)
-      Z, altitude (1,): [5.0] m
-      Y, latitude (8,): [32.5, ..., 67.5] degrees_north
-      X, longitude (9,): [5.0, ..., 85.0] degrees_east
-      Z_bounds (1, 2): [[0.0, 10.0]] m
-      Y_bounds (8, 2): [[30.0, ..., 70.0]] degrees_north
-      X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
+       shape {Z, Y, X}: (1, 4, 3)
+       Z, altitude (1,): [2.0] m
+       Y, latitude (4,): [51.5, ..., 54.5] degrees_north
+       X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east
+       Z_bounds (1, 2): [[0.0, 4.0]] m
+       Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north
+       X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east
    )
+
 
 .. rubric:: `DataSet` object
 
@@ -127,22 +129,16 @@ It is a dictionary-like object that stores references to `cf.Field` instances.
    :caption: *Instantiating a Dataset object from a netCDF file.*
 
    >>> dataset = cm4twc.DataSet(
-   ...     files=['in/dummy_driving_data_1day.nc', 'in/dummy_ancillary_data.nc'],
-   ...     name_mapping={
-   ...         'rainfall_flux': 'rainfall',
-   ...         'snowfall_flux': 'snowfall',
-   ...         'air_temperature': 'air_temperature',
-   ...         'soil_temperature': 'soil_temperature'
-   ...     }
+   ...     files=['tests/data/sciencish_driving_data_daily.nc', 'tests/data/dummy_ancillary_data.nc'],
    ... )
    >>> print(dataset)
    DataSet{
-       air_temperature: <CF Field: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-       rainfall: <CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
-       snowfall: <CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1>
-       soil_temperature: <CF Field: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-       vegetation_fraction: <CF Field: vegetation_fraction(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) 1>
+       ancillary_a: ancillary_a(latitude(4), longitude(3)) 1
+       driving_a: driving_a(time(6), atmosphere_hybrid_height_coordinate(1), latitude(4), longitude(3)) 1
+       driving_b: driving_b(time(6), atmosphere_hybrid_height_coordinate(1), latitude(4), longitude(3)) 1
+       driving_c: driving_c(time(6), atmosphere_hybrid_height_coordinate(1), latitude(4), longitude(3)) 1
    }
+
 
 .. rubric:: `Component` object
 
@@ -153,17 +149,11 @@ for surface, sub-surface, and open water parts of the water cycle:
 .. code-block:: python
    :caption: *Instantiating a 'dummy' SurfaceLayerComponent.*
 
-   import tests
-   >>> component = tests.dummy_components.surfacelayer.Dummy(
-   ...     timedomain=timedomain,
-   ...     spacedomain=spacedomain,
-   ...     dataset=dataset,
-   ...     parameters={}
-   ... )
-   >>> print(component)
+   >>> import tests
+   >>> print(tests.dummy_components.surfacelayer.Dummy)
    Dummy(
        category: surfacelayer
-       inwards:
+        inwards:
            soil_water_stress [1]
        outwards:
            throughfall [kg m-2 s-1]
@@ -173,16 +163,30 @@ for surface, sub-surface, and open water parts of the water cycle:
            evaporation_ponded_water [kg m-2 s-1]
            evaporation_openwater [kg m-2 s-1]
        driving data:
-           rainfall [kg m-2 s-1]
-           snowfall [kg m-2 s-1]
-           air_temperature [K]
+           driving_a [1]
+           driving_b [1]
+           driving_c [1]
        ancillary data:
-           vegetation_fraction [1]
+           ancillary_a [1]
        states:
-           canopy [kg m-2]
-           snowpack [kg m-2]
+           state_a [1]
+           state_b [1]
        solver history: 1
    )
+   >>> component = tests.dummy_components.surfacelayer.Dummy(
+   ...     timedomain=timedomain2,
+   ...     spacedomain=spacedomain2,
+   ...     dataset=dataset,
+   ...     parameters={}
+   ... )
+   >>> print(component)
+   Dummy(
+       category: surfacelayer
+       timedomain: period: 3 days, 0:00:00
+       spacedomain: shape: (Z: 1, Y: 4, X: 3)
+       dataset: 4 variable(s)
+   )
+
 
 .. rubric:: `Model` object
 
@@ -195,22 +199,22 @@ instantiated with three `Component` instances, one for each of the three
 
    >>> model = cm4twc.Model(
    ...     surfacelayer=tests.dummy_components.surfacelayer.Dummy(
-   ...         timedomain=timedomain,
-   ...         spacedomain=spacedomain,
+   ...         timedomain=timedomain2,
+   ...         spacedomain=spacedomain2,
    ...         dataset=dataset,
    ...         parameters={}
    ...     ),
    ...     subsurface=tests.dummy_components.subsurface.Dummy(
-   ...         timedomain=timedomain,
-   ...         spacedomain=spacedomain,
+   ...         timedomain=timedomain2,
+   ...         spacedomain=spacedomain2,
    ...         dataset=dataset,
-   ...         parameters={'saturated_hydraulic_conductivity': 2}
+   ...         parameters={'parameter_a': 1}
    ...     ),
    ...     openwater=tests.dummy_components.openwater.Dummy(
-   ...         timedomain=timedomain,
-   ...         spacedomain=spacedomain,
+   ...         timedomain=timedomain2,
+   ...         spacedomain=spacedomain2,
    ...         dataset=dataset,
-   ...         parameters={'residence_time': 1}
+   ...         parameters={'parameter_a': 1}
    ...     )
    ... )
    >>> print(model)
@@ -229,6 +233,6 @@ This instance of `Model` can now be used to start a spin up run and/or a simulat
    :caption: *Spinning-up and running the Model simulation.*
 
    >>> model.spin_up(start=datetime(2019, 1, 1, 9, 0, 0),
-   ...               end=datetime(2019, 1, 2, 9, 0, 0),
+   ...               end=datetime(2019, 1, 3, 9, 0, 0),
    ...               cycles=2)
    >>> outputs = model.simulate()

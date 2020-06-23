@@ -78,16 +78,17 @@ in a <a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.Data
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a TimeDomain object from tuple of datetime objects.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">timedomain2</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">TimeDomain</span><span class="o">.</span><span class="n">from_start_end_step</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="gp">... </span>   <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>   <span class="n">step</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">timedomain2</span><span class="p">)</span>
 <span class="go">TimeDomain(</span>
-<span class="go">    time (367,): [2020-01-01 09:00:00, ..., 2021-01-01 09:00:00] gregorian</span>
-<span class="go">    bounds (367, 2): [[2020-01-01 09:00:00, ..., 2021-01-02 09:00:00]] gregorian</span>
+<span class="go">    time (4,): [2019-01-03 09:00:00, ..., 2019-01-06 09:00:00] gregorian</span>
+<span class="go">    bounds (4, 2): [[2019-01-03 09:00:00, ..., 2019-01-07 09:00:00]] gregorian</span>
 <span class="go">    calendar: gregorian</span>
 <span class="go">    units: seconds since 1970-01-01 00:00:00Z</span>
+<span class="go">    period: 3 days, 0:00:00</span>
 <span class="go">    timedelta: 1 day, 0:00:00</span>
 <span class="go">)</span>
 </pre></div>
@@ -128,22 +129,22 @@ A first subclass available is the <code class="xref py py-obj docutils literal n
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a LatLonGrid object from its dimensions’ extents and resolutions.</em></span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain2</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">70</span><span class="p">),</span>
-<span class="gp">... </span>   <span class="n">latitude_resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-<span class="gp">... </span>   <span class="n">longitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
-<span class="gp">... </span>   <span class="n">longitude_resolution</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-<span class="gp">... </span>   <span class="n">altitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-<span class="gp">... </span>   <span class="n">altitude_resolution</span><span class="o">=</span><span class="mi">10</span>
+<span class="gp">... </span>   <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">55</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">latitude_resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">longitude_extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">longitude_resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">altitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">altitude_resolution</span><span class="o">=</span><span class="mi">4</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">spacedomain2</span><span class="p">)</span>
 <span class="go">LatLonGrid(</span>
-<span class="go">   shape {Y, X}: (8, 9)</span>
-<span class="go">   Z, altitude (1,): [5.0] m</span>
-<span class="go">   Y, latitude (8,): [32.5, ..., 67.5] degrees_north</span>
-<span class="go">   X, longitude (9,): [5.0, ..., 85.0] degrees_east</span>
-<span class="go">   Z_bounds (1, 2): [[0.0, 10.0]] m</span>
-<span class="go">   Y_bounds (8, 2): [[30.0, ..., 70.0]] degrees_north</span>
-<span class="go">   X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east</span>
+<span class="go">    shape {Z, Y, X}: (1, 4, 3)</span>
+<span class="go">    Z, altitude (1,): [2.0] m</span>
+<span class="go">    Y, latitude (4,): [51.5, ..., 54.5] degrees_north</span>
+<span class="go">    X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east</span>
+<span class="go">    Z_bounds (1, 2): [[0.0, 4.0]] m</span>
+<span class="go">    Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north</span>
+<span class="go">    X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east</span>
 <span class="go">)</span>
 </pre></div>
 </div>
@@ -154,21 +155,14 @@ It is a dictionary-like object that stores references to <a class="reference ext
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a Dataset object from a netCDF file.</em></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/dummy_driving_data_1day.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;in/dummy_ancillary_data.nc&#39;</span><span class="p">],</span>
-<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span>
-<span class="gp">... </span>        <span class="s1">&#39;rainfall_flux&#39;</span><span class="p">:</span> <span class="s1">&#39;rainfall&#39;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s1">&#39;snowfall_flux&#39;</span><span class="p">:</span> <span class="s1">&#39;snowfall&#39;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s1">&#39;air_temperature&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s1">&#39;soil_temperature&#39;</span><span class="p">:</span> <span class="s1">&#39;soil_temperature&#39;</span>
-<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tests/data/sciencish_driving_data_daily.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;tests/data/dummy_ancillary_data.nc&#39;</span><span class="p">],</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 <span class="go">DataSet{</span>
-<span class="go">    air_temperature: &lt;CF Field: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
-<span class="go">    rainfall: &lt;CF Field: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
-<span class="go">    snowfall: &lt;CF Field: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1&gt;</span>
-<span class="go">    soil_temperature: &lt;CF Field: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
-<span class="go">    vegetation_fraction: &lt;CF Field: vegetation_fraction(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) 1&gt;</span>
+<span class="go">    ancillary_a: ancillary_a(latitude(4), longitude(3)) 1</span>
+<span class="go">    driving_a: driving_a(time(6), atmosphere_hybrid_height_coordinate(1), latitude(4), longitude(3)) 1</span>
+<span class="go">    driving_b: driving_b(time(6), atmosphere_hybrid_height_coordinate(1), latitude(4), longitude(3)) 1</span>
+<span class="go">    driving_c: driving_c(time(6), atmosphere_hybrid_height_coordinate(1), latitude(4), longitude(3)) 1</span>
 <span class="go">}</span>
 </pre></div>
 </div>
@@ -179,36 +173,43 @@ for surface, sub-surface, and open water parts of the water cycle:
 <a class="reference internal" href="classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> respectively.</p>
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a ‘dummy’ SurfaceLayerComponent.</em></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tests</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">component</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="o">...</span>     <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
-<span class="o">...</span> <span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
-<span class="n">Dummy</span><span class="p">(</span>
-    <span class="n">category</span><span class="p">:</span> <span class="n">surfacelayer</span>
-    <span class="n">inwards</span><span class="p">:</span>
-        <span class="n">soil_water_stress</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">outwards</span><span class="p">:</span>
-        <span class="n">throughfall</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">snowmelt</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">transpiration</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">evaporation_soil_surface</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">evaporation_ponded_water</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">evaporation_openwater</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">driving</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">rainfall</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">snowfall</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span> <span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">air_temperature</span> <span class="p">[</span><span class="n">K</span><span class="p">]</span>
-    <span class="n">ancillary</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">vegetation_fraction</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">states</span><span class="p">:</span>
-        <span class="n">canopy</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">snowpack</span> <span class="p">[</span><span class="n">kg</span> <span class="n">m</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">solver</span> <span class="n">history</span><span class="p">:</span> <span class="mi">1</span>
-<span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tests</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">)</span>
+<span class="go">Dummy(</span>
+<span class="go">    category: surfacelayer</span>
+<span class="go">     inwards:</span>
+<span class="go">        soil_water_stress [1]</span>
+<span class="go">    outwards:</span>
+<span class="go">        throughfall [kg m-2 s-1]</span>
+<span class="go">        snowmelt [kg m-2 s-1]</span>
+<span class="go">        transpiration [kg m-2 s-1]</span>
+<span class="go">        evaporation_soil_surface [kg m-2 s-1]</span>
+<span class="go">        evaporation_ponded_water [kg m-2 s-1]</span>
+<span class="go">        evaporation_openwater [kg m-2 s-1]</span>
+<span class="go">    driving data:</span>
+<span class="go">        driving_a [1]</span>
+<span class="go">        driving_b [1]</span>
+<span class="go">        driving_c [1]</span>
+<span class="go">    ancillary data:</span>
+<span class="go">        ancillary_a [1]</span>
+<span class="go">    states:</span>
+<span class="go">        state_a [1]</span>
+<span class="go">        state_b [1]</span>
+<span class="go">    solver history: 1</span>
+<span class="go">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+<span class="go">Dummy(</span>
+<span class="go">    category: surfacelayer</span>
+<span class="go">    timedomain: period: 3 days, 0:00:00</span>
+<span class="go">    spacedomain: shape: (Z: 1, Y: 4, X: 3)</span>
+<span class="go">    dataset: 4 variable(s)</span>
+<span class="go">)</span>
 </pre></div>
 </div>
 </div>
@@ -220,22 +221,22 @@ instantiated with three <code class="xref py py-obj docutils literal notranslate
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a Model.</em></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">surfacelayer</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
 <span class="gp">... </span>    <span class="p">),</span>
 <span class="gp">... </span>    <span class="n">subsurface</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">subsurface</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;saturated_hydraulic_conductivity&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 <span class="gp">... </span>    <span class="p">),</span>
 <span class="gp">... </span>    <span class="n">openwater</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">openwater</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;residence_time&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 <span class="gp">... </span>    <span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -254,7 +255,7 @@ instantiated with three <code class="xref py py-obj docutils literal notranslate
 <div class="literal-block-wrapper docutils container" id="id9">
 <div class="code-block-caption"><span class="caption-text"><em>Spinning-up and running the Model simulation.</em></span><a class="headerlink" href="#id9" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">spin_up</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>              <span class="n">cycles</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
 </pre></div>
