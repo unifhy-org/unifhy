@@ -43,8 +43,6 @@ class Dummy(OpenWaterComponent):
             constant_a=1,
             **kwargs):
 
-        dummy_array = np.ones(self.spaceshape, np.float32)
-
         state_a[0][:] = state_a[-1] + 1
 
         return {

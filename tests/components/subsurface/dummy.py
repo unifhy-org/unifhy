@@ -46,8 +46,6 @@ class Dummy(SubSurfaceComponent):
             # component constants
             **kwargs):
 
-        dummy_array = np.ones(self.spaceshape, np.float32)
-
         state_a[0][:] = state_a[-1] + 1
         state_b[0][:] = state_b[-1] + 2
 
