@@ -19,6 +19,18 @@ class SpaceDomain(object):
 
     @property
     def shape(self):
+        """Return the size of the SpaceDomain dimension axes as a
+        `tuple`. The corresponding names and order of the axes is
+        accessible through the `axes` property.
+        """
+        return None
+
+    @property
+    def axes(self):
+        """Return the name of the SpaceDomain dimension axes as a
+        `tuple`. These names are properties of SpaceDomain, which give
+        access to the coordinate values along each axis.
+        """
         return None
 
     def __eq__(self, other):
@@ -71,15 +83,17 @@ class Grid(SpaceDomain):
 
     @property
     def shape(self):
-        """Return the size of each of the dimension coordinates of
-         the SpaceDomain instance as a `tuple`, corresponding, in order,
-         to {Z, Y, X} if the Z-axis exists, to {Y, X} otherwise."""
         has_z = self._f.has_construct(self._Z_name)
         return (
             (self._f.construct('Z').shape if has_z else ())
             + self._f.construct('Y').shape
             + self._f.construct('X').shape
         )
+
+    @property
+    def axes(self):
+        has_z = self._f.has_construct(self._Z_name)
+        return ('Z', 'Y', 'X') if has_z else ('Y', 'X')
 
     @property
     def Z(self):
@@ -515,8 +529,7 @@ class Grid(SpaceDomain):
         has_z = self._f.has_construct(self._Z_name)
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
-            + ["    shape {}: {}".format("{Z, Y, X}" if has_z
-                                         else "{Y, X}", self.shape)]
+            + ["    shape {{{}}}: {}".format(", ".join(self.axes), self.shape)]
             + (["    Z, {} {}: {}".format(
                 self._f.construct('Z').standard_name,
                 self._f.construct('Z').data.shape,

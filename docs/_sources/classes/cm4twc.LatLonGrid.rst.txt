@@ -37,6 +37,8 @@ Attributes
    :toctree: ../attributes/
    :template: attribute.rst
 
+   ~cm4twc.LatLonGrid.shape
+   ~cm4twc.LatLonGrid.axes
    ~cm4twc.LatLonGrid.X
    ~cm4twc.LatLonGrid.Y
    ~cm4twc.LatLonGrid.Z

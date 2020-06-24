@@ -39,7 +39,7 @@
 <h1>SurfaceLayerComponent<a class="headerlink" href="#surfacelayercomponent" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="cm4twc.SurfaceLayerComponent">
-<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">SurfaceLayerComponent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timedomain</span></em>, <em class="sig-param"><span class="n">spacedomain</span></em>, <em class="sig-param"><span class="n">dataset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">constants</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.SurfaceLayerComponent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">SurfaceLayerComponent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timedomain</span></em>, <em class="sig-param"><span class="n">spacedomain</span></em>, <em class="sig-param"><span class="n">dataset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">constants</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_directory</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.SurfaceLayerComponent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cm4twc.components.component.Component</span></code></p>
 <p>The SurfaceLayerComponent is simulating the hydrological
 processes in the surface layer compartment of the hydrological
@@ -62,6 +62,9 @@ provided in the units expected by the <code class="xref py py-obj docutils liter
 </dd>
 <dt>constants: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Must be
 provided in the required units.</p>
+</dd>
+<dt>output_directory: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The path to the directory where to save the component
+output files.</p>
 </dd>
 </dl>
 </dd>
