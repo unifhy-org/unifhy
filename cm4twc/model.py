@@ -52,11 +52,11 @@ class Model(object):
             # check outwards interface
             return component
         elif isinstance(component, (DataComponent, NullComponent)):
-            if component.category != expected_component.get_class_kind():
+            if component.category != expected_component.get_class_category():
                 raise TypeError(
                     "The '{}' component given must be substituting an "
                     "instance of the class {}.".format(
-                        expected_component.get_class_kind(),
+                        expected_component.get_class_category(),
                         expected_component.__name__))
             else:
                 return component
@@ -64,7 +64,7 @@ class Model(object):
             raise TypeError(
                 "The '{}' component given must either be an instance of "
                 "the class {}, the class {}, or the class {}.".format(
-                    expected_component.get_class_kind(),
+                    expected_component.get_class_category(),
                     expected_component.__name__, DataComponent.__name__,
                     NullComponent.__name__))
 

@@ -227,6 +227,18 @@ class Component(metaclass=MetaComponent):
         return self._outwards_info
 
     @classmethod
+    def get_class_category(cls):
+        return cls._category
+
+    @classmethod
+    def get_class_inwards_info(cls):
+        return cls._inwards_info
+
+    @classmethod
+    def get_class_outwards_info(cls):
+        return cls._outwards_info
+
+    @classmethod
     def from_config(cls, cfg):
         spacedomain = getattr(space, cfg['spacedomain']['class'])
         return cls(
@@ -323,18 +335,6 @@ class Component(metaclass=MetaComponent):
 
     def finalise_states(self):
         self.finalise(**self.states)
-
-    @classmethod
-    def get_class_kind(cls):
-        return cls._category
-
-    @classmethod
-    def get_class_inwards(cls):
-        return cls._inwards_info
-
-    @classmethod
-    def get_class_outwards(cls):
-        return cls._outwards_info
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
@@ -443,7 +443,7 @@ class DataComponent(Component):
         super(DataComponent, self).__init__(timedomain, spacedomain, dataset)
 
         # override category to the one of substituting component
-        self._category = substituting_class.get_class_kind()
+        self._category = substituting_class.get_class_category()
 
     def __str__(self):
         return "\n".join(
@@ -496,10 +496,10 @@ class NullComponent(Component):
         super(NullComponent, self).__init__(timedomain, spacedomain)
 
         # override category with the one of component being substituted
-        self._category = substituting_class.get_class_kind()
+        self._category = substituting_class.get_class_category()
 
         # override outwards with the ones of component being substituted
-        self._outwards_info = substituting_class.get_class_outwards()
+        self._outwards_info = substituting_class.get_class_outwards_info()
 
     def __str__(self):
         return "\n".join(
