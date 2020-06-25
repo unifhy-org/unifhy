@@ -95,7 +95,7 @@ class Component(metaclass=MetaComponent):
         # # dataset to keep whole data period pristine
         self.dataset = dataset
         # # dataset to subset whole data for given period
-        self._dataset = DataSet()
+        self.datasubset = DataSet()
 
         # parameters attribute
         parameters = {} if parameters is None else parameters
@@ -185,19 +185,19 @@ class Component(metaclass=MetaComponent):
         # check time compatibility for driving data
         for data_name in self.driving_data_info:
             # subspace in time
-            self._dataset[data_name] = self.dataset[data_name].subspace(
+            self.datasubset[data_name] = self.dataset[data_name].subspace(
                 T=cf.wi(*timedomain.time.datetime_array[[0, -1]])
             )
 
             # check that the data and component time domains are compatible
-            if not timedomain.is_time_equal_to(self._dataset[data_name]):
+            if not timedomain.is_time_equal_to(self.datasubset[data_name]):
                 raise ValueError(
                     "The time domain of the data '{}' is not compatible with "
                     "the time domain of the {} component '{}'.".format(
                         data_name, self._category, self.__class__.__name__))
         # copy reference for ancillary data
         for data_name in self.ancillary_data_info:
-            self._dataset[data_name] = self.dataset[data_name]
+            self.datasubset[data_name] = self.dataset[data_name]
 
     def _check_parameters(self, parameters):
         """The purpose of this method is to check that parameter values
@@ -281,11 +281,11 @@ class Component(metaclass=MetaComponent):
     def __call__(self, timeindex, datetime, **kwargs):
         # collect required ancillary data from dataset
         for data in self.ancillary_data_info:
-            kwargs[data] = self._dataset[data].array[...]
+            kwargs[data] = self.datasubset[data].array[...]
 
         # collect required driving data from dataset
         for data in self.driving_data_info:
-            kwargs[data] = self._dataset[data].array[timeindex, ...]
+            kwargs[data] = self.datasubset[data].array[timeindex, ...]
 
         # run simulation for the component
         return self.run(datetime=datetime, **self.parameters, **self.constants,
