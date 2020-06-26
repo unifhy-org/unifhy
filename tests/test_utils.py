@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+from datetime import timedelta
 
 import cm4twc._utils
 
@@ -25,6 +26,8 @@ class TestClockAPI(unittest.TestCase):
             calendar='gregorian'
         )
 
+        self.d = timedelta(days=6)
+
         self.exp_bool_a = [True, True, True, True, True, True]
         self.exp_idx_a = [0, 1, 2, 3, 4, 5]
 
@@ -34,6 +37,8 @@ class TestClockAPI(unittest.TestCase):
         self.exp_bool_c = [True, False, False, True, False, False]
         self.exp_idx_c = [0, 1]
 
+        self.exp_bool_d = [True, False, False, False, False, False]
+
     def test_clock_init(self):
         clock = cm4twc._utils.Clock(surfacelayer_timedomain=self.td_a,
                                     subsurface_timedomain=self.td_b,
@@ -42,6 +47,7 @@ class TestClockAPI(unittest.TestCase):
         self.assertEqual(clock._surfacelayer_switch.tolist(), self.exp_bool_a)
         self.assertEqual(clock._subsurface_switch.tolist(), self.exp_bool_b)
         self.assertEqual(clock._openwater_switch.tolist(), self.exp_bool_c)
+        self.assertEqual(clock._dumping_switch.tolist(), self.exp_bool_d)
 
     def test_clock_iteration(self):
         clock = cm4twc._utils.Clock(surfacelayer_timedomain=self.td_a,
@@ -51,7 +57,7 @@ class TestClockAPI(unittest.TestCase):
         out_bool_a, out_bool_b, out_bool_c = list(), list(), list()
         out_idx_a, out_idx_b, out_idx_c = list(), list(), list()
 
-        for a, b, c in clock:
+        for a, b, c, d in clock:
             out_bool_a.append(a)
             if a:
                 out_idx_a.append(clock.get_current_timeindex('surfacelayer'))

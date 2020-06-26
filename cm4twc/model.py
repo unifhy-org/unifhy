@@ -13,10 +13,13 @@ class Model(object):
     compatibility between `Component`\s, and controlling the simulation
     workflow.
     """
-    def __init__(self, surfacelayer, subsurface, openwater):
+    def __init__(self, identifier, surfacelayer, subsurface, openwater):
         """**Initialisation**
 
         :Parameters:
+
+            identifier: `str`
+                A name to identify the model output files.
 
             surfacelayer: `SurfaceLayerComponent` object
                 The `Component` responsible for the surface layer
@@ -43,7 +46,12 @@ class Model(object):
         self._check_timedomain_compatibilities()
         self._check_spacedomain_compatibilities()
 
-        self._spun_up = False
+        # identifier
+        self.identifier = identifier
+        # propagate id to components
+        self.surfacelayer.identifier = identifier
+        self.subsurface.identifier = identifier
+        self.openwater.identifier = identifier
 
     @staticmethod
     def _process_component_type(component, expected_component):
@@ -128,6 +136,7 @@ class Model(object):
         )
 
         return cls(
+            identifier=cfg['identifier'],
             surfacelayer=surfacelayer.from_config(
                 cfg['surfacelayer']),
             subsurface=subsurface.from_config(
@@ -138,6 +147,7 @@ class Model(object):
 
     def to_config(self):
         return {
+            'identifier': self.identifier,
             'surfacelayer': self.surfacelayer.to_config(),
             'subsurface': self.subsurface.to_config(),
             'openwater': self.openwater.to_config()
@@ -145,13 +155,13 @@ class Model(object):
 
     @classmethod
     def from_yaml(cls, yaml_file):
-        """Initialise a `Model` from a YAML configuration file.
+        """Instantiate a `Model` from a YAML configuration file.
 
         :Parameters:
 
             yaml_file: `str`
                 A string providing the path to the YAML file to be used
-                to initialise `Model`.
+                to instantiate `Model`.
 
                 *Parameter example:* ::
 
@@ -186,12 +196,13 @@ class Model(object):
         with open(yaml_file, 'w') as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
-    def spin_up(self, start, end, cycles=1):
-        """Run model spin-up simulation to initialise model states.
+    def spin_up(self, start, end, cycles=1, dumping_frequency=None):
+        """Run model spin-up simulation to initialise states of each
+        `Component` of the Model.
 
         :Parameters:
 
-            start, end: datetime object
+            start, end: `datetime.datetime` object
                 The start and the end of the spin-up simulation. Their
                 calendar and units are assumed to be the ones of the
                 model `Components` that will be spun up. Note, the *end*
@@ -210,9 +221,19 @@ class Model(object):
                 The number of repetitions of the spin-up simulation. If
                 not provided, set to default 1 (cycle).
 
-        """
-        self._initialise()
+            dumping_frequency: `datetime.timedelta` object, optional
+                The frequency at which Components' states must be
+                stored in a dump file. These dumps can be used to
+                restart a `Component` from a particular point in time.
 
+                Note, the frequency is to be understood in a modelled
+                time context, not computational time context.
+
+                    *Parameter example:* ::
+
+                    dumping_frequency=datetime.timedelta(weeks=10)
+
+        """
         surfacelayer_timedomain = \
             self.surfacelayer.get_spin_up_timedomain(start, end)
         subsurface_timedomain = \
@@ -221,26 +242,42 @@ class Model(object):
             self.openwater.get_spin_up_timedomain(start, end)
 
         for cycle in range(cycles):
-            self._run(surfacelayer_timedomain,
-                      subsurface_timedomain,
-                      openwater_timedomain)
-
-        self._spun_up = True
-
-    def simulate(self):
-        """Run model simulation over period defined in its components'
-        timedomains.
-        """
-        if not self._spun_up:
             self._initialise()
 
-        interface = self._run(self.surfacelayer.timedomain,
-                              self.subsurface.timedomain,
-                              self.openwater.timedomain)
+            self._run(surfacelayer_timedomain,
+                      subsurface_timedomain,
+                      openwater_timedomain,
+                      dumping_frequency)
+
+            self._finalise()
+
+    def simulate(self, dumping_frequency=None):
+        """Run model simulation over period defined in its components'
+        timedomains.
+
+        :Parameters:
+
+            dumping_frequency: `datetime.timedelta` object, optional
+                The frequency at which Components' states must be
+                stored in a dump file. These dumps can be used to
+                restart a `Component` from a particular point in time.
+
+                Note, the frequency is to be understood in a modelled
+                time context, not computational time context.
+
+                *Parameter example:* ::
+
+                    dumping_frequency=datetime.timedelta(weeks=4)
+
+        """
+        self._initialise()
+
+        self._run(self.surfacelayer.timedomain,
+                  self.subsurface.timedomain,
+                  self.openwater.timedomain,
+                  dumping_frequency)
 
         self._finalise()
-
-        return interface
 
     def _initialise(self):
         # initialise components' states
@@ -249,11 +286,12 @@ class Model(object):
         self.openwater.initialise_states()
 
     def _run(self, surfacelayer_timedomain, subsurface_timedomain,
-             openwater_timedomain):
+             openwater_timedomain, dumping_frequency=None):
         # set up clock responsible for the time-stepping schemes
         clock = Clock(surfacelayer_timedomain,
                       subsurface_timedomain,
-                      openwater_timedomain)
+                      openwater_timedomain,
+                      dumping_frequency)
 
         # set up interface responsible for exchanges between components
         interface = Interface(
@@ -272,15 +310,26 @@ class Model(object):
         self.openwater.check_dataset_time(openwater_timedomain)
 
         # run components
-        for run_surfacelayer, run_subsurface, run_openwater in clock:
+        for run_surfacelayer, run_subsurface, run_openwater, dumping in clock:
 
-            datetime = clock.get_current_datetime()
+            datetime_ = clock.get_current_datetime()
+
+            if dumping:
+                self.surfacelayer.dump_states(
+                    clock.get_current_timeindex('surfacelayer')
+                )
+                self.subsurface.dump_states(
+                    clock.get_current_timeindex('subsurface')
+                )
+                self.openwater.dump_states(
+                    clock.get_current_timeindex('openwater')
+                )
 
             if run_surfacelayer:
                 interface.update(
                     self.surfacelayer(
                         timeindex=clock.get_current_timeindex('surfacelayer'),
-                        datetime=datetime,
+                        datetime_=datetime_,
                         **interface
                     )
                 )
@@ -289,7 +338,7 @@ class Model(object):
                 interface.update(
                     self.subsurface(
                         timeindex=clock.get_current_timeindex('subsurface'),
-                        datetime=datetime,
+                        datetime_=datetime_,
                         **interface
                     )
                 )
@@ -298,19 +347,10 @@ class Model(object):
                 interface.update(
                     self.openwater(
                         timeindex=clock.get_current_timeindex('openwater'),
-                        datetime=datetime,
+                        datetime_=datetime_,
                         **interface
                     )
                 )
-
-            if run_surfacelayer:
-                self.surfacelayer.increment_states()
-            if run_subsurface:
-                self.subsurface.increment_states()
-            if run_openwater:
-                self.openwater.increment_states()
-
-        return interface
 
     def _finalise(self):
         # finalise components

@@ -1,6 +1,8 @@
+identifier: test_ccc_yaml
 surfacelayer:
   module: tests.components.surfacelayer.dummy
   class: Dummy
+  output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-07 09:00:00
@@ -36,6 +38,7 @@ surfacelayer:
 subsurface:
   module: tests.components.subsurface.dummy
   class: Dummy
+  output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-07 09:00:00
@@ -63,6 +66,7 @@ subsurface:
 openwater:
   module: tests.components.openwater.dummy
   class: Dummy
+  output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-07 09:00:00

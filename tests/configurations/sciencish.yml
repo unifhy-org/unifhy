@@ -1,6 +1,8 @@
+identifier: test_sciencish
 surfacelayer:
   module: tests.components.surfacelayer.sciencish
   class: Sciencish
+  output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-07 09:00:00
@@ -39,6 +41,7 @@ surfacelayer:
 subsurface:
   module: tests.components.subsurface.sciencish
   class: Sciencish
+  output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-07 09:00:00
@@ -69,6 +72,7 @@ subsurface:
 openwater:
   module: tests.components.openwater.sciencish
   class: Sciencish
+  output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-07 09:00:00

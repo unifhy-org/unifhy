@@ -31,10 +31,10 @@ class Interface(MutableMapping):
 class Clock(object):
 
     def __init__(self, surfacelayer_timedomain, subsurface_timedomain,
-                 openwater_timedomain):
+                 openwater_timedomain, dumping_frequency=None):
         # determine temporal supermesh properties
         # (supermesh is the fastest component)
-        supermesh_timedelta = min(
+        supermesh_delta = min(
             surfacelayer_timedomain.timedelta,
             subsurface_timedomain.timedelta,
             openwater_timedomain.timedelta
@@ -42,77 +42,85 @@ class Clock(object):
         supermesh_length = max(
             surfacelayer_timedomain.time.size,
             subsurface_timedomain.time.size,
-            openwater_timedomain.time.data.size
+            openwater_timedomain.time.size
         )
-        supermesh_timestep = supermesh_timedelta.total_seconds()
+        supermesh_step = supermesh_delta.total_seconds()
 
         # check that all timesteps are multiple integers of the supermesh step
-        surfacelayer_timedomain_timestep = (
-            surfacelayer_timedomain.timedelta.total_seconds()
-        )
-        if not surfacelayer_timedomain_timestep % supermesh_timestep == 0:
+        surfacelayer_step = surfacelayer_timedomain.timedelta.total_seconds()
+        if not surfacelayer_step % supermesh_step == 0:
             raise ValueError(
-                "The timestep of the surfacelayer component ({}s) is not a "
-                "multiple integer of the timestep of the fastest component "
-                "({}s).".format(surfacelayer_timedomain_timestep,
-                                supermesh_timestep))
-        subsurface_timedomain_timestep = (
-            subsurface_timedomain.timedelta.total_seconds()
-        )
-        if not subsurface_timedomain_timestep % supermesh_timestep == 0:
+                "timestep of surfacelayer component ({}s) not a multiple "
+                "integer of timestep of fastest component ({}s).".format(
+                    surfacelayer_step, supermesh_step))
+
+        subsurface_step = subsurface_timedomain.timedelta.total_seconds()
+        if not subsurface_step % supermesh_step == 0:
             raise ValueError(
-                "The timestep of the subsurface component ({}s) is not a "
-                "multiple integer of the timestep of the fastest component "
-                "({}s).".format(subsurface_timedomain_timestep,
-                                supermesh_timestep))
-        openwater_timedomain_timestep = (
-            openwater_timedomain.timedelta.total_seconds()
-        )
-        if not openwater_timedomain_timestep % supermesh_timestep == 0:
+                "timestep of subsurface component ({}s) not a multiple "
+                "integer of timestep of fastest component ({}s).".format(
+                    subsurface_step, supermesh_step))
+
+        openwater_step = openwater_timedomain.timedelta.total_seconds()
+        if not openwater_step % supermesh_step == 0:
             raise ValueError(
-                "The timestep of the openwater component ({}s) is not a "
-                "multiple integer of the timestep of the fastest component "
-                "({}s).".format(openwater_timedomain_timestep,
-                                supermesh_timestep))
+                "timestep of openwater component ({}s) not a multiple "
+                "integer of timestep of fastest component ({}s).".format(
+                    openwater_step, supermesh_step))
 
         # get boolean arrays (switches) to determine when to run a given
         # component on temporal supermesh
         self._surfacelayer_switch = np.zeros((supermesh_length,), dtype=bool)
-        surfacelayer_increment = (
-            int(surfacelayer_timedomain_timestep // supermesh_timestep)
-        )
+        surfacelayer_increment = int(surfacelayer_step // supermesh_step)
         self._surfacelayer_switch[0::surfacelayer_increment] = True
         self._surfacelayer_index_multiple = surfacelayer_increment
 
         self._subsurface_switch = np.zeros((supermesh_length,), dtype=bool)
-        subsurface_increment = (
-            int(subsurface_timedomain_timestep // supermesh_timestep)
-        )
+        subsurface_increment = int(subsurface_step // supermesh_step)
         self._subsurface_switch[0::subsurface_increment] = True
         self._subsurface_index_multiple = subsurface_increment
 
         self._openwater_switch = np.zeros((supermesh_length,), dtype=bool)
-        openwater_increment = (
-            int(openwater_timedomain_timestep // supermesh_timestep)
-        )
+        openwater_increment = int(openwater_step // supermesh_step)
         self._openwater_switch[0::openwater_increment] = True
         self._openwater_index_multiple = openwater_increment
 
-        # set static time attributes
-        self.start_datetime = (
-            surfacelayer_timedomain.time.datetime_array[0]
-        )
-        self.end_datetime = (
-            surfacelayer_timedomain.time.datetime_array[-1]
-        )
-        self.timedelta = supermesh_timedelta
+        # determine whether model states dumping is required,and if so, when
+        self._dumping_switch = np.zeros((supermesh_length,), dtype=bool)
+        if dumping_frequency is not None:
+            # check that dumpy frequency is a multiple of
+            # slowest component's step
+            dumping_delta = max(
+                surfacelayer_timedomain.timedelta,
+                subsurface_timedomain.timedelta,
+                openwater_timedomain.timedelta
+            )
+            dumping_step = dumping_frequency.total_seconds()
+            if not dumping_step % dumping_delta.total_seconds() == 0:
+                raise ValueError(
+                    "dumping frequency ({}s) is not a multiple integer "
+                    "of timestep of slowest component ({}s).".format(
+                        dumping_step, dumping_delta.total_seconds()))
+
+            # get boolean arrays (switches) to determine when to dump the
+            # component states on temporal supermesh
+            dumping_increment = int(dumping_step // supermesh_step)
+            self._dumping_switch[0::dumping_increment] = True
+        else:
+            # get only one dump for the initial conditions
+            self._dumping_switch[0] = True
+
+        # set some time attributes
+        self.start_datetime = surfacelayer_timedomain.time.datetime_array[0]
+        self.end_datetime = surfacelayer_timedomain.time.datetime_array[-1]
+        self.timedelta = supermesh_delta
         self.start_timeindex = 0
         self.end_timeindex = supermesh_length - 1
 
         # initialise 'iterable' time attributes to the point in time just
         # prior the actual specified start of the supermesh because the
         # iterator needs to increment in time prior indexing the switches
-        self._current_datetime = self.start_datetime - supermesh_timedelta
+        self._current_datetime = self.start_datetime - supermesh_delta
         self._current_timeindex = self.start_timeindex - 1
 
     def get_current_datetime(self):
@@ -129,8 +137,7 @@ class Clock(object):
             return (self._current_timeindex //
                     self._openwater_index_multiple)
         else:
-            raise ValueError("Cannot get current time index: unknown "
-                             "component type {}.".format(component_type))
+            raise None
 
     def __iter__(self):
         return self
@@ -140,13 +147,14 @@ class Clock(object):
         # corresponds to the start of the last timestep)
         if self._current_timeindex < self.end_timeindex:
             self._current_timeindex += 1
+            index = self._current_timeindex
             self._current_datetime += self.timedelta
 
-            switches = (
-                self._surfacelayer_switch[self._current_timeindex],
-                self._subsurface_switch[self._current_timeindex],
-                self._openwater_switch[self._current_timeindex]
+            return (
+                self._surfacelayer_switch[index],
+                self._subsurface_switch[index],
+                self._openwater_switch[index],
+                self._dumping_switch[index]
             )
-            return switches
         else:
             raise StopIteration

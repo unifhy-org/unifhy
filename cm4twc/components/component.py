@@ -1,9 +1,12 @@
 import abc
 import numpy as np
+from datetime import datetime
+from os import sep
 import cf
 from cfunits import Units
 
 from ._state import State
+from ._io import create_dump_file, update_dump_file, load_dump_file
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
@@ -50,11 +53,15 @@ class Component(metaclass=MetaComponent):
     states_info = {}
     solver_history = 0
 
-    def __init__(self, timedomain, spacedomain, dataset=None,
-                 parameters=None, constants=None):
+    def __init__(self, output_directory, timedomain, spacedomain,
+                 dataset=None, parameters=None, constants=None):
         """**Initialisation**
 
         :Parameters:
+
+            output_directory: `str`
+                The path to the directory where to save the component
+                output files.
 
             timedomain: `TimeDomain` object
                 The temporal dimension of the `Component`.
@@ -77,7 +84,6 @@ class Component(metaclass=MetaComponent):
                 provided in the required units.
 
         """
-
         # time attributes
         self._check_timedomain(timedomain)
         self.timedomain = timedomain
@@ -109,6 +115,16 @@ class Component(metaclass=MetaComponent):
         # states attribute
         self.states = {}
 
+        # identifier
+        self.identifier = None
+
+        # directories and files
+        self.output_directory = output_directory
+        self.dump_file = None
+
+        # flag to check whether spin_up/initialise_from_file used
+        self.is_initialised = False
+
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
         of the right type.
@@ -127,7 +143,7 @@ class Component(metaclass=MetaComponent):
 
         if not isinstance(spacedomain, Grid):
             raise NotImplementedError(
-                "only {} currently supported by the framework "
+                "only {} currently supported by framework "
                 "for spacedomain".format(Grid.__name__))
 
     def _check_dataset(self, dataset):
@@ -137,8 +153,8 @@ class Component(metaclass=MetaComponent):
         if not isinstance(dataset, DataSet):
 
             raise TypeError(
-                "The dataset object given for the {} component '{}' must "
-                "be an instance of {}.".format(
+                "object given for dataset argument of {} component '{}' "
+                "not of type {}".format(
                     self._category, self.__class__.__name__,
                     DataSet.__name__))
 
@@ -148,8 +164,7 @@ class Component(metaclass=MetaComponent):
             # check that all driving data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
-                    "There is no data '{}' available in the {} "
-                    "for the {} component '{}'.".format(
+                    "no data '{}' available in {} for {} component '{}'".format(
                         data_name, DataSet.__name__, self._category,
                         self.__class__.__name__))
             # check that driving data units are compliant with component units
@@ -157,16 +172,14 @@ class Component(metaclass=MetaComponent):
                 if not Units(data_unit).equals(
                         Units(dataset[data_name].units)):
                     raise ValueError(
-                        "The units of the variable '{}' in the {} {} "
-                        "are not equal to the units required by the {} "
-                        "component '{}': {} are required.".format(
+                        "units of variable '{}' in {} {} not equal to units "
+                        "required by {} component '{}': {} required".format(
                             data_name, self._category, DataSet.__name__,
                             self._category, self.__class__.__name__,
                             data_unit))
             else:
-                raise AttributeError("The variable '{}' in the {} for "
-                                     "the {} component is missing a 'units' "
-                                     "attribute.".format(
+                raise AttributeError("variable '{}' in {} for {} component "
+                                     "missing 'units' attribute".format(
                                          data_name, DataSet.__name__,
                                          self._category))
 
@@ -177,8 +190,8 @@ class Component(metaclass=MetaComponent):
             # check that the data and component space domains are compatible
             if not spacedomain.is_space_equal_to(dataset[data_name]):
                 raise ValueError(
-                    "The space domain of the data '{}' is not compatible with "
-                    "the space domain of the {} component '{}'.".format(
+                    "spacedomain of data '{}' not compatible with "
+                    "spacedomain of {} component '{}'".format(
                         data_name, self._category, self.__class__.__name__))
 
     def check_dataset_time(self, timedomain):
@@ -192,8 +205,8 @@ class Component(metaclass=MetaComponent):
             # check that the data and component time domains are compatible
             if not timedomain.is_time_equal_to(self.datasubset[data_name]):
                 raise ValueError(
-                    "The time domain of the data '{}' is not compatible with "
-                    "the time domain of the {} component '{}'.".format(
+                    "timedomain of data '{}' not compatible with "
+                    "timedomain of {} component '{}'".format(
                         data_name, self._category, self.__class__.__name__))
         # copy reference for ancillary data
         for data_name in self.ancillary_data_info:
@@ -206,8 +219,8 @@ class Component(metaclass=MetaComponent):
         # check that all parameters are provided
         if not all([i in parameters for i in self.parameters_info]):
             raise RuntimeError(
-                "One or more parameters are missing in {} component '{}': "
-                "{} are all required.".format(
+                "one or more parameters are missing in {} component '{}': "
+                "{} all required".format(
                     self._category, self.__class__.__name__,
                     self.parameters_info))
 
@@ -242,6 +255,7 @@ class Component(metaclass=MetaComponent):
     def from_config(cls, cfg):
         spacedomain = getattr(space, cfg['spacedomain']['class'])
         return cls(
+            output_directory=cfg['output_directory'],
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
@@ -253,6 +267,7 @@ class Component(metaclass=MetaComponent):
         cfg = {
             'module': self.__module__,
             'class': self.__class__.__name__,
+            'output_directory': self.output_directory,
             'timedomain': self.timedomain.to_config(),
             'spacedomain': self.spacedomain.to_config(),
             'dataset': self.dataset.to_config(),
@@ -282,15 +297,16 @@ class Component(metaclass=MetaComponent):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    category: {}".format(self._category)]
+            + ["    output directory: {}".format(self.output_directory)]
             + ["    timedomain: period: {}".format(self.timedomain.period)]
-            + ["    spacedomain: shape: {}".format(shape)]
+            + ["    spacedomain: shape: ({})".format(shape)]
             + ["    dataset: {} variable(s)".format(len(self.dataset))]
             + (["    parameters:"] if parameters else []) + parameters
             + (["    constants:"] if constants else []) + constants
             + [")"]
         )
 
-    def __call__(self, timeindex, datetime, **kwargs):
+    def __call__(self, timeindex, datetime_, **kwargs):
         # collect required ancillary data from dataset
         for data in self.ancillary_data_info:
             kwargs[data] = self.datasubset[data].array[...]
@@ -300,19 +316,68 @@ class Component(metaclass=MetaComponent):
             kwargs[data] = self.datasubset[data].array[timeindex, ...]
 
         # run simulation for the component
-        return self.run(datetime=datetime, **self.parameters, **self.constants,
-                        **self.states, **kwargs)
+        outwards = self.run(datetime=datetime_, **self.parameters,
+                            **self.constants, **self.states, **kwargs)
 
-    def initialise_states(self):
-        states = self.initialise(**self.constants)
+        # increment the component's states by one timestep
+        self.increment_states()
+
+        return outwards
+
+    def _instantiate_states(self, states):
+        # get a State object for each state and give it its initial conditions
         for s in self.states_info:
             if s in states:
                 self.states[s] = State(*states[s])
             else:
-                raise KeyError(
-                    "The state '{}' of the {} component was "
-                    "not initialised.".format(s, self._category)
-                )
+                raise KeyError("initial conditions for {} component state "
+                               "'{}' not provided".format(self._category, s))
+
+    def _initialise_dump(self):
+        self.dump_file = '_'.join([self.identifier, self.category,
+                                   datetime.now().strftime('%Y%m%d%H%M%S%f'),
+                                   'dump.nc'])
+        create_dump_file(sep.join([self.output_directory, self.dump_file]),
+                         self.states_info, self.solver_history,
+                         self.timedomain, self.spacedomain)
+
+    def initialise_states(self):
+        # if not already initialised, get default state values
+        if not self.is_initialised:
+            states = self.initialise(**self.constants)
+            self._instantiate_states(states)
+            self.is_initialised = True
+        # create the dump file for this given run
+        self._initialise_dump()
+
+    def initialise_states_from_dump(self, dump_file, at=None):
+        """Initialise the states of the Component from a dump file.
+
+        :Parameters:
+
+            dump_file: `str`
+                A string providing the path to the netCDF dump file
+                containing values to be used as initial conditions for
+                the states of the Component.
+
+            at: datetime object, optional
+                The snapshot in time to be used for the initial
+                conditions. Must be any datetime type (except
+                `numpy.datetime64`). Must be contained in the 'time'
+                variable in *dump_file*. If not provided, the last index
+                in the 'time' variable in *dump_file* will be used.
+
+                Note: if a datetime is provided, there is no enforcement
+                of the fact that this datetime must correspond to the
+                initial datetime in the simulation period for the
+                `Component`, and it is only used as a means to select
+                a specific snapshot in time amongst the ones available
+                in the dump file.
+
+        """
+        states = load_dump_file(dump_file, at, self.states_info)
+        self._instantiate_states(states)
+        self.is_initialised = True
 
     def increment_states(self):
         for s in self.states:
@@ -333,26 +398,32 @@ class Component(metaclass=MetaComponent):
             # re-initialise current timestep of State to zero
             self.states[s][0][:] = 0.0
 
+    def dump_states(self, timeindex):
+        timestamp = self.timedomain.bounds.array[timeindex, 1]
+        update_dump_file(sep.join([self.output_directory, self.dump_file]),
+                         self.states, timestamp, self.solver_history)
+
     def finalise_states(self):
+        self.dump_states(-1)
         self.finalise(**self.states)
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
         raise NotImplementedError(
-            "The {} class '{}' does not feature an 'initialise' "
-            "method.".format(self._category, self.__class__.__name__))
+            "{} class '{}' missing an 'initialise' method".format(
+                self._category, self.__class__.__name__))
 
     @abc.abstractmethod
     def run(self, **kwargs):
         raise NotImplementedError(
-            "The {} class '{}' does not feature a 'run' "
-            "method.".format(self._category, self.__class__.__name__))
+            "{} class '{}' missing a 'run' method".format(
+                self._category, self.__class__.__name__))
 
     @abc.abstractmethod
     def finalise(self, **kwargs):
         raise NotImplementedError(
-            "The {} class '{}' does not feature a 'finalise' "
-            "method.".format(self._category, self.__class__.__name__))
+            "{} class '{}' missing a 'finalise' method.".format(
+                self._category, self.__class__.__name__))
 
 
 class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
@@ -440,7 +511,8 @@ class DataComponent(Component):
                 *dataset*.
 
         """
-        super(DataComponent, self).__init__(timedomain, spacedomain, dataset)
+        super(DataComponent, self).__init__(None, timedomain, spacedomain,
+                                            dataset)
 
         # override category to the one of substituting component
         self._category = substituting_class.get_class_category()
@@ -454,6 +526,12 @@ class DataComponent(Component):
              for n in self.driving_data_info] +
             [")"]
         )
+
+    def _initialise_dump(self):
+        pass
+
+    def dump_states(self, timeindex):
+        pass
 
     def initialise(self, **kwargs):
         return {}
@@ -493,7 +571,7 @@ class NullComponent(Component):
                 of zeros.
 
         """
-        super(NullComponent, self).__init__(timedomain, spacedomain)
+        super(NullComponent, self).__init__(None, timedomain, spacedomain)
 
         # override category with the one of component being substituted
         self._category = substituting_class.get_class_category()
@@ -510,6 +588,12 @@ class NullComponent(Component):
              for n in self._outwards_info] +
             [")"]
         )
+
+    def _initialise_dump(self):
+        pass
+
+    def dump_states(self, timeindex):
+        pass
 
     def initialise(self, **kwargs):
         return {}

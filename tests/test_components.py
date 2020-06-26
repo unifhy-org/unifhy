@@ -20,6 +20,7 @@ def get_dummy_surfacelayer_component(kind, timedomain=None, spacedomain=None,
 
     if kind == 'c':
         surfacelayer = SurfaceLayerDummy(
+            output_directory='outputs',
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
@@ -53,6 +54,7 @@ def get_dummy_subsurface_component(kind, timedomain=None, spacedomain=None,
 
     if kind == 'c':
         subsurface = SubSurfaceDummy(
+            output_directory='outputs',
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
@@ -86,6 +88,7 @@ def get_dummy_openwater_component(kind, timedomain=None, spacedomain=None,
 
     if kind == 'c':
         openwater = OpenWaterDummy(
+            output_directory='outputs',
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,

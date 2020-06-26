@@ -33,6 +33,10 @@ def get_dummy_spin_up_start_end():
     return td.time.datetime_array[[0, -1]]
 
 
+def get_dummy_dumping_frequency():
+    return timedelta(days=1)
+
+
 class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_standard_on_leap_year(self):
