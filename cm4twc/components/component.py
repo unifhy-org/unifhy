@@ -285,9 +285,8 @@ class Component(metaclass=MetaComponent):
         return timedomain
 
     def __str__(self):
-        shape = ("(Z: {}, Y: {}, X: {})".format(*self.spaceshape)
-                 if self.spacedomain.Z
-                 else "(Y: {}, X: {})".format(*self.spaceshape))
+        shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
+                           zip(self.spacedomain.axes, self.spaceshape)])
         parameters = ["        {}: {} {}".format(
             p, self.parameters[p], self.parameters_info[p])
             for p in self.parameters] if self.parameters else []
@@ -518,13 +517,15 @@ class DataComponent(Component):
         self._category = substituting_class.get_class_category()
 
     def __str__(self):
+        shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
+                           zip(self.spacedomain.axes, self.spaceshape)])
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)] +
-            ["    category: %s" % self._category] +
-            ["    outwards:"] +
-            ["        %s [%s]" % (n, self.driving_data_info[n])
-             for n in self.driving_data_info] +
-            [")"]
+            ["{}(".format(self.__class__.__name__)]
+            + ["    category: {}".format(self._category)]
+            + ["    timedomain: period: {}".format(self.timedomain.period)]
+            + ["    spacedomain: shape: ({})".format(shape)]
+            + ["    dataset: {} variable(s)".format(len(self.dataset))]
+            + [")"]
         )
 
     def _initialise_dump(self):
@@ -580,13 +581,14 @@ class NullComponent(Component):
         self._outwards_info = substituting_class.get_class_outwards_info()
 
     def __str__(self):
+        shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
+                           zip(self.spacedomain.axes, self.spaceshape)])
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)] +
-            ["    category: %s" % self._category] +
-            ["    outwards:"] +
-            ["        %s [%s]" % (n, self._outwards_info[n])
-             for n in self._outwards_info] +
-            [")"]
+            ["{}(".format(self.__class__.__name__)]
+            + ["    category: {}".format(self._category)]
+            + ["    timedomain: period: {}".format(self.timedomain.period)]
+            + ["    spacedomain: shape: ({})".format(shape)]
+            + [")"]
         )
 
     def _initialise_dump(self):
