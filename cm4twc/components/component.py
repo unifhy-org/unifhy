@@ -85,32 +85,22 @@ class Component(metaclass=MetaComponent):
 
         """
         # time attributes
-        self._check_timedomain(timedomain)
         self.timedomain = timedomain
-        self.timestepinseconds = self.timedomain.timedelta.total_seconds()
 
         # space attributes
-        self._check_spacedomain(spacedomain)
         self.spacedomain = spacedomain
-        self.spaceshape = self.spacedomain.shape
 
         # data attributes
-        dataset = DataSet() if dataset is None else dataset
-        self._check_dataset(dataset)
-        self._check_dataset_space(dataset, spacedomain)
         # # dataset to keep whole data period pristine
         self.dataset = dataset
         # # dataset to subset whole data for given period
         self.datasubset = DataSet()
 
         # parameters attribute
-        parameters = {} if parameters is None else parameters
-        self._check_parameters(parameters)
         self.parameters = parameters
 
         # constants attribute
-        constants = {} if constants is None else constants
-        self.constants = constants  # no check because they are optional
+        self.constants = constants
 
         # states attribute
         self.states = {}
@@ -122,8 +112,81 @@ class Component(metaclass=MetaComponent):
         self.output_directory = output_directory
         self.dump_file = None
 
-        # flag to check whether spin_up/initialise_from_file used
+        # flag to check whether spin_up/initialise_states_from_dump used
         self.is_initialised = False
+
+    @property
+    def timedomain(self):
+        """Return the temporal configuration of the Component as a
+        `TimeDomain` object."""
+        return self._timedomain
+
+    @timedomain.setter
+    def timedomain(self, timedomain):
+        self._check_timedomain(timedomain)
+        self._timedomain = timedomain
+
+    @property
+    def timestepinseconds(self):
+        """Return the number of seconds separating two consecutive
+        timestamps in the temporal configuration of the Component
+        as a float."""
+        return self.timedomain.timedelta.total_seconds()
+
+    @property
+    def spacedomain(self):
+        """Return the spatial configuration of the Component as a
+        `SpaceDomain` object."""
+        return self._spacedomain
+
+    @spacedomain.setter
+    def spacedomain(self, spacedomain):
+        self._check_spacedomain(spacedomain)
+        self._spacedomain = spacedomain
+
+    @property
+    def spaceshape(self):
+        """Return the length of each dimension in the spatial
+        configuration of the Component as a `tuple` of `int`."""
+        return self.spacedomain.shape
+
+    @property
+    def dataset(self):
+        """Return the collection of variables forming the dataset for
+        the Component as a `DataSet` object."""
+        return self._dataset
+
+    @dataset.setter
+    def dataset(self, dataset):
+        dataset = DataSet() if dataset is None else dataset
+        self._check_dataset(dataset)
+        self._check_dataset_space(dataset, self.spacedomain)
+        self._dataset = dataset
+
+    @property
+    def parameters(self):
+        """Return the collection of parameter values for the Component
+        as a `dict`."""
+        return self._parameters
+
+    @parameters.setter
+    def parameters(self, parameters):
+        parameters = {} if parameters is None else parameters
+        self._check_parameters(parameters)
+        self._parameters = parameters
+
+    @property
+    def constants(self):
+        """Return the collection of adjusted constant values for the
+        Component as a `dict`. Potentially returning an empty dictionary
+        if no default constant value is adjusted."""
+        return self._constants
+
+    @constants.setter
+    def constants(self, constants):
+        constants = {} if constants is None else constants
+        # # no check because they are optional
+        self._constants = constants
 
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
