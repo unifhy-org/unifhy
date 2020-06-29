@@ -43,9 +43,6 @@ class Model(object):
         self.openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
-        self._check_timedomain_compatibilities()
-        self._check_spacedomain_compatibilities()
-
         # identifier
         self.identifier = identifier
         # propagate id to components
@@ -287,6 +284,10 @@ class Model(object):
 
     def _run(self, surfacelayer_timedomain, subsurface_timedomain,
              openwater_timedomain, dumping_frequency=None):
+        # check time and space compatibilities between components
+        self._check_timedomain_compatibilities()
+        self._check_spacedomain_compatibilities()
+
         # set up clock responsible for the time-stepping schemes
         clock = Clock(surfacelayer_timedomain,
                       subsurface_timedomain,
