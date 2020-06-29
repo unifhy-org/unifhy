@@ -490,7 +490,7 @@ class Component(metaclass=MetaComponent):
     @abc.abstractmethod
     def finalise(self, **kwargs):
         raise NotImplementedError(
-            "{} class '{}' missing a 'finalise' method.".format(
+            "{} class '{}' missing a 'finalise' method".format(
                 self._category, self.__class__.__name__))
 
 

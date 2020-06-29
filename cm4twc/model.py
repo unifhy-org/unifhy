@@ -59,16 +59,15 @@ class Model(object):
         elif isinstance(component, (DataComponent, NullComponent)):
             if component.category != expected_component.get_class_category():
                 raise TypeError(
-                    "The '{}' component given must be substituting an "
-                    "instance of the class {}.".format(
+                    "'{}' component given must be substituting type {}".format(
                         expected_component.get_class_category(),
                         expected_component.__name__))
             else:
                 return component
         else:
             raise TypeError(
-                "The '{}' component given must either be an instance of "
-                "the class {}, the class {}, or the class {}.".format(
+                "'{}' component given must either be of type {}, {}, "
+                "or {}".format(
                     expected_component.get_class_category(),
                     expected_component.__name__, DataComponent.__name__,
                     NullComponent.__name__))
@@ -80,15 +79,14 @@ class Model(object):
             (not self.surfacelayer.timedomain.spans_same_period_as(
                 self.openwater.timedomain)):
             raise ValueError(
-                "The Timedomains of the Components do not span "
-                "the same period.")
+                "components' timedomains do not span same period.")
         # check that components' timedomains are equal
         # (to stay until temporal supermesh supported)
         if (self.surfacelayer.timedomain != self.subsurface.timedomain) or \
                 (self.surfacelayer.timedomain != self.openwater.timedomain):
             raise NotImplementedError(
-                "Currently, the modelling framework does not allow "
-                "for components to work on different TimeDomains.")
+                "currently not possible for components to work on "
+                "different timedomains")
 
     def _check_spacedomain_compatibilities(self):
         # check that components' spacedomains are equal
@@ -96,8 +94,8 @@ class Model(object):
         if (self.surfacelayer.spacedomain != self.subsurface.spacedomain) or \
                 (self.surfacelayer.spacedomain != self.openwater.spacedomain):
             raise NotImplementedError(
-                "Currently, the modelling framework does not allow "
-                "for components to work on different SpaceDomains.")
+                "currently not possible for components to work on "
+                "different spacedomains")
 
     def __str__(self):
         return "\n".join(

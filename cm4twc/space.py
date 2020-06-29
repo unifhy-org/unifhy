@@ -496,18 +496,18 @@ class Grid(SpaceDomain):
                 z_bounds_array = field.construct(cls._Z_name).bounds.array
                 if z_units not in cls._Z_units:
                     raise RuntimeError(
-                        "{} field construct '{}' units are not in {}.".format(
+                        "{} field construct '{}' units are not in {}".format(
                             cls.__name__, cls._Z_name, cls._Z_units[0]))
 
         # check units
         if y.units not in cls._Y_units:
             raise RuntimeError(
-                "{} field construct '{}' units are not in {}.".format(
+                "{} field construct '{}' units are not in {}".format(
                     cls.__name__, cls._Y_name, cls._Y_units[0])
             )
         if x.units not in cls._X_units:
             raise RuntimeError(
-                "{} field construct '{}' units are not in {}.".format(
+                "{} field construct '{}' units are not in {}".format(
                     cls.__name__, cls._X_name, cls._X_units[0])
             )
 

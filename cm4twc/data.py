@@ -83,9 +83,8 @@ class DataSet(MutableMapping):
         if isinstance(value, cf.Field):
             self._variables[key] = value
         else:
-            raise TypeError("A {} can only contain instances of "
-                            "{}.".format(self.__class__.__name__,
-                                         cf.Field.__name__))
+            raise TypeError("{} can only contain instances of {}".format(
+                self.__class__.__name__, cf.Field.__name__))
 
     def __delitem__(self, key):
         del self._variables[key]

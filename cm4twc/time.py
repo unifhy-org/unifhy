@@ -183,17 +183,14 @@ class TimeDomain(object):
         # check that calendar is a classic one for CF-convention
         if calendar.lower() not in _supported_calendar_mapping:
             raise ValueError(
-                "The calendar '{}' is not supported.".format(calendar))
+                "calendar '{}' is not supported".format(calendar))
 
         # get a cf.Units instance from units and calendar
         units = cfunits.Units(units, calendar=calendar)
 
         if not (units.isvalid and units.isreftime):
-            raise ValueError(
-                "Error when initialising a {} from a sequence of "
-                "timestamps: the reference time is not valid, it must "
-                "comply with the format 'unit_of_time since "
-                "reference_datetime'.".format(self.__class__.__name__))
+            raise ValueError("reference time not valid, format 'unit_of_time "
+                             "since reference_datetime' expected")
 
         return units
 
@@ -486,9 +483,8 @@ class TimeDomain(object):
         # check that datetimes sequence contains datetime objects
         if (not np.issubdtype(datetimes.dtype, np.dtype(datetime)) and
                 not np.issubdtype(datetimes.dtype, np.dtype('datetime64'))):
-            raise TypeError("Error when initialising a {} from a sequence of "
-                            "datetimes: the sequence given does not contain "
-                            "datetime objects.".format(cls.__name__))
+            raise TypeError("datetime sequence given does not contain "
+                            "datetime objects")
         # set units to default if not given
         if units is None:
             units = cls._units
