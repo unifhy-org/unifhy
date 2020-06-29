@@ -260,17 +260,23 @@ class Component(metaclass=MetaComponent):
     def check_dataset_time(self, timedomain):
         # check time compatibility for driving data
         for data_name in self.driving_data_info:
-            # subspace in time
-            self.datasubset[data_name] = self.dataset[data_name].subspace(
-                T=cf.wi(*timedomain.time.datetime_array[[0, -1]])
+            error = ValueError(
+                "timedomain of data '{}' not compatible with "
+                "timedomain of {} component '{}'".format(
+                    data_name, self._category, self.__class__.__name__)
             )
+            # try to subspace in time
+            if self.dataset[data_name].subspace(
+                    'test', T=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
+                # subspace in time
+                self.datasubset[data_name] = self.dataset[data_name].subspace(
+                    T=cf.wi(*timedomain.time.datetime_array[[0, -1]]))
+            else:
+                raise error
 
             # check that the data and component time domains are compatible
             if not timedomain.is_time_equal_to(self.datasubset[data_name]):
-                raise ValueError(
-                    "timedomain of data '{}' not compatible with "
-                    "timedomain of {} component '{}'".format(
-                        data_name, self._category, self.__class__.__name__))
+                raise error
         # copy reference for ancillary data
         for data_name in self.ancillary_data_info:
             self.datasubset[data_name] = self.dataset[data_name]
