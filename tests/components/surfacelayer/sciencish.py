@@ -1,6 +1,7 @@
 import numpy as np
 
 from cm4twc.components import SurfaceLayerComponent
+from cm4twc.settings import DTYPE_F
 
 
 class Sciencish(SurfaceLayerComponent):
@@ -30,12 +31,12 @@ class Sciencish(SurfaceLayerComponent):
         return {
             # component states
             'canopy': (  # in chronological order
-                np.ones(self.spaceshape, np.float32) * 5,  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.ones(self.spaceshape, DTYPE_F()) * 5,  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             ),
             'snowpack': (  # in chronological order
-                np.ones(self.spaceshape, np.float32) * 2,  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.ones(self.spaceshape, DTYPE_F()) * 2,  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             )
         }
 
@@ -77,7 +78,7 @@ class Sciencish(SurfaceLayerComponent):
         snowpack[0][:] = snowpack[-1] + ((snowfall - snowmelt)
                                          * self.timestepinseconds)
 
-        openwater_evaporation = np.zeros(self.spaceshape, np.float32)
+        openwater_evaporation = np.zeros(self.spaceshape, DTYPE_F())
 
         return {
             # interface fluxes out

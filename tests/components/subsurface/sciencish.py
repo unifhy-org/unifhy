@@ -1,6 +1,7 @@
 import numpy as np
 
 from cm4twc.components import SubSurfaceComponent
+from cm4twc.settings import DTYPE_F
 
 
 class Sciencish(SubSurfaceComponent):
@@ -25,12 +26,12 @@ class Sciencish(SubSurfaceComponent):
         # component has a history of 1, so needs states for t-1 and t
         return {
             'soil_moisture': (
-                np.ones(self.spaceshape, np.float32) * 3e2,  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.ones(self.spaceshape, DTYPE_F()) * 3e2,  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             ),
             'aquifer': (
-                np.ones(self.spaceshape, np.float32) * 1e3,  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.ones(self.spaceshape, DTYPE_F()) * 1e3,  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             )
         }
 

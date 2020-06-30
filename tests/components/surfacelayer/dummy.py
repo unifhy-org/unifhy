@@ -1,6 +1,7 @@
 import numpy as np
 
 from cm4twc.components import SurfaceLayerComponent
+from cm4twc.settings import DTYPE_F
 
 
 class Dummy(SurfaceLayerComponent):
@@ -26,12 +27,12 @@ class Dummy(SurfaceLayerComponent):
         return {
             # component states
             'state_a': (  # in chronological order
-                np.zeros(self.spaceshape, np.float32),  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             ),
             'state_b': (  # in chronological order
-                np.zeros(self.spaceshape, np.float32),  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             )
         }
 

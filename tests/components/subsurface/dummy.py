@@ -1,6 +1,7 @@
 import numpy as np
 
 from cm4twc.components import SubSurfaceComponent
+from cm4twc.settings import DTYPE_F
 
 
 class Dummy(SubSurfaceComponent):
@@ -23,12 +24,12 @@ class Dummy(SubSurfaceComponent):
         # component has a history of 1, so needs states for t-1 and t
         return {
             'state_a': (
-                np.zeros(self.spaceshape, np.float32),  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             ),
             'state_b': (
-                np.zeros(self.spaceshape, np.float32),  # for t-1
-                np.zeros(self.spaceshape, np.float32)  # for t
+                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
+                np.zeros(self.spaceshape, DTYPE_F())  # for t
             )
         }
 

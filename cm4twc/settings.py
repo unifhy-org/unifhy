@@ -1,3 +1,4 @@
+import numpy as np
 
 
 # SETTINGS FOR PRECISION OF NUMERICAL OPERATIONS
@@ -29,6 +30,15 @@ def DECR(decr=None):
     return PRECISION['DECR']
 
 
+def DTYPE_F(dtype=None):
+    """TODO: DOCSTRING REQUIRED"""
+    # data type (i.e. precision) for floating point numbers
+    if dtype is not None:
+        PRECISION['DTYPE_F'] = np.dtype(dtype)
+    return PRECISION['DTYPE_F']
+
+
 ATOL(1e-8)
 RTOL(1e-5)
 DECR(12)
+DTYPE_F(np.float64)
