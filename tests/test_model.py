@@ -4,7 +4,7 @@ import os
 from glob import glob
 
 import cm4twc
-from tests.test_time import (get_dummy_timedomain_different_end,
+from tests.test_time import (get_dummy_timedomain_different_start,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
 from tests.test_components import (get_dummy_subsurface_component,
@@ -149,7 +149,7 @@ class TestModelAPI(unittest.TestCase):
         surfacelayer = get_dummy_surfacelayer_component('n')
         subsurface = get_dummy_subsurface_component('n')
         openwater = get_dummy_openwater_component(
-            'n', timedomain=get_dummy_timedomain_different_end())
+            'n', timedomain=get_dummy_timedomain_different_start())
 
         self.model = cm4twc.Model(
             identifier='test_different_timedomains',
@@ -157,6 +157,8 @@ class TestModelAPI(unittest.TestCase):
             subsurface=subsurface,
             openwater=openwater
         )
+
+        self.model.simulate()
 
 
 if __name__ == '__main__':

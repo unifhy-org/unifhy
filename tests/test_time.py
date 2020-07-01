@@ -16,7 +16,7 @@ def get_dummy_timedomain():
     )
 
 
-def get_dummy_timedomain_different_end():
+def get_dummy_timedomain_different_start():
     return cm4twc.TimeDomain(
         timestamps=[0, 1, 2, 3, 4, 5, 6],
         units='days since 2019-01-01 09:00:00Z',
