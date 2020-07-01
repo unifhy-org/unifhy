@@ -153,7 +153,7 @@ html_theme_options = {
     'github_button': 'true',
     'github_type': 'star',
     'github_repo': 'cm4twc',
-    'github_user': 'ThibHlln',
+    'github_user': 'hydro-jules',
     'pre_bg': '#ecf2f9',
     'code_bg': '#ecf2f9',
     'description': 'A Community Model for the Terrestrial Water Cycle',
