@@ -17,9 +17,9 @@ setup(
     long_description=long_desc,
     long_description_content_type="text/markdown",
 
-    url='https://github.com/ThibHlln/cm4twc',
+    url='https://github.com/hydro-jules/cm4twc',
 
-    author='HydroJULES Team',
+    author='Thibault Hallouin',
     author_email='https://hydro-jules.org/',
 
     license='GPLv3',
@@ -49,9 +49,10 @@ setup(
 
     install_requires=[
         'numpy>=1.16',
-        'cf-python>=3.4.0',
+        'cf-python>=3.4',
         'cftime',
         'cfunits',
+        'netCDF4>=1.5',
         'pyyaml>=5.3'
     ]
 )
