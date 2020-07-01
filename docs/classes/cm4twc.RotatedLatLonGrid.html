@@ -51,7 +51,7 @@ with the North pole.</p>
 <dd class="field-odd"><dl>
 <dt>grid_latitude: one-dimensional array-like object</dt><dd><p>The array of latitude coordinates in degrees defining
 the temporal dimension. May be any type that can be cast
-to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values.</p>
+to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid_latitude</span><span class="o">=</span><span class="p">[</span><span class="mf">0.88</span><span class="p">,</span> <span class="mf">0.44</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.44</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.88</span><span class="p">]</span>
 </pre></div>
@@ -59,7 +59,7 @@ to a <a class="reference external" href="https://numpy.org/doc/stable/reference/
 </dd>
 <dt>grid_longitude: one-dimensional array-like object</dt><dd><p>The array of longitude coordinates in degrees defining
 the temporal dimension. May be any type that can be cast
-to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values.</p>
+to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid_longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.06</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.62</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.18</span><span class="p">]</span>
 </pre></div>
@@ -68,7 +68,7 @@ to a <a class="reference external" href="https://numpy.org/doc/stable/reference/
 <dt>grid_latitude_bounds: two-dimensional array-like object</dt><dd><p>The array of latitude coordinate bounds in degrees
 defining the extent of the grid cell around the
 coordinate. May be any type that can be cast to a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must be two dimensional with the first
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must be two dimensional with the first
 dimension equal to the size of <em>grid_latitude</em> and the
 second dimension equal to 2. Must contain numerical
 values.</p>
@@ -82,7 +82,7 @@ values.</p>
 <dt>grid_longitude_bounds: two-dimensional array-like object</dt><dd><p>The array of longitude coordinate bounds in degrees
 defining the extent of the grid cell around the
 coordinate. May be any type that can be cast to a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must feature two dimensional with the
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must feature two dimensional with the
 first dimension equal to the size of <em>grid_longitude</em>
 and the second dimension equal to 2. Must contain
 numerical values.</p>
@@ -110,7 +110,7 @@ coordinate system.</p>
 <dt>altitude: one-dimensional array-like object, optional</dt><dd><p>The array of altitude coordinates in metres defining the
 temporal dimension (with upwards as the positive
 direction). May be any type that can be cast to a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values. Ignored
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain numerical values. Ignored
 if <em>altitude_bounds</em> not also provided.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
@@ -120,7 +120,7 @@ if <em>altitude_bounds</em> not also provided.</p>
 <dt>altitude_bounds: two-dimensional array-like object, optional</dt><dd><p>The array of altitude coordinate bounds in metres
 defining the extent of the grid cell around the
 coordinate (with upwards as the positive direction).
-May be any type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.
+May be any type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.
 Must be two dimensional with the first dimension equal
 to the size of <em>altitude</em> and the second dimension equal
 to 2. Must contain numerical values. Ignored if
@@ -225,7 +225,7 @@ to 2. Must contain numerical values. Ignored if
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=ThibHlln&repo=cm4twc&type=star&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=hydro-jules&repo=cm4twc&type=star&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 

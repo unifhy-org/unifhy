@@ -39,12 +39,13 @@
 <h1>cm4twc.Model.spin_up<a class="headerlink" href="#cm4twc-model-spin-up" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt id="cm4twc.Model.spin_up">
-<code class="sig-prename descclassname">Model.</code><code class="sig-name descname">spin_up</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em>, <em class="sig-param"><span class="n">cycles</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.Model.spin_up" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run model spin-up simulation to initialise model states.</p>
+<code class="sig-prename descclassname">Model.</code><code class="sig-name descname">spin_up</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em>, <em class="sig-param"><span class="n">cycles</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">dumping_frequency</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.Model.spin_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model spin-up simulation to initialise states of each
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> of the Model.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>start, end: datetime object</dt><dd><p>The start and the end of the spin-up simulation. Their
+<dt>start, end: <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> object</dt><dd><p>The start and the end of the spin-up simulation. Their
 calendar and units are assumed to be the ones of the
 model <code class="xref py py-obj docutils literal notranslate"><span class="pre">Components</span></code> that will be spun up. Note, the <em>end</em>
 parameter refers to the end of the last timestep in the
@@ -60,6 +61,16 @@ spin-up period.</p>
 </dd>
 <dt>cycles: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The number of repetitions of the spin-up simulation. If
 not provided, set to default 1 (cycle).</p>
+</dd>
+<dt>dumping_frequency: <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.timedelta</span></code></a> object, optional</dt><dd><p>The frequency at which Components’ states must be
+stored in a dump file. These dumps can be used to
+restart a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> from a particular point in time.</p>
+<p>Note, the frequency is to be understood in a modelled
+time context, not computational time context.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dumping_frequency</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">weeks</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -86,7 +97,7 @@ not provided, set to default 1 (cycle).</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=ThibHlln&repo=cm4twc&type=star&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=hydro-jules&repo=cm4twc&type=star&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 

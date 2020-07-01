@@ -226,7 +226,7 @@ class Model(object):
                 Note, the frequency is to be understood in a modelled
                 time context, not computational time context.
 
-                    *Parameter example:* ::
+                *Parameter example:* ::
 
                     dumping_frequency=datetime.timedelta(weeks=10)
 

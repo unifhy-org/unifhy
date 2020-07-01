@@ -66,9 +66,52 @@ substituting its simulated time series with the ones in
 </dd>
 </dl>
 <dl class="py method">
+<dt id="cm4twc.DataComponent.initialise_states_from_dump">
+<code class="sig-name descname">initialise_states_from_dump</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dump_file</span></em>, <em class="sig-param"><span class="n">at</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.DataComponent.initialise_states_from_dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the states of the Component from a dump file.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>dump_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string providing the path to the netCDF dump file
+containing values to be used as initial conditions for
+the states of the Component.</p>
+</dd>
+<dt>at: datetime object, optional</dt><dd><p>The snapshot in time to be used for the initial
+conditions. Must be any datetime type (except
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.datetime64</span></code>). Must be contained in the ‘time’
+variable in <em>dump_file</em>. If not provided, the last index
+in the ‘time’ variable in <em>dump_file</em> will be used.</p>
+<p>Note: if a datetime is provided, there is no enforcement
+of the fact that this datetime must correspond to the
+initial datetime in the simulation period for the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>, and it is only used as a means to select
+a specific snapshot in time amongst the ones available
+in the dump file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="cm4twc.DataComponent.category">
 <em class="property">property </em><code class="sig-name descname">category</code><a class="headerlink" href="#cm4twc.DataComponent.category" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the part of the water cycle the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> represents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.constants">
+<em class="property">property </em><code class="sig-name descname">constants</code><a class="headerlink" href="#cm4twc.DataComponent.constants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the collection of adjusted constant values for the
+Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. Potentially returning an empty dictionary
+if no default constant value is adjusted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.dataset">
+<em class="property">property </em><code class="sig-name descname">dataset</code><a class="headerlink" href="#cm4twc.DataComponent.dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the collection of variables forming the dataset for
+the Component as a <a class="reference internal" href="cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> object.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -81,6 +124,42 @@ substituting its simulated time series with the ones in
 <dt id="cm4twc.DataComponent.outwards_info">
 <em class="property">property </em><code class="sig-name descname">outwards_info</code><a class="headerlink" href="#cm4twc.DataComponent.outwards_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the outgoing information provided by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.parameters">
+<em class="property">property </em><code class="sig-name descname">parameters</code><a class="headerlink" href="#cm4twc.DataComponent.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the collection of parameter values for the Component
+as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.spacedomain">
+<em class="property">property </em><code class="sig-name descname">spacedomain</code><a class="headerlink" href="#cm4twc.DataComponent.spacedomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the spatial configuration of the Component as a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.spaceshape">
+<em class="property">property </em><code class="sig-name descname">spaceshape</code><a class="headerlink" href="#cm4twc.DataComponent.spaceshape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of each dimension in the spatial
+configuration of the Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.timedomain">
+<em class="property">property </em><code class="sig-name descname">timedomain</code><a class="headerlink" href="#cm4twc.DataComponent.timedomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the temporal configuration of the Component as a
+<a class="reference internal" href="cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cm4twc.DataComponent.timestepinseconds">
+<em class="property">property </em><code class="sig-name descname">timestepinseconds</code><a class="headerlink" href="#cm4twc.DataComponent.timestepinseconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of seconds separating two consecutive
+timestamps in the temporal configuration of the Component
+as a float.</p>
 </dd></dl>
 
 </dd></dl>
@@ -105,7 +184,7 @@ substituting its simulated time series with the ones in
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=ThibHlln&repo=cm4twc&type=star&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=hydro-jules&repo=cm4twc&type=star&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
