@@ -83,7 +83,7 @@ class DummyFortran(SubSurfaceComponent):
         # component has a history of 1, so needs states for t-1 and t
         z, y, x = self.spaceshape
         state_a_m1, state_a_0, state_b_m1, state_b_0 = (
-            dummyfortran.dummyfortran.initialise(z, y, x)
+            dummyfortran.initialise(z, y, x)
         )
 
         return {
@@ -112,7 +112,7 @@ class DummyFortran(SubSurfaceComponent):
             # component constants
             **kwargs):
 
-        runoff, soil_water_stress = dummyfortran.dummyfortran.run(
+        runoff, soil_water_stress = dummyfortran.run(
             evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             driving_a, parameter_a,
@@ -127,7 +127,7 @@ class DummyFortran(SubSurfaceComponent):
 
     def finalise(self, state_a, state_b,
                  **kwargs):
-        dummyfortran.dummyfortran.finalise()
+        dummyfortran.finalise()
 
 
 class DummyC(SubSurfaceComponent):

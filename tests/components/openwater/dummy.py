@@ -78,7 +78,7 @@ class DummyFortran(OpenWaterComponent):
     def initialise(self, **kwargs):
         # component has a history of 1, so needs states for t-1 and t
         z, y, x = self.spaceshape
-        state_a_m1, state_a_0 = dummyfortran.dummyfortran.initialise(z, y, x)
+        state_a_m1, state_a_0 = dummyfortran.initialise(z, y, x)
 
         return {
             'state_a': (
@@ -101,7 +101,7 @@ class DummyFortran(OpenWaterComponent):
             constant_a=1.,
             **kwargs):
 
-        discharge = dummyfortran.dummyfortran.run(
+        discharge = dummyfortran.run(
             evaporation_openwater, runoff, ancillary_a, parameter_a,
             state_a[-1], state_a[0], constant_a
         )
@@ -113,7 +113,7 @@ class DummyFortran(OpenWaterComponent):
 
     def finalise(self, state_a,
                  **kwargs):
-        dummyfortran.dummyfortran.finalise()
+        dummyfortran.finalise()
 
 
 class DummyC(OpenWaterComponent):

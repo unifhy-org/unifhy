@@ -97,7 +97,7 @@ class DummyFortran(SurfaceLayerComponent):
         # component has a history of 1, so needs states for t-1 and t
         z, y, x = self.spaceshape
         state_a_m1, state_a_0, state_b_m1, state_b_0 = (
-            dummyfortran.dummyfortran.initialise(z, y, x)
+            dummyfortran.initialise(z, y, x)
         )
 
         return {
@@ -127,7 +127,7 @@ class DummyFortran(SurfaceLayerComponent):
 
         (throughfall, snowmelt, transpiration,
          evaporation_soil_surface, evaporation_ponded_water,
-         evaporation_openwater) = dummyfortran.dummyfortran.run(
+         evaporation_openwater) = dummyfortran.run(
             soil_water_stress,
             driving_a, driving_b, driving_c,
             ancillary_a,
@@ -145,7 +145,7 @@ class DummyFortran(SurfaceLayerComponent):
         }
 
     def finalise(self, **kwargs):
-        dummyfortran.dummyfortran.finalise()
+        dummyfortran.finalise()
 
 
 class DummyC(SurfaceLayerComponent):
