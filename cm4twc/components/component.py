@@ -1,6 +1,5 @@
 import abc
 import numpy as np
-from datetime import datetime
 from os import sep
 import cf
 from cfunits import Units
@@ -401,22 +400,21 @@ class Component(metaclass=MetaComponent):
                 raise KeyError("initial conditions for {} component state "
                                "'{}' not provided".format(self._category, s))
 
-    def _initialise_dump(self):
+    def _initialise_dump(self, tag):
         self.dump_file = '_'.join([self.identifier, self.category,
-                                   datetime.now().strftime('%Y%m%d%H%M%S%f'),
-                                   'dump.nc'])
+                                   tag, 'dump.nc'])
         create_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states_info, self.solver_history,
                          self.timedomain, self.spacedomain)
 
-    def initialise_states(self):
+    def initialise_states(self, tag):
         # if not already initialised, get default state values
         if not self.is_initialised:
             states = self.initialise(**self.constants)
             self._instantiate_states(states)
             self.is_initialised = True
         # create the dump file for this given run
-        self._initialise_dump()
+        self._initialise_dump(tag)
 
     def initialise_states_from_dump(self, dump_file, at=None):
         """Initialise the states of the Component from a dump file.

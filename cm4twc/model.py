@@ -239,7 +239,7 @@ class Model(object):
             self.openwater.get_spin_up_timedomain(start, end)
 
         for cycle in range(cycles):
-            self._initialise()
+            self._initialise(tag='spinup{}'.format(cycle + 1))
 
             self._run(surfacelayer_timedomain,
                       subsurface_timedomain,
@@ -267,7 +267,7 @@ class Model(object):
                     dumping_frequency=datetime.timedelta(weeks=4)
 
         """
-        self._initialise()
+        self._initialise(tag='run')
 
         self._run(self.surfacelayer.timedomain,
                   self.subsurface.timedomain,
@@ -276,11 +276,11 @@ class Model(object):
 
         self._finalise()
 
-    def _initialise(self):
+    def _initialise(self, tag):
         # initialise components' states
-        self.surfacelayer.initialise_states()
-        self.subsurface.initialise_states()
-        self.openwater.initialise_states()
+        self.surfacelayer.initialise_states(tag)
+        self.subsurface.initialise_states(tag)
+        self.openwater.initialise_states(tag)
 
     def _run(self, surfacelayer_timedomain, subsurface_timedomain,
              openwater_timedomain, dumping_frequency=None):

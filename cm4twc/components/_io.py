@@ -1,4 +1,5 @@
 from netCDF4 import Dataset
+from datetime import datetime
 import cftime
 import numpy as np
 
@@ -7,6 +8,10 @@ def create_dump_file(filepath, states_info, solver_history,
                      timedomain, spacedomain):
     with Dataset(filepath, 'w') as f:
         axes = spacedomain.axes
+
+        # description
+        f.description = "Dump file created on {}".format(
+            datetime.now().strftime('%Y-%m-%d at %H:%M:%S'))
 
         # dimensions
         f.createDimension('time', None)
