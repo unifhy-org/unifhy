@@ -55,7 +55,7 @@ def load_dump_file(filepath, datetime_, states_info):
         else:
             # find the index for the datetime given
             try:
-                t = cftime.date2index(datetime_, f.variable['time'])
+                t = cftime.date2index(datetime_, f.variables['time'])
             except ValueError:
                 raise ValueError(
                     '{} not available in dump {}'.format(datetime_, filepath))
