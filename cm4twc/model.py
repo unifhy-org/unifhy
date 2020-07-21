@@ -1,5 +1,6 @@
 from importlib import import_module
 import numpy as np
+from os import sep
 import yaml
 
 from ._utils import Interface, Clock
@@ -15,13 +16,19 @@ class Model(object):
     compatibility between `Component`\s, and controlling the simulation
     workflow.
     """
-    def __init__(self, identifier, surfacelayer, subsurface, openwater):
+    def __init__(self, identifier, config_directory,
+                 surfacelayer, subsurface, openwater,
+                 _to_yaml=True):
         """**Initialisation**
 
         :Parameters:
 
             identifier: `str`
                 A name to identify the model output files.
+
+            config_directory: `str`
+                The path to the directory where to save the model
+                configuration files.
 
             surfacelayer: `SurfaceLayerComponent` object
                 The `Component` responsible for the surface layer
@@ -36,6 +43,7 @@ class Model(object):
                 compartment of the hydrological cycle.
 
         """
+        # assign components to model if of the correct type
         self.surfacelayer = self._process_component_type(
             surfacelayer, SurfaceLayerComponent)
 
@@ -45,12 +53,19 @@ class Model(object):
         self.openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
-        # identifier
+        # assign identifier
         self.identifier = identifier
         # propagate id to components
         self.surfacelayer.identifier = identifier
         self.subsurface.identifier = identifier
         self.openwater.identifier = identifier
+
+        # assign configuration directory
+        self.config_directory = config_directory
+
+        # save model configuration in yaml file
+        if _to_yaml:
+            self.to_yaml()
 
     @staticmethod
     def _process_component_type(component, expected_component):
@@ -102,6 +117,8 @@ class Model(object):
     def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
+            ["    identifier: {}".format(self.identifier)] +
+            ["    config directory: {}".format(self.config_directory)] +
             ["    surfacelayer: {}".format(
                 self.surfacelayer.__class__.__name__)] +
             ["    subsurface: {}".format(
@@ -134,21 +151,24 @@ class Model(object):
 
         return cls(
             identifier=cfg['identifier'],
+            config_directory=cfg['config_directory'],
             surfacelayer=surfacelayer.from_config(
                 cfg['surfacelayer']),
             subsurface=subsurface.from_config(
                 cfg['subsurface']),
             openwater=openwater.from_config(
-                cfg['openwater'])
+                cfg['openwater']),
+            _to_yaml=False
         )
 
     def to_config(self):
         return {
             'identifier': self.identifier,
+            'config_directory': self.config_directory,
             'surfacelayer': self.surfacelayer.to_config(),
             'subsurface': self.subsurface.to_config(),
             'openwater': self.openwater.to_config()
-            }
+        }
 
     @classmethod
     def from_yaml(cls, yaml_file):
@@ -169,6 +189,8 @@ class Model(object):
         >>> m = Model.from_yaml('configurations/dummy.yml')
         >>> print(m)
         Model(
+            identifier: dummy
+            config directory: configurations
             surfacelayer: Dummy
             subsurface: Dummy
             openwater: Dummy
@@ -179,7 +201,7 @@ class Model(object):
             cfg = yaml.load(f, yaml.FullLoader)
         return cls.from_config(cfg)
 
-    def to_yaml(self, yaml_file):
+    def to_yaml(self):
         # configure the dumping format for sequences
         for type_ in (list, tuple, set):
             yaml.add_representer(
@@ -190,7 +212,8 @@ class Model(object):
                 Dumper=yaml.Dumper
             )
         # dump configuration in yaml file
-        with open(yaml_file, 'w') as f:
+        with open(sep.join([self.config_directory,
+                            '.'.join([self.identifier, 'yml'])]), 'w') as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def spin_up(self, start, end, cycles=1, dumping_frequency=None):
@@ -231,6 +254,7 @@ class Model(object):
                     dumping_frequency=datetime.timedelta(weeks=10)
 
         """
+        # generate timedomains for each model component
         surfacelayer_timedomain = \
             self.surfacelayer.get_spin_up_timedomain(start, end)
         subsurface_timedomain = \

@@ -1,4 +1,5 @@
-identifier: test_ccc_yaml
+identifier: dummy
+config_directory: configurations
 surfacelayer:
   module: tests.components.surfacelayer.dummy
   class: Dummy

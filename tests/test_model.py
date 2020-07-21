@@ -72,6 +72,7 @@ class TestModelAPI(unittest.TestCase):
                 self.model = cm4twc.Model(
                     identifier='test_{}{}{}'.format(
                         surfacelayer_kind, subsurface_kind, openwater_kind),
+                    config_directory='outputs',
                     surfacelayer=surfacelayer,
                     subsurface=subsurface,
                     openwater=openwater
@@ -129,6 +130,7 @@ class TestModelAPI(unittest.TestCase):
 
         self.model = cm4twc.Model(
             identifier='test_different_timedomains',
+            config_directory='outputs',
             surfacelayer=surfacelayer,
             subsurface=subsurface,
             openwater=openwater
