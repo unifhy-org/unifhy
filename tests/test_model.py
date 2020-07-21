@@ -18,37 +18,13 @@ class TestModelAPI(unittest.TestCase):
 
     # full factorial design of experiment
     # (i.e. all possible combinations of components)
-    doe = (
-        # tuple(surfacelayer_component, subsurface_component, openwater_component)
-        # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
-        ('c', 'c', 'c'),
-        ('d', 'c', 'c'),
-        ('n', 'c', 'c'),
-        ('c', 'd', 'c'),
-        ('d', 'd', 'c'),
-        ('n', 'd', 'c'),
-        ('c', 'n', 'c'),
-        ('d', 'n', 'c'),
-        ('n', 'n', 'c'),
-        ('c', 'c', 'd'),
-        ('d', 'c', 'd'),
-        ('n', 'c', 'd'),
-        ('c', 'd', 'd'),
-        ('d', 'd', 'd'),
-        ('n', 'd', 'd'),
-        ('c', 'n', 'd'),
-        ('d', 'n', 'd'),
-        ('n', 'n', 'd'),
-        ('c', 'c', 'n'),
-        ('d', 'c', 'n'),
-        ('n', 'c', 'n'),
-        ('c', 'd', 'n'),
-        ('d', 'd', 'n'),
-        ('n', 'd', 'n'),
-        ('c', 'n', 'n'),
-        ('d', 'n', 'n'),
-        ('n', 'n', 'n')
-    )
+
+    # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
+    kinds = ('c', 'd', 'n')
+
+    # generator of component combinations
+    # tuple(surfacelayer_component, subsurface_component, openwater_component)
+    doe = ((sl, ss, ow) for sl in kinds for ss in kinds for ow in kinds)
 
     def setUp(self):
         self.model = None
