@@ -595,7 +595,7 @@ class DataComponent(Component):
             + [")"]
         )
 
-    def _initialise_dump(self):
+    def _initialise_dump(self, **kwargs):
         pass
 
     def dump_states(self, timeindex):
@@ -658,7 +658,7 @@ class NullComponent(Component):
             + [")"]
         )
 
-    def _initialise_dump(self):
+    def _initialise_dump(self, **kwargs):
         pass
 
     def dump_states(self, timeindex):
