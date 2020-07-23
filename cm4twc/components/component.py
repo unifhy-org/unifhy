@@ -595,19 +595,19 @@ class DataComponent(Component):
             + [")"]
         )
 
-    def _initialise_dump(self, **kwargs):
+    def _initialise_dump(self, *args, **kwargs):
         pass
 
-    def dump_states(self, timeindex):
+    def dump_states(self, *args, **kwargs):
         pass
 
-    def initialise(self, **kwargs):
+    def initialise(self, *args, **kwargs):
         return {}
 
-    def run(self, **kwargs):
+    def run(self, *args, **kwargs):
         return {n: kwargs[n] for n in self.driving_data_info}
 
-    def finalise(self, **kwargs):
+    def finalise(self, *args, **kwargs):
         pass
 
 
@@ -658,18 +658,18 @@ class NullComponent(Component):
             + [")"]
         )
 
-    def _initialise_dump(self, **kwargs):
+    def _initialise_dump(self, *args, **kwargs):
         pass
 
-    def dump_states(self, timeindex):
+    def dump_states(self, *args, **kwargs):
         pass
 
-    def initialise(self, **kwargs):
+    def initialise(self, *args, **kwargs):
         return {}
 
-    def run(self, **kwargs):
+    def run(self, *args, **kwargs):
         null_array = np.zeros(self.spaceshape, np.float32)
         return {n: null_array for n in self._outwards_info}
 
-    def finalise(self, **kwargs):
+    def finalise(self, *args, **kwargs):
         pass
