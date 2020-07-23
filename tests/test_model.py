@@ -16,15 +16,14 @@ class TestModelAPI(unittest.TestCase):
     # dictionary to store the model once initialised
     doe_models = {}
 
-    # full factorial design of experiment
-    # (i.e. all possible combinations of components)
-
+    # generator of all possible component combinations
+    # (i.e. full factorial design of experiment) as
+    # tuple(surfacelayer kind, subsurface kind, openwater kind)
     # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
-    kinds = ('c', 'd', 'n')
-
-    # generator of component combinations
-    # tuple(surfacelayer_component, subsurface_component, openwater_component)
-    doe = ((sl, ss, ow) for sl in kinds for ss in kinds for ow in kinds)
+    doe = ((sl, ss, ow)
+           for sl in ('c', 'd', 'n')
+           for ss in ('c', 'd', 'n')
+           for ow in ('c', 'd', 'n'))
 
     def setUp(self):
         self.model = None
