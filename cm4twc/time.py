@@ -107,7 +107,7 @@ class TimeDomain(object):
             bounds (3, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:03]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
-            period: 0:00:02
+            period: 0:00:03
             timedelta: 0:00:01
         )
         """
@@ -163,7 +163,7 @@ class TimeDomain(object):
         """Return the period that the TimeDomain is covering as a
         `datetime.timedelta`.
         """
-        return (self._f.construct('time').bounds.datetime_array[-1, 0]
+        return (self._f.construct('time').bounds.datetime_array[-1, -1]
                 - self._f.construct('time').bounds.datetime_array[0, 0])
 
     @property
@@ -475,7 +475,7 @@ class TimeDomain(object):
             bounds (3, 2): [[1970-01-01 00:00:00, ..., 1970-01-04 00:00:00]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
-            period: 2 days, 0:00:00
+            period: 3 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
         """
@@ -596,7 +596,7 @@ class TimeDomain(object):
             bounds (60, 2): [[2020-01-01 00:00:00, ..., 2020-03-01 00:00:00]] standard
             calendar: standard
             units: seconds since 1970-01-01 00:00:00
-            period: 59 days, 0:00:00
+            period: 60 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
@@ -613,7 +613,7 @@ class TimeDomain(object):
             bounds (59, 2): [[2020-01-01 00:00:00, ..., 2020-03-01 00:00:00]] noleap
             calendar: noleap
             units: seconds since 1970-01-01 00:00:00
-            period: 58 days, 0:00:00
+            period: 59 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
@@ -685,7 +685,7 @@ class TimeDomain(object):
             bounds (4, 2): [[1970-01-01 00:00:00, ..., 1970-01-05 00:00:00]] gregorian
             calendar: gregorian
             units: days since 1970-01-01
-            period: 3 days, 0:00:00
+            period: 4 days, 0:00:00
             timedelta: 1 day, 0:00:00
         )
 
