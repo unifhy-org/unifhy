@@ -163,8 +163,8 @@ class TimeDomain(object):
         """Return the period that the TimeDomain is covering as a
         `datetime.timedelta`.
         """
-        return (self._f.construct('time').datetime_array[-1]
-                - self._f.construct('time').datetime_array[0])
+        return (self._f.construct('time').bounds.datetime_array[-1, 0]
+                - self._f.construct('time').bounds.datetime_array[0, 0])
 
     @property
     def timedelta(self):
@@ -173,8 +173,8 @@ class TimeDomain(object):
         instance.
         """
         return (
-                self._f.construct('time').datetime_array[1]
-                - self._f.construct('time').datetime_array[0]
+                self._f.construct('time').bounds.datetime_array[0, 1]
+                - self._f.construct('time').bounds.datetime_array[0, 0]
         )
 
     def _get_cf_units(self, units, calendar):
@@ -217,12 +217,14 @@ class TimeDomain(object):
         # check that the timestamps is regularly spaced
         self._check_dimension_regularity(timestamps)
 
+        # determine the timedelta between timestamps
+        delta = timestamps[1] - timestamps[0]
+
         # eliminate last timestamp (because it is end of last time step)
         timestamps = timestamps[0:-1]
 
         # generate bounds from span and timedelta
         bounds = np.zeros((len(timestamps), 2), dtype=timestamps.dtype)
-        delta = timestamps[1] - timestamps[0]
         bounds[:, 0] = timestamps + span[0] * delta
         bounds[:, 1] = timestamps + span[1] * delta
 
