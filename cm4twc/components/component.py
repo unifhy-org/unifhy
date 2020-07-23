@@ -464,13 +464,13 @@ class Component(metaclass=MetaComponent):
             # re-initialise current timestep of State to zero
             self.states[s][0][:] = 0.0
 
-    def dump_states(self, timeindex):
-        timestamp = self.timedomain.bounds.array[timeindex, 1]
+    def dump_states(self, timedomain, timeindex):
+        timestamp = timedomain.bounds.array[timeindex, 1]
         update_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states, timestamp, self.solver_history)
 
-    def finalise_states(self):
-        self.dump_states(-1)
+    def finalise_states(self, timedomain):
+        self.dump_states(timedomain, -1)
         self.finalise(**self.states)
 
     @abc.abstractmethod

@@ -270,7 +270,9 @@ class Model(object):
                       openwater_timedomain,
                       dumping_frequency)
 
-            self._finalise()
+            self._finalise(surfacelayer_timedomain,
+                           subsurface_timedomain,
+                           openwater_timedomain)
 
     def simulate(self, dumping_frequency=None):
         """Run model simulation over period defined in its components'
@@ -298,7 +300,9 @@ class Model(object):
                   self.openwater.timedomain,
                   dumping_frequency)
 
-        self._finalise()
+        self._finalise(self.surfacelayer.timedomain,
+                       self.subsurface.timedomain,
+                       self.openwater.timedomain)
 
     def _initialise(self, tag):
         # initialise components' states
@@ -341,12 +345,15 @@ class Model(object):
 
             if dumping:
                 self.surfacelayer.dump_states(
+                    surfacelayer_timedomain,
                     clock.get_current_timeindex('surfacelayer')
                 )
                 self.subsurface.dump_states(
+                    subsurface_timedomain,
                     clock.get_current_timeindex('subsurface')
                 )
                 self.openwater.dump_states(
+                    openwater_timedomain,
                     clock.get_current_timeindex('openwater')
                 )
 
@@ -377,8 +384,9 @@ class Model(object):
                     )
                 )
 
-    def _finalise(self):
+    def _finalise(self, surfacelayer_timedomain, subsurface_timedomain,
+                  openwater_timedomain):
         # finalise components
-        self.surfacelayer.finalise_states()
-        self.subsurface.finalise_states()
-        self.openwater.finalise_states()
+        self.surfacelayer.finalise_states(surfacelayer_timedomain)
+        self.subsurface.finalise_states(subsurface_timedomain)
+        self.openwater.finalise_states(openwater_timedomain)
