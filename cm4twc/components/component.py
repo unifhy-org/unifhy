@@ -465,12 +465,14 @@ class Component(metaclass=MetaComponent):
             self.states[s][0][:] = 0.0
 
     def dump_states(self, timedomain, timeindex):
-        timestamp = timedomain.bounds.array[timeindex, 1]
+        timestamp = timedomain.bounds.array[timeindex, 0]
         update_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states, timestamp, self.solver_history)
 
     def finalise_states(self, timedomain):
-        self.dump_states(timedomain, -1)
+        timestamp = timedomain.bounds.array[-1, -1]
+        update_dump_file(sep.join([self.output_directory, self.dump_file]),
+                         self.states, timestamp, self.solver_history)
         self.finalise(**self.states)
 
     @abc.abstractmethod
