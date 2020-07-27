@@ -597,10 +597,13 @@ class DataComponent(Component):
             + [")"]
         )
 
-    def _initialise_dump(self, *args, **kwargs):
+    def initialise_states(self, *args, **kwargs):
         pass
 
     def dump_states(self, *args, **kwargs):
+        pass
+
+    def finalise_states(self, *args, **kwargs):
         pass
 
     def initialise(self, *args, **kwargs):
@@ -660,10 +663,13 @@ class NullComponent(Component):
             + [")"]
         )
 
-    def _initialise_dump(self, *args, **kwargs):
+    def initialise_states(self, *args, **kwargs):
         pass
 
     def dump_states(self, *args, **kwargs):
+        pass
+
+    def finalise_states(self, *args, **kwargs):
         pass
 
     def initialise(self, *args, **kwargs):
