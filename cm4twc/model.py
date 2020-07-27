@@ -1,11 +1,14 @@
 from importlib import import_module
 import numpy as np
-from os import sep
+from os import sep, path
+from glob import glob
+from datetime import datetime, timedelta
 import yaml
 
 from ._utils import Interface, Clock
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
+from .time import TimeDomain
 from .settings import DTYPE_F
 
 
@@ -216,7 +219,8 @@ class Model(object):
                             '.'.join([self.identifier, 'yml'])]), 'w') as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
-    def spin_up(self, start, end, cycles=1, dumping_frequency=None):
+    def spin_up(self, start, end, cycles=1, dumping_frequency=None,
+                overwrite=True, _cycle_origin_no=0):
         """Run model spin-up simulation to initialise states of each
         `Component` of the Model.
 
@@ -253,6 +257,11 @@ class Model(object):
 
                     dumping_frequency=datetime.timedelta(weeks=10)
 
+            overwrite: `bool`, optional
+                Whether existing files should be overwritten if they
+                feature the same name as files about to be written by
+                the model. If not provided, set to default True.
+
         """
         # generate timedomains for each model component
         surfacelayer_timedomain = \
@@ -262,8 +271,24 @@ class Model(object):
         openwater_timedomain = \
             self.openwater.get_spin_up_timedomain(start, end)
 
+        # store spin up configuration in a separate yaml file
+        spin_up_config = {
+            'start': start.strftime('%Y-%m-%d %H:%M:%S'),
+            'end': end.strftime('%Y-%m-%d %H:%M:%S'),
+            'cycles': cycles,
+            'dumping_frequency': {'seconds': dumping_frequency.total_seconds()}
+        }
+        with open(sep.join([self.config_directory,
+                            '.'.join([self.identifier, 'spin_up', 'yml'])]),
+                  'w') as f:
+            yaml.dump(spin_up_config, f, yaml.Dumper, sort_keys=False)
+
+        # start the spin up run(s)
         for cycle in range(cycles):
-            self._initialise(tag='spinup{}'.format(cycle + 1))
+            self._initialise(
+                tag='spinup{}'.format(_cycle_origin_no + cycle + 1),
+                overwrite=overwrite
+            )
 
             self._run(surfacelayer_timedomain,
                       subsurface_timedomain,
@@ -274,7 +299,7 @@ class Model(object):
                            subsurface_timedomain,
                            openwater_timedomain)
 
-    def simulate(self, dumping_frequency=None):
+    def simulate(self, dumping_frequency=None, overwrite=True):
         """Run model simulation over period defined in its components'
         timedomains.
 
@@ -292,8 +317,23 @@ class Model(object):
 
                     dumping_frequency=datetime.timedelta(weeks=4)
 
+            overwrite: `bool`, optional
+                Whether existing files should be overwritten if they
+                feature the same name as files about to be written by
+                the model. If not provided, set to default True.
+
         """
-        self._initialise(tag='run')
+        # store spin up configuration in a separate yaml file
+        simulate_config = {
+            'dumping_frequency': {'seconds': dumping_frequency.total_seconds()}
+        }
+        with open(sep.join([self.config_directory,
+                            '.'.join([self.identifier, 'simulate', 'yml'])]),
+                  'w') as f:
+            yaml.dump(simulate_config, f, yaml.Dumper, sort_keys=False)
+
+        # initialise, run, finalise model
+        self._initialise(tag='run', overwrite=overwrite)
 
         self._run(self.surfacelayer.timedomain,
                   self.subsurface.timedomain,
@@ -304,11 +344,11 @@ class Model(object):
                        self.subsurface.timedomain,
                        self.openwater.timedomain)
 
-    def _initialise(self, tag):
+    def _initialise(self, tag, overwrite):
         # initialise components' states
-        self.surfacelayer.initialise_states(tag)
-        self.subsurface.initialise_states(tag)
-        self.openwater.initialise_states(tag)
+        self.surfacelayer.initialise_states(tag, overwrite)
+        self.subsurface.initialise_states(tag, overwrite)
+        self.openwater.initialise_states(tag, overwrite)
 
     def _run(self, surfacelayer_timedomain, subsurface_timedomain,
              openwater_timedomain, dumping_frequency=None):
@@ -390,3 +430,126 @@ class Model(object):
         self.surfacelayer.finalise_states(surfacelayer_timedomain)
         self.subsurface.finalise_states(subsurface_timedomain)
         self.openwater.finalise_states(openwater_timedomain)
+
+    def resume(self, at=None):
+        ats = []
+        cycle_nos = []
+        data_or_null = 0
+        for component in [self.surfacelayer, self.subsurface, self.openwater]:
+            # skip DataComponent and NullComponent
+            if isinstance(component, (DataComponent, NullComponent)):
+                data_or_null += 1
+                continue
+
+            # initialise component from dump file
+            dump_sig = sep.join([component.output_directory,
+                                 '_'.join([component.identifier,
+                                           component.category,
+                                           '*', 'dump.nc'])])
+
+            dump_files = sorted(glob(dump_sig))
+
+            if not dump_files:
+                raise RuntimeError(
+                    "no dump file found for {} component of model {}".format(
+                        component.category, self.identifier)
+                )
+            elif dump_sig.replace('*', 'run') in dump_files:
+                dump_file = dump_sig.replace('*', 'run')
+            else:
+                # use last dump file, which will be the latest spinup run
+                dump_file = dump_files[-1]
+                cycle_nos.append(
+                    dump_file.split('_dump.nc')[0].split('spinup')[-1]
+                )
+
+            ats.append(component.initialise_states_from_dump(dump_file, at))
+
+        # if all components are Data or Null, exit resume
+        if data_or_null == 3:
+            return
+
+        # check whether snapshots in component dumps are for same datetime
+        if not len(set(ats)) == 1:
+            raise RuntimeError("component dump files feature different last "
+                               "snapshots in time, cannot resume")
+        at = list(set(ats))[0]
+
+        # reload simulate configuration (if it exists)
+        yaml_sig = sep.join(
+            [self.config_directory,
+             '.'.join([self.identifier, '*', 'yml'])]
+        )
+
+        if path.exists(yaml_sig.replace('*', 'simulate')):
+            # collect simulate arguments stored in yaml file
+            with open(yaml_sig.replace('*', 'simulate'), 'r') as f:
+                cfg = yaml.load(f, yaml.FullLoader)
+
+            # adjust the component timedomain to reflect remaining period
+            for component in [self.surfacelayer, self.subsurface,
+                              self.openwater]:
+                if at == component.timedomain.bounds.datetime_array[-1, -1]:
+                    raise RuntimeError("{} component run already completed "
+                                       "successfully, cannot resume".format(
+                                            component.category))
+
+                remaining_td = TimeDomain.from_start_end_step(
+                    start=at,
+                    end=component.timedomain.bounds.datetime_array[-1, -1],
+                    step=component.timedomain.timedelta,
+                    units=component.timedomain.units,
+                    calendar=component.timedomain.calendar
+                )
+                component.timedomain = remaining_td
+
+            # resume the simulation run
+            self.simulate(
+                dumping_frequency=timedelta(
+                    seconds=cfg['dumping_frequency']['seconds']
+                ),
+                overwrite=False
+            )
+        elif path.exists(yaml_sig.replace('*', 'spin_up')):
+            # collect spin up arguments stored in yaml file
+            with open(yaml_sig.replace('*', 'spin_up'), 'r') as f:
+                cfg = yaml.load(f, yaml.FullLoader)
+
+            # check whether spin up cycles for components are the same
+            if not len(set(cycle_nos)) == 1:
+                raise RuntimeError("component cycle numbers are different, "
+                                   "cannot resume")
+            cycle_no = int(list(set(cycle_nos))[0])
+
+            # resume the spin up run(s)
+            start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
+            end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
+            dumping_frequency = timedelta(
+                seconds=cfg['dumping_frequency']['seconds'])
+            # resume spin up cycle according to the latest dump found
+            if at == end:
+                if cfg['cycles'] == cycle_no:
+                    raise RuntimeError("spin up run(s) already completed "
+                                       "successfully, cannot resume")
+            else:
+                self.spin_up(
+                    start=at,
+                    end=end,
+                    cycles=1,
+                    dumping_frequency=dumping_frequency,
+                    overwrite=False,
+                    _cycle_origin_no=cycle_no - 1
+                )
+            # start any additional spin up cycle
+            if cfg['cycles'] - cycle_no > 0:
+                self.spin_up(
+                    start=start,
+                    end=end,
+                    cycles=cfg['cycles'] - cycle_no,
+                    dumping_frequency=dumping_frequency,
+                    overwrite=False,
+                    _cycle_origin_no=cycle_no
+                )
+        else:
+            raise RuntimeError("no spin up nor simulate configuration found, "
+                               "cannot resume")

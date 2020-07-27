@@ -37,8 +37,16 @@ def create_dump_file(filepath, states_info, solver_history,
 
 def update_dump_file(filepath, states, timestamp, solver_history):
     with Dataset(filepath, 'a') as f:
-        t = len(f.variables['time'])
-        f.variables['time'][t] = timestamp
+        try:
+            # check whether given snapshot already in file
+            t = cftime.time2index(timestamp, f.variables['time'])
+        # will get a IndexError if time variable is empty
+        # will get a ValueError if timestamp not in time variable
+        except (IndexError, ValueError):
+            # if not, extend time dimension
+            t = len(f.variables['time'])
+            f.variables['time'][t] = timestamp
+
         for state in states:
             for i, step in enumerate(range(-solver_history, 1, 1)):
                 f.variables[state][t, i, ...] = states[state][step]
@@ -48,10 +56,14 @@ def load_dump_file(filepath, datetime_, states_info):
     states = {}
 
     with Dataset(filepath, 'r') as f:
+        f.set_always_mask(False)
         # determine point in time to use from the dump
         if datetime_ is None:
             # if not specified, use the last time index
             t = -1
+            datetime_ = cftime.num2date(f.variables['time'][-1],
+                                        f.variables['time'].units,
+                                        f.variables['time'].calendar)
         else:
             # find the index for the datetime given
             try:
@@ -67,4 +79,4 @@ def load_dump_file(filepath, datetime_, states_info):
             except KeyError:
                 pass
 
-    return states
+    return states, datetime_

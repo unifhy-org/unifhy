@@ -1,6 +1,6 @@
 import abc
 import numpy as np
-from os import sep
+from os import path, sep
 import cf
 from cfunits import Units
 
@@ -400,21 +400,23 @@ class Component(metaclass=MetaComponent):
                 raise KeyError("initial conditions for {} component state "
                                "'{}' not provided".format(self._category, s))
 
-    def _initialise_dump(self, tag):
+    def _initialise_dump(self, tag, overwrite_dump):
         self.dump_file = '_'.join([self.identifier, self.category,
                                    tag, 'dump.nc'])
-        create_dump_file(sep.join([self.output_directory, self.dump_file]),
-                         self.states_info, self.solver_history,
-                         self.timedomain, self.spacedomain)
+        if (overwrite_dump or not path.exists(sep.join([self.output_directory,
+                                                        self.dump_file]))):
+            create_dump_file(sep.join([self.output_directory, self.dump_file]),
+                             self.states_info, self.solver_history,
+                             self.timedomain, self.spacedomain)
 
-    def initialise_states(self, tag):
+    def initialise_states(self, tag, overwrite):
         # if not already initialised, get default state values
         if not self.is_initialised:
             states = self.initialise(**self.constants)
             self._instantiate_states(states)
             self.is_initialised = True
         # create the dump file for this given run
-        self._initialise_dump(tag)
+        self._initialise_dump(tag, overwrite)
 
     def initialise_states_from_dump(self, dump_file, at=None):
         """Initialise the states of the Component from a dump file.
@@ -440,10 +442,18 @@ class Component(metaclass=MetaComponent):
                 a specific snapshot in time amongst the ones available
                 in the dump file.
 
+        :Returns:
+
+            datetime object
+                The snapshot in time that was used for the initial
+                conditions.
+
         """
-        states = load_dump_file(dump_file, at, self.states_info)
+        states, at = load_dump_file(dump_file, at, self.states_info)
         self._instantiate_states(states)
         self.is_initialised = True
+
+        return at
 
     def increment_states(self):
         for s in self.states:
