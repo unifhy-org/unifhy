@@ -432,6 +432,17 @@ class Model(object):
         self.openwater.finalise_states(openwater_timedomain)
 
     def resume(self, at=None):
+        """Resume model simulation on latest snapshot in dump files or
+        at the given snapshot.
+
+        :Parameters:
+
+            at: datetime object, optional
+                The particular point in time (snapshot) available in the
+                dump files that will be used to resume the model
+                simulation.
+
+        """
         ats = []
         cycle_nos = []
         data_or_null = 0
