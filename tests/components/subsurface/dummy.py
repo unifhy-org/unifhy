@@ -7,18 +7,25 @@ from .dummyc import dummyc
 
 
 class Dummy(SubSurfaceComponent):
-
     driving_data_info = {
-        'driving_a': '1',
+        'driving_a': {
+            'units': '1'
+        },
     }
     # ancillary_data_info = {},
     parameters_info = {
-        'parameter_a': '1',
+        'parameter_a': {
+            'units': '1'
+        },
     }
     # constants_info = {},
     states_info = {
-        'state_a': '1',
-        'state_b': '1'
+        'state_a': {
+            'units': '1'
+        },
+        'state_b': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
@@ -64,18 +71,25 @@ class Dummy(SubSurfaceComponent):
 
 
 class DummyFortran(SubSurfaceComponent):
-
     driving_data_info = {
-        'driving_a': '1',
+        'driving_a': {
+            'units': '1'
+        },
     }
     # ancillary_data_info = {},
     parameters_info = {
-        'parameter_a': '1',
+        'parameter_a': {
+            'units': '1'
+        },
     }
     # constants_info = {},
     states_info = {
-        'state_a': '1',
-        'state_b': '1'
+        'state_a': {
+            'units': '1'
+        },
+        'state_b': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
@@ -131,18 +145,25 @@ class DummyFortran(SubSurfaceComponent):
 
 
 class DummyC(SubSurfaceComponent):
-
     driving_data_info = {
-        'driving_a': '1',
+        'driving_a': {
+            'units': '1'
+        },
     }
     # ancillary_data_info = {},
     parameters_info = {
-        'parameter_a': '1',
+        'parameter_a': {
+            'units': '1'
+        },
     }
     # constants_info = {},
     states_info = {
-        'state_a': '1',
-        'state_b': '1'
+        'state_a': {
+            'units': '1'
+        },
+        'state_b': {
+            'units': '1'
+        }
     }
     solver_history = 1
 

@@ -221,7 +221,7 @@ class Component(metaclass=MetaComponent):
                     DataSet.__name__))
 
         # check data units compatibility with component
-        for data_name, data_unit in {**self.driving_data_info,
+        for data_name, data_info in {**self.driving_data_info,
                                      **self.ancillary_data_info}.items():
             # check that all driving data are available in DataSet
             if data_name not in dataset:
@@ -231,14 +231,14 @@ class Component(metaclass=MetaComponent):
                         self.__class__.__name__))
             # check that driving data units are compliant with component units
             if hasattr(dataset[data_name], 'units'):
-                if not Units(data_unit).equals(
+                if not Units(data_info['units']).equals(
                         Units(dataset[data_name].units)):
                     raise ValueError(
                         "units of variable '{}' in {} {} not equal to units "
                         "required by {} component '{}': {} required".format(
                             data_name, self._category, DataSet.__name__,
                             self._category, self.__class__.__name__,
-                            data_unit))
+                            data_info['units']))
             else:
                 raise AttributeError("variable '{}' in {} for {} component "
                                      "missing 'units' attribute".format(
@@ -511,15 +511,29 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'surfacelayer'
     _inwards_info = {
-        'soil_water_stress': '1'
+        'soil_water_stress': {
+            'units': '1'
+        }
     }
     _outwards_info = {
-        'throughfall': 'kg m-2 s-1',
-        'snowmelt': 'kg m-2 s-1',
-        'transpiration': 'kg m-2 s-1',
-        'evaporation_soil_surface': 'kg m-2 s-1',
-        'evaporation_ponded_water': 'kg m-2 s-1',
-        'evaporation_openwater': 'kg m-2 s-1'
+        'throughfall': {
+            'units': 'kg m-2 s-1'
+        },
+        'snowmelt': {
+            'units': 'kg m-2 s-1'
+        },
+        'transpiration': {
+            'units': 'kg m-2 s-1'
+        },
+        'evaporation_soil_surface': {
+            'units': 'kg m-2 s-1'
+        },
+        'evaporation_ponded_water': {
+            'units': 'kg m-2 s-1'
+        },
+        'evaporation_openwater': {
+            'units': 'kg m-2 s-1'
+        }
     }
 
 
@@ -529,15 +543,29 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'subsurface'
     _inwards_info = {
-        'evaporation_soil_surface': 'kg m-2 s-1',
-        'evaporation_ponded_water': 'kg m-2 s-1',
-        'transpiration': 'kg m-2 s-1',
-        'throughfall': 'kg m-2 s-1',
-        'snowmelt': 'kg m-2 s-1'
+        'evaporation_soil_surface': {
+            'units': 'kg m-2 s-1'
+        },
+        'evaporation_ponded_water': {
+            'units': 'kg m-2 s-1'
+        },
+        'transpiration': {
+            'units': 'kg m-2 s-1'
+        },
+        'throughfall': {
+            'units': 'kg m-2 s-1'
+        },
+        'snowmelt': {
+            'units': 'kg m-2 s-1'
+        }
     }
     _outwards_info = {
-        'runoff': 'kg m-2 s-1',
-        'soil_water_stress': '1'
+        'runoff': {
+            'units': 'kg m-2 s-1'
+        },
+        'soil_water_stress': {
+            'units': '1'
+        }
     }
 
 
@@ -547,11 +575,17 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'openwater'
     _inwards_info = {
-        'evaporation_openwater': 'kg m-2 s-1',
-        'runoff': 'kg m-2 s-1'
+        'evaporation_openwater': {
+            'units': 'kg m-2 s-1'
+        },
+        'runoff': {
+            'units': 'kg m-2 s-1'
+        }
     }
     _outwards_info = {
-        'discharge': 'kg m-2 s-1'
+        'discharge': {
+            'units': 'kg m-2 s-1'
+        }
     }
 
 

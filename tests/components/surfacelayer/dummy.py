@@ -7,20 +7,31 @@ from .dummyc import dummyc
 
 
 class Dummy(SurfaceLayerComponent):
-
     driving_data_info = {
-        'driving_a': '1',
-        'driving_b': '1',
-        'driving_c': '1',
+        'driving_a': {
+            'units': '1'
+        },
+        'driving_b': {
+            'units': '1'
+        },
+        'driving_c': {
+            'units': '1'
+        },
     }
     ancillary_data_info = {
-        'ancillary_a': '1'
+        'ancillary_a': {
+            'units': '1'
+        }
     }
     # parameters_info = {}
     # constants_info = {}
     states_info = {
-        'state_a': '1',
-        'state_b': '1'
+        'state_a': {
+            'units': '1'
+        },
+        'state_b': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
@@ -76,20 +87,31 @@ class Dummy(SurfaceLayerComponent):
 
 
 class DummyFortran(SurfaceLayerComponent):
-
     driving_data_info = {
-        'driving_a': '1',
-        'driving_b': '1',
-        'driving_c': '1',
+        'driving_a': {
+            'units': '1'
+        },
+        'driving_b': {
+            'units': '1'
+        },
+        'driving_c': {
+            'units': '1'
+        },
     }
     ancillary_data_info = {
-        'ancillary_a': '1'
+        'ancillary_a': {
+            'units': '1'
+        }
     }
     # parameters_info = {}
     # constants_info = {}
     states_info = {
-        'state_a': '1',
-        'state_b': '1'
+        'state_a': {
+            'units': '1'
+        },
+        'state_b': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
@@ -149,20 +171,31 @@ class DummyFortran(SurfaceLayerComponent):
 
 
 class DummyC(SurfaceLayerComponent):
-
     driving_data_info = {
-        'driving_a': '1',
-        'driving_b': '1',
-        'driving_c': '1',
+        'driving_a': {
+            'units': '1'
+        },
+        'driving_b': {
+            'units': '1'
+        },
+        'driving_c': {
+            'units': '1'
+        },
     }
     ancillary_data_info = {
-        'ancillary_a': '1'
+        'ancillary_a': {
+            'units': '1'
+        }
     }
     # parameters_info = {}
     # constants_info = {}
     states_info = {
-        'state_a': '1',
-        'state_b': '1'
+        'state_a': {
+            'units': '1'
+        },
+        'state_b': {
+            'units': '1'
+        }
     }
     solver_history = 1
 

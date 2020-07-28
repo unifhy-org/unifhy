@@ -32,7 +32,7 @@ def create_dump_file(filepath, states_info, solver_history,
         # state variables
         for state in states_info:
             s = f.createVariable(state, np.float64, ('time', 'history', *axes))
-            s.units = states_info[state]
+            s.units = states_info[state]['units']
 
 
 def update_dump_file(filepath, states, timestamp, solver_history):

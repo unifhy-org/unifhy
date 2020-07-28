@@ -7,19 +7,26 @@ from .dummyc import dummyc
 
 
 class Dummy(OpenWaterComponent):
-
     # driving_data_info = {}
     ancillary_data_info = {
-        'ancillary_a': '1'
+        'ancillary_a': {
+            'units': '1'
+        }
     }
     parameters_info = {
-        'parameter_a': '1',
+        'parameter_a': {
+            'units': '1'
+        },
     }
     constants_info = {
-        'constant_a': '1'
+        'constant_a': {
+            'units': '1'
+        }
     },
     states_info = {
-        'state_a': '1'
+        'state_a': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
@@ -59,19 +66,26 @@ class Dummy(OpenWaterComponent):
 
 
 class DummyFortran(OpenWaterComponent):
-
     # driving_data_info = {}
     ancillary_data_info = {
-        'ancillary_a': '1'
+        'ancillary_a': {
+            'units': '1'
+        }
     }
     parameters_info = {
-        'parameter_a': '1',
+        'parameter_a': {
+            'units': '1'
+        },
     }
     constants_info = {
-        'constant_a': '1'
-    },
+                         'constant_a': {
+                             'units': '1'
+                         }
+                     },
     states_info = {
-        'state_a': '1'
+        'state_a': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
@@ -117,19 +131,26 @@ class DummyFortran(OpenWaterComponent):
 
 
 class DummyC(OpenWaterComponent):
-
     # driving_data_info = {}
     ancillary_data_info = {
-        'ancillary_a': '1'
+        'ancillary_a': {
+            'units': '1'
+        }
     }
     parameters_info = {
-        'parameter_a': '1',
+        'parameter_a': {
+            'units': '1'
+        },
     }
     constants_info = {
-        'constant_a': '1'
-    },
+                         'constant_a': {
+                             'units': '1'
+                         }
+                     },
     states_info = {
-        'state_a': '1'
+        'state_a': {
+            'units': '1'
+        }
     }
     solver_history = 1
 
