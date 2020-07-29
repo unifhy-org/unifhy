@@ -124,8 +124,6 @@ class TestModelAPI(unittest.TestCase):
                     dumping_frequency=get_dummy_dumping_frequency()
                 )
 
-                self.tearDown()
-
     def test_3_model_resume(self):
         # loop through all the possible combinations of components
         for surfacelayer_kind, subsurface_kind, openwater_kind in \
@@ -137,10 +135,7 @@ class TestModelAPI(unittest.TestCase):
                 self.model = self.doe_models[(surfacelayer_kind,
                                               subsurface_kind,
                                               openwater_kind)]
-                self.model.simulate(
-                    dumping_frequency=get_dummy_dumping_frequency()
-                )
-
+                
                 # store the last component states
                 last_states_sl = deepcopy(self.model.surfacelayer.states)
                 last_states_ss = deepcopy(self.model.subsurface.states)
