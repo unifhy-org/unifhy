@@ -27,30 +27,26 @@ class Dummy(SurfaceLayerComponent):
     # constants_info = {}
     states_info = {
         'state_a': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1
         },
         'state_b': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1
         }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        return {
-            # component states
-            'state_a': (  # in chronological order
-                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            ),
-            'state_b': (  # in chronological order
-                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   state_a, state_b,
+                   **kwargs):
+
+        state_a[-1][:] = 0
+        state_b[-1][:] = 0
 
     def run(self,
-            # interface fluxes in
+            # from interface
             soil_water_stress,
             # component driving data
             driving_a, driving_b, driving_c,
@@ -66,7 +62,7 @@ class Dummy(SurfaceLayerComponent):
         state_b[0][:] = state_b[-1] + 2
 
         return {
-            # interface fluxes out
+            # to interface
             'throughfall':
                 driving_a + driving_b + driving_c,
             'snowmelt':
@@ -81,7 +77,9 @@ class Dummy(SurfaceLayerComponent):
                 driving_a + driving_b + driving_c
         }
 
-    def finalise(self, state_a, state_b,
+    def finalise(self,
+                 # component states
+                 state_a, state_b,
                  **kwargs):
         pass
 
@@ -107,35 +105,26 @@ class DummyFortran(SurfaceLayerComponent):
     # constants_info = {}
     states_info = {
         'state_a': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1,
+            'order': 'F'
         },
         'state_b': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1,
+            'order': 'F'
         }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        z, y, x = self.spaceshape
-        state_a_m1, state_a_0, state_b_m1, state_b_0 = (
-            dummyfortran.initialise(z, y, x)
-        )
-
-        return {
-            # component states
-            'state_a': (  # in chronological order
-                state_a_m1,  # for t-1
-                state_a_0  # for t
-            ),
-            'state_b': (  # in chronological order
-                state_b_m1,  # for t-1
-                state_b_0  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   state_a, state_b,
+                   **kwargs):
+        dummyfortran.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # interface fluxes in
+            # from interface
             soil_water_stress,
             # component driving data
             driving_a, driving_b, driving_c,
@@ -157,7 +146,7 @@ class DummyFortran(SurfaceLayerComponent):
         )
 
         return {
-            # interface fluxes out
+            # to interface
             'throughfall': throughfall,
             'snowmelt': snowmelt,
             'transpiration': transpiration,
@@ -166,7 +155,10 @@ class DummyFortran(SurfaceLayerComponent):
             'evaporation_openwater': evaporation_openwater
         }
 
-    def finalise(self, **kwargs):
+    def finalise(self,
+                 # component states
+                 state_a, state_b,
+                 **kwargs):
         dummyfortran.finalise()
 
 
@@ -191,35 +183,24 @@ class DummyC(SurfaceLayerComponent):
     # constants_info = {}
     states_info = {
         'state_a': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1
         },
         'state_b': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1
         }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        z, y, x = self.spaceshape
-        state_a_m1, state_a_0, state_b_m1, state_b_0 = (
-            dummyc.initialise(z, y, x)
-        )
-
-        return {
-            # component states
-            'state_a': (  # in chronological order
-                state_a_m1,  # for t-1
-                state_a_0  # for t
-            ),
-            'state_b': (  # in chronological order
-                state_b_m1,  # for t-1
-                state_b_0  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   state_a, state_b,
+                   **kwargs):
+        dummyc.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # interface fluxes in
+            # from interface
             soil_water_stress,
             # component driving data
             driving_a, driving_b, driving_c,
@@ -241,7 +222,7 @@ class DummyC(SurfaceLayerComponent):
         )
 
         return {
-            # interface fluxes out
+            # to interface
             'throughfall': throughfall,
             'snowmelt': snowmelt,
             'transpiration': transpiration,
@@ -250,5 +231,8 @@ class DummyC(SurfaceLayerComponent):
             'evaporation_openwater': evaporation_openwater
         }
 
-    def finalise(self, **kwargs):
+    def finalise(self,
+                 # component states
+                 state_a, state_b,
+                 **kwargs):
         dummyc.finalise()

@@ -7,41 +7,54 @@ from cm4twc.settings import DTYPE_F
 class Sciencish(SurfaceLayerComponent):
 
     driving_data_info = {
-        'rainfall': 'kg m-2 s-1',
-        'snowfall': 'kg m-2 s-1',
-        'air_temperature': 'K',
+        'rainfall': {
+            'units': 'kg m-2 s-1'
+        },
+        'snowfall': {
+            'units': 'kg m-2 s-1'
+        },
+        'air_temperature': {
+            'units': 'K'
+        },
     }
     ancillary_data_info = {
-        'vegetation_fraction': '1'
+        'vegetation_fraction': {
+            'units': '1'
+        }
     }
     # parameters_info = {}
     constants_info = {
-        'evaporation_rate': 'kg m-2 s-1',
-        'melting_temperature': 'K',
-        'interception_fraction': '1'
+        'evaporation_rate': {
+            'units': 'kg m-2 s-1'
+        },
+        'melting_temperature': {
+            'units': 'K'
+        },
+        'interception_fraction': {
+            'units': '1'
+        }
     }
     states_info = {
-        'canopy': 'kg m-2',
-        'snowpack': 'kg m-2'
+        'canopy': {
+            'units': 'kg m-2',
+            'divisions': 1
+        },
+        'snowpack': {
+            'units': 'kg m-2',
+            'divisions': 1
+        }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        return {
-            # component states
-            'canopy': (  # in chronological order
-                np.ones(self.spaceshape, DTYPE_F()) * 5,  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            ),
-            'snowpack': (  # in chronological order
-                np.ones(self.spaceshape, DTYPE_F()) * 2,  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   canopy, snowpack,
+                   **kwargs):
+        canopy[-1][:] = 5
+        snowpack[-1][:] = 2
 
     def run(self,
-            # interface fluxes in
+            # from interface
             soil_water_stress,
             # component driving data
             rainfall, snowfall, air_temperature,
@@ -90,7 +103,8 @@ class Sciencish(SurfaceLayerComponent):
             'evaporation_openwater': openwater_evaporation
         }
 
-    def finalise(self, canopy, snowpack,
+    def finalise(self,
+                 # to interface
+                 canopy, snowpack,
                  **kwargs):
-
         pass

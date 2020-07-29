@@ -10,6 +10,7 @@ from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
 from ..data import DataSet
+from ..settings import DTYPE_F, ORDER
 
 
 class MetaComponent(abc.ABCMeta):
@@ -391,14 +392,19 @@ class Component(metaclass=MetaComponent):
 
         return outwards
 
-    def _instantiate_states(self, states):
-        # get a State object for each state and give it its initial conditions
+    def _instantiate_states(self):
+        # get a State object for each state and initialise to zero
         for s in self.states_info:
-            if s in states:
-                self.states[s] = State(*states[s])
-            else:
-                raise KeyError("initial conditions for {} component state "
-                               "'{}' not provided".format(self._category, s))
+            d = self.states_info[s].get('divisions', 1)
+            o = self.states_info[s].get('order', ORDER())
+            self.states[s] = State(
+                np.zeros(
+                    (self.solver_history+1, d, *self.spaceshape) if d > 1
+                    else (self.solver_history+1, *self.spaceshape),
+                    DTYPE_F(), order=o
+                ),
+                order=o
+            )
 
     def _initialise_dump(self, tag, overwrite_dump):
         self.dump_file = '_'.join([self.identifier, self.category,
@@ -412,8 +418,8 @@ class Component(metaclass=MetaComponent):
     def initialise_states(self, tag, overwrite):
         # if not already initialised, get default state values
         if not self.is_initialised:
-            states = self.initialise(**self.constants)
-            self._instantiate_states(states)
+            self._instantiate_states()
+            self.initialise(**self.states)
             self.is_initialised = True
         # create the dump file for this given run
         self._initialise_dump(tag, overwrite)
@@ -450,7 +456,13 @@ class Component(metaclass=MetaComponent):
 
         """
         states, at = load_dump_file(dump_file, at, self.states_info)
-        self._instantiate_states(states)
+        for s in self.states_info:
+            if s in states:
+                o = self.states_info[s].get('order', ORDER())
+                self.states[s] = State(states[s], order=o)
+            else:
+                raise KeyError("initial conditions for {} component state "
+                               "'{}' not in dump".format(self._category, s))
         self.is_initialised = True
 
         return at

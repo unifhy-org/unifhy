@@ -38,7 +38,16 @@ def DTYPE_F(dtype=None):
     return PRECISION['DTYPE_F']
 
 
+def ORDER(order=None):
+    """TODO: DOCSTRING REQUIRED"""
+    # contiguity for arrays ('C' is row-major, 'F' is column-major)
+    if order is not None:
+        PRECISION['ORDER'] = str(order)
+    return PRECISION['ORDER']
+
+
 ATOL(1e-8)
 RTOL(1e-5)
 DECR(12)
 DTYPE_F(np.float64)
+ORDER('C')

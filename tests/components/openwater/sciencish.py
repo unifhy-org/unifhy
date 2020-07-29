@@ -9,25 +9,27 @@ class Sciencish(OpenWaterComponent):
     # driving_data_info = {}
     # ancillary_data_info = {}
     parameters_info = {
-        'residence_time': 's',
+        'residence_time': {
+            'units': 's'
+        },
     }
     # constants_info = {},
     states_info = {
-        'river_channel': 'kg m-2'
+        'river_channel': {
+            'units': 'kg m-2',
+            'divisions': 1
+        }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        return {
-            'river_channel': (
-                np.ones(self.spaceshape, DTYPE_F()) * 1e3,  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   river_channel,
+                   **kwargs):
+        river_channel[-1][:] = 1e3
 
     def run(self,
-            # interface fluxes in
+            # from interface
             evaporation_openwater, runoff,
             # component driving data
             # component ancillary data
@@ -47,11 +49,12 @@ class Sciencish(OpenWaterComponent):
         river_channel[0][:] = np.where(channel_water < 0, 0, channel_water)
 
         return {
-            # interface fluxes out
+            # to interface
             'discharge': discharge
         }
 
-    def finalise(self, river_channel,
+    def finalise(self,
+                 # component states
+                 river_channel,
                  **kwargs):
-
         pass

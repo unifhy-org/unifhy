@@ -7,36 +7,42 @@ from cm4twc.settings import DTYPE_F
 class Sciencish(SubSurfaceComponent):
 
     driving_data_info = {
-        'soil_temperature': 'K',
+        'soil_temperature': {
+            'units': 'K'
+        },
     }
     # ancillary_data_info = {},
     parameters_info = {
-        'saturation_capacity': 'kg m-2'
+        'saturation_capacity': {
+            'units': 'kg m-2'
+        }
     }
     constants_info = {
-        'freezing_temperature': 'K'
+        'freezing_temperature': {
+            'units': 'K'
+        }
     },
     states_info = {
-        'soil_moisture': 'kg m-2',
-        'aquifer': 'kg m-2'
+        'soil_moisture': {
+            'units': 'kg m-2',
+            'divisions': 1
+        },
+        'aquifer': {
+            'units': 'kg m-2',
+            'divisions': 1
+        }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        return {
-            'soil_moisture': (
-                np.ones(self.spaceshape, DTYPE_F()) * 3e2,  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            ),
-            'aquifer': (
-                np.ones(self.spaceshape, DTYPE_F()) * 1e3,  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   soil_moisture, aquifer,
+                   **kwargs):
+        soil_moisture[-1][:] = 3e2
+        aquifer[-1][:] = 1e3
 
     def run(self,
-            # interface fluxes in
+            # from interface
             evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             # component driving data
@@ -77,12 +83,13 @@ class Sciencish(SubSurfaceComponent):
                          - groundwater_runoff * self.timestepinseconds)
 
         return {
-            # interface fluxes out
+            # to interface
             'runoff': soil_runoff + surface_runoff + groundwater_runoff,
             'soil_water_stress': soil_water_stress
         }
 
-    def finalise(self, soil_moisture, aquifer,
+    def finalise(self,
+                 # component states
+                 soil_moisture, aquifer,
                  **kwargs):
-
         pass

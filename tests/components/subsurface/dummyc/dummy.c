@@ -1,7 +1,6 @@
 void initialise_(int nz, int ny, int nx,
                  // component states
-                 double *state_a_m1, double *state_a_0,
-                 double *state_b_m1, double *state_b_0)
+                 double *state_a_m1, double *state_b_m1)
 {
   int i, j, k;
   int ijk;
@@ -14,9 +13,7 @@ void initialise_(int nz, int ny, int nx,
         ijk = k + nx * (j + ny * i);
         // initialise states
         state_a_m1[ijk] = 0.0;
-        state_a_0[ijk] = 0.0;
         state_b_m1[ijk] = 0.0;
-        state_b_0[ijk] = 0.0;
       }
 }
 

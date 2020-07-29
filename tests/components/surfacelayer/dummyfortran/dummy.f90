@@ -1,15 +1,13 @@
-subroutine initialise(z, y, x, state_a_m1, state_a_0, state_b_m1, state_b_0)
+subroutine initialise(z, y, x, state_a_m1, state_b_m1)
     implicit none
 
     ! spaceshape
     integer, intent(in) :: z, y, x
     ! component states
-    real(kind=8), intent(out), dimension(z, y, x) :: state_a_m1, state_a_0, state_b_m1, state_b_0
+    real(kind=8), intent(inout), dimension(z, y, x) :: state_a_m1, state_b_m1
 
     state_a_m1 = 0
-    state_a_0 = 0
     state_b_m1 = 0
-    state_b_0 = 0
 
 end subroutine initialise
 

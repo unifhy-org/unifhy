@@ -25,22 +25,21 @@ class Dummy(OpenWaterComponent):
     },
     states_info = {
         'state_a': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1
         }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        return {
-            'state_a': (
-                np.zeros(self.spaceshape, DTYPE_F()),  # for t-1
-                np.zeros(self.spaceshape, DTYPE_F())  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   state_a,
+                   **kwargs):
+
+        state_a[-1][:] = 0
 
     def run(self,
-            # interface fluxes in
+            # from interface
             evaporation_openwater, runoff,
             # component driving data
             # component ancillary data
@@ -56,11 +55,13 @@ class Dummy(OpenWaterComponent):
         state_a[0][:] = state_a[-1] + 1
 
         return {
-            # interface fluxes out
+            # to interface
             'discharge': ancillary_a * parameter_a * constant_a
         }
 
-    def finalise(self, state_a,
+    def finalise(self,
+                 # component states
+                 state_a,
                  **kwargs):
         pass
 
@@ -78,31 +79,27 @@ class DummyFortran(OpenWaterComponent):
         },
     }
     constants_info = {
-                         'constant_a': {
-                             'units': '1'
-                         }
-                     },
+         'constant_a': {
+             'units': '1'
+         }
+     },
     states_info = {
         'state_a': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1,
+            'order': 'F'
         }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        z, y, x = self.spaceshape
-        state_a_m1, state_a_0 = dummyfortran.initialise(z, y, x)
-
-        return {
-            'state_a': (
-                state_a_m1,  # for t-1
-                state_a_0  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   state_a,
+                   **kwargs):
+        dummyfortran.initialise(state_a[-1])
 
     def run(self,
-            # interface fluxes in
+            # from interface
             evaporation_openwater, runoff,
             # component driving data
             # component ancillary data
@@ -121,11 +118,13 @@ class DummyFortran(OpenWaterComponent):
         )
 
         return {
-            # interface fluxes out
+            # to interface
             'discharge': discharge
         }
 
-    def finalise(self, state_a,
+    def finalise(self,
+                 # component states
+                 state_a,
                  **kwargs):
         dummyfortran.finalise()
 
@@ -143,31 +142,26 @@ class DummyC(OpenWaterComponent):
         },
     }
     constants_info = {
-                         'constant_a': {
-                             'units': '1'
-                         }
-                     },
+        'constant_a': {
+            'units': '1'
+        }
+    },
     states_info = {
         'state_a': {
-            'units': '1'
+            'units': '1',
+            'divisions': 1
         }
     }
     solver_history = 1
 
-    def initialise(self, **kwargs):
-        # component has a history of 1, so needs states for t-1 and t
-        z, y, x = self.spaceshape
-        state_a_m1, state_a_0 = dummyc.initialise(z, y, x)
-
-        return {
-            'state_a': (
-                state_a_m1,  # for t-1
-                state_a_0  # for t
-            )
-        }
+    def initialise(self,
+                   # component states
+                   state_a,
+                   **kwargs):
+        dummyc.initialise(state_a[-1])
 
     def run(self,
-            # interface fluxes in
+            # from interface
             evaporation_openwater, runoff,
             # component driving data
             # component ancillary data
@@ -185,10 +179,12 @@ class DummyC(OpenWaterComponent):
                                state_a[0], constant_a)
 
         return {
-            # interface fluxes out
+            # to interface
             'discharge': discharge
         }
 
-    def finalise(self, state_a,
+    def finalise(self,
+                 # component states
+                 state_a,
                  **kwargs):
         dummyc.finalise()
