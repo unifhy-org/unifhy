@@ -51,3 +51,21 @@ class State(object):
 
     def __repr__(self):
         return "%r" % self.history
+
+    def increment(self):
+        # determine first index in the State
+        # (function of solver's history)
+        first_index = -len(self) + 1
+        # prepare the left-hand side for the permutation of views
+        lhs = [t for t in self]
+        # prepare the right-hand side for the permutation of views
+        rhs = [t for t in self[first_index + 1:]] + \
+              [self[first_index]]
+        # carry out the permutation of views
+        # to avoid new object creations
+        lhs[:] = rhs[:]
+        # apply new list of views to the State
+        self[:] = lhs
+
+        # re-initialise current timestep of State to zero
+        self[0][:] = 0.0

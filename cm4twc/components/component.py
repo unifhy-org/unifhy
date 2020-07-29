@@ -457,22 +457,7 @@ class Component(metaclass=MetaComponent):
 
     def increment_states(self):
         for s in self.states:
-            # determine first index in the State
-            # (function of solver's history)
-            first_index = -len(self.states[s]) + 1
-            # prepare the left-hand side of the name re-binding
-            lhs = [t for t in self.states[s]]
-            # prepare the right-hand side of the name re-binding
-            rhs = [t for t in self.states[s][first_index+1:]] + \
-                [self.states[s][first_index]]
-            # carry out the permutation (i.e. name re-binding)
-            # to avoid new object creations
-            lhs[:] = rhs[:]
-            # apply new name bindings to the State
-            self.states[s][:] = lhs
-
-            # re-initialise current timestep of State to zero
-            self.states[s][0][:] = 0.0
+            self.states[s].increment()
 
     def dump_states(self, timedomain, timeindex):
         timestamp = timedomain.bounds.array[timeindex, 0]
