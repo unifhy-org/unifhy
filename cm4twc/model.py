@@ -276,7 +276,9 @@ class Model(object):
             'start': start.strftime('%Y-%m-%d %H:%M:%S'),
             'end': end.strftime('%Y-%m-%d %H:%M:%S'),
             'cycles': cycles,
-            'dumping_frequency': {'seconds': dumping_frequency.total_seconds()}
+            'dumping_frequency':
+                {'seconds': dumping_frequency.total_seconds()}
+                if dumping_frequency is not None else None
         }
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'spin_up', 'yml'])]),
@@ -325,7 +327,9 @@ class Model(object):
         """
         # store spin up configuration in a separate yaml file
         simulate_config = {
-            'dumping_frequency': {'seconds': dumping_frequency.total_seconds()}
+            'dumping_frequency':
+                {'seconds': dumping_frequency.total_seconds()}
+                if dumping_frequency is not None else None
         }
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'simulate', 'yml'])]),
@@ -515,10 +519,11 @@ class Model(object):
                 component.timedomain = remaining_td
 
             # resume the simulation run
+            dump_freq_sec = (None if cfg['dumping_frequency'] is None else
+                             cfg['dumping_frequency'].get('seconds', None))
             self.simulate(
-                dumping_frequency=timedelta(
-                    seconds=cfg['dumping_frequency']['seconds']
-                ),
+                dumping_frequency=timedelta(seconds=dump_freq_sec)
+                if dump_freq_sec is not None else None,
                 overwrite=False
             )
         elif path.exists(yaml_sig.replace('*', 'spin_up')):
@@ -535,8 +540,10 @@ class Model(object):
             # resume the spin up run(s)
             start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
             end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
-            dumping_frequency = timedelta(
-                seconds=cfg['dumping_frequency']['seconds'])
+            dump_freq_sec = (None if cfg['dumping_frequency'] is None else
+                             cfg['dumping_frequency'].get('seconds', None))
+            dumping_frequency = (timedelta(seconds=dump_freq_sec)
+                                 if dump_freq_sec is not None else None)
             # resume spin up cycle according to the latest dump found
             if at == end:
                 if cfg['cycles'] == cycle_no:
