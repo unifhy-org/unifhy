@@ -1,6 +1,18 @@
 from cm4twc.components import SubSurfaceComponent
-from .dummyfortran import dummyfortran
-from .dummyc import dummyc
+try:
+    from .dummyfortran import dummyfortran
+except ImportError:
+    # since dummyfortran is not defined in this exception catch, it will raise
+    # a NameError later if DummyFortran component is used, but other component
+    # will remain usable
+    pass
+try:
+    from .dummyc import dummyc
+except ImportError:
+    # since dummyc is not defined in this exception catch, it will raise
+    # a NameError later if DummyC component is used, but other component
+    # will remain usable
+    pass
 
 
 class Dummy(SubSurfaceComponent):
