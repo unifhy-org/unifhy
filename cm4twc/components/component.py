@@ -374,7 +374,16 @@ class Component(metaclass=MetaComponent):
             + [")"]
         )
 
-    def __call__(self, timeindex, datetime_, **kwargs):
+    def initialise_(self, tag, overwrite):
+        # if not already initialised, get default state values
+        if not self.is_initialised:
+            self._instantiate_states()
+            self.initialise(**self.states)
+            self.is_initialised = True
+        # create the dump file for this given run
+        self._initialise_dump(tag, overwrite)
+
+    def run_(self, timeindex, datetime_, **kwargs):
         # collect required ancillary data from dataset
         for data in self.ancillary_data_info:
             kwargs[data] = self.datasubset[data].array[...]
@@ -391,6 +400,12 @@ class Component(metaclass=MetaComponent):
         self.increment_states()
 
         return outwards
+
+    def finalise_(self, timedomain):
+        timestamp = timedomain.bounds.array[-1, -1]
+        update_dump_file(sep.join([self.output_directory, self.dump_file]),
+                         self.states, timestamp, self.solver_history)
+        self.finalise(**self.states)
 
     def _instantiate_states(self):
         # get a State object for each state and initialise to zero
@@ -414,15 +429,6 @@ class Component(metaclass=MetaComponent):
             create_dump_file(sep.join([self.output_directory, self.dump_file]),
                              self.states_info, self.solver_history,
                              self.timedomain, self.spacedomain)
-
-    def initialise_states(self, tag, overwrite):
-        # if not already initialised, get default state values
-        if not self.is_initialised:
-            self._instantiate_states()
-            self.initialise(**self.states)
-            self.is_initialised = True
-        # create the dump file for this given run
-        self._initialise_dump(tag, overwrite)
 
     def initialise_states_from_dump(self, dump_file, at=None):
         """Initialise the states of the Component from a dump file.
@@ -475,12 +481,6 @@ class Component(metaclass=MetaComponent):
         timestamp = timedomain.bounds.array[timeindex, 0]
         update_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states, timestamp, self.solver_history)
-
-    def finalise_states(self, timedomain):
-        timestamp = timedomain.bounds.array[-1, -1]
-        update_dump_file(sep.join([self.output_directory, self.dump_file]),
-                         self.states, timestamp, self.solver_history)
-        self.finalise(**self.states)
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
@@ -638,13 +638,13 @@ class DataComponent(Component):
             + [")"]
         )
 
-    def initialise_states(self, *args, **kwargs):
+    def initialise_(self, *args, **kwargs):
         pass
 
     def dump_states(self, *args, **kwargs):
         pass
 
-    def finalise_states(self, *args, **kwargs):
+    def finalise_(self, *args, **kwargs):
         pass
 
     def initialise(self, *args, **kwargs):
@@ -704,13 +704,13 @@ class NullComponent(Component):
             + [")"]
         )
 
-    def initialise_states(self, *args, **kwargs):
+    def initialise_(self, *args, **kwargs):
         pass
 
     def dump_states(self, *args, **kwargs):
         pass
 
-    def finalise_states(self, *args, **kwargs):
+    def finalise_(self, *args, **kwargs):
         pass
 
     def initialise(self, *args, **kwargs):

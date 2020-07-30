@@ -350,9 +350,9 @@ class Model(object):
 
     def _initialise(self, tag, overwrite):
         # initialise components' states
-        self.surfacelayer.initialise_states(tag, overwrite)
-        self.subsurface.initialise_states(tag, overwrite)
-        self.openwater.initialise_states(tag, overwrite)
+        self.surfacelayer.initialise_(tag, overwrite)
+        self.subsurface.initialise_(tag, overwrite)
+        self.openwater.initialise_(tag, overwrite)
 
     def _run(self, surfacelayer_timedomain, subsurface_timedomain,
              openwater_timedomain, dumping_frequency=None):
@@ -403,7 +403,7 @@ class Model(object):
 
             if run_surfacelayer:
                 interface.update(
-                    self.surfacelayer(
+                    self.surfacelayer.run_(
                         timeindex=clock.get_current_timeindex('surfacelayer'),
                         datetime_=datetime_,
                         **interface
@@ -412,7 +412,7 @@ class Model(object):
 
             if run_subsurface:
                 interface.update(
-                    self.subsurface(
+                    self.subsurface.run_(
                         timeindex=clock.get_current_timeindex('subsurface'),
                         datetime_=datetime_,
                         **interface
@@ -421,7 +421,7 @@ class Model(object):
 
             if run_openwater:
                 interface.update(
-                    self.openwater(
+                    self.openwater.run_(
                         timeindex=clock.get_current_timeindex('openwater'),
                         datetime_=datetime_,
                         **interface
@@ -431,9 +431,9 @@ class Model(object):
     def _finalise(self, surfacelayer_timedomain, subsurface_timedomain,
                   openwater_timedomain):
         # finalise components
-        self.surfacelayer.finalise_states(surfacelayer_timedomain)
-        self.subsurface.finalise_states(subsurface_timedomain)
-        self.openwater.finalise_states(openwater_timedomain)
+        self.surfacelayer.finalise_(surfacelayer_timedomain)
+        self.subsurface.finalise_(subsurface_timedomain)
+        self.openwater.finalise_(openwater_timedomain)
 
     def resume(self, at=None):
         """Resume model simulation on latest snapshot in dump files or
