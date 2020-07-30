@@ -1,7 +1,6 @@
 import numpy as np
 
 from cm4twc.components import SurfaceLayerComponent
-from cm4twc.settings import DTYPE_F
 
 
 class Sciencish(SurfaceLayerComponent):
@@ -91,7 +90,7 @@ class Sciencish(SurfaceLayerComponent):
         snowpack[0][:] = snowpack[-1] + ((snowfall - snowmelt)
                                          * self.timestepinseconds)
 
-        openwater_evaporation = np.zeros(self.spaceshape, DTYPE_F())
+        openwater_evaporation = soil_evaporation * 0
 
         return {
             # interface fluxes out

@@ -1,7 +1,6 @@
 import numpy as np
 
 from cm4twc.components import OpenWaterComponent
-from cm4twc.settings import DTYPE_F
 
 
 class Sciencish(OpenWaterComponent):

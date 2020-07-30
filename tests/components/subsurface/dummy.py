@@ -1,7 +1,4 @@
-import numpy as np
-
 from cm4twc.components import SubSurfaceComponent
-from cm4twc.settings import DTYPE_F
 from .dummyfortran import dummyfortran
 from .dummyc import dummyc
 
