@@ -414,7 +414,7 @@ class Component(metaclass=MetaComponent):
             o = self.states_info[s].get('order', ORDER())
             self.states[s] = State(
                 np.zeros(
-                    (self.solver_history+1, d, *self.spaceshape) if d > 1
+                    (self.solver_history+1, *self.spaceshape, d) if d > 1
                     else (self.solver_history+1, *self.spaceshape),
                     DTYPE_F(), order=o
                 ),
