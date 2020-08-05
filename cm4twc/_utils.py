@@ -47,43 +47,43 @@ class Clock(object):
         supermesh_step = supermesh_delta.total_seconds()
 
         # check that all timesteps are multiple integers of the supermesh step
-        surfacelayer_step = surfacelayer_timedomain.timedelta.total_seconds()
-        if not surfacelayer_step % supermesh_step == 0:
+        sl_step = surfacelayer_timedomain.timedelta.total_seconds()
+        if not sl_step % supermesh_step == 0:
             raise ValueError(
                 "timestep of surfacelayer component ({}s) not a multiple "
                 "integer of timestep of fastest component ({}s).".format(
-                    surfacelayer_step, supermesh_step))
+                    sl_step, supermesh_step))
 
-        subsurface_step = subsurface_timedomain.timedelta.total_seconds()
-        if not subsurface_step % supermesh_step == 0:
+        ss_step = subsurface_timedomain.timedelta.total_seconds()
+        if not ss_step % supermesh_step == 0:
             raise ValueError(
                 "timestep of subsurface component ({}s) not a multiple "
                 "integer of timestep of fastest component ({}s).".format(
-                    subsurface_step, supermesh_step))
+                    ss_step, supermesh_step))
 
-        openwater_step = openwater_timedomain.timedelta.total_seconds()
-        if not openwater_step % supermesh_step == 0:
+        ow_step = openwater_timedomain.timedelta.total_seconds()
+        if not ow_step % supermesh_step == 0:
             raise ValueError(
                 "timestep of openwater component ({}s) not a multiple "
                 "integer of timestep of fastest component ({}s).".format(
-                    openwater_step, supermesh_step))
+                    ow_step, supermesh_step))
 
         # get boolean arrays (switches) to determine when to run a given
         # component on temporal supermesh
-        self._surfacelayer_switch = np.zeros((supermesh_length,), dtype=bool)
-        surfacelayer_increment = int(surfacelayer_step // supermesh_step)
-        self._surfacelayer_switch[0::surfacelayer_increment] = True
-        self._surfacelayer_index_multiple = surfacelayer_increment
+        self._sl_switch = np.zeros((supermesh_length,), dtype=bool)
+        sl_increment = int(sl_step // supermesh_step)
+        self._sl_switch[sl_increment-1::sl_increment] = True
+        self._sl_index_multiple = sl_increment
 
-        self._subsurface_switch = np.zeros((supermesh_length,), dtype=bool)
-        subsurface_increment = int(subsurface_step // supermesh_step)
-        self._subsurface_switch[0::subsurface_increment] = True
-        self._subsurface_index_multiple = subsurface_increment
+        self._ss_switch = np.zeros((supermesh_length,), dtype=bool)
+        ss_increment = int(ss_step // supermesh_step)
+        self._ss_switch[ss_increment-1::ss_increment] = True
+        self._ss_index_multiple = ss_increment
 
-        self._openwater_switch = np.zeros((supermesh_length,), dtype=bool)
-        openwater_increment = int(openwater_step // supermesh_step)
-        self._openwater_switch[0::openwater_increment] = True
-        self._openwater_index_multiple = openwater_increment
+        self._ow_switch = np.zeros((supermesh_length,), dtype=bool)
+        ow_increment = int(ow_step // supermesh_step)
+        self._ow_switch[ow_increment-1::ow_increment] = True
+        self._ow_index_multiple = ow_increment
 
         # determine whether model states dumping is required,and if so, when
         self._dumping_switch = np.zeros((supermesh_length,), dtype=bool)
@@ -129,13 +129,13 @@ class Clock(object):
     def get_current_timeindex(self, component_type):
         if component_type == 'surfacelayer':
             return (self._current_timeindex //
-                    self._surfacelayer_index_multiple)
+                    self._sl_index_multiple)
         if component_type == 'subsurface':
             return (self._current_timeindex //
-                    self._subsurface_index_multiple)
+                    self._ss_index_multiple)
         if component_type == 'openwater':
             return (self._current_timeindex //
-                    self._openwater_index_multiple)
+                    self._ow_index_multiple)
         else:
             raise None
 
@@ -151,9 +151,9 @@ class Clock(object):
             self._current_datetime += self.timedelta
 
             return (
-                self._surfacelayer_switch[index],
-                self._subsurface_switch[index],
-                self._openwater_switch[index],
+                self._sl_switch[index],
+                self._ss_switch[index],
+                self._ow_switch[index],
                 self._dumping_switch[index]
             )
         else:
