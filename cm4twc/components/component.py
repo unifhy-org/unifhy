@@ -10,7 +10,7 @@ from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
 from ..data import DataSet
-from ..settings import DTYPE_F, ORDER
+from ..settings import dtype_float, array_order
 
 
 class MetaComponent(abc.ABCMeta):
@@ -411,12 +411,12 @@ class Component(metaclass=MetaComponent):
         # get a State object for each state and initialise to zero
         for s in self.states_info:
             d = self.states_info[s].get('divisions', 1)
-            o = self.states_info[s].get('order', ORDER())
+            o = self.states_info[s].get('order', array_order())
             self.states[s] = State(
                 np.zeros(
                     (self.solver_history+1, *self.spaceshape, d) if d > 1
                     else (self.solver_history+1, *self.spaceshape),
-                    DTYPE_F(), order=o
+                    dtype_float(), order=o
                 ),
                 order=o
             )
@@ -464,7 +464,7 @@ class Component(metaclass=MetaComponent):
         states, at = load_dump_file(dump_file, at, self.states_info)
         for s in self.states_info:
             if s in states:
-                o = self.states_info[s].get('order', ORDER())
+                o = self.states_info[s].get('order', array_order())
                 self.states[s] = State(states[s], order=o)
             else:
                 raise KeyError("initial conditions for {} component state "

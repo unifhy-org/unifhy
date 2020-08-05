@@ -9,7 +9,7 @@ from ._utils import Interface, Clock
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
 from .time import TimeDomain
-from .settings import DTYPE_F
+from .settings import dtype_float
 
 
 class Model(object):
@@ -371,7 +371,7 @@ class Model(object):
             # fluxes that are both inwards and outwards will exist
             # only once because dictionary keys are unique
             fluxes={
-                f: np.zeros(c.spaceshape, DTYPE_F()) for c in
+                f: np.zeros(c.spaceshape, dtype_float()) for c in
                 [self.surfacelayer, self.subsurface, self.openwater]
                 for f in list(c.inwards_info) + list(c.outwards_info)
             }

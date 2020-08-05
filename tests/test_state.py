@@ -4,7 +4,7 @@ import cm4twc
 
 
 def compare_states(some_states, some_other_states):
-    rtol, atol = cm4twc.RTOL(), cm4twc.ATOL()
+    rtol, atol = cm4twc.rtol(), cm4twc.atol()
 
     comparison = []
     if some_states is not None:

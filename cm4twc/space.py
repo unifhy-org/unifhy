@@ -2,7 +2,7 @@ import numpy as np
 import re
 import cf
 
-from .settings import ATOL, RTOL, DECR
+from .settings import atol, rtol, decr
 
 
 class SpaceDomain(object):
@@ -157,7 +157,7 @@ class Grid(SpaceDomain):
         """
         space_diff = np.diff(dimension) if dimension.ndim > 0 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
-                          RTOL(), ATOL()):
+                          rtol(), atol()):
             raise RuntimeError(
                 "{} space gap not constant across region".format(name))
 
@@ -181,17 +181,17 @@ class Grid(SpaceDomain):
             ...
         RuntimeError: test bounds space gap not constant across region
         """
-        rtol = RTOL()
-        atol = ATOL()
+        rtol_ = rtol()
+        atol_ = atol()
 
         space_diff = np.diff(bounds, axis=0) if bounds.ndim > 0 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
-                          rtol, atol):
+                          rtol_, atol_):
             raise RuntimeError(
                 "{} bounds space gap not constant across region".format(name))
         space_diff = np.diff(bounds, axis=1) if bounds.ndim > 1 else 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
-                          rtol, atol):
+                          rtol_, atol_):
             raise RuntimeError(
                 "{} bounds space gap not constant across region".format(name))
 
@@ -212,7 +212,7 @@ class Grid(SpaceDomain):
         """
         prev_to_next = bounds[1:, 0] - bounds[:-1, 1] \
             if bounds.ndim > 1 else 0
-        if not np.allclose(prev_to_next, 0, RTOL(), ATOL()):
+        if not np.allclose(prev_to_next, 0, rtol(), atol()):
             raise RuntimeError(
                 "{} bounds not contiguous across region".format(name))
 
@@ -333,12 +333,12 @@ class Grid(SpaceDomain):
         # (i.e. need to produce a whole number of grid cells)
         dim_start, dim_end = extent
 
-        rtol = RTOL()
-        atol = ATOL()
-        if np.isclose((dim_end - dim_start) % resolution, 0, rtol, atol):
+        rtol_ = rtol()
+        atol_ = atol()
+        if np.isclose((dim_end - dim_start) % resolution, 0, rtol_, atol_):
             dim_size = (dim_end - dim_start) // resolution
         elif np.isclose((dim_end - dim_start) % resolution, resolution,
-                        rtol, atol):
+                        rtol_, atol_):
             dim_size = ((dim_end - dim_start) // resolution) + 1
         else:
             raise RuntimeError(
@@ -358,10 +358,10 @@ class Grid(SpaceDomain):
         )
 
         # round the arrays and return them
-        decr = DECR()
+        decr_ = decr()
         return (
-            np.around(dim, decimals=decr).tolist(),
-            np.around(dim_bounds, decimals=decr).tolist()
+            np.around(dim, decimals=decr_).tolist(),
+            np.around(dim_bounds, decimals=decr_).tolist()
         )
 
     def _get_dimension_resolution(self, axis):
@@ -379,7 +379,7 @@ class Grid(SpaceDomain):
                 dim_bnds = getattr(self, axis + '_bounds').array
                 return np.around(dim[1] - dim[0] if dim.size > 1
                                  else dim_bnds[0, 1] - dim_bnds[0, 0],
-                                 DECR()).tolist()
+                                 decr()).tolist()
 
     def _get_dimension_extent(self, axis):
         # return dimension extent (i.e. (start, end) for dimension)
@@ -392,10 +392,10 @@ class Grid(SpaceDomain):
                 return self._extent[axis]
             # infer from first coordinate lower/upper bounds along dimension
             else:
-                decr = DECR()
+                decr_ = decr()
                 dim_bnds = getattr(self, axis + '_bounds').array
-                return (np.around(dim_bnds[0, 0], decr).tolist(),
-                        np.around(dim_bnds[-1, -1], decr).tolist())
+                return (np.around(dim_bnds[0, 0], decr_).tolist(),
+                        np.around(dim_bnds[-1, -1], decr_).tolist())
 
     def _get_dimension_span(self, axis):
         if getattr(self, axis) is None:
@@ -410,9 +410,9 @@ class Grid(SpaceDomain):
             left_wing = (dim_bnds[0, 0] - dim[0]) / dim_res
             right_wing = (dim_bnds[0, 1] - dim[0]) / dim_res
 
-            decr = DECR()
-            return (np.around(left_wing, decr).tolist(),
-                    np.around(right_wing, decr).tolist())
+            decr_ = decr()
+            return (np.around(left_wing, decr_).tolist(),
+                    np.around(right_wing, decr_).tolist())
 
     def _get_yx_location(self):
         # return location of Y/X coordinates relative to their grid cell
@@ -426,23 +426,23 @@ class Grid(SpaceDomain):
             x_span = self._get_dimension_span('X')
             y_span = self._get_dimension_span('Y')
 
-            rtol = RTOL()
-            atol = ATOL()
+            rtol_ = rtol()
+            atol_ = atol()
 
-            if (np.allclose(x_span, [-0.5, 0.5], rtol, atol)
-                    and np.allclose(y_span, [-0.5, 0.5], rtol, atol)):
+            if (np.allclose(x_span, [-0.5, 0.5], rtol_, atol_)
+                    and np.allclose(y_span, [-0.5, 0.5], rtol_, atol_)):
                 yx_loc = 'centre'
-            elif (np.allclose(x_span, [0, 1], rtol, atol)
-                  and np.allclose(y_span, [0, 1], rtol, atol)):
+            elif (np.allclose(x_span, [0, 1], rtol_, atol_)
+                  and np.allclose(y_span, [0, 1], rtol_, atol_)):
                 yx_loc = 'lower_left'
-            elif (np.allclose(x_span, [0, 1], rtol, atol)
-                  and np.allclose(y_span, [-1, 0], rtol, atol)):
+            elif (np.allclose(x_span, [0, 1], rtol_, atol_)
+                  and np.allclose(y_span, [-1, 0], rtol_, atol_)):
                 yx_loc = 'upper_left'
-            elif (np.allclose(x_span, [-1, 0], rtol, atol)
-                  and np.allclose(y_span, [0, 1], rtol, atol)):
+            elif (np.allclose(x_span, [-1, 0], rtol_, atol_)
+                  and np.allclose(y_span, [0, 1], rtol_, atol_)):
                 yx_loc = 'lower_right'
-            elif (np.allclose(x_span, [-1, 0], rtol, atol)
-                  and np.allclose(y_span, [-1, 0], rtol, atol)):
+            elif (np.allclose(x_span, [-1, 0], rtol_, atol_)
+                  and np.allclose(y_span, [-1, 0], rtol_, atol_)):
                 yx_loc = 'upper_right'
             else:
                 yx_loc = None
@@ -462,14 +462,14 @@ class Grid(SpaceDomain):
             else:
                 z_span = self._get_dimension_span('Z')
 
-                rtol = RTOL()
-                atol = ATOL()
+                rtol_ = rtol()
+                atol_ = atol()
 
-                if np.allclose(z_span, [-0.5, 0.5], rtol, atol):
+                if np.allclose(z_span, [-0.5, 0.5], rtol_, atol_):
                     z_loc = 'centre'
-                elif np.allclose(z_span, [0, 1], rtol, atol):
+                elif np.allclose(z_span, [0, 1], rtol_, atol_):
                     z_loc = 'bottom'
-                elif np.allclose(z_span, [-1, 0], rtol, atol):
+                elif np.allclose(z_span, [-1, 0], rtol_, atol_):
                     z_loc = 'top'
                 else:
                     z_loc = None

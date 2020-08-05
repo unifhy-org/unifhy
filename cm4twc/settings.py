@@ -1,53 +1,54 @@
 import numpy as np
 
 
-# SETTINGS FOR PRECISION OF NUMERICAL OPERATIONS
-# WHERE FLOATING POINT ISSUES CAN ARISE
-PRECISION = {}
+# dictionary to store package-wide settings
+settings_ = {}
 
 
-def ATOL(atol=None):
+# functions to set and get a particular package-wide setting
+def atol(value=None):
     """TODO: DOCSTRING REQUIRED"""
     # absolute numerical tolerance parameter for equality
-    if atol is not None:
-        PRECISION['ATOL'] = float(atol)
-    return PRECISION['ATOL']
+    if value is not None:
+        settings_['ATOL'] = float(value)
+    return settings_['ATOL']
 
 
-def RTOL(rtol=None):
+def rtol(value=None):
     """TODO: DOCSTRING REQUIRED"""
     # relative numerical tolerance parameter for equality
-    if rtol is not None:
-        PRECISION['RTOL'] = float(rtol)
-    return PRECISION['RTOL']
+    if value is not None:
+        settings_['RTOL'] = float(value)
+    return settings_['RTOL']
 
 
-def DECR(decr=None):
+def decr(value=None):
     """TODO: DOCSTRING REQUIRED"""
     # number of decimals for rounding floating point numbers
-    if decr is not None:
-        PRECISION['DECR'] = int(decr)
-    return PRECISION['DECR']
+    if value is not None:
+        settings_['DECR'] = int(value)
+    return settings_['DECR']
 
 
-def DTYPE_F(dtype=None):
+def dtype_float(value=None):
     """TODO: DOCSTRING REQUIRED"""
     # data type (i.e. precision) for floating point numbers
-    if dtype is not None:
-        PRECISION['DTYPE_F'] = np.dtype(dtype)
-    return PRECISION['DTYPE_F']
+    if value is not None:
+        settings_['DTYPE_FLOAT'] = np.dtype(value)
+    return settings_['DTYPE_FLOAT']
 
 
-def ORDER(order=None):
+def array_order(value=None):
     """TODO: DOCSTRING REQUIRED"""
     # contiguity for arrays ('C' is row-major, 'F' is column-major)
-    if order is not None:
-        PRECISION['ORDER'] = str(order)
-    return PRECISION['ORDER']
+    if value is not None:
+        settings_['ORDER'] = str(value)
+    return settings_['ORDER']
 
 
-ATOL(1e-8)
-RTOL(1e-5)
-DECR(12)
-DTYPE_F(np.float64)
-ORDER('C')
+# configuring default values
+atol(1e-8)
+rtol(1e-5)
+decr(12)
+dtype_float(np.float64)
+array_order('C')
