@@ -346,11 +346,17 @@ class Component(metaclass=MetaComponent):
         return cfg
 
     def get_spin_up_timedomain(self, start, end):
+        if ((end - start)
+                % self.timedomain.timedelta).total_seconds() != 0:
+            raise RuntimeError("spin up start-end incompatible with {} "
+                               "component timedelta".format(self._category))
+
         timedomain = TimeDomain.from_start_end_step(
             start, end, self.timedomain.timedelta,
             self.timedomain.units,
             self.timedomain.calendar
         )
+
         return timedomain
 
     def __str__(self):
