@@ -197,9 +197,12 @@ class TimeDomain(object):
     @staticmethod
     def _check_dimension_regularity(dimension):
         time_diff = np.diff(dimension)
+        if time_diff.size == 0:
+            raise RuntimeError("timestamps sequence must contain 2 items "
+                               "or more")
         if np.amin(time_diff) != np.amax(time_diff):
-            raise RuntimeWarning("timestep in sequence not constant "
-                                 "across period")
+            raise RuntimeError("timestep in sequence not constant "
+                               "across period")
 
     def _set_time(self, timestamps, span):
         # convert timestamps to np.array if not already
