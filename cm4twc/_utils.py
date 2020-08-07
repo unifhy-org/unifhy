@@ -1,4 +1,6 @@
 from collections.abc import MutableMapping
+from datetime import timedelta
+from math import gcd
 import numpy as np
 
 
@@ -90,16 +92,17 @@ class Clock(object):
         if dumping_frequency is not None:
             # check that dumpy frequency is a multiple of
             # slowest component's step
-            dumping_delta = max(
+            dumping_delta = self._lcm_timedelta(
                 surfacelayer_timedomain.timedelta,
-                subsurface_timedomain.timedelta,
-                openwater_timedomain.timedelta
+                self._lcm_timedelta(subsurface_timedomain.timedelta,
+                                    openwater_timedomain.timedelta)
             )
             dumping_step = dumping_frequency.total_seconds()
             if not dumping_step % dumping_delta.total_seconds() == 0:
                 raise ValueError(
                     "dumping frequency ({}s) is not a multiple integer "
-                    "of timestep of slowest component ({}s).".format(
+                    "of smallest common multiple across components' "
+                    "timedomains ({}s).".format(
                         dumping_step, dumping_delta.total_seconds()))
 
             # get boolean arrays (switches) to determine when to dump the
@@ -122,6 +125,13 @@ class Clock(object):
         # iterator needs to increment in time prior indexing the switches
         self._current_datetime = self.start_datetime - supermesh_delta
         self._current_timeindex = self.start_timeindex - 1
+
+    @staticmethod
+    def _lcm_timedelta(timedelta_a, timedelta_b):
+        a = int(timedelta_a.total_seconds())
+        b = int(timedelta_b.total_seconds())
+        lcm = a * b // gcd(a, b)
+        return timedelta(seconds=lcm)
 
     def get_current_datetime(self):
         return self._current_datetime
