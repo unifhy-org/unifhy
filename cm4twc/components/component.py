@@ -383,18 +383,22 @@ class Component(metaclass=MetaComponent):
         # create the dump file for this given run
         self._initialise_dump(tag, overwrite)
 
-    def run_(self, timeindex, datetime_, **kwargs):
+    def run_(self, interface, clock):
+        data = {}
+        timeindex = clock.get_current_timeindex(self.category)
         # collect required ancillary data from dataset
-        for data in self.ancillary_data_info:
-            kwargs[data] = self.datasubset[data].array[...]
-
+        for d in self.ancillary_data_info:
+            data[d] = self.datasubset[d].array[...]
         # collect required driving data from dataset
-        for data in self.driving_data_info:
-            kwargs[data] = self.datasubset[data].array[timeindex, ...]
+        for d in self.driving_data_info:
+            data[d] = self.datasubset[d].array[timeindex, ...]
+        # collect required transfers from interface
+        for d in self._inwards_info:
+            data[d] = interface[d]
 
         # run simulation for the component
-        outwards = self.run(datetime=datetime_, **self.parameters,
-                            **self.constants, **self.states, **kwargs)
+        outwards = self.run(**self.parameters, **self.constants,
+                            **self.states, **data)
 
         # increment the component's states by one timestep
         self.increment_states()
@@ -477,8 +481,9 @@ class Component(metaclass=MetaComponent):
         for s in self.states:
             self.states[s].increment()
 
-    def dump_states(self, timedomain, timeindex):
-        timestamp = timedomain.bounds.array[timeindex, 0]
+    def dump_states(self, timedomain, clock):
+        timestamp = timedomain.bounds.array[
+            clock.get_current_timeindex(self.category), 0]
         update_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states, timestamp, self.solver_history)
 
@@ -509,27 +514,41 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     _category = 'surfacelayer'
     _inwards_info = {
         'soil_water_stress': {
-            'units': '1'
+            'units': '1',
+            'from': 'subsurface',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'throughfall': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'snowmelt': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'transpiration': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'evaporation_soil_surface': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'evaporation_ponded_water': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'evaporation_openwater': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'openwater',
+            'method': 'mean'
         }
     }
 
@@ -541,27 +560,41 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     _category = 'subsurface'
     _inwards_info = {
         'evaporation_soil_surface': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'evaporation_ponded_water': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'transpiration': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'throughfall': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'snowmelt': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'runoff': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'openwater',
+            'method': 'mean'
         },
         'soil_water_stress': {
-            'units': '1'
+            'units': '1',
+            'to': 'surfacelayer',
+            'method': 'mean'
         }
     }
 
@@ -573,15 +606,21 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     _category = 'openwater'
     _inwards_info = {
         'evaporation_openwater': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'runoff': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'discharge': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'ocean',
+            'method': 'mean'
         }
     }
 

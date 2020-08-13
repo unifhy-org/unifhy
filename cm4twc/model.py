@@ -1,5 +1,4 @@
 from importlib import import_module
-import numpy as np
 from os import sep, path
 from glob import glob
 from datetime import datetime, timedelta
@@ -9,7 +8,6 @@ from ._utils import Interface, Clock, Compass
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
 from .time import TimeDomain
-from .settings import dtype_float
 
 
 class Model(object):
@@ -100,13 +98,6 @@ class Model(object):
                 self.openwater.timedomain)):
             raise ValueError(
                 "components' timedomains do not span same period.")
-        # check that components' timedomains are equal
-        # (to stay until temporal supermesh supported)
-        if (self.surfacelayer.timedomain != self.subsurface.timedomain) or \
-                (self.surfacelayer.timedomain != self.openwater.timedomain):
-            raise NotImplementedError(
-                "currently not possible for components to work on "
-                "different timedomains")
 
     def _check_spacedomain_compatibilities(self):
         # check that components' spacedomains are equal
@@ -360,27 +351,22 @@ class Model(object):
         self._check_timedomain_compatibilities()
         self._check_spacedomain_compatibilities()
 
-        # set up clock responsible for the time-stepping schemes
-        clock = Clock(surfacelayer_timedomain,
-                      subsurface_timedomain,
-                      openwater_timedomain,
+        # set up clock responsible for the time-stepping and summary
+        clock = Clock({'surfacelayer': surfacelayer_timedomain,
+                       'subsurface': subsurface_timedomain,
+                       'openwater': openwater_timedomain},
                       dumping_frequency)
 
-        # set up interface responsible for exchanges between components
-        interface = Interface(
-            # fluxes that are both inwards and outwards will exist
-            # only once because dictionary keys are unique
-            fluxes={
-                f: np.zeros(c.spaceshape, dtype_float()) for c in
-                [self.surfacelayer, self.subsurface, self.openwater]
-                for f in list(c.inwards_info) + list(c.outwards_info)
-            }
-        )
         # set up compass responsible for the mapping
         compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
                            'subsurface': self.subsurface.spacedomain,
                            'openwater': self.openwater.spacedomain})
 
+        # set up interface responsible for transfers between components
+        interface = Interface({'surfacelayer': self.surfacelayer,
+                               'subsurface': self.subsurface,
+                               'openwater': self.openwater},
+                              clock, compass)
 
         # check time compatibility with data and subspace data in time
         self.surfacelayer.check_dataset_time(surfacelayer_timedomain)
@@ -390,48 +376,23 @@ class Model(object):
         # run components
         for run_surfacelayer, run_subsurface, run_openwater, dumping in clock:
 
-            datetime_ = clock.get_current_datetime()
+            to_interface = {}
 
             if dumping:
-                self.surfacelayer.dump_states(
-                    surfacelayer_timedomain,
-                    clock.get_current_timeindex('surfacelayer')
-                )
-                self.subsurface.dump_states(
-                    subsurface_timedomain,
-                    clock.get_current_timeindex('subsurface')
-                )
-                self.openwater.dump_states(
-                    openwater_timedomain,
-                    clock.get_current_timeindex('openwater')
-                )
+                self.surfacelayer.dump_states(surfacelayer_timedomain, clock)
+                self.subsurface.dump_states(subsurface_timedomain, clock)
+                self.openwater.dump_states(openwater_timedomain, clock)
 
             if run_surfacelayer:
-                interface.update(
-                    self.surfacelayer.run_(
-                        timeindex=clock.get_current_timeindex('surfacelayer'),
-                        datetime_=datetime_,
-                        **interface
-                    )
-                )
+                to_interface.update(self.surfacelayer.run_(interface, clock))
 
             if run_subsurface:
-                interface.update(
-                    self.subsurface.run_(
-                        timeindex=clock.get_current_timeindex('subsurface'),
-                        datetime_=datetime_,
-                        **interface
-                    )
-                )
+                to_interface.update(self.subsurface.run_(interface, clock))
 
             if run_openwater:
-                interface.update(
-                    self.openwater.run_(
-                        timeindex=clock.get_current_timeindex('openwater'),
-                        datetime_=datetime_,
-                        **interface
-                    )
-                )
+                to_interface.update(self.openwater.run_(interface, clock))
+
+            interface.update(to_interface)
 
     def _finalise(self, surfacelayer_timedomain, subsurface_timedomain,
                   openwater_timedomain):
