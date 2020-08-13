@@ -5,7 +5,7 @@ from glob import glob
 from datetime import datetime, timedelta
 import yaml
 
-from ._utils import Interface, Clock
+from ._utils import Interface, Clock, Compass
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
 from .time import TimeDomain
@@ -376,6 +376,11 @@ class Model(object):
                 for f in list(c.inwards_info) + list(c.outwards_info)
             }
         )
+        # set up compass responsible for the mapping
+        compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
+                           'subsurface': self.subsurface.spacedomain,
+                           'openwater': self.openwater.spacedomain})
+
 
         # check time compatibility with data and subspace data in time
         self.surfacelayer.check_dataset_time(surfacelayer_timedomain)
