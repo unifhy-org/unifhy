@@ -29,7 +29,10 @@ class Interface(MutableMapping):
             # (should only be temporary until Ocean and Atmosphere
             # are included in the framework)
             if steps.get(transfers[t]['to']) is None:
-                transfers[t]['arrays'] = [
+                # in this case only __setitem__ will be called,
+                # so it just needs to have an array for storage
+                transfers[t]['history'] = 1
+                transfers[t]['slices'] = [
                     np.zeros(compass.shape, dtype_float())
                 ]
                 continue
@@ -40,10 +43,12 @@ class Interface(MutableMapping):
             transfers[t]['weights'] = self._calculate_weights(from_, to_,
                                                               clock.length)
 
-            arr = np.zeros((transfers[t]['weights'].shape[-1],)
-                           + compass.shape, dtype_float())
-            transfers[t]['arrays'] = [
-                arr[i] for i in range(transfers[t]['weights'].shape[-1])
+            transfers[t]['history'] = transfers[t]['weights'].shape[-1]
+
+            arr = np.zeros((transfers[t]['history'],) + compass.shape,
+                           dtype_float())
+            transfers[t]['slices'] = [
+                arr[i] for i in range(transfers[t]['history'])
             ]
 
             transfers[t]['iter'] = 0
@@ -142,37 +147,39 @@ class Interface(MutableMapping):
         # depending on method for that particular transfer
         if self.transfers[key]['method'] == 'mean':
             value = np.average(
-                self.transfers[key]['arrays'],
+                self.transfers[key]['slices'],
                 weights=self.transfers[key]['weights'][i], axis=0
             )
         elif self.transfers[key]['method'] == 'sum':
             value = np.sum(
-                self.transfers[key]['arrays']
+                self.transfers[key]['slices']
                 * self.transfers[key]['weights'][i], axis=0
             )
         elif self.transfers[key]['method'] == 'point':
-            value = self.transfers[key]['arrays'][-1]
+            value = self.transfers[key]['slices'][-1]
         elif self.transfers[key]['method'] == 'minimum':
-            value = np.amin(self.transfers[key]['arrays'], axis=0)
+            value = np.amin(self.transfers[key]['slices'], axis=0)
         elif self.transfers[key]['method'] == 'maximum':
-            value = np.amax(self.transfers[key]['arrays'], axis=0)
+            value = np.amax(self.transfers[key]['slices'], axis=0)
         else:
             raise ValueError('method for interface transfer unknown')
 
-        # record that another value was processed by incrementing count
+        # record that another value was retrieved by incrementing count
         self.transfers[key]['iter'] += 1
 
         return value
 
     def __setitem__(self, key, value):
-        lhs = [a for a in self.transfers[key]['arrays']]
-        rhs = ([a for a in self.transfers[key]['arrays'][1:]]
-               + [self.transfers[key]['arrays'][0]])
+        lhs = [a for a in self.transfers[key]['slices']]
+        rhs = ([a for a in self.transfers[key]['slices'][1:]]
+               + [self.transfers[key]['slices'][0]])
 
         lhs[:] = rhs[:]
 
-        self.transfers[key]['arrays'][:] = lhs
-        self.transfers[key]['arrays'][-1] = value
+        z = self.transfers[key]['slices'][-1]
+
+        self.transfers[key]['slices'][:] = lhs
+        self.transfers[key]['slices'][-1] = value
 
     def __delitem__(self, key):
         del self.transfers[key]
@@ -182,10 +189,6 @@ class Interface(MutableMapping):
 
     def __len__(self):
         return len(self.transfers)
-
-    def __repr__(self):
-        return "Interface(\n\tfluxes: %r\n" % \
-               {f: self.transfers[f] for f in self.transfers}
 
 
 class Clock(object):
