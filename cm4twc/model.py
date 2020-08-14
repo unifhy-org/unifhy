@@ -354,8 +354,8 @@ class Model(object):
         # set up clock responsible for the time-stepping and summary
         clock = Clock({'surfacelayer': surfacelayer_timedomain,
                        'subsurface': subsurface_timedomain,
-                       'openwater': openwater_timedomain},
-                      dumping_frequency)
+                       'openwater': openwater_timedomain})
+        clock.set_dumping_frequency(dumping_frequency)
 
         # set up compass responsible for the mapping
         compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,

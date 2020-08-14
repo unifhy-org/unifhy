@@ -5,7 +5,7 @@ from math import gcd
 
 class Clock(object):
 
-    def __init__(self, timedomains, dumping_frequency=None):
+    def __init__(self, timedomains):
         self.categories = tuple(timedomains)
         # determine temporal supermesh properties
         # (supermesh is the fastest component)
@@ -39,35 +39,21 @@ class Clock(object):
             self.switches[category][sl_increment - 1::sl_increment] = True
             self.increments[category] = sl_increment
 
-        # determine whether model states dumping is required, and if so, when
+        # determine model states minimum dumping delta and set initial dump
         self.switches['dumping'] = np.zeros((supermesh_length,), dtype=bool)
-        if dumping_frequency is not None:
-            # check that dumpy frequency is a multiple of
-            # the least common multiple across components
+        # dump delta is the least common multiple across components
+        dumping_delta = self._lcm_timedelta(
+            timedomains[self.categories[0]].timedelta,
+            timedomains[self.categories[1]].timedelta
+        )
+        for category in self.categories[2:]:
             dumping_delta = self._lcm_timedelta(
-                timedomains[self.categories[0]].timedelta,
-                timedomains[self.categories[1]].timedelta
+                dumping_delta,
+                timedomains[category].timedelta
             )
-            for category in self.categories[2:]:
-                dumping_delta = self._lcm_timedelta(
-                    dumping_delta,
-                    timedomains[category].timedelta
-                )
-            dumping_step = dumping_frequency.total_seconds()
-            if not dumping_step % dumping_delta.total_seconds() == 0:
-                raise ValueError(
-                    "dumping frequency ({}s) is not a multiple integer "
-                    "of smallest common multiple across components' "
-                    "timedomains ({}s).".format(
-                        dumping_step, dumping_delta.total_seconds()))
-
-            # get boolean arrays (switches) to determine when to dump the
-            # component states on temporal supermesh
-            dumping_increment = int(dumping_step // supermesh_step)
-            self.switches['dumping'][0::dumping_increment] = True
-        else:
-            # get only one dump for the initial conditions
-            self.switches['dumping'][0] = True
+        self.min_dumping_delta = dumping_delta
+        # set as a minimum requirement one dump for the initial conditions
+        self.switches['dumping'][0] = True
 
         # set some time attributes
         self.timedelta = supermesh_delta
@@ -95,6 +81,21 @@ class Clock(object):
         b = int(timedelta_b.total_seconds())
         lcm = a * b // gcd(a, b)
         return timedelta(seconds=lcm)
+
+    def set_dumping_frequency(self, dumping_frequency):
+        # check that dumpy frequency is a multiple of dumping delta
+        dumping_step = dumping_frequency.total_seconds()
+        if not dumping_step % self.min_dumping_delta.total_seconds() == 0:
+            raise ValueError(
+                "dumping frequency ({}s) is not a multiple integer "
+                "of smallest common multiple across components' "
+                "timedomains ({}s).".format(
+                    dumping_step, self.min_dumping_delta.total_seconds()))
+
+        # get boolean arrays (switches) to determine when to dump the
+        # component states on temporal supermesh
+        dumping_increment = int(dumping_step // self.timedelta.total_seconds())
+        self.switches['dumping'][0::dumping_increment] = True
 
     def get_current_datetime(self):
         return self._current_datetime

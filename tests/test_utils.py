@@ -50,8 +50,8 @@ class TestClockAPI(unittest.TestCase):
             {'surfacelayer': self.td_a,
              'subsurface': self.td_b,
              'openwater': self.td_c},
-            dumping_frequency=self.d
         )
+        clock.set_dumping_frequency(dumping_frequency=self.d)
 
         self.assertEqual(clock.switches['surfacelayer'].tolist(),
                          self.exp_bool_a)
