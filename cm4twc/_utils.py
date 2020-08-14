@@ -29,7 +29,9 @@ class Interface(MutableMapping):
             # (should only be temporary until Ocean and Atmosphere
             # are included in the framework)
             if steps.get(transfers[t]['to']) is None:
-                transfers[t]['arrays'] = np.zeros(compass.shape, dtype_float())
+                transfers[t]['arrays'] = [
+                    np.zeros(compass.shape, dtype_float())
+                ]
                 continue
 
             to_ = steps[transfers[t]['to']]
