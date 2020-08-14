@@ -3,7 +3,7 @@ from datetime import datetime
 import cftime
 import numpy as np
 
-from .settings import dtype_float
+from ..settings import dtype_float
 
 
 def create_dump_file(filepath, vars_info, vars_history,
