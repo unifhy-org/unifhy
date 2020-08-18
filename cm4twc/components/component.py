@@ -632,6 +632,10 @@ class DataComponent(Component):
         # override category to the one of substituting component
         self._category = substituting_class.get_class_category()
 
+        # override driving data info with the outwards
+        # of component being substituted
+        self.driving_data_info = substituting_class.get_class_outwards_info()
+
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
