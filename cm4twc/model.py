@@ -90,24 +90,6 @@ class Model(object):
                     expected_component.__name__, DataComponent.__name__,
                     NullComponent.__name__))
 
-    def _check_timedomain_compatibilities(self):
-        # check that components' timedomains start/end on same datetime
-        if (not self.surfacelayer.timedomain.spans_same_period_as(
-                self.subsurface.timedomain)) or \
-            (not self.surfacelayer.timedomain.spans_same_period_as(
-                self.openwater.timedomain)):
-            raise ValueError(
-                "components' timedomains do not span same period.")
-
-    def _check_spacedomain_compatibilities(self):
-        # check that components' spacedomains are equal
-        # (to stay until spatial supermesh supported)
-        if (self.surfacelayer.spacedomain != self.subsurface.spacedomain) or \
-                (self.surfacelayer.spacedomain != self.openwater.spacedomain):
-            raise NotImplementedError(
-                "currently not possible for components to work on "
-                "different spacedomains")
-
     def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +

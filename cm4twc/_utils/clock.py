@@ -7,6 +7,9 @@ class Clock(object):
 
     def __init__(self, timedomains):
         self.categories = tuple(timedomains)
+        # check time compatibility between components
+        self._check_timedomain_compatibilities(timedomains)
+
         # determine temporal supermesh properties
         # (supermesh is the fastest component)
         supermesh_delta = min(
@@ -74,6 +77,14 @@ class Clock(object):
         # iterator needs to increment in time prior indexing the switches
         self._current_datetime = self.start_datetime - supermesh_delta
         self._current_timeindex = self.start_timeindex - 1
+
+    def _check_timedomain_compatibilities(self, timedomains):
+        for category in timedomains:
+            # check that components' timedomains start/end on same datetime
+            if not timedomains[category].spans_same_period_as(
+                    timedomains[self.categories[0]]):
+                raise ValueError(
+                    "components' timedomains do not span same period")
 
     @staticmethod
     def _lcm_timedelta(timedelta_a, timedelta_b):
