@@ -84,9 +84,6 @@ class Component(metaclass=MetaComponent):
                 provided in the required units.
 
         """
-        # time attributes
-        self.timedomain = timedomain
-
         # space attributes
         self.spacedomain = spacedomain
 
@@ -95,6 +92,9 @@ class Component(metaclass=MetaComponent):
         self.dataset = dataset
         # # dataset to subset whole data for given period
         self.datasubset = DataSet()
+
+        # time attributes
+        self.timedomain = timedomain
 
         # parameters attribute
         self.parameters = parameters
@@ -124,6 +124,7 @@ class Component(metaclass=MetaComponent):
     @timedomain.setter
     def timedomain(self, timedomain):
         self._check_timedomain(timedomain)
+        self._check_dataset_time(timedomain)
         self._timedomain = timedomain
 
     @property
@@ -257,7 +258,7 @@ class Component(metaclass=MetaComponent):
                     "spacedomain of {} component '{}'".format(
                         data_name, self._category, self.__class__.__name__))
 
-    def check_dataset_time(self, timedomain):
+    def _check_dataset_time(self, timedomain):
         # check time compatibility for driving data
         for data_name in self.driving_data_info:
             error = ValueError(

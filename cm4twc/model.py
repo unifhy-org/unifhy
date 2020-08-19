@@ -350,10 +350,6 @@ class Model(object):
                                'openwater': self.openwater},
                               clock, compass)
 
-        # check time compatibility with data and subspace data in time
-        self.surfacelayer.check_dataset_time(surfacelayer_timedomain)
-        self.subsurface.check_dataset_time(subsurface_timedomain)
-        self.openwater.check_dataset_time(openwater_timedomain)
 
         # run components
         for run_surfacelayer, run_subsurface, run_openwater, dumping in clock:
