@@ -68,6 +68,9 @@ class Model(object):
         if _to_yaml:
             self.to_yaml()
 
+        # define attribute interface for transfers between components
+        self.interface = None
+
     @staticmethod
     def _process_component_type(component, expected_component):
         if isinstance(component, expected_component):
@@ -236,13 +239,16 @@ class Model(object):
                 the model. If not provided, set to default True.
 
         """
-        # generate timedomains for each model component
-        surfacelayer_timedomain = \
+        # generate spin-up timedomains for each model component
+        surfacelayer_timedomain = (
             self.surfacelayer.get_spin_up_timedomain(start, end)
-        subsurface_timedomain = \
+        )
+        subsurface_timedomain = (
             self.subsurface.get_spin_up_timedomain(start, end)
-        openwater_timedomain = \
+        )
+        openwater_timedomain = (
             self.openwater.get_spin_up_timedomain(start, end)
+        )
 
         # store spin up configuration in a separate yaml file
         spin_up_config = {
@@ -258,21 +264,29 @@ class Model(object):
                   'w') as f:
             yaml.dump(spin_up_config, f, yaml.Dumper, sort_keys=False)
 
+        # store main run attributes
+        main_sl_td = self.surfacelayer.timedomain
+        main_ss_td = self.subsurface.timedomain
+        main_ow_td = self.openwater.timedomain
+
+        # assign spin-up run attributes in place of main run's ones
+        self.surfacelayer.timedomain = surfacelayer_timedomain
+        self.subsurface.timedomain = subsurface_timedomain
+        self.openwater.timedomain = openwater_timedomain
+
         # start the spin up run(s)
         for cycle in range(cycles):
             self._initialise(
                 tag='spinup{}'.format(_cycle_origin_no + cycle + 1),
                 overwrite=overwrite
             )
+            self._run()
+            self._finalise()
 
-            self._run(surfacelayer_timedomain,
-                      subsurface_timedomain,
-                      openwater_timedomain,
-                      dumping_frequency)
-
-            self._finalise(surfacelayer_timedomain,
-                           subsurface_timedomain,
-                           openwater_timedomain)
+        # restore main run attributes
+        self.surfacelayer.timedomain = main_sl_td
+        self.subsurface.timedomain = main_ss_td
+        self.openwater.timedomain = main_ow_td
 
     def simulate(self, dumping_frequency=None, overwrite=True):
         """Run model simulation over period defined in its components'
@@ -311,15 +325,8 @@ class Model(object):
 
         # initialise, run, finalise model
         self._initialise(tag='run', overwrite=overwrite)
-
-        self._run(self.surfacelayer.timedomain,
-                  self.subsurface.timedomain,
-                  self.openwater.timedomain,
-                  dumping_frequency)
-
-        self._finalise(self.surfacelayer.timedomain,
-                       self.subsurface.timedomain,
-                       self.openwater.timedomain)
+        self._run(dumping_frequency)
+        self._finalise()
 
     def _initialise(self, tag, overwrite):
         # initialise components' states
@@ -327,57 +334,83 @@ class Model(object):
         self.subsurface.initialise_(tag, overwrite)
         self.openwater.initialise_(tag, overwrite)
 
-    def _run(self, surfacelayer_timedomain, subsurface_timedomain,
-             openwater_timedomain, dumping_frequency=None):
-        # check time and space compatibilities between components
-        self._check_timedomain_compatibilities()
-        self._check_spacedomain_compatibilities()
-
-        # set up clock responsible for the time-stepping and summary
-        clock = Clock({'surfacelayer': surfacelayer_timedomain,
-                       'subsurface': subsurface_timedomain,
-                       'openwater': openwater_timedomain})
-        clock.set_dumping_frequency(dumping_frequency)
-
-        # set up compass responsible for the mapping
+    def _run(self, dumping_frequency=None):
+        # set up compass responsible for mapping across components
         compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
                            'subsurface': self.subsurface.spacedomain,
                            'openwater': self.openwater.spacedomain})
 
-        # set up interface responsible for transfers between components
-        interface = Interface({'surfacelayer': self.surfacelayer,
-                               'subsurface': self.subsurface,
-                               'openwater': self.openwater},
-                              clock, compass)
+        # set up clock responsible for iterating over time
+        clock = Clock({'surfacelayer': self.surfacelayer.timedomain,
+                       'subsurface': self.subsurface.timedomain,
+                       'openwater': self.openwater.timedomain})
+        if dumping_frequency is not None:
+            clock.set_dumping_frequency(dumping_frequency)
 
+        # set up interface responsible for transfers between components
+        if self.interface is None:
+            # generate an instance of Interface
+            self.interface = Interface({'surfacelayer': self.surfacelayer,
+                                        'subsurface': self.subsurface,
+                                        'openwater': self.openwater},
+                                       clock, compass)
+        else:
+            # no need for a new instance, but need to re-run the setup
+            # of the existing instance because time or space information
+            # may have been changed for one or more components
+            self.interface.set_up({'surfacelayer': self.surfacelayer,
+                                   'subsurface': self.subsurface,
+                                   'openwater': self.openwater},
+                                  clock, compass)
 
         # run components
-        for run_surfacelayer, run_subsurface, run_openwater, dumping in clock:
+        for (run_surfacelayer, run_subsurface, run_openwater,
+             dumping) in clock:
 
             to_interface = {}
 
             if dumping:
-                self.surfacelayer.dump_states(surfacelayer_timedomain, clock)
-                self.subsurface.dump_states(subsurface_timedomain, clock)
-                self.openwater.dump_states(openwater_timedomain, clock)
+                self.surfacelayer.dump_states(
+                    clock.get_current_timeindex('surfacelayer')
+                )
+                self.subsurface.dump_states(
+                    clock.get_current_timeindex('subsurface')
+                )
+                self.openwater.dump_states(
+                    clock.get_current_timeindex('openwater')
+                )
 
             if run_surfacelayer:
-                to_interface.update(self.surfacelayer.run_(interface, clock))
+                to_interface.update(
+                    self.surfacelayer.run_(
+                        clock.get_current_timeindex('surfacelayer'),
+                        self.interface
+                    )
+                )
 
             if run_subsurface:
-                to_interface.update(self.subsurface.run_(interface, clock))
+                to_interface.update(
+                    self.subsurface.run_(
+                        clock.get_current_timeindex('subsurface'),
+                        self.interface
+                    )
+                )
 
             if run_openwater:
-                to_interface.update(self.openwater.run_(interface, clock))
+                to_interface.update(
+                    self.openwater.run_(
+                        clock.get_current_timeindex('openwater'),
+                        self.interface
+                    )
+                )
 
-            interface.update(to_interface)
+            self.interface.update(to_interface)
 
-    def _finalise(self, surfacelayer_timedomain, subsurface_timedomain,
-                  openwater_timedomain):
+    def _finalise(self):
         # finalise components
-        self.surfacelayer.finalise_(surfacelayer_timedomain)
-        self.subsurface.finalise_(subsurface_timedomain)
-        self.openwater.finalise_(openwater_timedomain)
+        self.surfacelayer.finalise_()
+        self.subsurface.finalise_()
+        self.openwater.finalise_()
 
     def resume(self, at=None):
         """Resume model simulation on latest snapshot in dump files or

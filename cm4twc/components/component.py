@@ -390,9 +390,8 @@ class Component(metaclass=MetaComponent):
         # create the dump file for this given run
         self._initialise_dump(tag, overwrite)
 
-    def run_(self, interface, clock):
+    def run_(self, timeindex, from_interface):
         data = {}
-        timeindex = clock.get_current_timeindex(self.category)
         # collect required ancillary data from dataset
         for d in self.ancillary_data_info:
             data[d] = self.datasubset[d].array[...]
@@ -401,19 +400,19 @@ class Component(metaclass=MetaComponent):
             data[d] = self.datasubset[d].array[timeindex, ...]
         # collect required transfers from interface
         for d in self._inwards_info:
-            data[d] = interface[d]
+            data[d] = from_interface[d]
 
         # run simulation for the component
-        outwards = self.run(**self.parameters, **self.constants,
-                            **self.states, **data)
+        to_interface = self.run(**self.parameters, **self.constants,
+                                **self.states, **data)
 
         # increment the component's states by one timestep
         self.increment_states()
 
-        return outwards
+        return to_interface
 
-    def finalise_(self, timedomain):
-        timestamp = timedomain.bounds.array[-1, -1]
+    def finalise_(self):
+        timestamp = self.timedomain.bounds.array[-1, -1]
         update_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states, timestamp, self.solver_history)
         self.finalise(**self.states)
@@ -488,9 +487,8 @@ class Component(metaclass=MetaComponent):
         for s in self.states:
             self.states[s].increment()
 
-    def dump_states(self, timedomain, clock):
-        timestamp = timedomain.bounds.array[
-            clock.get_current_timeindex(self.category), 0]
+    def dump_states(self, timeindex):
+        timestamp = self.timedomain.bounds.array[timeindex, 0]
         update_dump_file(sep.join([self.output_directory, self.dump_file]),
                          self.states, timestamp, self.solver_history)
 
@@ -656,7 +654,7 @@ class DataComponent(Component):
 
             dataset: `DataSet` object
                 The dataset containing the substitute data substituting
-                the `Component`\'s simulated time series. The data is
+                the `Component`\'s simulated time series. The data in
                 dataset must be compatible in time with *timedomain* and
                 compatible in space with *spacedomain*.
 
@@ -672,8 +670,12 @@ class DataComponent(Component):
         # override category to the one of substituting component
         self._category = substituting_class.get_class_category()
 
-        # override driving data info with the outwards
-        # of component being substituted
+        # override outwards with the ones of component being substituted
+        self._outwards_info = substituting_class.get_class_outwards_info()
+
+        # override driving data info with the outwards of component
+        # being substituted (so that the dataset is checked for time
+        # and space compatibility as a 'standard' dataset would be)
         self.driving_data_info = substituting_class.get_class_outwards_info()
 
     def __str__(self):
@@ -701,7 +703,7 @@ class DataComponent(Component):
         return {}
 
     def run(self, *args, **kwargs):
-        return {n: kwargs[n] for n in self.driving_data_info}
+        return {n: kwargs[n] for n in self._outwards_info}
 
     def finalise(self, *args, **kwargs):
         pass
@@ -740,7 +742,8 @@ class NullComponent(Component):
         # override category with the one of component being substituted
         self._category = substituting_class.get_class_category()
 
-        # override outwards with the ones of component being substituted
+        # override inwards and outwards with the ones of component
+        # being substituted
         self._outwards_info = substituting_class.get_class_outwards_info()
 
     def __str__(self):

@@ -17,48 +17,70 @@ class Interface(MutableMapping):
                         transfers[t] = {}
                     transfers[t].update(i[t])
 
+        self.transfers = transfers
+        self.set_up(components, clock, compass)
+
+    def set_up(self, components, clock, compass, overwrite=False):
+        # determine how many iterations of the clock
+        # each component covers (i.e. steps)
         steps = {
             c: components[c].timedomain.timedelta // clock.timedelta
             for c in components
         }
 
-        for t in transfers:
-            # special case for transfers towards outside framework
-            # (should only be temporary until Ocean and Atmosphere
-            # are included in the framework)
-            if steps.get(transfers[t]['to']) is None:
-                # in this case only __setitem__ will be called,
-                # so it just needs to have an array for storage
-                transfers[t]['history'] = 1
-                transfers[t]['slices'] = [
-                    np.zeros(compass.shape, dtype_float())
-                ]
+        # set up each transfer
+        for t in self.transfers:
+            # special case for transfers towards a DataComponent or
+            # a NullComponent (or towards outside framework which will
+            # remain possible until Ocean and Atmosphere components are
+            # implemented in the framework)
+            if self.transfers[t].get('from') is None:
+                # in this case only __setitem__ will be called
                 continue
 
-            to_ = steps[transfers[t]['to']]
-            from_ = steps[transfers[t]['from']]
+            to_ = steps[self.transfers[t]['to']]
+            from_ = steps[self.transfers[t]['from']]
 
-            transfers[t]['weights'] = self._calculate_weights(from_, to_,
-                                                              clock.length)
-
-            transfers[t]['history'] = transfers[t]['weights'].shape[-1]
-
-            arr = np.zeros((transfers[t]['history'],) + compass.shape,
-                           dtype_float())
-            transfers[t]['slices'] = [
-                arr[i] for i in range(transfers[t]['history'])
-            ]
-
-            transfers[t]['iter'] = 0
-
-            if transfers[t]['method'] == 'sum':
-                # need to add dimensions for numpy broadcasting
-                transfers[t]['weights'] = np.expand_dims(
-                    transfers[t]['weights'],
+            # determine the weights that will be used by the interface
+            # on the stored timesteps when a transfer is asked (i.e.
+            # when __getitem__ is called)
+            self.transfers[t]['weights'] = self._calculate_weights(
+                from_, to_, clock.length
+            )
+            if self.transfers[t]['method'] == 'sum':
+                # need to add dimensions of size 1 for numpy broadcasting
+                self.transfers[t]['weights'] = np.expand_dims(
+                    self.transfers[t]['weights'],
                     axis=[-(i+1) for i in range(len(compass.shape))]
                 )
 
-        self.transfers = transfers
+            # history is the number of timesteps that are stored
+            self.transfers[t]['history'] = (
+                self.transfers[t]['weights'].shape[-1]
+            )
+
+            # initialise iterator that allows the interface to know
+            # which weights to use
+            self.transfers[t]['iter'] = 0
+
+            # if required or requested, initialise array to store
+            # required timesteps
+            if (
+                    overwrite
+                    or ('array' not in self.transfers[t])
+                    or ('array' in self.transfers[t]
+                        and (self.transfers[t]['array'].shape
+                             != ((self.transfers[t]['history'],)
+                                 + compass.shape)))
+            ):
+                arr = np.zeros((self.transfers[t]['history'],) + compass.shape,
+                               dtype_float())
+                self.transfers[t]['array'] = arr
+                # set up slices that are views of the array that is be
+                # rolled out each time a transfer is asked
+                self.transfers[t]['slices'] = [
+                    arr[i] for i in range(self.transfers[t]['history'])
+                ]
 
     @staticmethod
     def _calculate_weights(from_, to_, length):
@@ -168,13 +190,18 @@ class Interface(MutableMapping):
         return value
 
     def __setitem__(self, key, value):
+        # special case for transfers towards a DataComponent or
+        # a NullComponent (or towards outside framework which will
+        # remain possible until Ocean and Atmosphere components are
+        # implemented in the framework)
+        if self.transfers[key].get('from') is None:
+            return
+
         lhs = [a for a in self.transfers[key]['slices']]
         rhs = ([a for a in self.transfers[key]['slices'][1:]]
                + [self.transfers[key]['slices'][0]])
 
         lhs[:] = rhs[:]
-
-        z = self.transfers[key]['slices'][-1]
 
         self.transfers[key]['slices'][:] = lhs
         self.transfers[key]['slices'][-1] = value
