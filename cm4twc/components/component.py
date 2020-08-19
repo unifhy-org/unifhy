@@ -4,8 +4,8 @@ from os import path, sep
 import cf
 from cfunits import Units
 
-from ._state import State
-from .._io.dump import create_dump_file, update_dump_file, load_dump_file
+from ._utils.states import (State, create_states_dump, update_states_dump,
+                            load_states_dump)
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
@@ -61,7 +61,7 @@ class Component(metaclass=MetaComponent):
 
             output_directory: `str`
                 The path to the directory where to save the component
-                output files.
+                dump and output files.
 
             timedomain: `TimeDomain` object
                 The temporal dimension of the `Component`.
@@ -388,7 +388,7 @@ class Component(metaclass=MetaComponent):
             self.initialise(**self.states)
             self.is_initialised = True
         # create the dump file for this given run
-        self._initialise_dump(tag, overwrite)
+        self._initialise_states_dump(tag, overwrite)
 
     def run_(self, timeindex, from_interface):
         data = {}
@@ -413,8 +413,8 @@ class Component(metaclass=MetaComponent):
 
     def finalise_(self):
         timestamp = self.timedomain.bounds.array[-1, -1]
-        update_dump_file(sep.join([self.output_directory, self.dump_file]),
-                         self.states, timestamp, self.solver_history)
+        update_states_dump(sep.join([self.output_directory, self.dump_file]),
+                           self.states, timestamp, self.solver_history)
         self.finalise(**self.states)
 
     def _instantiate_states(self):
@@ -431,14 +431,14 @@ class Component(metaclass=MetaComponent):
                 order=o
             )
 
-    def _initialise_dump(self, tag, overwrite_dump):
+    def _initialise_states_dump(self, tag, overwrite_dump):
         self.dump_file = '_'.join([self.identifier, self.category,
                                    tag, 'dump.nc'])
         if (overwrite_dump or not path.exists(sep.join([self.output_directory,
                                                         self.dump_file]))):
-            create_dump_file(sep.join([self.output_directory, self.dump_file]),
-                             self.states_info, self.solver_history,
-                             self.timedomain, self.spacedomain)
+            create_states_dump(sep.join([self.output_directory, self.dump_file]),
+                               self.states_info, self.solver_history,
+                               self.timedomain, self.spacedomain)
 
     def initialise_states_from_dump(self, dump_file, at=None):
         """Initialise the states of the Component from a dump file.
@@ -471,7 +471,7 @@ class Component(metaclass=MetaComponent):
                 conditions.
 
         """
-        states, at = load_dump_file(dump_file, at, self.states_info)
+        states, at = load_states_dump(dump_file, at, self.states_info)
         for s in self.states_info:
             if s in states:
                 o = self.states_info[s].get('order', array_order())
@@ -489,8 +489,8 @@ class Component(metaclass=MetaComponent):
 
     def dump_states(self, timeindex):
         timestamp = self.timedomain.bounds.array[timeindex, 0]
-        update_dump_file(sep.join([self.output_directory, self.dump_file]),
-                         self.states, timestamp, self.solver_history)
+        update_states_dump(sep.join([self.output_directory, self.dump_file]),
+                           self.states, timestamp, self.solver_history)
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
