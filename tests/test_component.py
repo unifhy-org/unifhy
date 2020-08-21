@@ -32,13 +32,13 @@ def get_dummy_surfacelayer_component(kind, timedomain=None, spacedomain=None,
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset('surfacelayer'),
-            substituting_class=cm4twc.SurfaceLayerComponent
+            substituting_class=SurfaceLayerDummy
         )
     else:  # i.e. 'n'
         surfacelayer = cm4twc.NullComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            substituting_class=cm4twc.SurfaceLayerComponent
+            substituting_class=SurfaceLayerDummy
         )
     return surfacelayer
 
@@ -50,7 +50,7 @@ def get_dummy_subsurface_component(kind, timedomain=None, spacedomain=None,
     if spacedomain is None:
         spacedomain = get_dummy_spacedomain()
     if dataset is None:
-        dataset = get_dummy_dataset('surfacelayer')
+        dataset = get_dummy_dataset('subsurface')
 
     if kind == 'c':
         subsurface = SubSurfaceDummy(
@@ -58,7 +58,7 @@ def get_dummy_subsurface_component(kind, timedomain=None, spacedomain=None,
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
-            parameters={'parameter_a': 2},
+            parameters={'parameter_a': 1},
             constants={}
         )
     elif kind == 'd':
@@ -66,13 +66,13 @@ def get_dummy_subsurface_component(kind, timedomain=None, spacedomain=None,
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset('subsurface'),
-            substituting_class=cm4twc.SubSurfaceComponent
+            substituting_class=SubSurfaceDummy
         )
     else:  # i.e. 'n'
         subsurface = cm4twc.NullComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            substituting_class=cm4twc.SubSurfaceComponent
+            substituting_class=SubSurfaceDummy
         )
     return subsurface
 
@@ -84,7 +84,7 @@ def get_dummy_openwater_component(kind, timedomain=None, spacedomain=None,
     if spacedomain is None:
         spacedomain = get_dummy_spacedomain()
     if dataset is None:
-        dataset = get_dummy_dataset('surfacelayer')
+        dataset = get_dummy_dataset('openwater')
 
     if kind == 'c':
         openwater = OpenWaterDummy(
@@ -92,7 +92,7 @@ def get_dummy_openwater_component(kind, timedomain=None, spacedomain=None,
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
-            parameters={'parameter_a': 3},
+            parameters={'parameter_c': 3},
             constants={}
         )
     elif kind == 'd':
@@ -100,12 +100,12 @@ def get_dummy_openwater_component(kind, timedomain=None, spacedomain=None,
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset('openwater'),
-            substituting_class=cm4twc.OpenWaterComponent
+            substituting_class=OpenWaterDummy
         )
     else:  # i.e. 'n'
         openwater = cm4twc.NullComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            substituting_class=cm4twc.OpenWaterComponent
+            substituting_class=OpenWaterDummy
         )
     return openwater

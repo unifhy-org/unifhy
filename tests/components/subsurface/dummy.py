@@ -16,6 +16,32 @@ except ImportError:
 
 
 class Dummy(SubSurfaceComponent):
+    # supersede existing inwards/outwards for physically meaningless ones
+    _inwards_info = {
+        'transfer_i': {
+            'units': '1',
+            'from': 'surfacelayer',
+            'method': 'mean'
+        },
+        'transfer_n': {
+            'units': '1',
+            'from': 'openwater',
+            'method': 'mean'
+        }
+    }
+    _outwards_info = {
+        'transfer_k': {
+            'units': '1',
+            'to': 'surfacelayer',
+            'method': 'mean'
+        },
+        'transfer_m': {
+            'units': '1',
+            'to': 'openwater',
+            'method': 'mean'
+        }
+    }
+    # define some dummy driving/ancillary/parameters/constants/states
     driving_data_info = {
         'driving_a': {
             'units': '1'
@@ -50,8 +76,7 @@ class Dummy(SubSurfaceComponent):
 
     def run(self,
             # from interface
-            evaporation_soil_surface, evaporation_ponded_water,
-            transpiration, throughfall, snowmelt,
+            transfer_i, transfer_n,
             # component driving data
             driving_a,
             # component ancillary data
@@ -67,8 +92,8 @@ class Dummy(SubSurfaceComponent):
 
         return {
             # to interface
-            'runoff': driving_a * parameter_a,
-            'soil_water_stress': driving_a * parameter_a
+            'transfer_k': driving_a * parameter_a + transfer_n + state_a[0],
+            'transfer_m': driving_a * parameter_a + transfer_i + state_b[0]
         }
 
     def finalise(self,
@@ -78,19 +103,8 @@ class Dummy(SubSurfaceComponent):
         pass
 
 
-class DummyFortran(SubSurfaceComponent):
-    driving_data_info = {
-        'driving_a': {
-            'units': '1'
-        },
-    }
-    # ancillary_data_info = {},
-    parameters_info = {
-        'parameter_a': {
-            'units': '1'
-        },
-    }
-    # constants_info = {},
+class DummyFortran(Dummy):
+    # overwrite states to explicitly set array order
     states_info = {
         'state_a': {
             'units': '1',
@@ -103,7 +117,6 @@ class DummyFortran(SubSurfaceComponent):
             'order': 'F'
         }
     }
-    solver_history = 1
 
     def initialise(self,
                    # component states
@@ -113,8 +126,7 @@ class DummyFortran(SubSurfaceComponent):
 
     def run(self,
             # from interface
-            evaporation_soil_surface, evaporation_ponded_water,
-            transpiration, throughfall, snowmelt,
+            transfer_i, transfer_n,
             # component driving data
             driving_a,
             # component ancillary data
@@ -125,17 +137,16 @@ class DummyFortran(SubSurfaceComponent):
             # component constants
             **kwargs):
 
-        runoff, soil_water_stress = dummyfortran.run(
-            evaporation_soil_surface, evaporation_ponded_water,
-            transpiration, throughfall, snowmelt,
+        transfer_k, transfer_m = dummyfortran.run(
+            transfer_i, transfer_n,
             driving_a, parameter_a,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
         return {
             # to interface
-            'runoff': runoff,
-            'soil_water_stress': soil_water_stress
+            'transfer_k': transfer_k,
+            'transfer_m': transfer_m
         }
 
     def finalise(self,
@@ -145,30 +156,7 @@ class DummyFortran(SubSurfaceComponent):
         dummyfortran.finalise()
 
 
-class DummyC(SubSurfaceComponent):
-    driving_data_info = {
-        'driving_a': {
-            'units': '1'
-        },
-    }
-    # ancillary_data_info = {},
-    parameters_info = {
-        'parameter_a': {
-            'units': '1'
-        },
-    }
-    # constants_info = {},
-    states_info = {
-        'state_a': {
-            'units': '1',
-            'divisions': 1
-        },
-        'state_b': {
-            'units': '1',
-            'divisions': 1
-        }
-    }
-    solver_history = 1
+class DummyC(Dummy):
 
     def initialise(self,
                    # component states
@@ -178,8 +166,7 @@ class DummyC(SubSurfaceComponent):
 
     def run(self,
             # from interface
-            evaporation_soil_surface, evaporation_ponded_water,
-            transpiration, throughfall, snowmelt,
+            transfer_i, transfer_n,
             # component driving data
             driving_a,
             # component ancillary data
@@ -190,17 +177,16 @@ class DummyC(SubSurfaceComponent):
             # component constants
             **kwargs):
 
-        runoff, soil_water_stress = dummyc.run(
-            evaporation_soil_surface, evaporation_ponded_water,
-            transpiration, throughfall, snowmelt,
+        transfer_k, transfer_m = dummyc.run(
+            transfer_i, transfer_n,
             driving_a, parameter_a,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
         return {
             # to interface
-            'runoff': runoff,
-            'soil_water_stress': soil_water_stress
+            'transfer_k': transfer_k,
+            'transfer_m': transfer_m
         }
 
     def finalise(self,

@@ -18,9 +18,8 @@ void initialise_(int nz, int ny, int nx,
 }
 
 void run_(int nz, int ny, int nx,
-          // interface fluxes in
-          double *evaporation_soil_surface, double *evaporation_ponded_water,
-          double *transpiration, double *throughfall, double *snowmelt,
+          // from interface
+          double *transfer_i, double *transfer_n,
           // component driving data
           double *driving_a,
           // component parameters
@@ -28,8 +27,8 @@ void run_(int nz, int ny, int nx,
           // component states
           double *state_a_m1, double *state_a_0,
           double *state_b_m1, double *state_b_0,
-          // interface fluxes out
-          double *runoff, double *soil_water_stress)
+          // to interface
+          double *transfer_k, double *transfer_m)
 {
   int i, j, k;
   int ijk;
@@ -43,9 +42,11 @@ void run_(int nz, int ny, int nx,
         // update states
         state_a_0[ijk] = state_a_m1[ijk] + 1;
         state_b_0[ijk] = state_b_m1[ijk] + 2;
-        // interface fluxes out
-        runoff[ijk] = driving_a[ijk] * parameter_a;
-        soil_water_stress[ijk] = driving_a[ijk] * parameter_a;
+        // compute transfers to interface
+        transfer_k[ijk] = (driving_a[ijk] * parameter_a) + transfer_n[ijk]
+          + state_a_0[ijk];
+        transfer_m[ijk] = (driving_a[ijk] * parameter_a) + transfer_i[ijk]
+          + state_b_0[ijk];
       }
 }
 

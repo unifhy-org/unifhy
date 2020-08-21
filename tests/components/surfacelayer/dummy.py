@@ -16,6 +16,32 @@ except ImportError:
 
 
 class Dummy(SurfaceLayerComponent):
+    # supersede existing inwards/outwards for physically meaningless ones
+    _inwards_info = {
+        'transfer_k': {
+            'units': '1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'transfer_l': {
+            'units': '1',
+            'from': 'openwater',
+            'method': 'mean'
+        }
+    }
+    _outwards_info = {
+        'transfer_i': {
+            'units': '1',
+            'to': 'subsurface',
+            'method': 'mean'
+        },
+        'transfer_j': {
+            'units': '1',
+            'to': 'openwater',
+            'method': 'mean'
+        }
+    }
+    # define some dummy driving/ancillary/parameters/constants/states
     driving_data_info = {
         'driving_a': {
             'units': '1'
@@ -28,7 +54,7 @@ class Dummy(SurfaceLayerComponent):
         },
     }
     ancillary_data_info = {
-        'ancillary_a': {
+        'ancillary_c': {
             'units': '1'
         }
     }
@@ -56,11 +82,11 @@ class Dummy(SurfaceLayerComponent):
 
     def run(self,
             # from interface
-            soil_water_stress,
+            transfer_k, transfer_l,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
-            ancillary_a,
+            ancillary_c,
             # component parameters
             # component states
             state_a, state_b,
@@ -72,18 +98,10 @@ class Dummy(SurfaceLayerComponent):
 
         return {
             # to interface
-            'throughfall':
-                driving_a + driving_b + driving_c,
-            'snowmelt':
-                driving_a + driving_b + driving_c,
-            'transpiration':
-                driving_a + driving_b + driving_c,
-            'evaporation_soil_surface':
-                driving_a + driving_b + driving_c,
-            'evaporation_ponded_water':
-                driving_a + driving_b + driving_c,
-            'evaporation_openwater':
-                driving_a + driving_b + driving_c
+            'transfer_i':
+                driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
+            'transfer_j':
+                driving_a + driving_b + driving_c + transfer_k + state_b[0]
         }
 
     def finalise(self,
@@ -93,25 +111,8 @@ class Dummy(SurfaceLayerComponent):
         pass
 
 
-class DummyFortran(SurfaceLayerComponent):
-    driving_data_info = {
-        'driving_a': {
-            'units': '1'
-        },
-        'driving_b': {
-            'units': '1'
-        },
-        'driving_c': {
-            'units': '1'
-        },
-    }
-    ancillary_data_info = {
-        'ancillary_a': {
-            'units': '1'
-        }
-    }
-    # parameters_info = {}
-    # constants_info = {}
+class DummyFortran(Dummy):
+    # overwrite states to explicitly set array order
     states_info = {
         'state_a': {
             'units': '1',
@@ -124,7 +125,6 @@ class DummyFortran(SurfaceLayerComponent):
             'order': 'F'
         }
     }
-    solver_history = 1
 
     def initialise(self,
                    # component states
@@ -134,34 +134,28 @@ class DummyFortran(SurfaceLayerComponent):
 
     def run(self,
             # from interface
-            soil_water_stress,
+            transfer_k, transfer_l,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
-            ancillary_a,
+            ancillary_c,
             # component parameters
             # component states
             state_a, state_b,
             # component constants
             **kwargs):
 
-        (throughfall, snowmelt, transpiration,
-         evaporation_soil_surface, evaporation_ponded_water,
-         evaporation_openwater) = dummyfortran.run(
-            soil_water_stress,
+        transfer_i, transfer_j = dummyfortran.run(
+            transfer_k, transfer_l,
             driving_a, driving_b, driving_c,
-            ancillary_a,
+            ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
         return {
             # to interface
-            'throughfall': throughfall,
-            'snowmelt': snowmelt,
-            'transpiration': transpiration,
-            'evaporation_soil_surface': evaporation_soil_surface,
-            'evaporation_ponded_water': evaporation_ponded_water,
-            'evaporation_openwater': evaporation_openwater
+            'transfer_i': transfer_i,
+            'transfer_j': transfer_j
         }
 
     def finalise(self,
@@ -171,36 +165,7 @@ class DummyFortran(SurfaceLayerComponent):
         dummyfortran.finalise()
 
 
-class DummyC(SurfaceLayerComponent):
-    driving_data_info = {
-        'driving_a': {
-            'units': '1'
-        },
-        'driving_b': {
-            'units': '1'
-        },
-        'driving_c': {
-            'units': '1'
-        },
-    }
-    ancillary_data_info = {
-        'ancillary_a': {
-            'units': '1'
-        }
-    }
-    # parameters_info = {}
-    # constants_info = {}
-    states_info = {
-        'state_a': {
-            'units': '1',
-            'divisions': 1
-        },
-        'state_b': {
-            'units': '1',
-            'divisions': 1
-        }
-    }
-    solver_history = 1
+class DummyC(Dummy):
 
     def initialise(self,
                    # component states
@@ -210,34 +175,28 @@ class DummyC(SurfaceLayerComponent):
 
     def run(self,
             # from interface
-            soil_water_stress,
+            transfer_k, transfer_l,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
-            ancillary_a,
+            ancillary_c,
             # component parameters
             # component states
             state_a, state_b,
             # component constants
             **kwargs):
 
-        (throughfall, snowmelt, transpiration,
-         evaporation_soil_surface, evaporation_ponded_water,
-         evaporation_openwater) = dummyc.run(
-            soil_water_stress,
+        transfer_i, transfer_j = dummyc.run(
+            transfer_k, transfer_l,
             driving_a, driving_b, driving_c,
-            ancillary_a,
+            ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
         return {
             # to interface
-            'throughfall': throughfall,
-            'snowmelt': snowmelt,
-            'transpiration': transpiration,
-            'evaporation_soil_surface': evaporation_soil_surface,
-            'evaporation_ponded_water': evaporation_ponded_water,
-            'evaporation_openwater': evaporation_openwater
+            'transfer_i': transfer_i,
+            'transfer_j': transfer_j
         }
 
     def finalise(self,

@@ -17,18 +17,18 @@ void initialise_(int nz, int ny, int nx,
 }
 
 void run_(int nz, int ny, int nx,
-          // interface fluxes in
-          double *evaporation_openwater, double *runoff,
+          // to interface
+          double *transfer_j, double *transfer_m,
           // component ancillary data
-          double *ancillary_a,
+          double *ancillary_b,
           // component parameters
-          double parameter_a,
+          double parameter_c,
           // component states
           double *state_a_m1, double *state_a_0,
           // component constants,
           double constant_a,
-          // interface fluxes out
-          double *discharge)
+          // from interface
+          double *transfer_l, double *transfer_n, double *transfer_o)
 {
   int i, j, k;
   int ijk;
@@ -41,8 +41,11 @@ void run_(int nz, int ny, int nx,
         ijk = k + nx * (j + ny * i);
         // update states
         state_a_0[ijk] = state_a_m1[ijk] + 1;
-        // interface fluxes out
-        discharge[ijk] = ancillary_a[ijk] * parameter_a * constant_a;
+        // compute transfers to interface
+        transfer_l[ijk] = (ancillary_b[ijk] * transfer_m[ijk])
+          + state_a_0[ijk];
+        transfer_n[ijk] = parameter_c * transfer_j[ijk];
+        transfer_o[ijk] = parameter_c + transfer_j[ijk];
       }
 }
 

@@ -11,35 +11,37 @@ subroutine initialise(z, y, x, state_a_m1)
 end subroutine initialise
 
 subroutine run(z, y, x, &
-    evaporation_openwater, runoff, &
-    ancillary_a, &
-    parameter_a, &
-    state_a_m1, state_a_0, &
-    constant_a, &
-    discharge)
+               transfer_j, transfer_m, &
+               ancillary_b, &
+               parameter_c, &
+               state_a_m1, state_a_0, &
+               constant_a, &
+               transfer_l, transfer_n, transfer_o)
 
     implicit none
 
     ! spaceshape
     integer, intent(in) :: z, y, x
-    ! interface fluxes in
-    real(kind=8), intent(in), dimension(z, y, x) :: &
-        evaporation_openwater, runoff
+    ! from interface
+    real(kind=8), intent(in), dimension(z, y, x) :: transfer_j, transfer_m
     ! component ancillary data
-    real(kind=8), intent(in), dimension(z, y, x) :: ancillary_a
+    real(kind=8), intent(in), dimension(z, y, x) :: ancillary_b
     ! component parameters
-    real(kind=8), intent(inout) :: parameter_a
+    real(kind=8), intent(inout) :: parameter_c
     ! component states
     real(kind=8), intent(in), dimension(z, y, x) :: state_a_m1
     real(kind=8), intent(inout), dimension(z, y, x) :: state_a_0
     ! component constants
     real(kind=8), intent(inout) :: constant_a
-    ! interface fluxes out
-    real(kind=8), intent(out), dimension(z, y, x) :: discharge
+    ! to interface
+    real(kind=8), intent(out), dimension(z, y, x) :: &
+        transfer_l, transfer_n, transfer_o
 
     state_a_0 = state_a_m1 + 1
 
-    discharge = ancillary_a * parameter_a * constant_a
+    transfer_l = (ancillary_b * transfer_m) + state_a_0
+    transfer_n = parameter_c * transfer_j
+    transfer_o = parameter_c + transfer_j
 
 end subroutine run
 

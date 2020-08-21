@@ -5,9 +5,10 @@ cdef extern from "dummy.h":
 
     void initialise_(int nz, int ny, int nx, double *state_a_m1)
 
-    void run_(int nz, int ny, int nx, double *evaporation, double *runoff,
-              double *ancillary_a, double parameter_a, double *state_a_m1,
-              double *state_a_0, double constant_a, double *discharge)
+    void run_(int nz, int ny, int nx, double *transfer_j, double *transfer_m,
+              double *ancillary_b, double parameter_c, double *state_a_m1,
+              double *state_a_0, double constant_a, double *transfer_l,
+              double *transfer_n, double *transfer_o)
 
     void finalise_()
 
@@ -19,26 +20,31 @@ def initialise(cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1):
 
     initialise_(nz, ny, nx, &state_a_m1[0, 0, 0])
 
-def run(cnp.ndarray[cnp.npy_float64, ndim=3] evaporation_openwater,
-        cnp.ndarray[cnp.npy_float64, ndim=3] runoff,
-        cnp.ndarray[cnp.npy_float64, ndim=3] ancillary_a,
-        double parameter_a,
+def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_j,
+        cnp.ndarray[cnp.npy_float64, ndim=3] transfer_m,
+        cnp.ndarray[cnp.npy_float64, ndim=3] ancillary_b,
+        double parameter_c,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_a_0,
         double constant_a):
 
-    cdef int nz = evaporation_openwater.shape[0]
-    cdef int ny = evaporation_openwater.shape[1]
-    cdef int nx = evaporation_openwater.shape[2]
+    cdef int nz = transfer_j.shape[0]
+    cdef int ny = transfer_j.shape[1]
+    cdef int nx = transfer_j.shape[2]
 
-    cdef cnp.ndarray[cnp.npy_float64, ndim=3] discharge = np.zeros(
+    cdef cnp.ndarray[cnp.npy_float64, ndim=3] transfer_l = np.zeros(
+        (nz, ny, nx), dtype=np.float64)
+    cdef cnp.ndarray[cnp.npy_float64, ndim=3] transfer_n = np.zeros(
+        (nz, ny, nx), dtype=np.float64)
+    cdef cnp.ndarray[cnp.npy_float64, ndim=3] transfer_o = np.zeros(
         (nz, ny, nx), dtype=np.float64)
 
-    run_(nz, ny, nx, &evaporation_openwater[0, 0, 0], &runoff[0, 0, 0],
-         &ancillary_a[0, 0, 0], parameter_a, &state_a_m1[0, 0, 0],
-         &state_a_0[0, 0, 0], constant_a, &discharge[0, 0, 0])
+    run_(nz, ny, nx, &transfer_j[0, 0, 0], &transfer_m[0, 0, 0],
+         &ancillary_b[0, 0, 0], parameter_c, &state_a_m1[0, 0, 0],
+         &state_a_0[0, 0, 0], constant_a, &transfer_l[0, 0, 0],
+         &transfer_n[0, 0, 0], &transfer_o[0, 0, 0])
 
-    return discharge
+    return transfer_l, transfer_n, transfer_o
 
 def finalise():
     finalise_()
