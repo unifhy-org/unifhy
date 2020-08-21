@@ -1,6 +1,9 @@
 import numpy as np
 from datetime import timedelta
+from cftime import date2num
 from math import gcd
+
+from ..time import TimeDomain
 
 
 class Clock(object):
@@ -58,24 +61,28 @@ class Clock(object):
         # set as a minimum requirement one dump for the initial conditions
         self.switches['dumping'][0] = True
 
+        # generate a TimeDomain for the Clock
+        start_datetime = (
+            timedomains[self.categories[0]].bounds.datetime_array[0, 0]
+        )
+        end_datetime = (
+            timedomains[self.categories[0]].bounds.datetime_array[-1, -1]
+        )
+
+        self.timedomain = TimeDomain.from_start_end_step(
+            start_datetime, end_datetime, supermesh_delta
+        )
+
         # set some time attributes
         self.timedelta = supermesh_delta
         self.length = supermesh_length
-
-        self.start_datetime = (
-            timedomains[self.categories[0]].time.datetime_array[0]
-        )
-        self.end_datetime = (
-            timedomains[self.categories[0]].time.datetime_array[-1]
-        )
-
         self.start_timeindex = 0
         self.end_timeindex = supermesh_length - 1
 
         # initialise 'iterable' time attributes to the point in time just
         # prior the actual specified start of the supermesh because the
         # iterator needs to increment in time prior indexing the switches
-        self._current_datetime = self.start_datetime - supermesh_delta
+        self._current_datetime = start_datetime - supermesh_delta
         self._current_timeindex = self.start_timeindex - 1
 
     def _check_timedomain_compatibilities(self, timedomains):
@@ -110,6 +117,10 @@ class Clock(object):
 
     def get_current_datetime(self):
         return self._current_datetime
+
+    def get_current_timestamp(self):
+        return date2num(self._current_datetime, self.timedomain.units,
+                        self.timedomain.calendar)
 
     def get_current_timeindex(self, category):
         return (self._current_timeindex //

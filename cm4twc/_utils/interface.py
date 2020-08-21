@@ -1,4 +1,8 @@
 from collections.abc import MutableMapping
+from os import path, sep
+from netCDF4 import Dataset
+from datetime import datetime
+import cftime
 import numpy as np
 
 from ..settings import dtype_float
@@ -6,7 +10,8 @@ from ..settings import dtype_float
 
 class Interface(MutableMapping):
 
-    def __init__(self, components, clock, compass):
+    def __init__(self, components, clock, compass,
+                 identifier, output_directory):
         # transfers that are both inwards and outwards will exist
         # only once because dictionary keys are unique
         transfers = {}
@@ -16,9 +21,16 @@ class Interface(MutableMapping):
                     if t not in transfers:
                         transfers[t] = {}
                     transfers[t].update(i[t])
-
         self.transfers = transfers
+        # set up transfers according to components' time-/spacedomains
         self.set_up(components, clock, compass)
+
+        # assign identifier
+        self.identifier = identifier
+
+        # directories and files
+        self.output_directory = output_directory
+        self.dump_file = None
 
     def set_up(self, components, clock, compass, overwrite=False):
         # determine how many iterations of the clock
@@ -160,6 +172,23 @@ class Interface(MutableMapping):
 
         return weights
 
+    def initialise_transfers_dump(self, tag, clock, compass,
+                                  overwrite_dump=True):
+        self.dump_file = '_'.join([self.identifier, 'interface',
+                                   tag, 'dump.nc'])
+        if (overwrite_dump or not path.exists(sep.join([self.output_directory,
+                                                        self.dump_file]))):
+            create_transfers_dump(
+                sep.join([self.output_directory, self.dump_file]),
+                self.transfers, clock.timedomain, compass.spacedomain
+            )
+
+    def dump_transfers(self, timestamp):
+        update_transfers_dump(
+            sep.join([self.output_directory, self.dump_file]),
+            self.transfers, timestamp
+        )
+
     def __getitem__(self, key):
         i = self.transfers[key]['iter']
 
@@ -214,3 +243,79 @@ class Interface(MutableMapping):
 
     def __len__(self):
         return len(self.transfers)
+
+
+def create_transfers_dump(filepath, transfers_info, timedomain, spacedomain):
+    with Dataset(filepath, 'w') as f:
+        axes = spacedomain.axes
+
+        # description
+        f.description = "Dump file created on {}".format(
+            datetime.now().strftime('%Y-%m-%d at %H:%M:%S'))
+
+        # dimensions
+        f.createDimension('time', None)
+        for axis in axes:
+            f.createDimension(axis, len(getattr(spacedomain, axis)))
+
+        # coordinate variables
+        t = f.createVariable('time', np.float64, ('time',))
+        t.units = timedomain.units
+        t.calendar = timedomain.calendar
+        for axis in axes:
+            a = f.createVariable(axis, dtype_float(), (axis,))
+            a[:] = getattr(spacedomain, axis).array
+
+        # state variables
+        for var in transfers_info:
+            s = f.createVariable(var, dtype_float(),
+                                 ('time', *axes))
+            s.units = transfers_info[var]['units']
+
+
+def update_transfers_dump(filepath, transfers, timestamp):
+    with Dataset(filepath, 'a') as f:
+        try:
+            # check whether given snapshot already in file
+            t = cftime.time2index(timestamp, f.variables['time'])
+        # will get a IndexError if time variable is empty
+        # will get a ValueError if timestamp not in time variable
+        except (IndexError, ValueError):
+            # if not, extend time dimension
+            t = len(f.variables['time'])
+            f.variables['time'][t] = timestamp
+
+        for transfer in transfers:
+            if transfers[transfer].get('from') is None:
+                continue
+            f.variables[transfer][t, ...] = transfers[transfer]['slices'][-1]
+
+
+def load_transfers_dump(filepath, datetime_, transfers_info):
+    transfers = {}
+
+    with Dataset(filepath, 'r') as f:
+        f.set_always_mask(False)
+        # determine point in time to use from the dump
+        if datetime_ is None:
+            # if not specified, use the last time index
+            t = -1
+            datetime_ = cftime.num2date(f.variables['time'][-1],
+                                        f.variables['time'].units,
+                                        f.variables['time'].calendar)
+        else:
+            # find the index for the datetime given
+            try:
+                t = cftime.date2index(datetime_, f.variables['time'])
+            except ValueError:
+                raise ValueError(
+                    '{} not available in dump {}'.format(datetime_, filepath))
+
+        # try to get each of the transfers, if not in file, carry on anyway
+        for transfer in transfers_info:
+            try:
+                transfers[transfer] = f.variables[transfer][t, ...]
+            except KeyError:
+                pass
+
+    return transfers, datetime_

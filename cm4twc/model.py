@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import yaml
 
 from ._utils import Interface, Clock, Compass
+from ._utils.interface import load_transfers_dump
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
 from .time import TimeDomain
@@ -17,7 +18,7 @@ class Model(object):
     compatibility between `Component`\s, and controlling the simulation
     workflow.
     """
-    def __init__(self, identifier, config_directory,
+    def __init__(self, identifier, config_directory, output_directory,
                  surfacelayer, subsurface, openwater,
                  _to_yaml=True):
         """**Initialisation**
@@ -30,6 +31,10 @@ class Model(object):
             config_directory: `str`
                 The path to the directory where to save the model
                 configuration files.
+
+            output_directory: `str`
+                The path to the directory where to save the model
+                interface dump files and model output files.
 
             surfacelayer: `SurfaceLayerComponent` object
                 The `Component` responsible for the surface layer
@@ -61,8 +66,9 @@ class Model(object):
         self.subsurface.identifier = identifier
         self.openwater.identifier = identifier
 
-        # assign configuration directory
+        # assign directories
         self.config_directory = config_directory
+        self.output_directory = output_directory
 
         # save model configuration in yaml file
         if _to_yaml:
@@ -98,6 +104,7 @@ class Model(object):
             ["{}(".format(self.__class__.__name__)] +
             ["    identifier: {}".format(self.identifier)] +
             ["    config directory: {}".format(self.config_directory)] +
+            ["    output directory: {}".format(self.output_directory)] +
             ["    surfacelayer: {}".format(
                 self.surfacelayer.__class__.__name__)] +
             ["    subsurface: {}".format(
@@ -131,6 +138,7 @@ class Model(object):
         return cls(
             identifier=cfg['identifier'],
             config_directory=cfg['config_directory'],
+            output_directory=cfg['output_directory'],
             surfacelayer=surfacelayer.from_config(
                 cfg['surfacelayer']),
             subsurface=subsurface.from_config(
@@ -144,6 +152,7 @@ class Model(object):
         return {
             'identifier': self.identifier,
             'config_directory': self.config_directory,
+            'output_directory': self.output_directory,
             'surfacelayer': self.surfacelayer.to_config(),
             'subsurface': self.subsurface.to_config(),
             'openwater': self.openwater.to_config()
@@ -170,6 +179,7 @@ class Model(object):
         Model(
             identifier: dummy
             config directory: configurations
+            output directory: outputs
             surfacelayer: Dummy
             subsurface: Dummy
             openwater: Dummy
@@ -194,6 +204,68 @@ class Model(object):
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'yml'])]), 'w') as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
+
+    def initialise_transfers_from_dump(self, dump_file, at=None):
+        """Initialise the transfers of the Interface from a dump file.
+
+        :Parameters:
+
+            dump_file: `str`
+                A string providing the path to the netCDF dump file
+                containing values to be used as initial conditions for
+                the transfers of the Interface.
+
+            at: datetime object, optional
+                The snapshot in time to be used for the initial
+                conditions. Must be any datetime type (except
+                `numpy.datetime64`). Must be contained in the 'time'
+                variable in *dump_file*. If not provided, the last index
+                in the 'time' variable in *dump_file* will be used.
+
+                Note: if a datetime is provided, there is no enforcement
+                of the fact that this datetime must correspond to the
+                initial datetime in the simulation period for the
+                `Component`, and it is only used as a means to select
+                a specific snapshot in time amongst the ones available
+                in the dump file.
+
+        :Returns:
+
+            datetime object
+                The snapshot in time that was used for the initial
+                conditions.
+
+        """
+        # set up compass responsible for mapping across components
+        compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
+                           'subsurface': self.subsurface.spacedomain,
+                           'openwater': self.openwater.spacedomain})
+
+        # set up clock responsible for iterating over time
+        clock = Clock({'surfacelayer': self.surfacelayer.timedomain,
+                       'subsurface': self.subsurface.timedomain,
+                       'openwater': self.openwater.timedomain})
+
+        # set up interface responsible for transfers between components
+        self.interface = Interface({'surfacelayer': self.surfacelayer,
+                                    'subsurface': self.subsurface,
+                                    'openwater': self.openwater},
+                                   clock, compass, self.identifier,
+                                   self.output_directory)
+
+        transfers, at = load_transfers_dump(dump_file, at,
+                                            self.interface.transfers)
+        for tr in self.interface.transfers:
+            if tr in transfers:
+                if self.interface.transfers[tr].get('from') is None:
+                    continue
+                else:
+                    self.interface.transfers[tr]['slices'][-1] = transfers[tr]
+            else:
+                raise KeyError("initial conditions for interface transfer "
+                               "'{}' not in dump".format(tr))
+
+        return at
 
     def spin_up(self, start, end, cycles=1, dumping_frequency=None,
                 overwrite=True, _cycle_origin_no=0):
@@ -276,11 +348,9 @@ class Model(object):
 
         # start the spin up run(s)
         for cycle in range(cycles):
-            self._initialise(
-                tag='spinup{}'.format(_cycle_origin_no + cycle + 1),
-                overwrite=overwrite
-            )
-            self._run()
+            tag = 'spinup{}'.format(_cycle_origin_no + cycle + 1)
+            self._initialise(tag=tag, overwrite=overwrite)
+            self._run(tag=tag, dumping_frequency=dumping_frequency)
             self._finalise()
 
         # restore main run attributes
@@ -325,7 +395,7 @@ class Model(object):
 
         # initialise, run, finalise model
         self._initialise(tag='run', overwrite=overwrite)
-        self._run(dumping_frequency)
+        self._run(tag='run', dumping_frequency=dumping_frequency)
         self._finalise()
 
     def _initialise(self, tag, overwrite):
@@ -334,7 +404,7 @@ class Model(object):
         self.subsurface.initialise_(tag, overwrite)
         self.openwater.initialise_(tag, overwrite)
 
-    def _run(self, dumping_frequency=None):
+    def _run(self, tag, dumping_frequency=None):
         # set up compass responsible for mapping across components
         compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
                            'subsurface': self.subsurface.spacedomain,
@@ -353,7 +423,8 @@ class Model(object):
             self.interface = Interface({'surfacelayer': self.surfacelayer,
                                         'subsurface': self.subsurface,
                                         'openwater': self.openwater},
-                                       clock, compass)
+                                       clock, compass, self.identifier,
+                                       self.output_directory)
         else:
             # no need for a new instance, but need to re-run the setup
             # of the existing instance because time or space information
@@ -362,6 +433,7 @@ class Model(object):
                                    'subsurface': self.subsurface,
                                    'openwater': self.openwater},
                                   clock, compass)
+        self.interface.initialise_transfers_dump(tag, clock, compass)
 
         # run components
         for (run_surfacelayer, run_subsurface, run_openwater,
@@ -378,6 +450,9 @@ class Model(object):
                 )
                 self.openwater.dump_states(
                     clock.get_current_timeindex('openwater')
+                )
+                self.interface.dump_transfers(
+                    clock.get_current_timestamp()
                 )
 
             if run_surfacelayer:
@@ -433,7 +508,7 @@ class Model(object):
                 data_or_null += 1
                 continue
 
-            # initialise component from dump file
+            # initialise component states from dump file
             dump_sig = sep.join([component.output_directory,
                                  '_'.join([component.identifier,
                                            component.category,
@@ -457,13 +532,36 @@ class Model(object):
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
+        # initialise model interface transfers from dump file
+        dump_sig = sep.join([self.output_directory,
+                             '_'.join([self.identifier, 'interface',
+                                       '*', 'dump.nc'])])
+
+        dump_files = sorted(glob(dump_sig))
+
+        if not dump_files:
+            raise RuntimeError(
+                "no dump file found for interface of model {}".format(
+                    self.identifier)
+            )
+        elif dump_sig.replace('*', 'run') in dump_files:
+            dump_file = dump_sig.replace('*', 'run')
+        else:
+            # use last dump file, which will be the latest spinup run
+            dump_file = dump_files[-1]
+            cycle_nos.append(
+                dump_file.split('_dump.nc')[0].split('spinup')[-1]
+            )
+
+        ats.append(self.initialise_transfers_from_dump(dump_file, at))
+
         # if all components are Data or Null, exit resume
         if data_or_null == 3:
             return
 
-        # check whether snapshots in component dumps are for same datetime
+        # check whether snapshots in dumps are for same datetime
         if not len(set(ats)) == 1:
-            raise RuntimeError("component dump files feature different last "
+            raise RuntimeError("dump files feature different last "
                                "snapshots in time, cannot resume")
         at = list(set(ats))[0]
 

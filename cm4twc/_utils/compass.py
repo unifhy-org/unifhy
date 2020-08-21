@@ -11,6 +11,10 @@ class Compass(object):
         # arbitrarily one component to be the supermesh
         self.shape = spacedomains[self.categories[0]].shape
 
+        # generate a SpaceDomain for the Compass (for now take a
+        # TimeDomain of a Component arbitrarily)
+        self.spacedomain = spacedomains[self.categories[0]]
+
     def _check_spacedomain_compatibilities(self, spacedomains):
         for category in spacedomains:
             # check that components' spacedomains are equal

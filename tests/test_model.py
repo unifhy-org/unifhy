@@ -50,6 +50,12 @@ class TestModelAPI(unittest.TestCase):
                     glob(os.sep.join([self.model.openwater.output_directory,
                                       self.model.identifier + '*_dump.nc']))
                 )
+            if self.model.interface is not None:
+                if self.model.interface.dump_file is not None:
+                    files.extend(
+                        glob(os.sep.join([self.model.interface.output_directory,
+                                          'interface_dump.nc']))
+                    )
             files.extend(
                 glob(os.sep.join([self.model.config_directory,
                                   self.model.identifier + '*.yml']))
@@ -79,6 +85,7 @@ class TestModelAPI(unittest.TestCase):
                     identifier='test_{}{}{}'.format(
                         surfacelayer_kind, subsurface_kind, openwater_kind),
                     config_directory='outputs',
+                    output_directory='outputs',
                     surfacelayer=surfacelayer,
                     subsurface=subsurface,
                     openwater=openwater
@@ -172,6 +179,7 @@ class TestModelAPI(unittest.TestCase):
         self.model = cm4twc.Model(
             identifier='test_different_timedomains',
             config_directory='outputs',
+            output_directory='outputs',
             surfacelayer=surfacelayer,
             subsurface=subsurface,
             openwater=openwater

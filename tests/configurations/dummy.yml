@@ -1,5 +1,6 @@
 identifier: dummy
 config_directory: configurations
+output_directory: outputs
 surfacelayer:
   module: tests.components.surfacelayer.dummy
   class: Dummy
