@@ -28,11 +28,17 @@ class Interface(MutableMapping):
         # assign identifier
         self.identifier = identifier
 
+        # assign clock and compass for interface to remain aware of space/time
+        self.clock = clock
+        self.compass = compass
+
         # directories and files
         self.output_directory = output_directory
         self.dump_file = None
 
     def set_up(self, components, clock, compass, overwrite=False):
+        self.clock = clock
+        self.compass = compass
         # determine how many iterations of the clock
         # each component covers (i.e. steps)
         steps = {
@@ -172,18 +178,24 @@ class Interface(MutableMapping):
 
         return weights
 
-    def initialise_transfers_dump(self, tag, clock, compass,
-                                  overwrite_dump=True):
+    def initialise_(self, tag, overwrite_dump=True):
         self.dump_file = '_'.join([self.identifier, 'interface',
                                    tag, 'dump.nc'])
         if (overwrite_dump or not path.exists(sep.join([self.output_directory,
                                                         self.dump_file]))):
             create_transfers_dump(
                 sep.join([self.output_directory, self.dump_file]),
-                self.transfers, clock.timedomain, compass.spacedomain
+                self.transfers, self.clock.timedomain, self.compass.spacedomain
             )
 
     def dump_transfers(self, timestamp):
+        update_transfers_dump(
+            sep.join([self.output_directory, self.dump_file]),
+            self.transfers, timestamp
+        )
+
+    def finalise_(self):
+        timestamp = self.clock.timedomain.bounds.array[-1, -1]
         update_transfers_dump(
             sep.join([self.output_directory, self.dump_file]),
             self.transfers, timestamp

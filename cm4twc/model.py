@@ -433,7 +433,7 @@ class Model(object):
                                    'subsurface': self.subsurface,
                                    'openwater': self.openwater},
                                   clock, compass)
-        self.interface.initialise_transfers_dump(tag, clock, compass)
+        self.interface.initialise_(tag)
 
         # run components
         for (run_surfacelayer, run_subsurface, run_openwater,
@@ -486,6 +486,8 @@ class Model(object):
         self.surfacelayer.finalise_()
         self.subsurface.finalise_()
         self.openwater.finalise_()
+        # finalise model
+        self.interface.finalise_()
 
     def resume(self, at=None):
         """Resume model simulation on latest snapshot in dump files or
