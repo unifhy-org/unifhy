@@ -1,4 +1,5 @@
 import abc
+from importlib import import_module
 import numpy as np
 from os import path, sep
 import cf
@@ -629,6 +630,9 @@ class DataComponent(Component):
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
                                             dataset)
 
+        # store class being substituted for config
+        self._substituting_class = substituting_class
+
         # override category to the one of substituting component
         self._category = substituting_class.get_class_category()
 
@@ -647,6 +651,36 @@ class DataComponent(Component):
             + ["    dataset: {} variable(s)".format(len(self.dataset))]
             + [")"]
         )
+
+    @classmethod
+    def from_config(cls, cfg):
+        spacedomain = getattr(space, cfg['spacedomain']['class'])
+        substituting_class = (
+            getattr(
+                import_module(cfg['substituting']['module']),
+                cfg['substituting']['class']
+            )
+        )
+        return cls(
+            timedomain=TimeDomain.from_config(cfg['timedomain']),
+            spacedomain=spacedomain.from_config(cfg['spacedomain']),
+            dataset=DataSet.from_config(cfg.get('dataset')),
+            substituting_class=substituting_class
+        )
+
+    def to_config(self):
+        cfg = {
+            'module': self.__module__,
+            'class': self.__class__.__name__,
+            'timedomain': self.timedomain.to_config(),
+            'spacedomain': self.spacedomain.to_config(),
+            'dataset': self.dataset.to_config(),
+            'substituting': {
+                'module': self._substituting_class.__module__,
+                'class': self._substituting_class.__name__
+            }
+        }
+        return cfg
 
     def initialise_(self, *args, **kwargs):
         pass
@@ -678,7 +712,7 @@ class NullComponent(Component):
     _inwards_info = {}
     _outwards_info = {}
 
-    def __init__(self, timedomain, spacedomain, substituting_class):
+    def __init__(self, timedomain, spacedomain, substituting_class, **kwargs):
         """**Initialisation**
 
         :Parameters:
@@ -697,6 +731,9 @@ class NullComponent(Component):
         """
         super(NullComponent, self).__init__(None, timedomain, spacedomain)
 
+        # store class being substituted for config
+        self._substituting_class = substituting_class
+
         # override category with the one of component being substituted
         self._category = substituting_class.get_class_category()
 
@@ -713,6 +750,34 @@ class NullComponent(Component):
             + ["    spacedomain: shape: ({})".format(shape)]
             + [")"]
         )
+
+    @classmethod
+    def from_config(cls, cfg):
+        spacedomain = getattr(space, cfg['spacedomain']['class'])
+        substituting_class = (
+            getattr(
+                import_module(cfg['substituting']['module']),
+                cfg['substituting']['class']
+            )
+        )
+        return cls(
+            timedomain=TimeDomain.from_config(cfg['timedomain']),
+            spacedomain=spacedomain.from_config(cfg['spacedomain']),
+            substituting_class=substituting_class
+        )
+
+    def to_config(self):
+        cfg = {
+            'module': self.__module__,
+            'class': self.__class__.__name__,
+            'timedomain': self.timedomain.to_config(),
+            'spacedomain': self.spacedomain.to_config(),
+            'substituting': {
+                'module': self._substituting_class.__module__,
+                'class': self._substituting_class.__name__
+            }
+        }
+        return cfg
 
     def initialise_(self, *args, **kwargs):
         pass
