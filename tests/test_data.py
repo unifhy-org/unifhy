@@ -15,15 +15,16 @@ def get_sciencish_dataset():
     )
 
 
-def get_dummy_dataset(component_category):
+def get_dummy_dataset(component_category, resolution):
     return cm4twc.DataSet(
-        'data/dummy_{}_data_daily.nc'.format(component_category)
+        'data/dummy_{}_data_{}.nc'.format(component_category, resolution)
     )
 
 
-def get_dummy_component_substitute_dataset(component_category):
+def get_dummy_component_substitute_dataset(component_category, resolution):
     return cm4twc.DataSet(
-        'data/dummy_{}_substitute_data_daily.nc'.format(component_category)
+        'data/dummy_{}_substitute_data_{}.nc'.format(component_category,
+                                                     resolution)
     )
 
 
