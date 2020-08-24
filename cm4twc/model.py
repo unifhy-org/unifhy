@@ -534,6 +534,10 @@ class Model(object):
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
+        # if all components are Data or Null, exit resume
+        if data_or_null == 3:
+            return
+
         # initialise model interface transfers from dump file
         dump_sig = sep.join([self.output_directory,
                              '_'.join([self.identifier, 'interface',
@@ -556,10 +560,6 @@ class Model(object):
             )
 
         ats.append(self.initialise_transfers_from_dump(dump_file, at))
-
-        # if all components are Data or Null, exit resume
-        if data_or_null == 3:
-            return
 
         # check whether snapshots in dumps are for same datetime
         if not len(set(ats)) == 1:
