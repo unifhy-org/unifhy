@@ -53,33 +53,37 @@ class Interface(MutableMapping):
             # remain possible until Ocean and Atmosphere components are
             # implemented in the framework)
             if self.transfers[t].get('from') is None:
-                # in this case only __setitem__ will be called
-                continue
+                # in this case only __setitem__ will be called,
+                # no component is going to call __getitem__, so no need
+                # for weights, but because transfers still need to be
+                # stored for dump, need to define history for creation
+                # of 'array' and 'slices'
+                self.transfers[t]['history'] = 1
+            else:
+                to_ = steps[self.transfers[t]['to']]
+                from_ = steps[self.transfers[t]['from']]
 
-            to_ = steps[self.transfers[t]['to']]
-            from_ = steps[self.transfers[t]['from']]
+                # determine the weights that will be used by the interface
+                # on the stored timesteps when a transfer is asked (i.e.
+                # when __getitem__ is called)
+                self.transfers[t]['weights'] = self._calculate_weights(
+                    from_, to_, clock.length
+                )
+                if self.transfers[t]['method'] == 'sum':
+                    # need to add dimensions of size 1 for numpy broadcasting
+                    self.transfers[t]['weights'] = np.expand_dims(
+                        self.transfers[t]['weights'],
+                        axis=[-(i+1) for i in range(len(compass.shape))]
+                    )
 
-            # determine the weights that will be used by the interface
-            # on the stored timesteps when a transfer is asked (i.e.
-            # when __getitem__ is called)
-            self.transfers[t]['weights'] = self._calculate_weights(
-                from_, to_, clock.length
-            )
-            if self.transfers[t]['method'] == 'sum':
-                # need to add dimensions of size 1 for numpy broadcasting
-                self.transfers[t]['weights'] = np.expand_dims(
-                    self.transfers[t]['weights'],
-                    axis=[-(i+1) for i in range(len(compass.shape))]
+                # history is the number of timesteps that are stored
+                self.transfers[t]['history'] = (
+                    self.transfers[t]['weights'].shape[-1]
                 )
 
-            # history is the number of timesteps that are stored
-            self.transfers[t]['history'] = (
-                self.transfers[t]['weights'].shape[-1]
-            )
-
-            # initialise iterator that allows the interface to know
-            # which weights to use
-            self.transfers[t]['iter'] = 0
+                # initialise iterator that allows the interface to know
+                # which weights to use
+                self.transfers[t]['iter'] = 0
 
             # if required or requested, initialise array to store
             # required timesteps
@@ -231,13 +235,6 @@ class Interface(MutableMapping):
         return value
 
     def __setitem__(self, key, value):
-        # special case for transfers towards a DataComponent or
-        # a NullComponent (or towards outside framework which will
-        # remain possible until Ocean and Atmosphere components are
-        # implemented in the framework)
-        if self.transfers[key].get('from') is None:
-            return
-
         lhs = [a for a in self.transfers[key]['slices']]
         rhs = ([a for a in self.transfers[key]['slices'][1:]]
                + [self.transfers[key]['slices'][0]])
@@ -298,8 +295,6 @@ def update_transfers_dump(filepath, transfers, timestamp):
             f.variables['time'][t] = timestamp
 
         for transfer in transfers:
-            if transfers[transfer].get('from') is None:
-                continue
             f.variables[transfer][t, ...] = transfers[transfer]['slices'][-1]
 
 
