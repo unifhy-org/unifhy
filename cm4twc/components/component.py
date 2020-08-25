@@ -665,9 +665,6 @@ class DataComponent(Component):
                 *dataset*.
 
         """
-        super(DataComponent, self).__init__(None, timedomain, spacedomain,
-                                            dataset)
-
         # store class being substituted for config
         self._substituting_class = substituting_class
 
@@ -681,6 +678,10 @@ class DataComponent(Component):
         # being substituted (so that the dataset is checked for time
         # and space compatibility as a 'standard' dataset would be)
         self.driving_data_info = substituting_class.get_class_outwards_info()
+
+        # initialise as a Component
+        super(DataComponent, self).__init__(None, timedomain, spacedomain,
+                                            dataset)
 
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
@@ -771,8 +772,6 @@ class NullComponent(Component):
                 of zeros.
 
         """
-        super(NullComponent, self).__init__(None, timedomain, spacedomain)
-
         # store class being substituted for config
         self._substituting_class = substituting_class
 
@@ -782,6 +781,9 @@ class NullComponent(Component):
         # override inwards and outwards with the ones of component
         # being substituted
         self._outwards_info = substituting_class.get_class_outwards_info()
+
+        # initialise as a Component
+        super(NullComponent, self).__init__(None, timedomain, spacedomain)
 
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
