@@ -9,7 +9,8 @@ from tests.test_data import (get_dummy_dataset,
                              get_dummy_component_substitute_dataset)
 
 
-def get_dummy_surfacelayer_component(kind, time_resolution, sync=True):
+def get_dummy_surfacelayer_component(kind, sync):
+    time_resolution = 'daily'
     timedomain = get_dummy_timedomain(time_resolution)
     spacedomain = get_dummy_spacedomain()
     dataset = get_dummy_dataset('surfacelayer', time_resolution)
@@ -28,7 +29,7 @@ def get_dummy_surfacelayer_component(kind, time_resolution, sync=True):
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset(
-                'surfacelayer' if sync else 'surfacelayer_async',
+                'surfacelayer_{}'.format(sync),
                 time_resolution
             ),
             substituting_class=SurfaceLayerDummy
@@ -42,7 +43,8 @@ def get_dummy_surfacelayer_component(kind, time_resolution, sync=True):
     return surfacelayer
 
 
-def get_dummy_subsurface_component(kind, time_resolution, sync=True):
+def get_dummy_subsurface_component(kind, sync):
+    time_resolution = 'daily' if sync == 'sync' else '3daily'
     timedomain = get_dummy_timedomain(time_resolution)
     spacedomain = get_dummy_spacedomain()
     dataset = get_dummy_dataset('subsurface', time_resolution)
@@ -61,7 +63,7 @@ def get_dummy_subsurface_component(kind, time_resolution, sync=True):
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset(
-                'subsurface' if sync else 'subsurface_async',
+                'subsurface_{}'.format(sync),
                 time_resolution
             ),
             substituting_class=SubSurfaceDummy
@@ -75,7 +77,8 @@ def get_dummy_subsurface_component(kind, time_resolution, sync=True):
     return subsurface
 
 
-def get_dummy_openwater_component(kind, time_resolution, sync=True):
+def get_dummy_openwater_component(kind, sync):
+    time_resolution = 'daily' if sync == 'sync' else '2daily'
     timedomain = get_dummy_timedomain(time_resolution)
     spacedomain = get_dummy_spacedomain()
     dataset = get_dummy_dataset('openwater', time_resolution)
@@ -94,7 +97,7 @@ def get_dummy_openwater_component(kind, time_resolution, sync=True):
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset(
-                'openwater' if sync else 'openwater_async',
+                'openwater_{}'.format(sync),
                 time_resolution
             ),
             substituting_class=OpenWaterDummy

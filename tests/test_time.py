@@ -44,8 +44,8 @@ def get_dummy_spin_up_start_end():
             cftime.DatetimeGregorian(2019, 1, 7, 9))
 
 
-def get_dummy_dumping_frequency(sync=True):
-    if sync:
+def get_dummy_dumping_frequency(sync):
+    if sync == 'sync':
         return timedelta(days=1)
     else:
         return timedelta(days=6)
