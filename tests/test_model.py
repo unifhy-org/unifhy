@@ -57,9 +57,9 @@ class Simulator(object):
 
         return model
 
-    def spinup_model(self):
+    def spinup_model(self, cycles=2):
         self.model.spin_up(
-            *get_dummy_spin_up_start_end(), cycles=2,
+            *get_dummy_spin_up_start_end(), cycles,
             dumping_frequency=get_dummy_dumping_frequency(self.sync)
         )
 
@@ -204,14 +204,8 @@ class TestModelSync(unittest.TestCase):
                 simulator = Simulator(self.sync, sl_kind, ss_kind, ow_kind)
                 simulator.run_model()
 
-                # check components' final state values
-                for comp in [simulator.model.surfacelayer,
-                             simulator.model.subsurface,
-                             simulator.model.openwater]:
-                    self.check_component_states(comp)
-
-                # check final transfer values
-                self.check_interface_transfers(simulator.model.interface)
+                # check final state and transfer values
+                self.check_final_conditions(simulator.model)
 
                 # clean up
                 simulator.delete_yml_and_dump()
@@ -234,17 +228,58 @@ class TestModelSync(unittest.TestCase):
                                        'openwater': ow_src})
                 simulator.run_model()
 
-                # check components' final state values
-                for comp in [simulator.model.surfacelayer,
-                             simulator.model.subsurface,
-                             simulator.model.openwater]:
-                    self.check_component_states(comp)
-
-                # check final transfer values
-                self.check_interface_transfers(simulator.model.interface)
+                # check final state and transfer values
+                self.check_final_conditions(simulator.model)
 
                 # clean up
                 simulator.delete_yml_and_dump()
+
+    def test_in_session_vs_through_dump(self):
+        # initialise a model, and spin it up
+        simulator_1 = Simulator(self.sync, 'c', 'c', 'c')
+        simulator_1.spinup_model(cycles=1)
+
+        # initialise another model
+        simulator_2 = Simulator(self.sync, 'c', 'c', 'c')
+
+        # use dump of first model as initial conditions for second model
+        simulator_2.model.surfacelayer.initialise_states_from_dump(
+            os.sep.join([simulator_1.model.surfacelayer.output_directory,
+                         simulator_1.model.surfacelayer.dump_file])
+        )
+        simulator_2.model.subsurface.initialise_states_from_dump(
+            os.sep.join([simulator_1.model.subsurface.output_directory,
+                         simulator_1.model.subsurface.dump_file])
+        )
+        simulator_2.model.openwater.initialise_states_from_dump(
+            os.sep.join([simulator_1.model.openwater.output_directory,
+                         simulator_1.model.openwater.dump_file])
+        )
+
+        simulator_2.model.initialise_transfers_from_dump(
+            os.sep.join([simulator_1.model.interface.output_directory,
+                         simulator_1.model.interface.dump_file])
+        )
+
+        # spin second model up
+        simulator_2.spinup_model(cycles=1)
+
+        # check final state and transfer values
+        # (since simulate period is of 12 days, and each spinup cycle is
+        #  of 6 days, and given that the driving data is constant for
+        #  the 12-day period, the final conditions with spinup+spinup
+        #  will be the same as with simulate without spinup)
+        self.check_final_conditions(simulator_2.model)
+
+    def check_final_conditions(self, model):
+        # check components' final state values
+        for comp in [model.surfacelayer,
+                     model.subsurface,
+                     model.openwater]:
+            self.check_component_states(comp)
+
+        # check final transfer values
+        self.check_interface_transfers(model.interface)
 
     def check_component_states(self, component):
         cat = component.category
