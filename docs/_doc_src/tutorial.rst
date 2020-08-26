@@ -20,8 +20,8 @@ in a `DataSet` instance.
    >>> print(cm4twc.__version__)
    0.0.1
 
-Core concepts structuring the framework
----------------------------------------
+Configuring a Model
+-------------------
 
 .. rubric:: `TimeDomain` object
 
@@ -224,8 +224,8 @@ instantiated with three `Component` instances, one for each of the three
        openwater: Dummy
    )
 
-Using the `Model` once configured
----------------------------------
+Simulating with the Model
+-------------------------
 
 This instance of `Model` can now be used to start a spin up run and/or a simulation run.
 

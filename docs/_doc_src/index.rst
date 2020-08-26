@@ -6,11 +6,10 @@
 
 .. include:: overview.rst
 
-Contents
-========
-
 .. toctree::
+   :hidden:
    :maxdepth: 1
+   :caption: Contents
 
    overview
    api
@@ -18,8 +17,9 @@ Contents
 
 
 
-Index and search
-================
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Appendix
 
-* :ref:`genindex`
-* :ref:`search`
+   genindex
