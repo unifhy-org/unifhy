@@ -15,26 +15,32 @@ from tests.test_state import compare_states
 
 class Simulator(object):
     def __init__(self, sync, surfacelayer_kind, subsurface_kind,
-                 openwater_kind, source='Python'):
+                 openwater_kind, sources=None):
         self.sync = sync
         self.model = self._initialise_model(
-            sync, surfacelayer_kind, subsurface_kind, openwater_kind, source
+            sync, surfacelayer_kind, subsurface_kind, openwater_kind, sources
         )
 
     @staticmethod
     def _initialise_model(sync, surfacelayer_kind, subsurface_kind,
-                          openwater_kind, source):
+                          openwater_kind, sources):
         # for surfacelayer component
+        category = 'surfacelayer'
         surfacelayer = get_dummy_component(
-            'surfacelayer', surfacelayer_kind, sync, source
+            category, surfacelayer_kind, sync,
+            'Python' if sources is None else sources.get(category, 'Python')
         )
         # for subsurface component
+        category = 'subsurface'
         subsurface = get_dummy_component(
-            'subsurface', subsurface_kind, sync, source
+            category, subsurface_kind, sync,
+            'Python' if sources is None else sources.get(category, 'Python')
         )
         # for openwater
+        category = 'openwater'
         openwater = get_dummy_component(
-            'openwater', openwater_kind, sync, source
+            category, openwater_kind, sync,
+            'Python' if sources is None else sources.get(category, 'Python')
         )
 
         # try to get an instance of model with the given combination
@@ -194,56 +200,91 @@ class TestModelSync(unittest.TestCase):
                               subsurface=ss_kind,
                               openwater=ow_kind):
 
-                # initialise, spinup, and run model
+                # initialise, and run model
                 simulator = Simulator(self.sync, sl_kind, ss_kind, ow_kind)
                 simulator.run_model()
 
+                # check components' final state values
                 for comp in [simulator.model.surfacelayer,
                              simulator.model.subsurface,
                              simulator.model.openwater]:
-                    cat = comp.category
+                    self.check_component_states(comp)
 
-                    # if component is "real", otherwise no states
-                    if not isinstance(comp, cm4twc.DataComponent):
-                        # check final state values
-                        for state in ['state_a', 'state_b']:
-                            if self.exp_states[cat].get(state) is None:
-                                # some components feature only one state
-                                continue
-                            # retrieve last state values
-                            arr = comp.states[state][-1]
-                            # compare both min/max, as arrays are homogeneous
-                            try:
-                                if isinstance(comp, cm4twc.DataComponent):
-                                    # state value should remain at zero
-                                    self.assertEqual(np.amin(arr), 0)
-                                    self.assertEqual(np.amax(arr), 0)
-                                else:
-                                    val = self.exp_states[cat][state]
-                                    self.assertEqual(np.amin(arr), val)
-                                    self.assertEqual(np.amax(arr), val)
-                            except AssertionError as e:
-                                raise AssertionError(
-                                    "error for {}, {}".format(cat, state)
-                                ) from e
-
-                    # check final transfer values
-                    for transfer in ['transfer_i', 'transfer_j', 'transfer_k',
-                                     'transfer_l', 'transfer_m', 'transfer_n',
-                                     'transfer_o']:
-                        arr = simulator.model.interface.transfers[transfer][
-                            'slices'][-1]
-                        # compare both min/max, as array should be homogeneous
-                        val = self.exp_transfers[transfer]
-                        try:
-                            self.assertAlmostEqual(np.amin(arr), val)
-                            self.assertAlmostEqual(np.amax(arr), val)
-                        except AssertionError as e:
-                            raise AssertionError(
-                                "error for {}".format(transfer)) from e
+                # check final transfer values
+                self.check_interface_transfers(simulator.model.interface)
 
                 # clean up
                 simulator.delete_yml_and_dump()
+
+    def test_init_simulate_various_sources(self):
+        doe = ((sl, ss, ow)
+               for sl in ('Python', 'Fortran', 'C')
+               for ss in ('Python', 'Fortran', 'C')
+               for ow in ('Python', 'Fortran', 'C'))
+
+        # loop through all possible combinations of component sources
+        for sl_src, ss_src, ow_src in doe:
+            with self.subTest(surfacelayer=sl_src,
+                              subsurface=ss_src,
+                              openwater=ow_src):
+                # initialise, and run model
+                simulator = Simulator(self.sync, 'c', 'c', 'c',
+                                      {'surfacelayer': sl_src,
+                                       'subsurface': ss_src,
+                                       'openwater': ow_src})
+                simulator.run_model()
+
+                # check components' final state values
+                for comp in [simulator.model.surfacelayer,
+                             simulator.model.subsurface,
+                             simulator.model.openwater]:
+                    self.check_component_states(comp)
+
+                # check final transfer values
+                self.check_interface_transfers(simulator.model.interface)
+
+                # clean up
+                simulator.delete_yml_and_dump()
+
+    def check_component_states(self, component):
+        cat = component.category
+        # if component is "real", otherwise no states
+        if not isinstance(component, cm4twc.DataComponent):
+            for state in ['state_a', 'state_b']:
+                if self.exp_states[cat].get(state) is None:
+                    # some components feature only one state
+                    continue
+                # retrieve last state values
+                arr = component.states[state][-1]
+                # compare both min/max, as arrays are homogeneous
+                try:
+                    if isinstance(component, cm4twc.DataComponent):
+                        # state value should remain at zero
+                        self.assertEqual(np.amin(arr), 0)
+                        self.assertEqual(np.amax(arr), 0)
+                    else:
+                        val = self.exp_states[cat][state]
+                        self.assertEqual(np.amin(arr), val)
+                        self.assertEqual(np.amax(arr), val)
+                except AssertionError as e:
+                    raise AssertionError(
+                        "error for {}, {}".format(cat, state)
+                    ) from e
+
+    def check_interface_transfers(self, interface):
+        for transfer in ['transfer_i', 'transfer_j', 'transfer_k',
+                         'transfer_l', 'transfer_m', 'transfer_n',
+                         'transfer_o']:
+            arr = interface.transfers[transfer][
+                'slices'][-1]
+            # compare both min/max, as array should be homogeneous
+            val = self.exp_transfers[transfer]
+            try:
+                self.assertAlmostEqual(np.amin(arr), val)
+                self.assertAlmostEqual(np.amax(arr), val)
+            except AssertionError as e:
+                raise AssertionError(
+                    "error for {}".format(transfer)) from e
 
 
 class TestModelAsync(TestModelSync):

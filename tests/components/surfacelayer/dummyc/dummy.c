@@ -46,7 +46,7 @@ void run_(int nz, int ny, int nx,
         transfer_i[ijk] = driving_a[ijk] + driving_b[ijk] + transfer_l[ijk]
           + (ancillary_c[ijk] * state_a_0[ijk]);
         transfer_j[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
-          + transfer_l[ijk] + state_b_0[ijk];
+          + transfer_k[ijk] + state_b_0[ijk];
       }
 }
 
