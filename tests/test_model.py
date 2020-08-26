@@ -9,34 +9,32 @@ import cm4twc
 from tests.test_time import (get_dummy_timedomain,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
-from tests.test_component import (get_dummy_subsurface_component,
-                                  get_dummy_surfacelayer_component,
-                                  get_dummy_openwater_component)
+from tests.test_component import get_dummy_component
 from tests.test_state import compare_states
 
 
 class Simulator(object):
     def __init__(self, sync, surfacelayer_kind, subsurface_kind,
-                 openwater_kind):
+                 openwater_kind, source='Python'):
         self.sync = sync
         self.model = self._initialise_model(
-            sync, surfacelayer_kind, subsurface_kind, openwater_kind
+            sync, surfacelayer_kind, subsurface_kind, openwater_kind, source
         )
 
     @staticmethod
     def _initialise_model(sync, surfacelayer_kind, subsurface_kind,
-                          openwater_kind):
+                          openwater_kind, source):
         # for surfacelayer component
-        surfacelayer = get_dummy_surfacelayer_component(
-            surfacelayer_kind, sync
+        surfacelayer = get_dummy_component(
+            'surfacelayer', surfacelayer_kind, sync, source
         )
         # for subsurface component
-        subsurface = get_dummy_subsurface_component(
-            subsurface_kind, sync
+        subsurface = get_dummy_component(
+            'subsurface', subsurface_kind, sync, source
         )
         # for openwater
-        openwater = get_dummy_openwater_component(
-            openwater_kind, sync
+        openwater = get_dummy_component(
+            'openwater', openwater_kind, sync, source
         )
 
         # try to get an instance of model with the given combination
