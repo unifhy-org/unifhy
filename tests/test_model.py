@@ -7,7 +7,6 @@ from glob import glob
 
 import cm4twc
 from tests.test_time import (get_dummy_timedomain,
-                             get_dummy_timedomain_different_start,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
 from tests.test_component import (get_dummy_subsurface_component,

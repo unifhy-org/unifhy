@@ -3,47 +3,36 @@ import numpy as np
 from datetime import timedelta
 
 import cm4twc._utils
+from tests.test_time import (get_dummy_timedomain, get_dummy_dumping_frequency,
+                             get_dummy_timedomain_different_start)
 
 
-class TestClockAPI(unittest.TestCase):
+class TestClock(unittest.TestCase):
+    # daily
+    td_a = get_dummy_timedomain('daily')
+    # 2-daily
+    td_b = get_dummy_timedomain('2daily')
+    # 3-daily
+    td_c = get_dummy_timedomain('3daily')
 
-    def setUp(self):
-        # daily
-        self.td_a = cm4twc.TimeDomain(
-            timestamps=np.array([0, 1, 2, 3, 4, 5, 6,
-                                 7, 8, 9, 10, 11, 12]),
-            units='days since 1970-01-01 00:00:00',
-            calendar='standard'
-        )
-        # 2-daily
-        self.td_b = cm4twc.TimeDomain(
-            timestamps=np.array([0, 2, 4, 6, 8, 10, 12]),
-            units='days since 1970-01-01 00:00:00',
-            calendar='gregorian'
-        )
-        # 3-daily
-        self.td_c = cm4twc.TimeDomain(
-            timestamps=np.array([0, 3, 6, 9, 12]),
-            units='days since 1970-01-01 00:00:00',
-            calendar='gregorian'
-        )
+    # dumping frequency
+    dumping = get_dummy_dumping_frequency('async')
 
-        self.d = timedelta(days=6)
+    # expected switches and indices
+    exp_bool_a = [True, True, True, True, True, True,
+                  True, True, True, True, True, True]
+    exp_idx_a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
-        self.exp_bool_a = [True, True, True, True, True, True,
-                           True, True, True, True, True, True]
-        self.exp_idx_a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    exp_bool_b = [False, True, False, True, False, True,
+                  False, True, False, True, False, True]
+    exp_idx_b = [0, 1, 2, 3, 4, 5]
 
-        self.exp_bool_b = [False, True, False, True, False, True,
-                           False, True, False, True, False, True]
-        self.exp_idx_b = [0, 1, 2, 3, 4, 5]
+    exp_bool_c = [False, False, True, False, False, True,
+                  False, False, True, False, False, True]
+    exp_idx_c = [0, 1, 2, 3]
 
-        self.exp_bool_c = [False, False, True, False, False, True,
-                           False, False, True, False, False, True]
-        self.exp_idx_c = [0, 1, 2, 3]
-
-        self.exp_bool_d = [True, False, False, False, False, False,
-                           True, False, False, False, False, False]
+    exp_bool_d = [True, False, False, False, False, False,
+                  True, False, False, False, False, False]
 
     def test_clock_init(self):
         clock = cm4twc._utils.Clock(
@@ -51,7 +40,7 @@ class TestClockAPI(unittest.TestCase):
              'subsurface': self.td_b,
              'openwater': self.td_c},
         )
-        clock.set_dumping_frequency(dumping_frequency=self.d)
+        clock.set_dumping_frequency(dumping_frequency=self.dumping)
 
         self.assertEqual(clock.switches['surfacelayer'].tolist(),
                          self.exp_bool_a)
@@ -91,12 +80,29 @@ class TestClockAPI(unittest.TestCase):
         self.assertEqual(out_idx_b, self.exp_idx_b)
         self.assertEqual(out_idx_c, self.exp_idx_c)
 
+    @unittest.expectedFailure
+    def test_clock_incompatible_timedomains(self):
+        clock = cm4twc._utils.Clock(
+            {'surfacelayer': get_dummy_timedomain_different_start('daily'),
+             'subsurface': self.td_b,
+             'openwater': self.td_c},
+        )
+
+    @unittest.expectedFailure
+    def test_clock_incompatible_dumping_frequency(self):
+        clock = cm4twc._utils.Clock(
+            {'surfacelayer': self.td_a,
+             'subsurface': self.td_b,
+             'openwater': self.td_c},
+        )
+        clock.set_dumping_frequency(get_dummy_dumping_frequency('sync'))
+
 
 if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestClockAPI))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestClock))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)
