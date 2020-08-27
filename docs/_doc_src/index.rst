@@ -15,6 +15,7 @@
    api
    tutorial
 
+   files
 
 
 .. toctree::
