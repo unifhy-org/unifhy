@@ -6,20 +6,26 @@
 
 .. include:: overview.rst
 
-Contents
-========
-
 .. toctree::
+   :hidden:
    :maxdepth: 1
+   :caption: Blueprint
 
    overview
-   api
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Implementation
+
    tutorial
+   api
+   files
 
 
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Appendix
 
-Index and search
-================
-
-* :ref:`genindex`
-* :ref:`search`
+   genindex

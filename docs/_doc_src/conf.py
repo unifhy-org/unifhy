@@ -10,9 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import sphinx_rtd_theme
 from datetime import datetime
 import os
 import sys
+from git import Repo
 sys.path.insert(0, os.path.abspath('../..'))
 
 
@@ -21,7 +23,7 @@ with open('../../cm4twc/version.py') as fv:
 
 # -- Project information -----------------------------------------------------
 project = 'cm4twc'
-copyright = '{}, NCAS–UKCEH–BGS'.format(
+copyright = '{}, NCAS–UKCEH–BGS.'.format(
     datetime.now().year
 )
 author = 'Thibault Hallouin'
@@ -40,6 +42,7 @@ version = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx_rtd_theme',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
@@ -99,7 +102,7 @@ add_module_names = True
 show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-# pygments_style = 'sphinx'
+pygments_style = 'sphinx'
 
 # The default language to highlight source code
 highlight_language = 'python'
@@ -112,7 +115,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -124,39 +127,24 @@ htmlhelp_basename = 'cm4twcdoc'
 
 # Paths (filenames) here must be relative to (under) html_static_path as above:
 html_css_files = [
-    'customise-alabaster.css',
+    'theme_overrides.css'
 ]
 
 # Custom sidebar templates, maps document names to template names.
 html_sidebars = {
     '**': ['about.html',
            'navigation.html',
-           'searchbox.html']
+           'searchbox.html',
+           'versions.html']
 }
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-    'show_related': 'true',
-    'sidebar_collapse': 'false',
-    'page_width': '85%',
-    'seealso_bg': 'transparent',
-    'seealso_border': 'transparent',
-    'shadow': 'false',
-    'show_powered_by': 'true',
-    'font_size': '13pt',
-    'code_font_size': '10pt',
-    'font_family': 'Arial',
-    'head_font_family': 'Arial',
-    'link_hover': '#6b0000',
-    'github_button': 'true',
-    'github_type': 'star',
-    'github_repo': 'cm4twc',
-    'github_user': 'hydro-jules',
-    'pre_bg': '#ecf2f9',
-    'code_bg': '#ecf2f9',
-    'description': 'A Community Model for the Terrestrial Water Cycle',
+    'canonical_url': 'https://hydro-jules.github.io/cm4twc/',
+    'prev_next_buttons_location': None,
+    'navigation_depth': 3
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
@@ -179,6 +167,25 @@ html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
 html_split_index = False
+
+html_show_sourcelink = False
+
+# info for versioning at bottom of sidebar
+repo = Repo(search_parent_directories=True)
+remote_url = repo.remotes.origin.url
+
+versions = [
+    (tag.tag, os.sep.join([html_theme_options['canonical_url'], tag.tag]))
+    for tag in repo.tags
+]
+html_context = {
+    'current_version': version,
+    'versions': versions,
+    'show_versions': True if versions else False,
+    'links': [
+        ('<span class="fa fa-github"> GitHub Repository', remote_url)
+    ]
+}
 
 # -- Extension configuration -------------------------------------------------
 

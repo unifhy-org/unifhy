@@ -15,4 +15,7 @@ communities.
    :align: center
    :alt: modelling framework diagram
 
-   Diagram of the Modelling Framework in `cm4twc`.
+   Diagram of the Modelling Framework Blueprint for `cm4twc`.
+
+.. note::
+   This is a working version of the framework blueprint.
