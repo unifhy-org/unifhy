@@ -21,9 +21,9 @@ class MetaComponent(abc.ABCMeta):
     def __str__(self):
         info = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ' '))] +
+                (["    {}:".format(t.replace('_', ''))] +
                  ["        {} [{}]".format(
-                     n, getattr(self, t + '_info')[n])
+                     n, getattr(self, t + '_info')[n]['units'])
                      for n in getattr(self, t + '_info')]
                  if getattr(self, t + '_info') else [])
             )
