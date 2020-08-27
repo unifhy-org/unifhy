@@ -14,6 +14,7 @@ import sphinx_rtd_theme
 from datetime import datetime
 import os
 import sys
+from git import Repo
 sys.path.insert(0, os.path.abspath('../..'))
 
 
@@ -133,13 +134,15 @@ html_css_files = [
 html_sidebars = {
     '**': ['about.html',
            'navigation.html',
-           'searchbox.html']
+           'searchbox.html',
+           'versions.html']
 }
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
+    'canonical_url': 'https://hydro-jules.github.io/cm4twc/',
     'prev_next_buttons_location': None,
     'navigation_depth': 3
 }
@@ -166,6 +169,23 @@ html_use_index = True
 html_split_index = False
 
 html_show_sourcelink = False
+
+# info for versioning at bottom of sidebar
+repo = Repo(search_parent_directories=True)
+remote_url = repo.remotes.origin.url
+
+versions = [
+    (tag.tag, os.sep.join([html_theme_options['canonical_url'], tag.tag]))
+    for tag in repo.tags
+]
+html_context = {
+    'current_version': version,
+    'versions': versions,
+    'show_versions': True if versions else False,
+    'links': [
+        ('<span class="fa fa-github"> GitHub Repository', remote_url)
+    ]
+}
 
 # -- Extension configuration -------------------------------------------------
 
