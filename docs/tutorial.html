@@ -40,8 +40,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Index" href="genindex.html" />
-    <link rel="prev" title="cm4twc.DataSet.load_from_file" href="methods/cm4twc.DataSet.load_from_file.html" /> 
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,15 +90,26 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
-<ul class="current">
+              <p class="caption"><span class="caption-text">Blueprint</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Implementation</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuring-a-model">Configuring a Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#simulating-with-the-model">Simulating with the Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time">Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#space">Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data">Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#processes">Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#framework">Framework</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#simulating-with-a-model">Simulating with a Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files.html">Files</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Appendix</span></p>
 <ul>
@@ -194,10 +205,6 @@
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <p>This draft of the modelling framework has a code-name: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> for Community
 Model for the Terrestrial Water Cycle.</p>
-<p>The central object in the framework is the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>, which is composed of
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>s for the various compartments of the hydrological cycle,
-themselves spatio-temporally configured through <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> and <a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a>
-objects, and driven by data contained in a <a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text"><em>Importing the package and checking its version.</em></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cm4twc</span>
@@ -206,10 +213,15 @@ objects, and driven by data contained in a <a class="reference internal" href="c
 </pre></div>
 </div>
 </div>
+<p>The central object in the framework is the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>, which is composed of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>s for the various compartments of the hydrological cycle,
+themselves spatio-temporally configured through <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> and <a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a>
+objects, and driven by data contained in a <a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance.</p>
 <div class="section" id="configuring-a-model">
 <h2>Configuring a Model<a class="headerlink" href="#configuring-a-model" title="Permalink to this headline">¶</a></h2>
-<p class="rubric"><a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> object</p>
-<p>This class characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+<div class="section" id="time">
+<h3>Time<a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a TimeDomain object by specifying its start, end, and step.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
@@ -230,8 +242,10 @@ objects, and driven by data contained in a <a class="reference internal" href="c
 </pre></div>
 </div>
 </div>
-<p class="rubric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> object</p>
-<p>This class characterises the space dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.
+</div>
+<div class="section" id="space">
+<h3>Space<a class="headerlink" href="#space" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> characterises the space dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.
 It is intended as an umbrella class from which to subclass.
 A first subclass available is the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>, itself discretised into <a class="reference internal" href="classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> and <a class="reference internal" href="classes/cm4twc.RotatedLatLonGrid.html#cm4twc.RotatedLatLonGrid" title="cm4twc.RotatedLatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RotatedLatLonGrid</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
@@ -257,8 +271,10 @@ A first subclass available is the <code class="xref py py-obj docutils literal n
 </pre></div>
 </div>
 </div>
-<p class="rubric"><a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> object</p>
-<p>This class exists to host all of the data required to run a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> .
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> exists to host all of the data required to run a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> .
 It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> instances.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating Dataset objects from a CF-compliant netCDF file.</em></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
@@ -281,76 +297,75 @@ It is a dictionary-like object that stores references to <a class="reference ext
 </pre></div>
 </div>
 </div>
-<p class="rubric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> object</p>
-<p>This class is an umbrella class which is subclassed into three distinct classes
+</div>
+<div class="section" id="processes">
+<h3>Processes<a class="headerlink" href="#processes" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> is an umbrella class which is subclassed into three distinct classes
 for surface, sub-surface, and open water parts of the water cycle:
 <a class="reference internal" href="classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> respectively.</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a ‘dummy’ SurfaceLayerComponent.</em></span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tests</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tests</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">)</span>
 <span class="go">Dummy(</span>
 <span class="go">    category: surfacelayer</span>
-<span class="go">     inwards:</span>
-<span class="go">        soil_water_stress [1]</span>
+<span class="go">    inwards:</span>
+<span class="go">        transfer_k [1]</span>
+<span class="go">        transfer_l [1]</span>
 <span class="go">    outwards:</span>
-<span class="go">        throughfall [kg m-2 s-1]</span>
-<span class="go">        snowmelt [kg m-2 s-1]</span>
-<span class="go">        transpiration [kg m-2 s-1]</span>
-<span class="go">        evaporation_soil_surface [kg m-2 s-1]</span>
-<span class="go">        evaporation_ponded_water [kg m-2 s-1]</span>
-<span class="go">        evaporation_openwater [kg m-2 s-1]</span>
+<span class="go">        transfer_i [1]</span>
+<span class="go">        transfer_j [1]</span>
 <span class="go">    driving data:</span>
 <span class="go">        driving_a [1]</span>
 <span class="go">        driving_b [1]</span>
 <span class="go">        driving_c [1]</span>
 <span class="go">    ancillary data:</span>
-<span class="go">        ancillary_a [1]</span>
+<span class="go">        ancillary_c [1]</span>
 <span class="go">    states:</span>
 <span class="go">        state_a [1]</span>
 <span class="go">        state_b [1]</span>
 <span class="go">    solver history: 1</span>
 <span class="go">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">output_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_surfacelayer</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
 <span class="go">Dummy(</span>
 <span class="go">    category: surfacelayer</span>
-<span class="go">    timedomain: period: 3 days, 0:00:00</span>
+<span class="go">    timedomain: period: 12 days, 0:00:00</span>
 <span class="go">    spacedomain: shape: (Z: 1, Y: 4, X: 3)</span>
 <span class="go">    dataset: 4 variable(s)</span>
 <span class="go">)</span>
 </pre></div>
 </div>
 </div>
-<p class="rubric"><a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> object</p>
-<p>This class constitutes the actual modelling framework, and it needs to be
+</div>
+<div class="section" id="framework">
+<h3>Framework<a class="headerlink" href="#framework" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> constitutes the actual modelling framework, and it needs to be
 instantiated with three <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> instances, one for each of the three
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>s of the water cycle.</p>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating a Model.</em></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">surfacelayer</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">identifier</span><span class="o">=</span><span class="s1">&#39;dummy&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">config_directory</span><span class="o">=</span><span class="s1">&#39;configurations&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">output_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">surfacelayer</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_surfacelayer</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
 <span class="gp">... </span>    <span class="p">),</span>
-<span class="gp">... </span>    <span class="n">subsurface</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">subsurface</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">subsurface</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">subsurface</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_subsurface</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 <span class="gp">... </span>    <span class="p">),</span>
-<span class="gp">... </span>    <span class="n">openwater</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">dummy_components</span><span class="o">.</span><span class="n">openwater</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="n">openwater</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">openwater</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_openwater</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 <span class="gp">... </span>    <span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -362,12 +377,23 @@ instantiated with three <code class="xref py py-obj docutils literal notranslate
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="simulating-with-the-model">
-<h2>Simulating with the Model<a class="headerlink" href="#simulating-with-the-model" title="Permalink to this headline">¶</a></h2>
-<p>This instance of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can now be used to start a spin up run and/or a simulation run.</p>
+<p>At this stage, the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> as such is fully configured, and the configuration
+can be saved as a YAML file in the <em>config_directory</em> and named using the
+<em>identifier</em> (e.g. in this tutorial, the file would be at
+<em>configurations/dummy.yml</em>).</p>
 <div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text"><em>Spinning-up and running the Model simulation.</em></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="code-block-caption"><span class="caption-text"><em>Instantiating a Model.</em></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="simulating-with-a-model">
+<h2>Simulating with a Model<a class="headerlink" href="#simulating-with-a-model" title="Permalink to this headline">¶</a></h2>
+<p>This instance of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can now be used to start a spin up run and/or a simulation run.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text"><em>Spinning-up and running the Model simulation.</em></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">spin_up</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>              <span class="n">cycles</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
