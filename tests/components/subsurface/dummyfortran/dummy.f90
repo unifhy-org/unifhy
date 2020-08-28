@@ -12,19 +12,16 @@ subroutine initialise(z, y, x, state_a_m1, state_b_m1)
 end subroutine initialise
 
 subroutine run(z, y, x, &
-    evaporation_soil_surface, evaporation_ponded_water, &
-    transpiration, throughfall, snowmelt, &
-    driving_a, parameter_a, state_a_m1, state_a_0, state_b_m1, &
-    state_b_0, runoff, soil_water_stress)
+               transfer_i, transfer_n, &
+               driving_a, parameter_a, state_a_m1, state_a_0, state_b_m1, &
+               state_b_0, transfer_k, transfer_m)
 
     implicit none
 
     ! spaceshape
     integer, intent(in) :: z, y, x
-    ! interface fluxes in
-    real(kind=8), intent(in), dimension(z, y, x) :: &
-        evaporation_soil_surface, evaporation_ponded_water, &
-        transpiration, throughfall, snowmelt
+    ! from interface
+    real(kind=8), intent(in), dimension(z, y, x) :: transfer_i, transfer_n
     ! component driving data
     real(kind=8), intent(in), dimension(z, y, x) :: driving_a
     ! component parameters
@@ -32,15 +29,14 @@ subroutine run(z, y, x, &
     ! component states
     real(kind=8), intent(in), dimension(z, y, x) :: state_a_m1, state_b_m1
     real(kind=8), intent(inout), dimension(z, y, x) :: state_a_0, state_b_0
-    ! interface fluxes out
-    real(kind=8), intent(out), dimension(z, y, x) :: &
-        runoff, soil_water_stress
+    ! to interface
+    real(kind=8), intent(out), dimension(z, y, x) :: transfer_k, transfer_m
 
     state_a_0 = state_a_m1 + 1
     state_b_0 = state_b_m1 + 2
 
-    runoff = driving_a * parameter_a
-    soil_water_stress = driving_a * parameter_a
+    transfer_k = (driving_a * parameter_a) + transfer_n + state_a_0
+    transfer_m = (driving_a * parameter_a) + transfer_i + state_b_0
 
 end subroutine run
 

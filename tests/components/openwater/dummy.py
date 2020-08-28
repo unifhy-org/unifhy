@@ -16,19 +16,50 @@ except ImportError:
 
 
 class Dummy(OpenWaterComponent):
+    # supersede existing inwards/outwards for physically meaningless ones
+    _inwards_info = {
+        'transfer_j': {
+            'units': '1',
+            'from': 'surfacelayer',
+            'method': 'mean'
+        },
+        'transfer_m': {
+            'units': '1',
+            'from': 'subsurface',
+            'method': 'mean'
+        }
+    }
+    _outwards_info = {
+        'transfer_l': {
+            'units': '1',
+            'to': 'surfacelayer',
+            'method': 'mean'
+        },
+        'transfer_n': {
+            'units': '1',
+            'to': 'subsurface',
+            'method': 'mean'
+        },
+        'transfer_o': {
+            'units': '1',
+            'to': 'ocean',
+            'method': 'mean'
+        }
+    }
+    # define some dummy driving/ancillary/parameters/constants/states
     # driving_data_info = {}
     ancillary_data_info = {
-        'ancillary_a': {
+        'ancillary_b': {
             'units': '1'
         }
     }
     parameters_info = {
-        'parameter_a': {
+        'parameter_c': {
             'units': '1'
         },
     }
     constants_info = {
-        'constant_a': {
+        'constant_c': {
             'units': '1'
         }
     },
@@ -49,23 +80,25 @@ class Dummy(OpenWaterComponent):
 
     def run(self,
             # from interface
-            evaporation_openwater, runoff,
+            transfer_j, transfer_m,
             # component driving data
             # component ancillary data
-            ancillary_a,
+            ancillary_b,
             # component parameters
-            parameter_a,
+            parameter_c,
             # component states
             state_a,
             # component constants
-            constant_a=1,
+            constant_c=3,
             **kwargs):
 
         state_a[0][:] = state_a[-1] + 1
 
         return {
             # to interface
-            'discharge': ancillary_a * parameter_a * constant_a
+            'transfer_l': ancillary_b * transfer_m + state_a[0],
+            'transfer_n': parameter_c * transfer_j,
+            'transfer_o': constant_c + transfer_j
         }
 
     def finalise(self,
@@ -75,23 +108,8 @@ class Dummy(OpenWaterComponent):
         pass
 
 
-class DummyFortran(OpenWaterComponent):
-    # driving_data_info = {}
-    ancillary_data_info = {
-        'ancillary_a': {
-            'units': '1'
-        }
-    }
-    parameters_info = {
-        'parameter_a': {
-            'units': '1'
-        },
-    }
-    constants_info = {
-         'constant_a': {
-             'units': '1'
-         }
-     },
+class DummyFortran(Dummy):
+    # overwrite states to explicitly set array order
     states_info = {
         'state_a': {
             'units': '1',
@@ -99,7 +117,6 @@ class DummyFortran(OpenWaterComponent):
             'order': 'F'
         }
     }
-    solver_history = 1
 
     def initialise(self,
                    # component states
@@ -109,26 +126,28 @@ class DummyFortran(OpenWaterComponent):
 
     def run(self,
             # from interface
-            evaporation_openwater, runoff,
+            transfer_j, transfer_m,
             # component driving data
             # component ancillary data
-            ancillary_a,
+            ancillary_b,
             # component parameters
-            parameter_a,
+            parameter_c,
             # component states
             state_a,
             # component constants
             constant_a=1.,
             **kwargs):
 
-        discharge = dummyfortran.run(
-            evaporation_openwater, runoff, ancillary_a, parameter_a,
+        transfer_l, transfer_n, transfer_o = dummyfortran.run(
+            transfer_j, transfer_m, ancillary_b, parameter_c,
             state_a[-1], state_a[0], constant_a
         )
 
         return {
             # to interface
-            'discharge': discharge
+            'transfer_l': transfer_l,
+            'transfer_n': transfer_n,
+            'transfer_o': transfer_o
         }
 
     def finalise(self,
@@ -138,30 +157,7 @@ class DummyFortran(OpenWaterComponent):
         dummyfortran.finalise()
 
 
-class DummyC(OpenWaterComponent):
-    # driving_data_info = {}
-    ancillary_data_info = {
-        'ancillary_a': {
-            'units': '1'
-        }
-    }
-    parameters_info = {
-        'parameter_a': {
-            'units': '1'
-        },
-    }
-    constants_info = {
-        'constant_a': {
-            'units': '1'
-        }
-    },
-    states_info = {
-        'state_a': {
-            'units': '1',
-            'divisions': 1
-        }
-    }
-    solver_history = 1
+class DummyC(Dummy):
 
     def initialise(self,
                    # component states
@@ -171,25 +167,28 @@ class DummyC(OpenWaterComponent):
 
     def run(self,
             # from interface
-            evaporation_openwater, runoff,
+            transfer_j, transfer_m,
             # component driving data
             # component ancillary data
-            ancillary_a,
+            ancillary_b,
             # component parameters
-            parameter_a,
+            parameter_c,
             # component states
             state_a,
             # component constants
             constant_a=1.,
             **kwargs):
 
-        discharge = dummyc.run(evaporation_openwater, runoff,
-                               ancillary_a, parameter_a, state_a[-1],
-                               state_a[0], constant_a)
+        transfer_l, transfer_n, transfer_o = dummyc.run(
+            transfer_j, transfer_m, ancillary_b, parameter_c,
+            state_a[-1], state_a[0], constant_a
+        )
 
         return {
             # to interface
-            'discharge': discharge
+            'transfer_l': transfer_l,
+            'transfer_n': transfer_n,
+            'transfer_o': transfer_o
         }
 
     def finalise(self,

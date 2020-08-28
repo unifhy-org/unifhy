@@ -8,33 +8,47 @@ import cftime
 import cm4twc
 
 
-def get_dummy_timedomain():
-    return cm4twc.TimeDomain(
-        timestamps=[3, 4, 5, 6],
-        units='days since 2019-01-01 09:00:00Z',
-        calendar='gregorian'
-    )
+def get_dummy_timedomain(resolution):
+    if resolution == 'daily':
+        return cm4twc.TimeDomain(
+            timestamps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            units='days since 2019-01-01 09:00:00Z',
+            calendar='gregorian'
+        )
+    elif resolution == '2daily':
+        return cm4twc.TimeDomain(
+            timestamps=[0, 2, 4, 6, 8, 10, 12],
+            units='days since 2019-01-01 09:00:00Z',
+            calendar='gregorian'
+        )
+    elif resolution == '3daily':
+        return cm4twc.TimeDomain(
+            timestamps=[0, 3, 6, 9, 12],
+            units='days since 2019-01-01 09:00:00Z',
+            calendar='gregorian'
+        )
+    else:
+        raise ValueError(
+            "timedomain resolution '{}' not supported".format(resolution)
+        )
 
 
-def get_dummy_timedomain_different_start():
-    return cm4twc.TimeDomain(
-        timestamps=[0, 1, 2, 3, 4, 5, 6],
-        units='days since 2019-01-01 09:00:00Z',
-        calendar='gregorian'
+def get_dummy_timedomain_different_start(resolution):
+    return cm4twc.TimeDomain.from_datetime_sequence(
+        get_dummy_timedomain(resolution).bounds.datetime_array[1, :]
     )
 
 
 def get_dummy_spin_up_start_end():
-    td = cm4twc.TimeDomain(
-        timestamps=[0, 1, 2, 3],
-        units='days since 2019-01-01 09:00:00Z',
-        calendar='gregorian'
-    )
-    return td.time.datetime_array[[0, -1]]
+    return (cftime.DatetimeGregorian(2019, 1, 1, 9),
+            cftime.DatetimeGregorian(2019, 1, 7, 9))
 
 
-def get_dummy_dumping_frequency():
-    return timedelta(days=1)
+def get_dummy_dumping_frequency(sync):
+    if sync == 'sync':
+        return timedelta(days=1)
+    else:
+        return timedelta(days=6)
 
 
 class TestTimeDomainAPI(unittest.TestCase):

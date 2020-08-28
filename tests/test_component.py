@@ -1,111 +1,71 @@
 import cm4twc
 
-from tests.components.surfacelayer import Dummy as SurfaceLayerDummy
-from tests.components.subsurface import Dummy as SubSurfaceDummy
-from tests.components.openwater import Dummy as OpenWaterDummy
+from importlib import import_module
 from tests.test_time import get_dummy_timedomain
 from tests.test_space import get_dummy_spacedomain
 from tests.test_data import (get_dummy_dataset,
                              get_dummy_component_substitute_dataset)
 
+time_resolutions = {
+    'surfacelayer': {
+        'sync': 'daily',
+        'async': 'daily'
+    },
+    'subsurface': {
+        'sync': 'daily',
+        'async': '3daily'
+    },
+    'openwater': {
+        'sync': 'daily',
+        'async': '2daily'
+    },
+}
 
-def get_dummy_surfacelayer_component(kind, timedomain=None, spacedomain=None,
-                                     dataset=None):
-    if timedomain is None:
-        timedomain = get_dummy_timedomain()
-    if spacedomain is None:
-        spacedomain = get_dummy_spacedomain()
-    if dataset is None:
-        dataset = get_dummy_dataset('surfacelayer')
+parameters = {
+    'surfacelayer': {},
+    'subsurface': {
+        'parameter_a': 1
+    },
+    'openwater': {
+        'parameter_c': 3
+    },
+}
+
+
+def get_dummy_component(category, kind, sync, source):
+    # get component class
+    component_class = getattr(
+        import_module('tests.components.{}'.format(category)),
+        'Dummy{}'.format('' if source == 'Python' else source)
+    )
+    # get timedomain, spacedomain, dataset
+    time_resolution = time_resolutions[category][sync]
+    timedomain = get_dummy_timedomain(time_resolution)
+    spacedomain = get_dummy_spacedomain()
+    dataset = get_dummy_dataset(category, time_resolution)
 
     if kind == 'c':
-        surfacelayer = SurfaceLayerDummy(
+        return component_class(
             output_directory='outputs',
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
-            parameters={},
+            parameters=parameters[category],
             constants={}
         )
     elif kind == 'd':
-        surfacelayer = cm4twc.DataComponent(
+        return cm4twc.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            dataset=get_dummy_component_substitute_dataset('surfacelayer'),
-            substituting_class=cm4twc.SurfaceLayerComponent
+            dataset=get_dummy_component_substitute_dataset(
+                '{}_{}'.format(category, sync),
+                time_resolution
+            ),
+            substituting_class=component_class
         )
     else:  # i.e. 'n'
-        surfacelayer = cm4twc.NullComponent(
+        return cm4twc.NullComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
-            substituting_class=cm4twc.SurfaceLayerComponent
+            substituting_class=component_class
         )
-    return surfacelayer
-
-
-def get_dummy_subsurface_component(kind, timedomain=None, spacedomain=None,
-                                   dataset=None):
-    if timedomain is None:
-        timedomain = get_dummy_timedomain()
-    if spacedomain is None:
-        spacedomain = get_dummy_spacedomain()
-    if dataset is None:
-        dataset = get_dummy_dataset('surfacelayer')
-
-    if kind == 'c':
-        subsurface = SubSurfaceDummy(
-            output_directory='outputs',
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=dataset,
-            parameters={'parameter_a': 2},
-            constants={}
-        )
-    elif kind == 'd':
-        subsurface = cm4twc.DataComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=get_dummy_component_substitute_dataset('subsurface'),
-            substituting_class=cm4twc.SubSurfaceComponent
-        )
-    else:  # i.e. 'n'
-        subsurface = cm4twc.NullComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            substituting_class=cm4twc.SubSurfaceComponent
-        )
-    return subsurface
-
-
-def get_dummy_openwater_component(kind, timedomain=None, spacedomain=None,
-                                  dataset=None):
-    if timedomain is None:
-        timedomain = get_dummy_timedomain()
-    if spacedomain is None:
-        spacedomain = get_dummy_spacedomain()
-    if dataset is None:
-        dataset = get_dummy_dataset('surfacelayer')
-
-    if kind == 'c':
-        openwater = OpenWaterDummy(
-            output_directory='outputs',
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=dataset,
-            parameters={'parameter_a': 3},
-            constants={}
-        )
-    elif kind == 'd':
-        openwater = cm4twc.DataComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            dataset=get_dummy_component_substitute_dataset('openwater'),
-            substituting_class=cm4twc.OpenWaterComponent
-        )
-    else:  # i.e. 'n'
-        openwater = cm4twc.NullComponent(
-            timedomain=timedomain,
-            spacedomain=spacedomain,
-            substituting_class=cm4twc.OpenWaterComponent
-        )
-    return openwater

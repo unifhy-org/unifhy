@@ -1,5 +1,6 @@
 identifier: dummy
 config_directory: configurations
+output_directory: outputs
 surfacelayer:
   module: tests.components.surfacelayer.dummy
   class: Dummy
@@ -31,9 +32,9 @@ surfacelayer:
     driving_c:
       files: [data/dummy_surfacelayer_data_daily.nc]
       select: driving_c
-    ancillary_a:
+    ancillary_c:
       files: [data/dummy_surfacelayer_data_daily.nc]
-      select: ancillary_a
+      select: ancillary_c
   parameters: null
   constants: null
 subsurface:
@@ -62,7 +63,7 @@ subsurface:
       files: [data/dummy_subsurface_data_daily.nc]
       select: driving_a
   parameters:
-    parameter_a: 2
+    parameter_a: 1
   constants: null
 openwater:
   module: tests.components.openwater.dummy
@@ -86,9 +87,9 @@ openwater:
     altitude_resolution: 4
     altitude_location: centre
   dataset:
-    ancillary_a:
+    ancillary_b:
       files: [data/dummy_openwater_data_daily.nc]
-      select: ancillary_a
+      select: ancillary_b
   parameters:
-    parameter_a: 3
+    parameter_c: 3
   constants: null

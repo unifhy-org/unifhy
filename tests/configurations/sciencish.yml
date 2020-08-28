@@ -1,4 +1,6 @@
 identifier: test_sciencish
+config_directory: configurations
+output_directory: outputs
 surfacelayer:
   module: tests.components.surfacelayer.sciencish
   class: Sciencish

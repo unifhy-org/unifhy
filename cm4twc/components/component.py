@@ -5,8 +5,8 @@ from os import path, sep
 import cf
 from cfunits import Units
 
-from ._state import State
-from ._io import create_dump_file, update_dump_file, load_dump_file
+from ._utils.states import (State, create_states_dump, update_states_dump,
+                            load_states_dump)
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
@@ -21,9 +21,9 @@ class MetaComponent(abc.ABCMeta):
     def __str__(self):
         info = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ' '))] +
+                (["    {}:".format(t.replace('_', ''))] +
                  ["        {} [{}]".format(
-                     n, getattr(self, t + '_info')[n])
+                     n, getattr(self, t + '_info')[n]['units'])
                      for n in getattr(self, t + '_info')]
                  if getattr(self, t + '_info') else [])
             )
@@ -62,7 +62,7 @@ class Component(metaclass=MetaComponent):
 
             output_directory: `str`
                 The path to the directory where to save the component
-                output files.
+                dump and output files.
 
             timedomain: `TimeDomain` object
                 The temporal dimension of the `Component`.
@@ -85,9 +85,6 @@ class Component(metaclass=MetaComponent):
                 provided in the required units.
 
         """
-        # time attributes
-        self.timedomain = timedomain
-
         # space attributes
         self.spacedomain = spacedomain
 
@@ -96,6 +93,9 @@ class Component(metaclass=MetaComponent):
         self.dataset = dataset
         # # dataset to subset whole data for given period
         self.datasubset = DataSet()
+
+        # time attributes
+        self.timedomain = timedomain
 
         # parameters attribute
         self.parameters = parameters
@@ -125,6 +125,7 @@ class Component(metaclass=MetaComponent):
     @timedomain.setter
     def timedomain(self, timedomain):
         self._check_timedomain(timedomain)
+        self._check_dataset_time(timedomain)
         self._timedomain = timedomain
 
     @property
@@ -258,7 +259,7 @@ class Component(metaclass=MetaComponent):
                     "spacedomain of {} component '{}'".format(
                         data_name, self._category, self.__class__.__name__))
 
-    def check_dataset_time(self, timedomain):
+    def _check_dataset_time(self, timedomain):
         # check time compatibility for driving data
         for data_name in self.driving_data_info:
             error = ValueError(
@@ -388,30 +389,33 @@ class Component(metaclass=MetaComponent):
             self.initialise(**self.states)
             self.is_initialised = True
         # create the dump file for this given run
-        self._initialise_dump(tag, overwrite)
+        self._initialise_states_dump(tag, overwrite)
 
-    def run_(self, timeindex, datetime_, **kwargs):
+    def run_(self, timeindex, from_interface):
+        data = {}
         # collect required ancillary data from dataset
-        for data in self.ancillary_data_info:
-            kwargs[data] = self.datasubset[data].array[...]
-
+        for d in self.ancillary_data_info:
+            data[d] = self.datasubset[d].array[...]
         # collect required driving data from dataset
-        for data in self.driving_data_info:
-            kwargs[data] = self.datasubset[data].array[timeindex, ...]
+        for d in self.driving_data_info:
+            data[d] = self.datasubset[d].array[timeindex, ...]
+        # collect required transfers from interface
+        for d in self._inwards_info:
+            data[d] = from_interface[d]
 
         # run simulation for the component
-        outwards = self.run(datetime=datetime_, **self.parameters,
-                            **self.constants, **self.states, **kwargs)
+        to_interface = self.run(**self.parameters, **self.constants,
+                                **self.states, **data)
 
         # increment the component's states by one timestep
         self.increment_states()
 
-        return outwards
+        return to_interface
 
-    def finalise_(self, timedomain):
-        timestamp = timedomain.bounds.array[-1, -1]
-        update_dump_file(sep.join([self.output_directory, self.dump_file]),
-                         self.states, timestamp, self.solver_history)
+    def finalise_(self):
+        timestamp = self.timedomain.bounds.array[-1, -1]
+        update_states_dump(sep.join([self.output_directory, self.dump_file]),
+                           self.states, timestamp, self.solver_history)
         self.finalise(**self.states)
 
     def _instantiate_states(self):
@@ -428,14 +432,14 @@ class Component(metaclass=MetaComponent):
                 order=o
             )
 
-    def _initialise_dump(self, tag, overwrite_dump):
+    def _initialise_states_dump(self, tag, overwrite_dump):
         self.dump_file = '_'.join([self.identifier, self.category,
                                    tag, 'dump.nc'])
         if (overwrite_dump or not path.exists(sep.join([self.output_directory,
                                                         self.dump_file]))):
-            create_dump_file(sep.join([self.output_directory, self.dump_file]),
-                             self.states_info, self.solver_history,
-                             self.timedomain, self.spacedomain)
+            create_states_dump(sep.join([self.output_directory, self.dump_file]),
+                               self.states_info, self.solver_history,
+                               self.timedomain, self.spacedomain)
 
     def initialise_states_from_dump(self, dump_file, at=None):
         """Initialise the states of the Component from a dump file.
@@ -468,7 +472,7 @@ class Component(metaclass=MetaComponent):
                 conditions.
 
         """
-        states, at = load_dump_file(dump_file, at, self.states_info)
+        states, at = load_states_dump(dump_file, at, self.states_info)
         for s in self.states_info:
             if s in states:
                 o = self.states_info[s].get('order', array_order())
@@ -484,10 +488,10 @@ class Component(metaclass=MetaComponent):
         for s in self.states:
             self.states[s].increment()
 
-    def dump_states(self, timedomain, timeindex):
-        timestamp = timedomain.bounds.array[timeindex, 0]
-        update_dump_file(sep.join([self.output_directory, self.dump_file]),
-                         self.states, timestamp, self.solver_history)
+    def dump_states(self, timeindex):
+        timestamp = self.timedomain.bounds.array[timeindex, 0]
+        update_states_dump(sep.join([self.output_directory, self.dump_file]),
+                           self.states, timestamp, self.solver_history)
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
@@ -516,27 +520,41 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     _category = 'surfacelayer'
     _inwards_info = {
         'soil_water_stress': {
-            'units': '1'
+            'units': '1',
+            'from': 'subsurface',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'throughfall': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'snowmelt': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'transpiration': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'evaporation_soil_surface': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'evaporation_ponded_water': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'subsurface',
+            'method': 'mean'
         },
         'evaporation_openwater': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'openwater',
+            'method': 'mean'
         }
     }
 
@@ -548,27 +566,41 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     _category = 'subsurface'
     _inwards_info = {
         'evaporation_soil_surface': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'evaporation_ponded_water': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'transpiration': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'throughfall': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'snowmelt': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'runoff': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'openwater',
+            'method': 'mean'
         },
         'soil_water_stress': {
-            'units': '1'
+            'units': '1',
+            'to': 'surfacelayer',
+            'method': 'mean'
         }
     }
 
@@ -580,15 +612,21 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     _category = 'openwater'
     _inwards_info = {
         'evaporation_openwater': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
         },
         'runoff': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'discharge': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'to': 'ocean',
+            'method': 'mean'
         }
     }
 
@@ -617,7 +655,7 @@ class DataComponent(Component):
 
             dataset: `DataSet` object
                 The dataset containing the substitute data substituting
-                the `Component`\'s simulated time series. The data is
+                the `Component`\'s simulated time series. The data in
                 dataset must be compatible in time with *timedomain* and
                 compatible in space with *spacedomain*.
 
@@ -627,18 +665,23 @@ class DataComponent(Component):
                 *dataset*.
 
         """
-        super(DataComponent, self).__init__(None, timedomain, spacedomain,
-                                            dataset)
-
         # store class being substituted for config
         self._substituting_class = substituting_class
 
         # override category to the one of substituting component
         self._category = substituting_class.get_class_category()
 
-        # override driving data info with the outwards
-        # of component being substituted
+        # override outwards with the ones of component being substituted
+        self._outwards_info = substituting_class.get_class_outwards_info()
+
+        # override driving data info with the outwards of component
+        # being substituted (so that the dataset is checked for time
+        # and space compatibility as a 'standard' dataset would be)
         self.driving_data_info = substituting_class.get_class_outwards_info()
+
+        # initialise as a Component
+        super(DataComponent, self).__init__(None, timedomain, spacedomain,
+                                            dataset)
 
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
@@ -695,7 +738,7 @@ class DataComponent(Component):
         return {}
 
     def run(self, *args, **kwargs):
-        return {n: kwargs[n] for n in self.driving_data_info}
+        return {n: kwargs[n] for n in self._outwards_info}
 
     def finalise(self, *args, **kwargs):
         pass
@@ -729,16 +772,18 @@ class NullComponent(Component):
                 of zeros.
 
         """
-        super(NullComponent, self).__init__(None, timedomain, spacedomain)
-
         # store class being substituted for config
         self._substituting_class = substituting_class
 
         # override category with the one of component being substituted
         self._category = substituting_class.get_class_category()
 
-        # override outwards with the ones of component being substituted
+        # override inwards and outwards with the ones of component
+        # being substituted
         self._outwards_info = substituting_class.get_class_outwards_info()
+
+        # initialise as a Component
+        super(NullComponent, self).__init__(None, timedomain, spacedomain)
 
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in

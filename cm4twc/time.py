@@ -444,7 +444,7 @@ class TimeDomain(object):
 
                     units='seconds since 1970-01-01'
 
-                *Parameter example:*
+                *Parameter example:* ::
 
                     units='days since 2000-01-01 00:00:00'
 

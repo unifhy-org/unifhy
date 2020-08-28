@@ -18,19 +18,17 @@ void initialise_(int nz, int ny, int nx,
 }
 
 void run_(int nz, int ny, int nx,
-          // interface fluxes in
-          double *soil_water_stress,
+          // from interface
+          double *transfer_k, double *transfer_l,
           // component driving data
           double *driving_a, double *driving_b, double *driving_c,
           // component ancillary data
-          double *ancillary_a,
+          double *ancillary_c,
           // component states
           double *state_a_m1, double *state_a_0,
           double *state_b_m1, double *state_b_0,
-          // interface fluxes out
-          double *throughfall, double *snowmelt, double *transpiration,
-          double *evaporation_soil_surface, double *evaporation_ponded_water,
-          double *evaporation_openwater)
+          // to interface
+          double *transfer_i, double *transfer_j)
 {
   int i, j, k;
   int ijk;
@@ -44,13 +42,11 @@ void run_(int nz, int ny, int nx,
         // update states
         state_a_0[ijk] = state_a_m1[ijk] + 1;
         state_b_0[ijk] = state_b_m1[ijk] + 2;
-        // interface fluxes out
-        throughfall[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk];
-        snowmelt[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk];
-        transpiration[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk];
-        evaporation_soil_surface[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk];
-        evaporation_ponded_water[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk];
-        evaporation_openwater[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk];
+        // compute transfers to interface
+        transfer_i[ijk] = driving_a[ijk] + driving_b[ijk] + transfer_l[ijk]
+          + (ancillary_c[ijk] * state_a_0[ijk]);
+        transfer_j[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
+          + transfer_k[ijk] + state_b_0[ijk];
       }
 }
 
