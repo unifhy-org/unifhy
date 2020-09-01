@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 import re
 import cf
 
@@ -48,10 +49,10 @@ class SpaceDomain(object):
                         "please use a subclass of it instead.")
 
     def to_field(self):
-        """Return the inner cf.Field used to characterise the
-        SpaceDomain.
+        """Return a deep copy of the inner cf.Field used to characterise
+        the SpaceDomain.
         """
-        return self._f
+        return deepcopy(self._f)
 
 
 class Grid(SpaceDomain):
