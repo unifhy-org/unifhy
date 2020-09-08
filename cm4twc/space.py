@@ -573,11 +573,14 @@ class Grid(SpaceDomain):
                 not ignored).
 
         """
+        rtol_ = rtol()
+        atol_ = atol()
         # check whether X/Y(/Z if not ignored) constructs are identical
         y_x = (
             self._f.construct(self._Y_name).equals(
                 field.construct(re.compile(r'name={}$'.format(self._Y_name)),
                                 default=None),
+                rtol=rtol_, atol=atol_,
                 ignore_data_type=True,
                 ignore_properties=('standard_name',
                                    'long_name',
@@ -585,6 +588,7 @@ class Grid(SpaceDomain):
             and self._f.construct(self._X_name).equals(
                 field.construct(re.compile(r'name={}$'.format(self._X_name)),
                                 default=None),
+                rtol=rtol_, atol=atol_,
                 ignore_data_type=True,
                 ignore_properties=('standard_name',
                                    'long_name',
@@ -598,6 +602,7 @@ class Grid(SpaceDomain):
                     field.construct(
                         re.compile(r'name={}$'.format(self._Z_name)),
                         default=None),
+                    rtol=rtol_, atol=atol_,
                     ignore_data_type=True,
                     ignore_properties=('standard_name',
                                        'long_name',
