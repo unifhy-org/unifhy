@@ -182,11 +182,11 @@ class Interface(MutableMapping):
 
         return weights
 
-    def initialise_(self, tag, overwrite_dump=True):
+    def initialise_(self, tag, overwrite=True):
         self.dump_file = '_'.join([self.identifier, 'interface',
                                    tag, 'dump.nc'])
-        if (overwrite_dump or not path.exists(sep.join([self.output_directory,
-                                                        self.dump_file]))):
+        if (overwrite or not path.exists(sep.join([self.output_directory,
+                                                   self.dump_file]))):
             create_transfers_dump(
                 sep.join([self.output_directory, self.dump_file]),
                 self.transfers, self.clock.timedomain, self.compass.spacedomain

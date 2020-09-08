@@ -349,8 +349,8 @@ class Model(object):
         # start the spin up run(s)
         for cycle in range(cycles):
             tag = 'spinup{}'.format(_cycle_origin_no + cycle + 1)
-            self._initialise(tag=tag, overwrite=overwrite)
-            self._run(tag=tag, dumping_frequency=dumping_frequency)
+            self._initialise(tag, overwrite)
+            self._run(tag, dumping_frequency, overwrite)
             self._finalise()
 
         # restore main run attributes
@@ -394,8 +394,8 @@ class Model(object):
             yaml.dump(simulate_config, f, yaml.Dumper, sort_keys=False)
 
         # initialise, run, finalise model
-        self._initialise(tag='run', overwrite=overwrite)
-        self._run(tag='run', dumping_frequency=dumping_frequency)
+        self._initialise('run', overwrite)
+        self._run('run', dumping_frequency, overwrite)
         self._finalise()
 
     def _initialise(self, tag, overwrite):
@@ -404,7 +404,7 @@ class Model(object):
         self.subsurface.initialise_(tag, overwrite)
         self.openwater.initialise_(tag, overwrite)
 
-    def _run(self, tag, dumping_frequency=None):
+    def _run(self, tag, dumping_frequency=None, overwrite=True):
         # set up compass responsible for mapping across components
         compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
                            'subsurface': self.subsurface.spacedomain,
@@ -433,7 +433,7 @@ class Model(object):
                                    'subsurface': self.subsurface,
                                    'openwater': self.openwater},
                                   clock, compass)
-        self.interface.initialise_(tag)
+        self.interface.initialise_(tag, overwrite)
 
         # run components
         for (run_surfacelayer, run_subsurface, run_openwater,
