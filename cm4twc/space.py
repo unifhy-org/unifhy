@@ -614,6 +614,56 @@ class Grid(SpaceDomain):
 
         return y_x and z
 
+    def spans_same_region_as(self, grid, ignore_z=False):
+        """Compare equality in region spanned between the Grid
+        and another instance of Grid.
+
+        For each axis, the lower bound of their first cell and the
+        upper bound of their last cell are compared.
+
+        :Parameters:
+
+            timedomain: `Grid`
+                The other Grid to be compared against Grid.
+
+            ignore_z: `bool`, optional
+                If True, the dimension coordinates along the Z axes of
+                the Grid instances will not be compared. If not
+                provided, set to default value False (i.e. Z is not
+                ignored).
+
+        """
+        if isinstance(grid, self.__class__):
+            start_x = self.X_bounds[[0], [0]] == grid.X_bounds[[0], [0]]
+            end_x = self.X_bounds[[-1], [-1]] == grid.X_bounds[[-1], [-1]]
+
+            start_y = self.Y_bounds[[0], [0]] == grid.Y_bounds[[0], [0]]
+            end_y = self.Y_bounds[[-1], [-1]] == grid.Y_bounds[[-1], [-1]]
+
+            if ignore_z:
+                start_z, end_z = True, True
+            else:
+                if self.Z_bounds is not None and grid.Z_bounds is not None:
+                    start_z = (
+                        self.Z_bounds[[0], [0]] == grid.Z_bounds[[0], [0]]
+                    ).array.item()
+                    end_z = (
+                        self.Z_bounds[[-1], [-1]] == grid.Z_bounds[[-1], [-1]]
+                    ).array.item()
+                elif self.Z_bounds is not None or grid.Z_bounds is not None:
+                    start_z, end_z = False, False
+                else:
+                    start_z, end_z = True, True
+
+            return all((start_x.array.item(), end_x.array.item(),
+                        start_y.array.item(), end_y.array.item(),
+                        start_z, end_z))
+
+        else:
+            raise TypeError("{} instance cannot be compared to {} "
+                            "instance".format(self.__class__.__name__,
+                                              grid.__class__.__name__))
+
     def to_config(self):
         return {
             'class': self.__class__.__name__,
