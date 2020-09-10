@@ -1393,20 +1393,29 @@ class RotatedLatLonGrid(Grid):
         # different if Z is ignored)
         y_x_z = super(RotatedLatLonGrid, self).is_space_equal_to(field,
                                                                  ignore_z)
-        conversion = (
-            self._f.coordinate_reference(
-                'rotated_latitude_longitude').coordinate_conversion.equals(
-                field.coordinate_reference(
-                    'rotated_latitude_longitude',
-                    default=None).coordinate_conversion)
-            and self._f.coordinate_reference(
-                'rotated_latitude_longitude').datum.equals(
-                field.coordinate_reference(
-                    'rotated_latitude_longitude',
-                    default=None).datum)
-        )
+
+        if hasattr(field, 'coordinate_reference'):
+            conversion = self._check_rotation_parameters(
+                field.coordinate_reference)
+        else:
+            conversion = False
 
         return y_x_z and conversion
+
+    def _check_rotation_parameters(self, coord_ref):
+        if (hasattr(coord_ref, 'coordinate_conversion')
+                and hasattr(coord_ref, 'datum')):
+            conversion = (
+                self._f.coordinate_reference(
+                    'rotated_latitude_longitude').coordinate_conversion.equals(
+                    coord_ref.coordinate_conversion)
+                and self._f.coordinate_reference(
+                    'rotated_latitude_longitude').datum.equals(coord_ref.datum)
+            )
+        else:
+            conversion = False
+
+        return conversion
 
     @classmethod
     def from_field(cls, field):
