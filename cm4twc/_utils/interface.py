@@ -21,9 +21,25 @@ class Interface(MutableMapping):
                     if t not in transfers:
                         transfers[t] = {}
                     transfers[t].update(i[t])
+                    if 'to' in i[t]:
+                        # store component category for dumping (which
+                        # will be identical to 'from' in most cases, but
+                        # when 'from' is absent, source component still
+                        # needed, namely for dumping to route to the
+                        # right netcdf group, and absence of 'from' is
+                        # informative, so info should not be added under
+                        # 'from', but using a different key)
+                        transfers[t]['src_cat'] = (
+                            components[c].category
+                        )
+                        # store component spacedomain for remapping
+                        transfers[t]['src_sd'] = (
+                            components[c].spacedomain
+                        )
+
         self.transfers = transfers
         # set up transfers according to components' time-/spacedomains
-        self.set_up(components, clock, compass)
+        self.set_up(clock, compass)
 
         # assign identifier
         self.identifier = identifier
@@ -36,32 +52,49 @@ class Interface(MutableMapping):
         self.output_directory = output_directory
         self.dump_file = None
 
-    def set_up(self, components, clock, compass, overwrite=False):
+    def set_up(self, clock, compass, overwrite=False):
         self.clock = clock
         self.compass = compass
         # determine how many iterations of the clock
         # each component covers (i.e. steps)
         steps = {
-            c: components[c].timedomain.timedelta // clock.timedelta
-            for c in components
+            c: clock.timedomains[c].timedelta // clock.timedelta
+            for c in clock.timedomains
         }
 
         # set up each transfer
         for t in self.transfers:
+            shape = self.transfers[t]['src_sd'].shape
             # special case for transfers towards a DataComponent or
-            # a NullComponent (or towards outside framework which will
+            # a NullComponent (or towards outside framework, which will
             # remain possible until Ocean and Atmosphere components are
             # implemented in the framework)
             if self.transfers[t].get('from') is None:
                 # in this case only __setitem__ will be called,
                 # no component is going to call __getitem__, so no need
                 # for weights, but because transfers still need to be
-                # stored for dump, need to define history for creation
+                # stored for dump, need to define 'history' for creation
                 # of 'array' and 'slices'
                 self.transfers[t]['history'] = 1
             else:
                 to_ = steps[self.transfers[t]['to']]
                 from_ = steps[self.transfers[t]['from']]
+                # check if spacedomains are different, if identical set
+                # to None to avoid unnecessary remapping
+                if self.transfers[t]['src_sd'].is_space_equal_to(
+                    compass.spacedomains[self.transfers[t]['to']].to_field(),
+                    ignore_z=True
+                ):
+                    self.transfers[t]['remap'] = None
+                else:
+                    # now assign a tuple to 'remap' where first and
+                    # second items are the source's and destination's
+                    # resolutions, respectively (as Fields, not as
+                    # SpaceDomains)
+                    self.transfers[t]['remap'] = (
+                        self.transfers[t]['src_sd'].to_field(),
+                        compass.spacedomains[self.transfers[t]['to']].to_field()
+                    )
 
                 # determine the weights that will be used by the interface
                 # on the stored timesteps when a transfer is asked (i.e.
@@ -73,7 +106,7 @@ class Interface(MutableMapping):
                     # need to add dimensions of size 1 for numpy broadcasting
                     self.transfers[t]['weights'] = np.expand_dims(
                         self.transfers[t]['weights'],
-                        axis=[-(i+1) for i in range(len(compass.shape))]
+                        axis=[-(i+1) for i in range(len(shape))]
                     )
 
                 # history is the number of timesteps that are stored
@@ -92,10 +125,9 @@ class Interface(MutableMapping):
                     or ('array' not in self.transfers[t])
                     or ('array' in self.transfers[t]
                         and (self.transfers[t]['array'].shape
-                             != ((self.transfers[t]['history'],)
-                                 + compass.shape)))
+                             != ((self.transfers[t]['history'],) + shape)))
             ):
-                arr = np.zeros((self.transfers[t]['history'],) + compass.shape,
+                arr = np.zeros((self.transfers[t]['history'],) + shape,
                                dtype_float())
                 self.transfers[t]['array'] = arr
                 # set up slices that are views of the array that is be
@@ -149,7 +181,8 @@ class Interface(MutableMapping):
                 from_hits = 1
                 for i in range(length // to_):
                     from_tracker = from_ * from_hits
-                    if ((i * to_) < from_tracker) and (from_tracker < ((i + 1) * to_)):
+                    if (((i * to_) < from_tracker)
+                            and (from_tracker < ((i + 1) * to_))):
                         # from_ falls in-between two consecutive steps of to_
                         # spread weight across from_ kept values
                         # and update from_ hits
@@ -189,7 +222,8 @@ class Interface(MutableMapping):
                                                    self.dump_file]))):
             create_transfers_dump(
                 sep.join([self.output_directory, self.dump_file]),
-                self.transfers, self.clock.timedomain, self.compass.spacedomain
+                self.transfers, self.clock.timedomain,
+                self.compass.spacedomains
             )
 
     def dump_transfers(self, timestamp):
@@ -229,12 +263,19 @@ class Interface(MutableMapping):
         else:
             raise ValueError('method for interface transfer unknown')
 
+        # remap incoming value to resolution of destination
+        if self.transfers[key]['remap'] is not None:
+            from_, to_ = self.transfers[key]['remap']
+            from_[:] = value
+            value = from_.regrids(to_, 'conservative').array
+
         # record that another value was retrieved by incrementing count
         self.transfers[key]['iter'] += 1
 
         return value
 
     def __setitem__(self, key, value):
+        # make room for new value by time incrementing
         lhs = [a for a in self.transfers[key]['slices']]
         rhs = ([a for a in self.transfers[key]['slices'][1:]]
                + [self.transfers[key]['slices'][0]])
@@ -254,32 +295,38 @@ class Interface(MutableMapping):
         return len(self.transfers)
 
 
-def create_transfers_dump(filepath, transfers_info, timedomain, spacedomain):
+def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):
     with Dataset(filepath, 'w') as f:
-        axes = spacedomain.axes
-
         # description
         f.description = "Dump file created on {}".format(
             datetime.now().strftime('%Y-%m-%d at %H:%M:%S'))
 
+        # common to all groups
         # dimensions
         f.createDimension('time', None)
-        for axis in axes:
-            f.createDimension(axis, len(getattr(spacedomain, axis)))
-
         # coordinate variables
         t = f.createVariable('time', np.float64, ('time',))
         t.units = timedomain.units
         t.calendar = timedomain.calendar
-        for axis in axes:
-            a = f.createVariable(axis, dtype_float(), (axis,))
-            a[:] = getattr(spacedomain, axis).array
+        # for each group (corresponding to each source component)
+        for c in spacedomains:
+            g = f.createGroup(c)
+            spacedomain = spacedomains[c]
+            axes = spacedomain.axes
+            # dimensions
+            for axis in axes:
+                g.createDimension(axis, len(getattr(spacedomain, axis)))
+            # coordinate variables
+            for axis in axes:
+                a = g.createVariable(axis, dtype_float(), (axis,))
+                a[:] = getattr(spacedomain, axis).array
 
-        # state variables
-        for var in transfers_info:
-            s = f.createVariable(var, dtype_float(),
-                                 ('time', *axes))
-            s.units = transfers_info[var]['units']
+        # transfer variables
+        for trf in transfers_info:
+            s = f.groups[transfers_info[trf]['src_cat']].createVariable(
+                trf, dtype_float(), ('time', *axes)
+            )
+            s.units = transfers_info[trf]['units']
 
 
 def update_transfers_dump(filepath, transfers, timestamp):
@@ -294,8 +341,10 @@ def update_transfers_dump(filepath, transfers, timestamp):
             t = len(f.variables['time'])
             f.variables['time'][t] = timestamp
 
-        for transfer in transfers:
-            f.variables[transfer][t, ...] = transfers[transfer]['slices'][-1]
+        for trf in transfers:
+            f.groups[transfers[trf]['src_cat']].variables[trf][t, ...] = (
+                transfers[trf]['slices'][-1]
+            )
 
 
 def load_transfers_dump(filepath, datetime_, transfers_info):
@@ -319,9 +368,11 @@ def load_transfers_dump(filepath, datetime_, transfers_info):
                     '{} not available in dump {}'.format(datetime_, filepath))
 
         # try to get each of the transfers, if not in file, carry on anyway
-        for transfer in transfers_info:
+        for trf in transfers_info:
             try:
-                transfers[transfer] = f.variables[transfer][t, ...]
+                transfers[trf] = (
+                    f.groups[transfers_info[trf]['src_cat']].variables[trf][t, ...]
+                )
             except KeyError:
                 pass
 

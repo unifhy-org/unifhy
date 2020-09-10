@@ -429,10 +429,7 @@ class Model(object):
             # no need for a new instance, but need to re-run the setup
             # of the existing instance because time or space information
             # may have been changed for one or more components
-            self.interface.set_up({'surfacelayer': self.surfacelayer,
-                                   'subsurface': self.subsurface,
-                                   'openwater': self.openwater},
-                                  clock, compass)
+            self.interface.set_up(clock, compass)
         self.interface.initialise_(tag, overwrite)
 
         # run components
