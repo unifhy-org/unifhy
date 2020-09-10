@@ -1350,6 +1350,13 @@ class RotatedLatLonGrid(Grid):
         # set dummy data needed for using inner field for remapping
         self._set_dummy_data()
 
+    @property
+    def coordinate_reference(self):
+        """Return the coordinate reference of the RotatedLatLonGrid
+        instance as a `cf.CoordinateReference` instance.
+        """
+        return self._f.coordinate_reference('rotated_latitude_longitude')
+
     def _set_rotation_parameters(self, earth_radius, grid_north_pole_latitude,
                                  grid_north_pole_longitude):
         coord_conversion = cf.CoordinateConversion(
@@ -1397,6 +1404,10 @@ class RotatedLatLonGrid(Grid):
         if hasattr(field, 'coordinate_reference'):
             conversion = self._check_rotation_parameters(
                 field.coordinate_reference)
+        if hasattr(rotated_grid, 'coordinate_reference'):
+            conversion = self._check_rotation_parameters(
+                rotated_grid.coordinate_reference
+            )
         else:
             conversion = False
 
