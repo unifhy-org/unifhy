@@ -3,7 +3,7 @@ from copy import deepcopy
 import re
 import cf
 
-from .settings import atol, rtol, decr
+from .settings import atol, rtol, decr, dtype_float
 
 
 class SpaceDomain(object):
@@ -269,6 +269,10 @@ class Grid(SpaceDomain):
                 bounds=cf.Bounds(data=cf.Data(dimension_bounds))),
             axes=axis_
         )
+
+    def _set_dummy_data(self):
+        self._f.set_data(cf.Data(np.zeros(self.shape, dtype_float())),
+                         axes=self.axes)
 
     @classmethod
     def _get_grid_from_extent_and_resolution(cls, y_extent, x_extent,
@@ -854,6 +858,9 @@ class LatLonGrid(Grid):
         self._set_space(longitude, longitude_bounds,
                         name=self._X_name, units=self._X_units[0], axis='X')
 
+        # set dummy data needed for using inner field for remapping
+        self._set_dummy_data()
+
     @classmethod
     def from_extent_and_resolution(cls, latitude_extent, longitude_extent,
                                    latitude_resolution, longitude_resolution,
@@ -1339,6 +1346,9 @@ class RotatedLatLonGrid(Grid):
 
         self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
                                       grid_north_pole_longitude)
+
+        # set dummy data needed for using inner field for remapping
+        self._set_dummy_data()
 
     def _set_rotation_parameters(self, earth_radius, grid_north_pole_latitude,
                                  grid_north_pole_longitude):
