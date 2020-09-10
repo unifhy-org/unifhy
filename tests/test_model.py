@@ -14,39 +14,42 @@ from tests.test_state import compare_states
 
 
 class Simulator(object):
-    def __init__(self, sync, surfacelayer_kind, subsurface_kind,
+    def __init__(self, time_, space_, surfacelayer_kind, subsurface_kind,
                  openwater_kind, sources=None):
-        self.sync = sync
+        self.time_ = time_
         self.model = self._initialise_model(
-            sync, surfacelayer_kind, subsurface_kind, openwater_kind, sources
+            time_, space_,
+            surfacelayer_kind, subsurface_kind, openwater_kind,
+            sources
         )
 
     @staticmethod
-    def _initialise_model(sync, surfacelayer_kind, subsurface_kind,
+    def _initialise_model(time_, space_, surfacelayer_kind, subsurface_kind,
                           openwater_kind, sources):
         # for surfacelayer component
         category = 'surfacelayer'
         surfacelayer = get_dummy_component(
-            category, surfacelayer_kind, sync,
+            category, surfacelayer_kind, time_, space_,
             'Python' if sources is None else sources.get(category, 'Python')
         )
         # for subsurface component
         category = 'subsurface'
         subsurface = get_dummy_component(
-            category, subsurface_kind, sync,
+            category, subsurface_kind, time_, space_,
             'Python' if sources is None else sources.get(category, 'Python')
         )
         # for openwater
         category = 'openwater'
         openwater = get_dummy_component(
-            category, openwater_kind, sync,
+            category, openwater_kind, time_, space_,
             'Python' if sources is None else sources.get(category, 'Python')
         )
 
         # try to get an instance of model with the given combination
         model = cm4twc.Model(
-            identifier='test_{}_{}{}{}'.format(
-                sync, surfacelayer_kind, subsurface_kind, openwater_kind
+            identifier='test-{}-{}-{}{}{}'.format(
+                time_, space_,
+                surfacelayer_kind, subsurface_kind, openwater_kind
             ),
             config_directory='outputs',
             output_directory='outputs',
@@ -60,18 +63,18 @@ class Simulator(object):
     def spinup_model(self, cycles=2):
         self.model.spin_up(
             *get_dummy_spin_up_start_end(), cycles,
-            dumping_frequency=get_dummy_dumping_frequency(self.sync)
+            dumping_frequency=get_dummy_dumping_frequency(self.time_)
         )
 
     def run_model(self):
         self.model.simulate(
-            dumping_frequency=get_dummy_dumping_frequency(self.sync)
+            dumping_frequency=get_dummy_dumping_frequency(self.time_)
         )
 
     def resume_model(self):
         self.model.resume(
             at=(get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
-                - get_dummy_dumping_frequency(self.sync))
+                - get_dummy_dumping_frequency(self.time_))
         )
 
     def delete_yml_and_dump(self):
@@ -107,9 +110,11 @@ class Simulator(object):
             os.remove(f)
 
 
-class TestModelSync(unittest.TestCase):
+class TestModelSyncMatch(unittest.TestCase):
     # flag to specify if components are to run synchronously or not
-    sync = 'sync'
+    t = 'sync'
+    # flag to specify if components are to run on space grid or not
+    s = 'match'
 
     # expected final values for states/transfers after main run
     # (null initial conditions, no spinup run, 12 iterations)
@@ -159,7 +164,7 @@ class TestModelSync(unittest.TestCase):
                               subsurface=ss_kind,
                               openwater=ow_kind):
                 # initialise, spinup, and run model
-                simulator = Simulator(self.sync, sl_kind, ss_kind, ow_kind)
+                simulator = Simulator(self.t, self.s, sl_kind, ss_kind, ow_kind)
                 simulator.spinup_model()
                 simulator.run_model()
 
@@ -201,7 +206,7 @@ class TestModelSync(unittest.TestCase):
                               openwater=ow_kind):
 
                 # initialise, and run model
-                simulator = Simulator(self.sync, sl_kind, ss_kind, ow_kind)
+                simulator = Simulator(self.t, self.s, sl_kind, ss_kind, ow_kind)
                 simulator.run_model()
 
                 # check final state and transfer values
@@ -222,7 +227,7 @@ class TestModelSync(unittest.TestCase):
                               subsurface=ss_src,
                               openwater=ow_src):
                 # initialise, and run model
-                simulator = Simulator(self.sync, 'c', 'c', 'c',
+                simulator = Simulator(self.t, self.s, 'c', 'c', 'c',
                                       {'surfacelayer': sl_src,
                                        'subsurface': ss_src,
                                        'openwater': ow_src})
@@ -236,11 +241,11 @@ class TestModelSync(unittest.TestCase):
 
     def test_in_session_vs_through_dump(self):
         # initialise a model, and spin it up
-        simulator_1 = Simulator(self.sync, 'c', 'c', 'c')
+        simulator_1 = Simulator(self.t, self.s, 'c', 'c', 'c')
         simulator_1.spinup_model(cycles=1)
 
         # initialise another model
-        simulator_2 = Simulator(self.sync, 'c', 'c', 'c')
+        simulator_2 = Simulator(self.t, self.s, 'c', 'c', 'c')
 
         # use dump of first model as initial conditions for second model
         simulator_2.model.surfacelayer.initialise_states_from_dump(
@@ -322,9 +327,11 @@ class TestModelSync(unittest.TestCase):
                     "error for {}".format(transfer)) from e
 
 
-class TestModelAsync(TestModelSync):
+class TestModelAsyncMatch(TestModelSyncMatch):
     # flag to specify if components are to run synchronously or not
-    sync = 'async'
+    t = 'async'
+    # flag to specify if components are to run on space grid or not
+    s = 'match'
 
     # expected final values for states/transfers after main run
     # (null initial conditions, no spinup run, 12 iterations)
@@ -352,12 +359,24 @@ class TestModelAsync(TestModelSync):
     }
 
 
+class TestModelSyncRemap(TestModelSyncMatch):
+    # flag to specify if components are to run on space grid or not
+    s = 'remap'
+
+
+class TestModelAsyncRemap(TestModelAsyncMatch):
+    # flag to specify if components are to run on space grid or not
+    s = 'remap'
+
+
 if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSync))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAsync))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSyncMatch))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAsyncMatch))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSyncRemap))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAsyncRemap))
 
     test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
 

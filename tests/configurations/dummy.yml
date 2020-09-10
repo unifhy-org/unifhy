@@ -24,16 +24,16 @@ surfacelayer:
     altitude_location: centre
   dataset:
     driving_a:
-      files: [data/dummy_surfacelayer_data_daily.nc]
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
       select: driving_a
     driving_b:
-      files: [data/dummy_surfacelayer_data_daily.nc]
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
       select: driving_b
     driving_c:
-      files: [data/dummy_surfacelayer_data_daily.nc]
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
       select: driving_c
     ancillary_c:
-      files: [data/dummy_surfacelayer_data_daily.nc]
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
       select: ancillary_c
   parameters: null
   constants: null
@@ -60,7 +60,7 @@ subsurface:
     altitude_location: centre
   dataset:
     driving_a:
-      files: [data/dummy_subsurface_data_daily.nc]
+      files: [data/dummy_subsurface_data_daily_1deg.nc]
       select: driving_a
   parameters:
     parameter_a: 1
@@ -88,7 +88,7 @@ openwater:
     altitude_location: centre
   dataset:
     ancillary_b:
-      files: [data/dummy_openwater_data_daily.nc]
+      files: [data/dummy_openwater_data_daily_1deg.nc]
       select: ancillary_b
   parameters:
     parameter_c: 3
