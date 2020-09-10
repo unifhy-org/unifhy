@@ -4,6 +4,7 @@ class Compass(object):
 
     def __init__(self, spacedomains):
         self.categories = tuple(spacedomains)
+        self.spacedomains = spacedomains
         # check time compatibility between components
         self._check_spacedomain_compatibilities(spacedomains)
 
