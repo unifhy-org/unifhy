@@ -1403,7 +1403,35 @@ class RotatedLatLonGrid(Grid):
 
         if hasattr(field, 'coordinate_reference'):
             conversion = self._check_rotation_parameters(
-                field.coordinate_reference)
+                field.coordinate_reference
+            )
+        else:
+            conversion = False
+
+        return y_x_z and conversion
+
+    def spans_same_region_as(self, rotated_grid, ignore_z=False):
+        """Compare equality in region spanned between the
+        RotatedLatLonGrid and another instance of RotatedLatLonGrid.
+
+        For each axis, the lower bound of their first cell and the
+        upper bound of their last cell are compared.
+
+        :Parameters:
+
+            timedomain: `Grid`
+                The other Grid to be compared against Grid.
+
+            ignore_z: `bool`, optional
+                If True, the dimension coordinates along the Z axes of
+                the Grid instances will not be compared. If not
+                provided, set to default value False (i.e. Z is not
+                ignored).
+
+        """
+        y_x_z = super(RotatedLatLonGrid, self).spans_same_region_as(
+            rotated_grid, ignore_z
+        )
         if hasattr(rotated_grid, 'coordinate_reference'):
             conversion = self._check_rotation_parameters(
                 rotated_grid.coordinate_reference
