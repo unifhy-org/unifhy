@@ -263,7 +263,10 @@ class Interface(MutableMapping):
         else:
             raise ValueError('method for interface transfer unknown')
 
-        # remap incoming value to resolution of destination
+        # remap value from supermesh resolution to destination resolution
+        # # NOT IMPLEMENTED
+        # # REPLACED BY:
+        # remap value from source resolution to destination resolution
         if self.transfers[key]['remap'] is not None:
             from_, to_ = self.transfers[key]['remap']
             from_[:] = value
@@ -275,6 +278,9 @@ class Interface(MutableMapping):
         return value
 
     def __setitem__(self, key, value):
+        # remap value from source resolution to supermesh resolution
+        # # NOT IMPLEMENTED
+
         # make room for new value by time incrementing
         lhs = [a for a in self.transfers[key]['slices']]
         rhs = ([a for a in self.transfers[key]['slices'][1:]]
