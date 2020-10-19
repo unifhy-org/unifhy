@@ -27,12 +27,12 @@ subroutine run(z, y, x, &
     ! component ancillary data
     real(kind=8), intent(in), dimension(z, y, x) :: ancillary_b
     ! component parameters
-    real(kind=8), intent(inout) :: parameter_c
+    real(kind=8), intent(in) :: parameter_c
     ! component states
     real(kind=8), intent(in), dimension(z, y, x) :: state_a_m1
     real(kind=8), intent(inout), dimension(z, y, x) :: state_a_0
     ! component constants
-    real(kind=8), intent(inout) :: constant_a
+    real(kind=8), intent(in) :: constant_a
     ! to interface
     real(kind=8), intent(out), dimension(z, y, x) :: &
         transfer_l, transfer_n, transfer_o
