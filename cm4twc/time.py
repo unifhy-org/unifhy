@@ -1,5 +1,6 @@
 import numpy as np
 from datetime import datetime, timedelta
+from copy import deepcopy
 import cf
 import cftime
 import cfunits
@@ -696,7 +697,8 @@ class TimeDomain(object):
         return cls.from_start_end_step(**cls._extract_time_from_field(field))
 
     def to_field(self):
-        """Return the inner cf.Field used to characterise the TimeDomain.
+        """Return a deep copy of the inner cf.Field used to characterise
+        the TimeDomain.
 
         **Examples**
         >>> td = TimeDomain.from_start_end_step(
@@ -710,7 +712,7 @@ class TimeDomain(object):
         True
 
         """
-        return self._f
+        return deepcopy(self._f)
 
     @classmethod
     def from_config(cls, cfg):

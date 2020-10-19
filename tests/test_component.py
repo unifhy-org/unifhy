@@ -21,6 +21,21 @@ time_resolutions = {
     },
 }
 
+space_resolutions = {
+    'surfacelayer': {
+        'match': '1deg',
+        'remap': '1deg'
+    },
+    'subsurface': {
+        'match': '1deg',
+        'remap': 'pt5deg'
+    },
+    'openwater': {
+        'match': '1deg',
+        'remap': 'pt2deg'
+    },
+}
+
 parameters = {
     'surfacelayer': {},
     'subsurface': {
@@ -32,17 +47,20 @@ parameters = {
 }
 
 
-def get_dummy_component(category, kind, sync, source):
+def get_dummy_component(category, kind, time_, space_, source):
     # get component class
     component_class = getattr(
         import_module('tests.components.{}'.format(category)),
         'Dummy{}'.format('' if source == 'Python' else source)
     )
     # get timedomain, spacedomain, dataset
-    time_resolution = time_resolutions[category][sync]
+    time_resolution = time_resolutions[category][time_]
     timedomain = get_dummy_timedomain(time_resolution)
-    spacedomain = get_dummy_spacedomain()
-    dataset = get_dummy_dataset(category, time_resolution)
+
+    space_resolution = space_resolutions[category][space_]
+    spacedomain = get_dummy_spacedomain(space_resolution)
+
+    dataset = get_dummy_dataset(category, time_resolution, space_resolution)
 
     if kind == 'c':
         return component_class(
@@ -58,8 +76,8 @@ def get_dummy_component(category, kind, sync, source):
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset(
-                '{}_{}'.format(category, sync),
-                time_resolution
+                '{}_{}'.format(category, time_),
+                time_resolution, space_resolution
             ),
             substituting_class=component_class
         )

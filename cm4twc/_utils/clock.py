@@ -10,6 +10,7 @@ class Clock(object):
 
     def __init__(self, timedomains):
         self.categories = tuple(timedomains)
+        self.timedomains = timedomains
         # check time compatibility between components
         self._check_timedomain_compatibilities(timedomains)
 

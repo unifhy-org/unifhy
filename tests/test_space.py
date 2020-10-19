@@ -7,15 +7,34 @@ import doctest
 import cm4twc
 
 
-def get_dummy_spacedomain():
-    return cm4twc.LatLonGrid(
-        latitude=[51.5, 52.5, 53.5, 54.5],
-        latitude_bounds=[[51, 52], [52, 53], [53, 54], [54, 55]],
-        longitude=[-1.5, -0.5, 0.5],
-        longitude_bounds=[[-2, -1], [-1, 0], [0, 1]],
-        altitude=[2],
-        altitude_bounds=[[0, 4]]
-    )
+def get_dummy_spacedomain(resolution):
+    if resolution == '1deg':
+        return cm4twc.LatLonGrid.from_extent_and_resolution(
+            latitude_extent=(51, 55),
+            latitude_resolution=1,
+            longitude_extent=(-2, 1),
+            longitude_resolution=1,
+            altitude_extent=(0, 4),
+            altitude_resolution=4
+        )
+    elif resolution == 'pt5deg':
+        return cm4twc.LatLonGrid.from_extent_and_resolution(
+            latitude_extent=(51, 55),
+            latitude_resolution=0.5,
+            longitude_extent=(-2, 1),
+            longitude_resolution=0.5,
+            altitude_extent=(0, 4),
+            altitude_resolution=4
+        )
+    elif resolution == 'pt2deg':
+        return cm4twc.LatLonGrid.from_extent_and_resolution(
+            latitude_extent=(51, 55),
+            latitude_resolution=0.2,
+            longitude_extent=(-2, 1),
+            longitude_resolution=0.2,
+            altitude_extent=(0, 4),
+            altitude_resolution=4
+        )
 
 
 def get_sciencish_spacedomain():

@@ -1,8 +1,9 @@
 import numpy as np
+from copy import deepcopy
 import re
 import cf
 
-from .settings import atol, rtol, decr
+from .settings import atol, rtol, decr, dtype_float
 
 
 class SpaceDomain(object):
@@ -48,10 +49,10 @@ class SpaceDomain(object):
                         "please use a subclass of it instead.")
 
     def to_field(self):
-        """Return the inner cf.Field used to characterise the
-        SpaceDomain.
+        """Return a deep copy of the inner cf.Field used to characterise
+        the SpaceDomain.
         """
-        return self._f
+        return deepcopy(self._f)
 
 
 class Grid(SpaceDomain):
@@ -268,6 +269,10 @@ class Grid(SpaceDomain):
                 bounds=cf.Bounds(data=cf.Data(dimension_bounds))),
             axes=axis_
         )
+
+    def _set_dummy_data(self):
+        self._f.set_data(cf.Data(np.zeros(self.shape, dtype_float())),
+                         axes=self.axes)
 
     @classmethod
     def _get_grid_from_extent_and_resolution(cls, y_extent, x_extent,
@@ -572,11 +577,14 @@ class Grid(SpaceDomain):
                 not ignored).
 
         """
+        rtol_ = rtol()
+        atol_ = atol()
         # check whether X/Y(/Z if not ignored) constructs are identical
         y_x = (
             self._f.construct(self._Y_name).equals(
                 field.construct(re.compile(r'name={}$'.format(self._Y_name)),
                                 default=None),
+                rtol=rtol_, atol=atol_,
                 ignore_data_type=True,
                 ignore_properties=('standard_name',
                                    'long_name',
@@ -584,6 +592,7 @@ class Grid(SpaceDomain):
             and self._f.construct(self._X_name).equals(
                 field.construct(re.compile(r'name={}$'.format(self._X_name)),
                                 default=None),
+                rtol=rtol_, atol=atol_,
                 ignore_data_type=True,
                 ignore_properties=('standard_name',
                                    'long_name',
@@ -597,6 +606,7 @@ class Grid(SpaceDomain):
                     field.construct(
                         re.compile(r'name={}$'.format(self._Z_name)),
                         default=None),
+                    rtol=rtol_, atol=atol_,
                     ignore_data_type=True,
                     ignore_properties=('standard_name',
                                        'long_name',
@@ -607,6 +617,56 @@ class Grid(SpaceDomain):
                 z = True
 
         return y_x and z
+
+    def spans_same_region_as(self, grid, ignore_z=False):
+        """Compare equality in region spanned between the Grid
+        and another instance of Grid.
+
+        For each axis, the lower bound of their first cell and the
+        upper bound of their last cell are compared.
+
+        :Parameters:
+
+            timedomain: `Grid`
+                The other Grid to be compared against Grid.
+
+            ignore_z: `bool`, optional
+                If True, the dimension coordinates along the Z axes of
+                the Grid instances will not be compared. If not
+                provided, set to default value False (i.e. Z is not
+                ignored).
+
+        """
+        if isinstance(grid, self.__class__):
+            start_x = self.X_bounds[[0], [0]] == grid.X_bounds[[0], [0]]
+            end_x = self.X_bounds[[-1], [-1]] == grid.X_bounds[[-1], [-1]]
+
+            start_y = self.Y_bounds[[0], [0]] == grid.Y_bounds[[0], [0]]
+            end_y = self.Y_bounds[[-1], [-1]] == grid.Y_bounds[[-1], [-1]]
+
+            if ignore_z:
+                start_z, end_z = True, True
+            else:
+                if self.Z_bounds is not None and grid.Z_bounds is not None:
+                    start_z = (
+                        self.Z_bounds[[0], [0]] == grid.Z_bounds[[0], [0]]
+                    ).array.item()
+                    end_z = (
+                        self.Z_bounds[[-1], [-1]] == grid.Z_bounds[[-1], [-1]]
+                    ).array.item()
+                elif self.Z_bounds is not None or grid.Z_bounds is not None:
+                    start_z, end_z = False, False
+                else:
+                    start_z, end_z = True, True
+
+            return all((start_x.array.item(), end_x.array.item(),
+                        start_y.array.item(), end_y.array.item(),
+                        start_z, end_z))
+
+        else:
+            raise TypeError("{} instance cannot be compared to {} "
+                            "instance".format(self.__class__.__name__,
+                                              grid.__class__.__name__))
 
     def to_config(self):
         return {
@@ -797,6 +857,9 @@ class LatLonGrid(Grid):
                         name=self._Y_name, units=self._Y_units[0], axis='Y')
         self._set_space(longitude, longitude_bounds,
                         name=self._X_name, units=self._X_units[0], axis='X')
+
+        # set dummy data needed for using inner field for remapping
+        self._set_dummy_data()
 
     @classmethod
     def from_extent_and_resolution(cls, latitude_extent, longitude_extent,
@@ -1284,6 +1347,16 @@ class RotatedLatLonGrid(Grid):
         self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
                                       grid_north_pole_longitude)
 
+        # set dummy data needed for using inner field for remapping
+        self._set_dummy_data()
+
+    @property
+    def coordinate_reference(self):
+        """Return the coordinate reference of the RotatedLatLonGrid
+        instance as a `cf.CoordinateReference` instance.
+        """
+        return self._f.coordinate_reference('rotated_latitude_longitude')
+
     def _set_rotation_parameters(self, earth_radius, grid_north_pole_latitude,
                                  grid_north_pole_longitude):
         coord_conversion = cf.CoordinateConversion(
@@ -1327,20 +1400,61 @@ class RotatedLatLonGrid(Grid):
         # different if Z is ignored)
         y_x_z = super(RotatedLatLonGrid, self).is_space_equal_to(field,
                                                                  ignore_z)
-        conversion = (
-            self._f.coordinate_reference(
-                'rotated_latitude_longitude').coordinate_conversion.equals(
-                field.coordinate_reference(
-                    'rotated_latitude_longitude',
-                    default=None).coordinate_conversion)
-            and self._f.coordinate_reference(
-                'rotated_latitude_longitude').datum.equals(
-                field.coordinate_reference(
-                    'rotated_latitude_longitude',
-                    default=None).datum)
-        )
+
+        if hasattr(field, 'coordinate_reference'):
+            conversion = self._check_rotation_parameters(
+                field.coordinate_reference
+            )
+        else:
+            conversion = False
 
         return y_x_z and conversion
+
+    def spans_same_region_as(self, rotated_grid, ignore_z=False):
+        """Compare equality in region spanned between the
+        RotatedLatLonGrid and another instance of RotatedLatLonGrid.
+
+        For each axis, the lower bound of their first cell and the
+        upper bound of their last cell are compared.
+
+        :Parameters:
+
+            timedomain: `Grid`
+                The other Grid to be compared against Grid.
+
+            ignore_z: `bool`, optional
+                If True, the dimension coordinates along the Z axes of
+                the Grid instances will not be compared. If not
+                provided, set to default value False (i.e. Z is not
+                ignored).
+
+        """
+        y_x_z = super(RotatedLatLonGrid, self).spans_same_region_as(
+            rotated_grid, ignore_z
+        )
+        if hasattr(rotated_grid, 'coordinate_reference'):
+            conversion = self._check_rotation_parameters(
+                rotated_grid.coordinate_reference
+            )
+        else:
+            conversion = False
+
+        return y_x_z and conversion
+
+    def _check_rotation_parameters(self, coord_ref):
+        if (hasattr(coord_ref, 'coordinate_conversion')
+                and hasattr(coord_ref, 'datum')):
+            conversion = (
+                self._f.coordinate_reference(
+                    'rotated_latitude_longitude').coordinate_conversion.equals(
+                    coord_ref.coordinate_conversion)
+                and self._f.coordinate_reference(
+                    'rotated_latitude_longitude').datum.equals(coord_ref.datum)
+            )
+        else:
+            conversion = False
+
+        return conversion
 
     @classmethod
     def from_field(cls, field):
