@@ -365,10 +365,10 @@ class Component(metaclass=MetaComponent):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
         parameters = ["        {}: {} {}".format(
-            p, self.parameters[p], self.parameters_info[p])
+            p, self.parameters[p], self.parameters_info[p]['units'])
             for p in self.parameters] if self.parameters else []
         constants = ["        {}: {} {}".format(
-            p, self.constants[p], self.constants_info[p])
+            p, self.constants[p], self.constants_info[p]['units'])
             for p in self.constants] if self.constants else []
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
