@@ -2,6 +2,7 @@ from importlib import import_module
 from os import sep, path
 from glob import glob
 from datetime import datetime, timedelta
+import re
 import yaml
 
 from ._utils import Interface, Clock, Compass
@@ -486,11 +487,18 @@ class Model(object):
         # finalise model
         self.interface.finalise_()
 
-    def resume(self, at=None):
-        """Resume model simulation on latest snapshot in dump files or
-        at the given snapshot.
+    def resume(self, tag, at=None):
+        """Resume model spin up or main simulation run on latest
+        snapshot in dump files or at the given snapshot.
 
         :Parameters:
+
+            tag: `str`
+                The tag for the run to resume. For a main simulation
+                run, this is simply *run*. For a given cycle of a spin
+                up run, this is *spinup#*, where # is the integer
+                corresponding to the given spin up cycle (e.g. *1* for
+                first cycle, *2* for second cycle, etc.).
 
             at: datetime object, optional
                 The particular point in time (snapshot) available in the
@@ -498,8 +506,30 @@ class Model(object):
                 simulation.
 
         """
+        # check validity of tag
+        if tag == 'run':
+            method = 'simulate'
+        elif 'spinup' in tag:
+            method = 'spin_up'
+            res = re.compile(r"spinup[0-9]+").match(tag)
+            if not res or ((res.end() - res.start()) != len(tag)):
+                raise ValueError("tag '{}' for resume is invalid".format(tag))
+        else:
+            raise ValueError("tag '{}' for resume is invalid".format(tag))
+
+        # collect simulate arguments stored in yaml file
+        yaml_sig = sep.join([self.config_directory,
+                             '.'.join([self.identifier, '*', 'yml'])])
+        try:
+            with open(yaml_sig.replace('*', method), 'r') as f:
+                cfg = yaml.load(f, yaml.FullLoader)
+        except FileNotFoundError:
+            raise FileNotFoundError("no configuration file found")
+
+        # initialise list to hold snapshot retrieved from each dump file
         ats = []
-        cycle_nos = []
+
+        # initialise component states from dump files
         data_or_null = 0
         for component in [self.surfacelayer, self.subsurface, self.openwater]:
             # skip DataComponent and NullComponent
@@ -507,27 +537,10 @@ class Model(object):
                 data_or_null += 1
                 continue
 
-            # initialise component states from dump file
-            dump_sig = sep.join([component.output_directory,
-                                 '_'.join([component.identifier,
-                                           component.category,
-                                           '*', 'dump.nc'])])
-
-            dump_files = sorted(glob(dump_sig))
-
-            if not dump_files:
-                raise RuntimeError(
-                    "no dump file found for {} component of model {}".format(
-                        component.category, self.identifier)
-                )
-            elif dump_sig.replace('*', 'run') in dump_files:
-                dump_file = dump_sig.replace('*', 'run')
-            else:
-                # use last dump file, which will be the latest spinup run
-                dump_file = dump_files[-1]
-                cycle_nos.append(
-                    dump_file.split('_dump.nc')[0].split('spinup')[-1]
-                )
+            dump_file = sep.join([self.output_directory,
+                                  '_'.join([component.identifier,
+                                            component.category,
+                                            tag, 'dump.nc'])])
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
@@ -536,25 +549,9 @@ class Model(object):
             return
 
         # initialise model interface transfers from dump file
-        dump_sig = sep.join([self.output_directory,
-                             '_'.join([self.identifier, 'interface',
-                                       '*', 'dump.nc'])])
-
-        dump_files = sorted(glob(dump_sig))
-
-        if not dump_files:
-            raise RuntimeError(
-                "no dump file found for interface of model {}".format(
-                    self.identifier)
-            )
-        elif dump_sig.replace('*', 'run') in dump_files:
-            dump_file = dump_sig.replace('*', 'run')
-        else:
-            # use last dump file, which will be the latest spinup run
-            dump_file = dump_files[-1]
-            cycle_nos.append(
-                dump_file.split('_dump.nc')[0].split('spinup')[-1]
-            )
+        dump_file = sep.join([self.output_directory,
+                              '_'.join([self.identifier, 'interface',
+                                        tag, 'dump.nc'])])
 
         ats.append(self.initialise_transfers_from_dump(dump_file, at))
 
@@ -564,24 +561,52 @@ class Model(object):
                                "snapshots in time, cannot resume")
         at = list(set(ats))[0]
 
-        # reload simulate configuration (if it exists)
-        yaml_sig = sep.join(
-            [self.config_directory,
-             '.'.join([self.identifier, '*', 'yml'])]
-        )
+        # proceed with call to spin_up or simulate method of self
+        if method == 'spinup':
+            cycle_no = int(tag.split('spinup')[-1])
 
-        if path.exists(yaml_sig.replace('*', 'simulate')):
-            # collect simulate arguments stored in yaml file
-            with open(yaml_sig.replace('*', 'simulate'), 'r') as f:
-                cfg = yaml.load(f, yaml.FullLoader)
+            # resume the spin up run(s)
+            start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
+            end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
+            dump_freq_sec = (None if cfg['dumping_frequency'] is None else
+                             cfg['dumping_frequency'].get('seconds', None))
+            dumping_frequency = (timedelta(seconds=dump_freq_sec)
+                                 if dump_freq_sec is not None else None)
 
+            # resume spin up cycle according to the latest dump found
+            if at == end:
+                if cfg['cycles'] == cycle_no:
+                    raise RuntimeError("(all) spin up run(s) already completed "
+                                       "successfully, cannot resume")
+            else:
+                # resume spin up cycle
+                self.spin_up(
+                    start=at,
+                    end=end,
+                    cycles=1,
+                    dumping_frequency=dumping_frequency,
+                    overwrite=False,
+                    _cycle_origin_no=cycle_no - 1
+                )
+            # start any potential additional spin up cycle
+            if cfg['cycles'] - cycle_no > 0:
+                self.spin_up(
+                    start=start,
+                    end=end,
+                    cycles=cfg['cycles'] - cycle_no,
+                    dumping_frequency=dumping_frequency,
+                    overwrite=False,
+                    _cycle_origin_no=cycle_no
+                )
+        else:  # method == 'simulate'
             # adjust the component timedomain to reflect remaining period
             for component in [self.surfacelayer, self.subsurface,
                               self.openwater]:
                 if at == component.timedomain.bounds.datetime_array[-1, -1]:
-                    raise RuntimeError("{} component run already completed "
-                                       "successfully, cannot resume".format(
-                                            component.category))
+                    raise RuntimeError(
+                        "{} component run already completed successfully, "
+                        "cannot resume".format(component.category)
+                    )
 
                 remaining_td = TimeDomain.from_start_end_step(
                     start=at,
@@ -592,7 +617,7 @@ class Model(object):
                 )
                 component.timedomain = remaining_td
 
-            # resume the simulation run
+            # resume simulation run
             dump_freq_sec = (None if cfg['dumping_frequency'] is None else
                              cfg['dumping_frequency'].get('seconds', None))
             self.simulate(
@@ -600,48 +625,3 @@ class Model(object):
                 if dump_freq_sec is not None else None,
                 overwrite=False
             )
-        elif path.exists(yaml_sig.replace('*', 'spin_up')):
-            # collect spin up arguments stored in yaml file
-            with open(yaml_sig.replace('*', 'spin_up'), 'r') as f:
-                cfg = yaml.load(f, yaml.FullLoader)
-
-            # check whether spin up cycles for components are the same
-            if not len(set(cycle_nos)) == 1:
-                raise RuntimeError("component cycle numbers are different, "
-                                   "cannot resume")
-            cycle_no = int(list(set(cycle_nos))[0])
-
-            # resume the spin up run(s)
-            start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
-            end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
-            dump_freq_sec = (None if cfg['dumping_frequency'] is None else
-                             cfg['dumping_frequency'].get('seconds', None))
-            dumping_frequency = (timedelta(seconds=dump_freq_sec)
-                                 if dump_freq_sec is not None else None)
-            # resume spin up cycle according to the latest dump found
-            if at == end:
-                if cfg['cycles'] == cycle_no:
-                    raise RuntimeError("spin up run(s) already completed "
-                                       "successfully, cannot resume")
-            else:
-                self.spin_up(
-                    start=at,
-                    end=end,
-                    cycles=1,
-                    dumping_frequency=dumping_frequency,
-                    overwrite=False,
-                    _cycle_origin_no=cycle_no - 1
-                )
-            # start any additional spin up cycle
-            if cfg['cycles'] - cycle_no > 0:
-                self.spin_up(
-                    start=start,
-                    end=end,
-                    cycles=cfg['cycles'] - cycle_no,
-                    dumping_frequency=dumping_frequency,
-                    overwrite=False,
-                    _cycle_origin_no=cycle_no
-                )
-        else:
-            raise RuntimeError("no spin up nor simulate configuration found, "
-                               "cannot resume")

@@ -73,6 +73,7 @@ class Simulator(object):
 
     def resume_model(self):
         self.model.resume(
+            tag='run',
             at=(get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
                 - get_dummy_dumping_frequency(self.time_))
         )
