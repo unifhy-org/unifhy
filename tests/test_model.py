@@ -111,10 +111,10 @@ class Simulator(object):
             os.remove(f)
 
 
-class TestModelSyncMatch(unittest.TestCase):
-    # flag to specify if components are to run synchronously or not
+class TestModelSameTimeSameSpace(unittest.TestCase):
+    # flag to specify that components are to run at same temporal resolution
     t = 'sync'
-    # flag to specify if components are to run on space grid or not
+    # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
     # expected final values for states/transfers after main run
@@ -328,10 +328,10 @@ class TestModelSyncMatch(unittest.TestCase):
                     "error for {}".format(transfer)) from e
 
 
-class TestModelAsyncMatch(TestModelSyncMatch):
-    # flag to specify if components are to run synchronously or not
+class TestModelDiffTimeSameSpace(TestModelSameTimeSameSpace):
+    # flag to specify that components are to run at different temporal resolutions
     t = 'async'
-    # flag to specify if components are to run on space grid or not
+    # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
     # expected final values for states/transfers after main run
@@ -360,13 +360,13 @@ class TestModelAsyncMatch(TestModelSyncMatch):
     }
 
 
-class TestModelSyncRemap(TestModelSyncMatch):
-    # flag to specify if components are to run on space grid or not
+class TestModelSameTimeDiffSpace(TestModelSameTimeSameSpace):
+    # flag to specify that components are to run at different spatial resolutions
     s = 'remap'
 
 
-class TestModelAsyncRemap(TestModelAsyncMatch):
-    # flag to specify if components are to run on space grid or not
+class TestModelDiffTimeDiffSpace(TestModelDiffTimeSameSpace):
+    # flag to specify that components are to run at different spatial resolutions
     s = 'remap'
 
 
@@ -374,10 +374,14 @@ if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSyncMatch))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAsyncMatch))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSyncRemap))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelAsyncRemap))
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace))
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace))
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
 
     test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
 
