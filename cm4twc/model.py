@@ -440,15 +440,15 @@ class Model(object):
             to_interface = {}
 
             if dumping:
-                self.surfacelayer.dump_states(
-                    clock.get_current_timeindex('surfacelayer')
-                )
-                self.subsurface.dump_states(
-                    clock.get_current_timeindex('subsurface')
-                )
-                self.openwater.dump_states(
-                    clock.get_current_timeindex('openwater')
-                )
+                ti = clock.get_current_timeindex('surfacelayer')
+                self.surfacelayer.dump_states(ti)
+                self.surfacelayer.dump_output_streams(ti)
+                ti = clock.get_current_timeindex('subsurface')
+                self.subsurface.dump_states(ti)
+                self.subsurface.dump_output_streams(ti)
+                ti = clock.get_current_timeindex('openwater')
+                self.openwater.dump_states(ti)
+                self.openwater.dump_output_streams(ti)
                 self.interface.dump_transfers(
                     clock.get_current_timestamp()
                 )
@@ -529,7 +529,7 @@ class Model(object):
         # initialise list to hold snapshot retrieved from each dump file
         ats = []
 
-        # initialise component states from dump files
+        # initialise component states and output streams from dump files
         data_or_null = 0
         for component in [self.surfacelayer, self.subsurface, self.openwater]:
             # skip DataComponent and NullComponent
@@ -537,12 +537,22 @@ class Model(object):
                 data_or_null += 1
                 continue
 
+            # initialise component states from dump file
             dump_file = sep.join([self.output_directory,
                                   '_'.join([component.identifier,
                                             component.category,
                                             tag, 'dump.nc'])])
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
+
+            # initialise component output streams from dump file
+            dump_file = sep.join([self.output_directory,
+                                  '_'.join([component.identifier,
+                                            component.category,
+                                            tag, 'dump_stream_{}.nc'])])
+
+            ats.extend(component.initialise_output_streams_from_dump(dump_file,
+                                                                     at))
 
         # if all components are Data or Null, exit resume
         if data_or_null == 3:
