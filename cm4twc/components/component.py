@@ -422,7 +422,8 @@ class Component(metaclass=MetaComponent):
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
             parameters=cfg.get('parameters'),
-            constants=cfg.get('constants')
+            constants=cfg.get('constants'),
+            outputs=cfg.get('outputs')
         )
 
     def to_config(self):
@@ -434,7 +435,8 @@ class Component(metaclass=MetaComponent):
             'spacedomain': self.spacedomain.to_config(),
             'dataset': self.dataset.to_config(),
             'parameters': self.parameters if self.parameters else None,
-            'constants': self.constants if self.constants else None
+            'constants': self.constants if self.constants else None,
+            'outputs': self.outputs if self.outputs else None
         }
         return cfg
 
@@ -459,8 +461,11 @@ class Component(metaclass=MetaComponent):
             p, self.parameters[p], self.parameters_info[p]['units'])
             for p in self.parameters] if self.parameters else []
         constants = ["        {}: {} {}".format(
-            p, self.constants[p], self.constants_info[p]['units'])
-            for p in self.constants] if self.constants else []
+            c, self.constants[c], self.constants_info[c]['units'])
+            for c in self.constants] if self.constants else []
+        outputs = ["        {}: {} {}".format(
+            o, d, m) for o, f in self.outputs.items()
+            for d, m in f.items()] if self.outputs else []
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    category: {}".format(self._category)]
@@ -470,6 +475,7 @@ class Component(metaclass=MetaComponent):
             + ["    dataset: {} variable(s)".format(len(self.dataset))]
             + (["    parameters:"] if parameters else []) + parameters
             + (["    constants:"] if constants else []) + constants
+            + (["    outputs:"] if outputs else []) + outputs
             + [")"]
         )
 
