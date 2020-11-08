@@ -23,14 +23,14 @@ class MetaComponent(abc.ABCMeta):
     def __str__(self):
         info = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ''))] +
-                 ["        {} [{}]".format(
-                     n, getattr(self, t + '_info')[n]['units'])
-                     for n in getattr(self, t + '_info')]
+                (["    {}:".format(t[1:] if t[0] == '_' else t).replace('_', ' ')]
+                 + ["        {} [{}]".format(n, info['units'])
+                    for n, info in getattr(self, t + '_info').items()]
                  if getattr(self, t + '_info') else [])
             )
             for t in ['_inwards', '_outwards', 'driving_data',
-                      'ancillary_data', 'parameters', 'constants', 'states']
+                      'ancillary_data', 'parameters', 'constants',
+                      'outputs', 'states']
             if getattr(self, t + '_info')
         ]
         return "\n".join(
