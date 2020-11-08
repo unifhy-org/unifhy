@@ -187,6 +187,21 @@ class Model(object):
         )
 
         """
+        # configure yaml for loading datetime.timedelta
+        yaml.add_constructor(
+            u'!timedelta',
+            lambda loader, node: timedelta(
+                **{match[1]: float(match[2]) for match in
+                   re.findall(r"(([a-z]+) *= *([0-9]+\.?[0-9]*))",
+                              loader.construct_scalar(node))}
+            ),
+            Loader=yaml.FullLoader
+        )
+        yaml.add_implicit_resolver(
+            u'!timedelta',
+            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
+        )
+
         with open(yaml_file, 'r') as f:
             cfg = yaml.load(f, yaml.FullLoader)
         return cls.from_config(cfg)
@@ -201,6 +216,19 @@ class Model(object):
                                           data, flow_style=True),
                 Dumper=yaml.Dumper
             )
+        # configure the dumping format for datetime.timedelta
+        yaml.add_representer(
+            timedelta,
+            lambda dumper, data:
+            dumper.represent_scalar(
+                u'!timedelta', 'timedelta(seconds=%s)' % data.total_seconds()
+            ),
+            Dumper=yaml.Dumper
+        )
+        yaml.add_implicit_resolver(
+            u'!timedelta',
+            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
+        )
         # dump configuration in yaml file
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'yml'])]), 'w') as f:
