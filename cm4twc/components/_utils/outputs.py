@@ -134,14 +134,14 @@ class OutputStream(object):
         # instantiate attributes to hold time iterators
         self.timedomain = TimeDomain.from_start_end_step(
             start=timedomain.bounds.datetime_array[0, 0],
-            end=timedomain.bounds.datetime_array[-1, -1],
+            end=timedomain.bounds.datetime_array[-1, -1] + delta,
             step=delta,
             calendar=timedomain.calendar,
             units=timedomain.units
         )
         self.frequency = _delta_to_frequency_tag(self.timedomain.timedelta)
-        self.time = self.timedomain.time.array
-        self.time_bounds = self.timedomain.bounds.array
+        self.time = self.timedomain.time.array[1:]
+        self.time_bounds = self.timedomain.bounds.array[:-1, :]
         self.time_tracker = 0
 
         # integers to track when to write to file
