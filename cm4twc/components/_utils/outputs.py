@@ -220,7 +220,7 @@ class OutputStream(object):
                     name_method = '_'.join([name, method])
                     v = f.createVariable(name_method, dtype_float(),
                                          ('time', *axes))
-                    v.standard_name = name_method
+                    v.standard_name = name
                     v.units = self.outputs[name].units
                     v.cell_methods = "time: {} over {}".format(
                         method, _delta_to_frequency_str(self.timedomain.timedelta)
