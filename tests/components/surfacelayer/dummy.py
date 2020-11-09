@@ -70,6 +70,11 @@ class Dummy(SurfaceLayerComponent):
             'divisions': 1
         }
     }
+    outputs_info = {
+        'output_x': {
+            'units': '1'
+        }
+    }
     solver_history = 1
 
     def initialise(self,
@@ -96,13 +101,20 @@ class Dummy(SurfaceLayerComponent):
         state_a[0][:] = state_a[-1] + 1
         state_b[0][:] = state_b[-1] + 2
 
-        return {
+        return (
             # to interface
-            'transfer_i':
-                driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
-            'transfer_j':
-                driving_a + driving_b + driving_c + transfer_k + state_b[0]
-        }
+            {
+                'transfer_i':
+                    driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
+                'transfer_j':
+                    driving_a + driving_b + driving_c + transfer_k + state_b[0]
+            },
+            # component outputs
+            {
+                'output_x':
+                    driving_a + driving_b + driving_c + transfer_k - state_a[0]
+            }
+        )
 
     def finalise(self,
                  # component states
@@ -145,18 +157,24 @@ class DummyFortran(Dummy):
             # component constants
             **kwargs):
 
-        transfer_i, transfer_j = dummyfortran.run(
+        transfer_i, transfer_j, output_x = dummyfortran.run(
             transfer_k, transfer_l,
             driving_a, driving_b, driving_c,
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
-        return {
+        return (
             # to interface
-            'transfer_i': transfer_i,
-            'transfer_j': transfer_j
-        }
+            {
+                'transfer_i': transfer_i,
+                'transfer_j': transfer_j
+            },
+            # component outputs
+            {
+                'output_x': output_x
+            }
+        )
 
     def finalise(self,
                  # component states
@@ -186,18 +204,24 @@ class DummyC(Dummy):
             # component constants
             **kwargs):
 
-        transfer_i, transfer_j = dummyc.run(
+        transfer_i, transfer_j, output_x = dummyc.run(
             transfer_k, transfer_l,
             driving_a, driving_b, driving_c,
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
-        return {
+        return (
             # to interface
-            'transfer_i': transfer_i,
-            'transfer_j': transfer_j
-        }
+            {
+                'transfer_i': transfer_i,
+                'transfer_j': transfer_j
+            },
+            # component outputs
+            {
+                'output_x': output_x
+            }
+        )
 
     def finalise(self,
                  # component states

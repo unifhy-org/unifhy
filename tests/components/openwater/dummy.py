@@ -62,11 +62,19 @@ class Dummy(OpenWaterComponent):
         'constant_c': {
             'units': '1'
         }
-    },
+    }
     states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1
+        }
+    }
+    outputs_info = {
+        'output_x': {
+            'units': '1'
+        },
+        'output_y': {
+            'units': '1'
         }
     }
     solver_history = 1
@@ -94,12 +102,19 @@ class Dummy(OpenWaterComponent):
 
         state_a[0][:] = state_a[-1] + 1
 
-        return {
+        return (
             # to interface
-            'transfer_l': ancillary_b * transfer_m + state_a[0],
-            'transfer_n': parameter_c * transfer_j,
-            'transfer_o': constant_c + transfer_j
-        }
+            {
+                'transfer_l': ancillary_b * transfer_m + state_a[0],
+                'transfer_n': parameter_c * transfer_j,
+                'transfer_o': constant_c + transfer_j
+            },
+            # component outputs
+            {
+                'output_x': parameter_c * transfer_j + constant_c,
+                'output_y': ancillary_b * transfer_m - state_a[0],
+            }
+        )
 
     def finalise(self,
                  # component states
@@ -138,17 +153,26 @@ class DummyFortran(Dummy):
             constant_a=1.,
             **kwargs):
 
-        transfer_l, transfer_n, transfer_o = dummyfortran.run(
-            transfer_j, transfer_m, ancillary_b, parameter_c,
-            state_a[-1], state_a[0], constant_a
+        transfer_l, transfer_n, transfer_o, output_x, output_y = (
+            dummyfortran.run(
+                transfer_j, transfer_m, ancillary_b, parameter_c,
+                state_a[-1], state_a[0], constant_a
+            )
         )
 
-        return {
+        return (
             # to interface
-            'transfer_l': transfer_l,
-            'transfer_n': transfer_n,
-            'transfer_o': transfer_o
-        }
+            {
+                'transfer_l': transfer_l,
+                'transfer_n': transfer_n,
+                'transfer_o': transfer_o
+            },
+            # component outputs
+            {
+                'output_x': output_x,
+                'output_y': output_y
+            }
+        )
 
     def finalise(self,
                  # component states
@@ -179,17 +203,26 @@ class DummyC(Dummy):
             constant_a=1.,
             **kwargs):
 
-        transfer_l, transfer_n, transfer_o = dummyc.run(
-            transfer_j, transfer_m, ancillary_b, parameter_c,
-            state_a[-1], state_a[0], constant_a
+        transfer_l, transfer_n, transfer_o, output_x, output_y = (
+            dummyc.run(
+                transfer_j, transfer_m, ancillary_b, parameter_c,
+                state_a[-1], state_a[0], constant_a
+            )
         )
 
-        return {
+        return (
             # to interface
-            'transfer_l': transfer_l,
-            'transfer_n': transfer_n,
-            'transfer_o': transfer_o
-        }
+            {
+                'transfer_l': transfer_l,
+                'transfer_n': transfer_n,
+                'transfer_o': transfer_o
+            },
+            # component outputs
+            {
+                'output_x': output_x,
+                'output_y': output_y
+            }
+        )
 
     def finalise(self,
                  # component states

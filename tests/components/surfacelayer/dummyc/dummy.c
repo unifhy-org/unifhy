@@ -28,7 +28,9 @@ void run_(int nz, int ny, int nx,
           double *state_a_m1, double *state_a_0,
           double *state_b_m1, double *state_b_0,
           // to interface
-          double *transfer_i, double *transfer_j)
+          double *transfer_i, double *transfer_j,
+          // component outputs
+          double *output_x)
 {
   int i, j, k;
   int ijk;
@@ -47,6 +49,9 @@ void run_(int nz, int ny, int nx,
           + (ancillary_c[ijk] * state_a_0[ijk]);
         transfer_j[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
           + transfer_k[ijk] + state_b_0[ijk];
+        // compute outputs
+        output_x[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
+          + transfer_k[ijk] - state_a_0[ijk];
       }
 }
 
