@@ -250,25 +250,7 @@ class Component(metaclass=MetaComponent):
     def outputs(self, outputs):
         outputs = {} if outputs is None else outputs
         outputs_ = {}
-        output_objects = {}
         for name, frequencies in outputs.items():
-            # create instance of appropriate Output subclass
-            if name in self.outputs_info:
-                output_objects[name] = OtherOutput(
-                    name, **self.outputs_info[name]
-                )
-            elif name in self._outwards_info:
-                output_objects[name] = InterfaceOutput(
-                    name, **self._outwards_info[name]
-                )
-            elif name in self.states_info:
-                output_objects[name] = StateOutput(
-                    name, **self.states_info[name]
-                )
-            else:
-                raise ValueError('{} not available for {} component'.format(
-                    name, self._category))
-
             # check type and eliminate duplicates in methods
             outputs_[name] = {}
             for delta, methods in frequencies.items():
@@ -278,7 +260,6 @@ class Component(metaclass=MetaComponent):
                     raise TypeError('output methods for {} at {} must be a '
                                     'sequence of strings'.format(name, delta))
 
-        self._output_objects = output_objects
         self._outputs = outputs_
 
     def _check_timedomain(self, timedomain):
@@ -484,14 +465,13 @@ class Component(metaclass=MetaComponent):
         if not self.is_initialised:
             self._instantiate_states()
             self.initialise(**self.states)
-            if self.outputs:
-                # create outputs, output streams, and output stream files
-                self._instantiate_output_streams(tag, overwrite)
             self.is_initialised = True
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
 
         if self.outputs:
+            # create outputs, output streams, and output stream files
+            self._instantiate_output_objects_and_streams(tag, overwrite)
             # create dumps for output streams
             self._initialise_output_streams_dumps(tag, overwrite)
 
@@ -601,11 +581,29 @@ class Component(metaclass=MetaComponent):
         update_states_dump(sep.join([self.output_directory, self.dump_file]),
                            self.states, timestamp, self.solver_history)
 
-    def _instantiate_output_streams(self, tag, overwrite):
+    def _instantiate_output_objects_and_streams(self, tag, overwrite):
+        self._output_objects = {}
         self._output_streams = {}
 
-        for name, deltas in self.outputs.items():
-            for delta, methods in deltas.items():
+        for name, frequencies in self.outputs.items():
+            # create instance of appropriate Output subclass
+            if name in self.outputs_info:
+                self._output_objects[name] = OtherOutput(
+                    name, **self.outputs_info[name]
+                )
+            elif name in self._outwards_info:
+                self._output_objects[name] = InterfaceOutput(
+                    name, **self._outwards_info[name]
+                )
+            elif name in self.states_info:
+                self._output_objects[name] = StateOutput(
+                    name, **self.states_info[name]
+                )
+            else:
+                raise ValueError('{} not available for {} component'.format(
+                    name, self._category))
+
+            for delta, methods in frequencies.items():
                 # instantiate OutputStream if none for given timedelta yet
                 if delta not in self._output_streams:
                     self._output_streams[delta] = OutputStream(
