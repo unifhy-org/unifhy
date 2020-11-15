@@ -617,21 +617,25 @@ class Component(metaclass=MetaComponent):
         for delta, stream in self._output_streams.items():
             filename = '_'.join([self.identifier, self._category, tag,
                                  'out', stream.frequency])
-            filepath = sep.join([self.output_directory, filename + '.nc'])
+            file_ = sep.join([self.output_directory, filename + '.nc'])
 
-            if overwrite or not path.exists(filepath):
-                stream.create_output_stream_file(filepath)
+            if overwrite or not path.exists(file_):
+                stream.create_output_stream_file(file_)
+            else:
+                stream.file = file_
 
     def _initialise_output_streams_dumps(self, tag, overwrite):
         for delta, stream in self._output_streams.items():
             filename = '_'.join([self.identifier, self._category, tag,
                                  'dump_stream', stream.frequency])
-            filepath = sep.join([self.output_directory, filename + '.nc'])
+            file_ = sep.join([self.output_directory, filename + '.nc'])
 
-            if overwrite or not path.exists(filepath):
-                stream.create_output_stream_dump(filepath)
+            if overwrite or not path.exists(file_):
+                stream.create_output_stream_dump(file_)
+            else:
+                stream.dump_file = file_
 
-    def initialise_output_streams_from_dump(self, dump_filepath_pattern,
+    def initialise_output_streams_from_dump(self, dump_file_pattern,
                                             at=None):
         """Initialise the states of the Component from a dump file.
 
@@ -646,7 +650,7 @@ class Component(metaclass=MetaComponent):
 
                 *Parameter example:* ::
 
-                    dump_filepath_pattern='out/dummy_surfacelayer_run_dump_stream_{}.nc'
+                    dump_file_pattern='out/dummy_surfacelayer_run_dump_stream_{}.nc'
 
             at: datetime object, optional
                 The snapshot in time to be used for the initial
@@ -673,8 +677,8 @@ class Component(metaclass=MetaComponent):
 
         if self.outputs:
             for delta, stream in self._output_streams.items():
-                filepath = dump_filepath_pattern.format(stream.frequency)
-                ats.append(stream.load_output_stream_dump(filepath, at))
+                file_ = dump_file_pattern.format(stream.frequency)
+                ats.append(stream.load_output_stream_dump(file_, at))
 
         return ats
 
