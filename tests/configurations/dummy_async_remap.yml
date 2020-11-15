@@ -72,23 +72,23 @@ subsurface:
     altitude_location: centre
   dataset:
     driving_a:
-      files: [data/dummy_subsurface_data_daily_1deg.nc]
+      files: [data/dummy_subsurface_data_3daily_pt5deg.nc]
       select: driving_a
   parameters:
     parameter_a: 1
   constants: null
   outputs:
     output_x:
-      timedelta(days=1): [point]
+      timedelta(days=3): [point]
       timedelta(days=6): [sum, mean, minimum, maximum]
     transfer_k:
-      timedelta(days=1): [point]
+      timedelta(days=3): [point]
     transfer_m:
-      timedelta(days=1): [point]
+      timedelta(days=3): [point]
     state_a:
-      timedelta(days=1): [point]
+      timedelta(days=3): [point]
     state_b:
-      timedelta(days=1): [point]
+      timedelta(days=3): [point]
 openwater:
   module: tests.components.openwater.dummy
   class: Dummy
@@ -112,7 +112,7 @@ openwater:
     altitude_location: centre
   dataset:
     ancillary_b:
-      files: [data/dummy_openwater_data_daily_1deg.nc]
+      files: [data/dummy_openwater_data_2daily_pt2deg.nc]
       select: ancillary_b
   parameters:
     parameter_c: 3
@@ -120,15 +120,15 @@ openwater:
     constant_c: 3
   outputs:
     output_x:
-      timedelta(days=1): [point]
+      timedelta(days=2): [point]
       timedelta(days=6): [sum, mean, minimum, maximum]
     output_y:
-      timedelta(days=1): [point]
+      timedelta(days=2): [point]
     transfer_l:
-      timedelta(days=1): [point]
+      timedelta(days=2): [point]
     transfer_n:
-      timedelta(days=1): [point]
+      timedelta(days=2): [point]
     transfer_o:
-      timedelta(days=1): [point]
+      timedelta(days=2): [point]
     state_a:
-      timedelta(days=1): [point]
+      timedelta(days=2): [point]
