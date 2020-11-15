@@ -150,13 +150,13 @@ class DummyFortran(Dummy):
             # component states
             state_a,
             # component constants
-            constant_a=1.,
+            constant_c=3,
             **kwargs):
 
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
             dummyfortran.run(
                 transfer_j, transfer_m, ancillary_b, parameter_c,
-                state_a[-1], state_a[0], constant_a
+                state_a[-1], state_a[0], constant_c
             )
         )
 
@@ -200,13 +200,13 @@ class DummyC(Dummy):
             # component states
             state_a,
             # component constants
-            constant_a=1.,
+            constant_c=3,
             **kwargs):
 
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
             dummyc.run(
                 transfer_j, transfer_m, ancillary_b, parameter_c,
-                state_a[-1], state_a[0], constant_a
+                state_a[-1], state_a[0], constant_c
             )
         )
 
