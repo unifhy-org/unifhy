@@ -26,7 +26,7 @@ class Simulator(object):
                      openwater_kind, sources=None, id_trail=None):
         return cls(
             time_, space_,
-            cls._initialise_model(
+            cls._set_up_model(
                 time_, space_,
                 surfacelayer_kind, subsurface_kind, openwater_kind,
                 sources, id_trail
@@ -43,8 +43,8 @@ class Simulator(object):
         )
 
     @staticmethod
-    def _initialise_model(time_, space_, surfacelayer_kind, subsurface_kind,
-                          openwater_kind, sources, id_trail):
+    def _set_up_model(time_, space_, surfacelayer_kind, subsurface_kind,
+                      openwater_kind, sources, id_trail):
         # for surfacelayer component
         category = 'surfacelayer'
         surfacelayer = get_dummy_component(
@@ -133,7 +133,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
         if self.simulator is not None:
             self.simulator.clean_up_files()
 
-    def test_init_spinup_simulate_resume(self):
+    def test_setup_spinup_simulate_resume(self):
         # generator of all possible component combinations
         # (i.e. full factorial design of experiment) as
         # tuple(surfacelayer kind, subsurface kind, openwater kind)
@@ -148,7 +148,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
             with self.subTest(surfacelayer=sl_kind,
                               subsurface=ss_kind,
                               openwater=ow_kind):
-                # initialise, spinup, and run model
+                # set up, spinup, and run model
                 simulator = Simulator.from_scratch(self.t, self.s,
                                                    sl_kind, ss_kind, ow_kind)
                 simulator.spinup_model()
@@ -179,7 +179,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                 # clean up
                 simulator.clean_up_files()
 
-    def test_init_simulate(self):
+    def test_setup_simulate(self):
         doe = ((sl, ss, ow)
                for sl in ('c', 'd')
                for ss in ('c', 'd')
@@ -191,7 +191,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                               subsurface=ss_kind,
                               openwater=ow_kind):
 
-                # initialise, and run model
+                # set up, and run model
                 simulator = Simulator.from_scratch(self.t, self.s,
                                                    sl_kind, ss_kind, ow_kind)
                 simulator.run_model()
@@ -204,7 +204,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                 # clean up
                 simulator.clean_up_files()
 
-    def test_init_simulate_various_sources(self):
+    def test_setup_simulate_various_sources(self):
         doe = ((sl, ss, ow)
                for sl in ('Python', 'Fortran', 'C')
                for ss in ('Python', 'Fortran', 'C')
@@ -215,7 +215,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
             with self.subTest(surfacelayer=sl_src,
                               subsurface=ss_src,
                               openwater=ow_src):
-                # initialise, and run model
+                # set up, and run model
                 simulator = Simulator.from_scratch(self.t, self.s,
                                                    'c', 'c', 'c',
                                                    {'surfacelayer': sl_src,
@@ -231,12 +231,12 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                 # clean up
                 simulator.clean_up_files()
 
-    def test_in_session_vs_through_dump(self):
-        # initialise a model, and spin it up
+    def test_spinup_dump_init_spinup(self):
+        # set up a model, and spin it up
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
         simulator_1.spinup_model(cycles=1)
 
-        # initialise another model
+        # set up another model
         simulator_2 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c',
                                              id_trail='bis')
 
@@ -270,7 +270,7 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
         self.check_final_conditions(simulator_2.model)
 
     def test_yaml_setup_simulate(self):
-        # initialise a model from yaml configuration file
+        # set up a model from yaml configuration file
         simulator = Simulator.from_yaml(self.t, self.s)
 
         # start main run
