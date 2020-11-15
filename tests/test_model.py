@@ -183,8 +183,6 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
 
                 # clean up
                 simulator.clean_up_files()
-                # check outputs
-                self.check_outputs(simulator.model)
 
     def test_init_simulate_various_sources(self):
         doe = ((sl, ss, ow)
