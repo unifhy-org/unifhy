@@ -118,8 +118,8 @@ class OutputStream(object):
         self.spacedomain = spacedomain
 
         # instantiate holders for file paths
-        self.filepath = None
-        self.dump_filepath = None
+        self.file = None
+        self.dump_file = None
 
         # mapping to store output objects (keys are output name)
         self.outputs = {}
@@ -179,9 +179,9 @@ class OutputStream(object):
             self.update_output_to_stream_file()
 
     def create_output_stream_file(self, filepath):
-        self.filepath = filepath
+        self.file = filepath
 
-        with Dataset(self.filepath, 'w') as f:
+        with Dataset(self.file, 'w') as f:
             axes = self.spacedomain.axes
             # dimension for space and time lower+upper bounds
             f.createDimension('nv', 2)
@@ -227,7 +227,7 @@ class OutputStream(object):
                     )
 
     def update_output_to_stream_file(self):
-        with Dataset(self.filepath, 'a') as f:
+        with Dataset(self.file, 'a') as f:
             time_ = self.time[self.time_tracker]
             time_bounds = self.time_bounds[self.time_tracker]
             try:
@@ -271,9 +271,9 @@ class OutputStream(object):
             self.trigger_tracker = 0
 
     def create_output_stream_dump(self, filepath):
-        self.dump_filepath = filepath
+        self.dump_file = filepath
 
-        with Dataset(self.dump_filepath, 'w') as f:
+        with Dataset(self.dump_file, 'w') as f:
             axes = self.spacedomain.axes
 
             # description
@@ -322,7 +322,7 @@ class OutputStream(object):
             f.createVariable('trigger_tracker', int, ('time',))
 
     def update_output_stream_dump(self, timestamp):
-        with Dataset(self.dump_filepath, 'a') as f:
+        with Dataset(self.dump_file, 'a') as f:
             try:
                 # check whether given snapshot already in file
                 t = cftime.time2index(timestamp, f.variables['time'])
@@ -342,9 +342,9 @@ class OutputStream(object):
             f.variables['trigger_tracker'][t] = self.trigger_tracker
 
     def load_output_stream_dump(self, filepath, datetime_):
-        self.dump_filepath = filepath
+        self.dump_file = filepath
 
-        with Dataset(self.dump_filepath, 'r') as f:
+        with Dataset(self.dump_file, 'r') as f:
             # determine point in time to use from the dump
             if datetime_ is None:
                 # if not specified, use the last time index
@@ -359,7 +359,7 @@ class OutputStream(object):
                 except ValueError:
                     raise ValueError(
                         '{} not available in dump {}'.format(
-                            datetime_, self.dump_filepath))
+                            datetime_, self.dump_file))
 
             # retrieve each output values
             for name in self.outputs:
