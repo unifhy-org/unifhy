@@ -133,6 +133,8 @@ for surface, sub-surface, and open water parts of the water cycle:
        states:
            state_a [1]
            state_b [1]
+       outputs:
+           output_x [1]
        solver history: 1
    )
    >>> component = tests.surfacelayer.Dummy(
@@ -140,7 +142,8 @@ for surface, sub-surface, and open water parts of the water cycle:
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
    ...     dataset=dataset_surfacelayer,
-   ...     parameters={}
+   ...     parameters={},
+   ...     outputs={'output_x': {timedelta(days=1): ['sum']}}
    ... )
    >>> print(component)
    Dummy(
@@ -148,6 +151,8 @@ for surface, sub-surface, and open water parts of the water cycle:
        timedomain: period: 12 days, 0:00:00
        spacedomain: shape: (Z: 1, Y: 4, X: 3)
        dataset: 4 variable(s)
+       outputs:
+           output_x: 1 day, 0:00:00 {'sum'}
    )
 
 
@@ -175,7 +180,11 @@ instantiated with three `Component` instances, one for each of the three
    ...     ),
    ...     openwater=tests.openwater.Dummy(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
-   ...         parameters={'parameter_c': 3}
+   ...         parameters={'parameter_c': 3},
+   ...         outputs={'output_y': {timedelta(days=1): ['point'],
+   ...                               timedelta(days=2): ['sum', 'min']},
+   ...                  'state_a': {timedelta(days=1): ['point']},
+   ...                  'transfer_l': {timedelta(days=2): ['mean']}}
    ...     )
    ... )
    >>> print(model)

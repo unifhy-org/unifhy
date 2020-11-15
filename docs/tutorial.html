@@ -275,7 +275,7 @@ A first subclass available is the <code class="xref py py-obj docutils literal n
 <div class="section" id="data">
 <h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> exists to host all of the data required to run a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> .
-It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> instances.</p>
+It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> instances.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text"><em>Instantiating Dataset objects from a CF-compliant netCDF file.</em></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_surfacelayer</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
@@ -324,6 +324,8 @@ for surface, sub-surface, and open water parts of the water cycle:
 <span class="go">    states:</span>
 <span class="go">        state_a [1]</span>
 <span class="go">        state_b [1]</span>
+<span class="go">    outputs:</span>
+<span class="go">        output_x [1]</span>
 <span class="go">    solver history: 1</span>
 <span class="go">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
@@ -331,7 +333,8 @@ for surface, sub-surface, and open water parts of the water cycle:
 <span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_surfacelayer</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span>
+<span class="gp">... </span>    <span class="n">outputs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;output_x&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]}}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
 <span class="go">Dummy(</span>
@@ -339,6 +342,8 @@ for surface, sub-surface, and open water parts of the water cycle:
 <span class="go">    timedomain: period: 12 days, 0:00:00</span>
 <span class="go">    spacedomain: shape: (Z: 1, Y: 4, X: 3)</span>
 <span class="go">    dataset: 4 variable(s)</span>
+<span class="go">    outputs:</span>
+<span class="go">        output_x: 1 day, 0:00:00 {&#39;sum&#39;}</span>
 <span class="go">)</span>
 </pre></div>
 </div>
@@ -365,7 +370,11 @@ instantiated with three <code class="xref py py-obj docutils literal notranslate
 <span class="gp">... </span>    <span class="p">),</span>
 <span class="gp">... </span>    <span class="n">openwater</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">openwater</span><span class="o">.</span><span class="n">Dummy</span><span class="p">(</span>
 <span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_openwater</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="n">outputs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;output_y&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                              <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">]},</span>
+<span class="gp">... </span>                 <span class="s1">&#39;state_a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]},</span>
+<span class="gp">... </span>                 <span class="s1">&#39;transfer_l&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]}}</span>
 <span class="gp">... </span>    <span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -418,7 +427,7 @@ can be saved as a YAML file in the <em>config_directory</em> and named using the
         
         &copy; Copyright 2020, NCAS–UKCEH–BGS.
       <span class="lastupdated">
-        Last updated on Aug 27, 2020.
+        Last updated on Nov 15, 2020.
       </span>
 
     </p>

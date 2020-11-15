@@ -11,3 +11,20 @@
       overflow: visible !important;
    }
 }
+
+/* override vertical menu caption style */
+.wy-menu-vertical p.caption{
+   color:#55a5d9;
+   height:32px;
+   line-height:32px;
+   /* override padding:0 1.618em */
+   padding:0 1.578em;
+   margin:12px 0 0;
+   display:block;
+   font-weight:700;
+   /* override text-transform:uppercase */
+   text-transform:capitalize;
+   /* override font-size:85% */
+   font-size:90%;
+   white-space:nowrap
+}
