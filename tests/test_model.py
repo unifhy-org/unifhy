@@ -16,18 +16,35 @@ from tests.test_outputs import (get_expected_output, get_produced_output,
 
 
 class Simulator(object):
-    def __init__(self, time_, space_, surfacelayer_kind, subsurface_kind,
-                 openwater_kind, sources=None):
+    def __init__(self, time_, space_, model):
         self.time_ = time_
-        self.model = self._initialise_model(
+        self.space_ = space_
+        self.model = model
+
+    @classmethod
+    def from_scratch(cls, time_, space_, surfacelayer_kind, subsurface_kind,
+                     openwater_kind, sources=None, id_trail=None):
+        return cls(
             time_, space_,
-            surfacelayer_kind, subsurface_kind, openwater_kind,
-            sources
+            cls._initialise_model(
+                time_, space_,
+                surfacelayer_kind, subsurface_kind, openwater_kind,
+                sources, id_trail
+            )
+        )
+
+    @classmethod
+    def from_yaml(cls, time_, space_):
+        return cls(
+            time_, space_,
+            cm4twc.Model.from_yaml(
+                'configurations/dummy_{}_{}.yml'.format(time_, space_)
+            )
         )
 
     @staticmethod
     def _initialise_model(time_, space_, surfacelayer_kind, subsurface_kind,
-                          openwater_kind, sources):
+                          openwater_kind, sources, id_trail):
         # for surfacelayer component
         category = 'surfacelayer'
         surfacelayer = get_dummy_component(
@@ -49,9 +66,10 @@ class Simulator(object):
 
         # try to get an instance of model with the given combination
         model = cm4twc.Model(
-            identifier='test-{}-{}-{}{}{}'.format(
+            identifier='test-{}-{}-{}{}{}{}'.format(
                 time_, space_,
-                surfacelayer_kind, subsurface_kind, openwater_kind
+                surfacelayer_kind, subsurface_kind, openwater_kind,
+                '' if id_trail is None else id_trail
             ),
             config_directory='outputs',
             output_directory='outputs',
@@ -131,7 +149,8 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                               subsurface=ss_kind,
                               openwater=ow_kind):
                 # initialise, spinup, and run model
-                simulator = Simulator(self.t, self.s, sl_kind, ss_kind, ow_kind)
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   sl_kind, ss_kind, ow_kind)
                 simulator.spinup_model()
                 simulator.run_model()
 
@@ -173,7 +192,8 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                               openwater=ow_kind):
 
                 # initialise, and run model
-                simulator = Simulator(self.t, self.s, sl_kind, ss_kind, ow_kind)
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   sl_kind, ss_kind, ow_kind)
                 simulator.run_model()
 
                 # check final state and transfer values
@@ -196,10 +216,11 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                               subsurface=ss_src,
                               openwater=ow_src):
                 # initialise, and run model
-                simulator = Simulator(self.t, self.s, 'c', 'c', 'c',
-                                      {'surfacelayer': sl_src,
-                                       'subsurface': ss_src,
-                                       'openwater': ow_src})
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   'c', 'c', 'c',
+                                                   {'surfacelayer': sl_src,
+                                                    'subsurface': ss_src,
+                                                    'openwater': ow_src})
                 simulator.run_model()
 
                 # check final state and transfer values
@@ -212,11 +233,12 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
 
     def test_in_session_vs_through_dump(self):
         # initialise a model, and spin it up
-        simulator_1 = Simulator(self.t, self.s, 'c', 'c', 'c')
+        simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
         simulator_1.spinup_model(cycles=1)
 
         # initialise another model
-        simulator_2 = Simulator(self.t, self.s, 'c', 'c', 'c')
+        simulator_2 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c',
+                                             id_trail='bis')
 
         # use dump of first model as initial conditions for second model
         simulator_2.model.surfacelayer.initialise_states_from_dump(
@@ -246,6 +268,21 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
         #  the 12-day period, the final conditions with spinup+spinup
         #  will be the same as with simulate without spinup)
         self.check_final_conditions(simulator_2.model)
+
+    def test_yaml_setup_simulate(self):
+        # initialise a model from yaml configuration file
+        simulator = Simulator.from_yaml(self.t, self.s)
+
+        # start main run
+        simulator.run_model()
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator.model)
+        # check outputs
+        self.check_outputs(simulator.model)
+
+        # clean up
+        simulator.clean_up_files()
 
     def check_final_conditions(self, model):
         # check components' final state values

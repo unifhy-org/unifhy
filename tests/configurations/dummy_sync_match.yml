@@ -1,5 +1,5 @@
-identifier: dummy
-config_directory: configurations
+identifier: test-dummy-sync-match
+config_directory: outputs
 output_directory: outputs
 surfacelayer:
   module: tests.components.surfacelayer.dummy
@@ -9,8 +9,8 @@ surfacelayer:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
     step:
-      seconds: 86400.0
-    units: seconds since 1970-01-01 00:00:00Z
+      days: 1
+    units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
@@ -57,8 +57,8 @@ subsurface:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
     step:
-      seconds: 86400.0
-    units: seconds since 1970-01-01 00:00:00Z
+      days: 1
+    units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
@@ -97,8 +97,8 @@ openwater:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
     step:
-      seconds: 86400.0
-    units: seconds since 1970-01-01 00:00:00Z
+      days: 1
+    units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid

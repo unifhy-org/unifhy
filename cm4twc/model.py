@@ -175,11 +175,11 @@ class Model(object):
 
         **Examples**
 
-        >>> m = Model.from_yaml('configurations/dummy.yml')
+        >>> m = Model.from_yaml('configurations/dummy_sync_match.yml')
         >>> print(m)
         Model(
-            identifier: dummy
-            config directory: configurations
+            identifier: test-dummy-sync-match
+            config directory: outputs
             output directory: outputs
             surfacelayer: Dummy
             subsurface: Dummy

@@ -1,0 +1,134 @@
+identifier: test-dummy-sync-match
+config_directory: outputs
+output_directory: outputs
+surfacelayer:
+  module: tests.components.surfacelayer.dummy
+  class: Dummy
+  output_directory: outputs
+  timedomain:
+    start: 2019-01-01 09:00:00
+    end: 2019-01-13 09:00:00
+    step:
+      days: 1
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: LatLonGrid
+    latitude_extent: [51, 55]
+    latitude_resolution: 1
+    longitude_extent: [-2, 1]
+    longitude_resolution: 1
+    latitude_longitude_location: centre
+    altitude_extent: [0, 4]
+    altitude_resolution: 4
+    altitude_location: centre
+  dataset:
+    driving_a:
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
+      select: driving_a
+    driving_b:
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
+      select: driving_b
+    driving_c:
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
+      select: driving_c
+    ancillary_c:
+      files: [data/dummy_surfacelayer_data_daily_1deg.nc]
+      select: ancillary_c
+  parameters: null
+  constants: null
+  outputs:
+    output_x:
+      timedelta(days=1): [instantaneous]
+      timedelta(days=6): [cumulative, average, min, max]
+    transfer_i:
+      timedelta(days=1): [instantaneous]
+    transfer_j:
+      timedelta(days=1): [instantaneous]
+    state_a:
+      timedelta(days=1): [instantaneous]
+    state_b:
+      timedelta(days=1): [instantaneous]
+subsurface:
+  module: tests.components.subsurface.dummy
+  class: Dummy
+  output_directory: outputs
+  timedomain:
+    start: 2019-01-01 09:00:00
+    end: 2019-01-13 09:00:00
+    step:
+      days: 1
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: LatLonGrid
+    latitude_extent: [51, 55]
+    latitude_resolution: 0.5
+    longitude_extent: [-2, 1]
+    longitude_resolution: 0.5
+    latitude_longitude_location: centre
+    altitude_extent: [0, 4]
+    altitude_resolution: 4
+    altitude_location: centre
+  dataset:
+    driving_a:
+      files: [data/dummy_subsurface_data_daily_1deg.nc]
+      select: driving_a
+  parameters:
+    parameter_a: 1
+  constants: null
+  outputs:
+    output_x:
+      timedelta(days=1): [point]
+      timedelta(days=6): [sum, mean, minimum, maximum]
+    transfer_k:
+      timedelta(days=1): [point]
+    transfer_m:
+      timedelta(days=1): [point]
+    state_a:
+      timedelta(days=1): [point]
+    state_b:
+      timedelta(days=1): [point]
+openwater:
+  module: tests.components.openwater.dummy
+  class: Dummy
+  output_directory: outputs
+  timedomain:
+    start: 2019-01-01 09:00:00
+    end: 2019-01-13 09:00:00
+    step:
+      days: 1
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: LatLonGrid
+    latitude_extent: [51, 55]
+    latitude_resolution: 0.2
+    longitude_extent: [-2, 1]
+    longitude_resolution: 0.2
+    latitude_longitude_location: centre
+    altitude_extent: [0, 4]
+    altitude_resolution: 4
+    altitude_location: centre
+  dataset:
+    ancillary_b:
+      files: [data/dummy_openwater_data_daily_1deg.nc]
+      select: ancillary_b
+  parameters:
+    parameter_c: 3
+  constants:
+    constant_c: 3
+  outputs:
+    output_x:
+      timedelta(days=1): [point]
+      timedelta(days=6): [sum, mean, minimum, maximum]
+    output_y:
+      timedelta(days=1): [point]
+    transfer_l:
+      timedelta(days=1): [point]
+    transfer_n:
+      timedelta(days=1): [point]
+    transfer_o:
+      timedelta(days=1): [point]
+    state_a:
+      timedelta(days=1): [point]
