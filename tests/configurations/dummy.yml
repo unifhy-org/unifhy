@@ -7,10 +7,10 @@ surfacelayer:
   output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
-    end: 2019-01-07 09:00:00
+    end: 2019-01-13 09:00:00
     step:
       seconds: 86400.0
-    units: days since 2019-01-01 09:00:00Z
+    units: seconds since 1970-01-01 00:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
@@ -37,16 +37,28 @@ surfacelayer:
       select: ancillary_c
   parameters: null
   constants: null
+  outputs:
+    output_x:
+      timedelta(days=1): [instantaneous]
+      timedelta(days=6): [cumulative, average, min, max]
+    transfer_i:
+      timedelta(days=1): [instantaneous]
+    transfer_j:
+      timedelta(days=1): [instantaneous]
+    state_a:
+      timedelta(days=1): [instantaneous]
+    state_b:
+      timedelta(days=1): [instantaneous]
 subsurface:
   module: tests.components.subsurface.dummy
   class: Dummy
   output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
-    end: 2019-01-07 09:00:00
+    end: 2019-01-13 09:00:00
     step:
       seconds: 86400.0
-    units: days since 2019-01-01 09:00:00Z
+    units: seconds since 1970-01-01 00:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
@@ -65,16 +77,28 @@ subsurface:
   parameters:
     parameter_a: 1
   constants: null
+  outputs:
+    output_x:
+      timedelta(days=1): [point]
+      timedelta(days=6): [sum, mean, minimum, maximum]
+    transfer_k:
+      timedelta(days=1): [point]
+    transfer_m:
+      timedelta(days=1): [point]
+    state_a:
+      timedelta(days=1): [point]
+    state_b:
+      timedelta(days=1): [point]
 openwater:
   module: tests.components.openwater.dummy
   class: Dummy
   output_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
-    end: 2019-01-07 09:00:00
+    end: 2019-01-13 09:00:00
     step:
       seconds: 86400.0
-    units: days since 2019-01-01 09:00:00Z
+    units: seconds since 1970-01-01 00:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
@@ -92,4 +116,19 @@ openwater:
       select: ancillary_b
   parameters:
     parameter_c: 3
-  constants: null
+  constants:
+    constant_c: 3
+  outputs:
+    output_x:
+      timedelta(days=1): [point]
+      timedelta(days=6): [sum, mean, minimum, maximum]
+    output_y:
+      timedelta(days=1): [point]
+    transfer_l:
+      timedelta(days=1): [point]
+    transfer_n:
+      timedelta(days=1): [point]
+    transfer_o:
+      timedelta(days=1): [point]
+    state_a:
+      timedelta(days=1): [point]

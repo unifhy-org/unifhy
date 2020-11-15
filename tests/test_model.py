@@ -10,7 +10,9 @@ from tests.test_time import (get_dummy_timedomain,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
 from tests.test_component import get_dummy_component
-from tests.test_state import compare_states
+from tests.test_states import compare_states
+from tests.test_outputs import (get_expected_output, get_produced_output,
+                                exp_outputs_raw)
 
 
 class Simulator(object):
@@ -78,30 +80,19 @@ class Simulator(object):
                 - get_dummy_dumping_frequency(self.time_))
         )
 
-    def delete_yml_and_dump(self):
-        # clean up dump files potentially created
+    def clean_up_files(self):
         files = []
-        if self.model.surfacelayer.dump_file is not None:
-            files.extend(
-                glob(os.sep.join([self.model.surfacelayer.output_directory,
-                                  self.model.identifier + '*_dump.nc']))
-            )
-        if self.model.subsurface.dump_file is not None:
-            files.extend(
-                glob(os.sep.join([self.model.subsurface.output_directory,
-                                  self.model.identifier + '*_dump.nc']))
-            )
-        if self.model.openwater.dump_file is not None:
-            files.extend(
-                glob(os.sep.join([self.model.openwater.output_directory,
-                                  self.model.identifier + '*_dump.nc']))
-            )
-        if self.model.interface is not None:
-            if self.model.interface.dump_file is not None:
-                files.extend(
-                    glob(os.sep.join([self.model.interface.output_directory,
-                                      self.model.identifier + '*_dump.nc']))
-                )
+        # clean up dump files potentially created
+        files.extend(
+            glob(os.sep.join([self.model.interface.output_directory,
+                              self.model.identifier + '*_dump*.nc']))
+        )
+        # clean up output files potentially created
+        files.extend(
+            glob(os.sep.join([self.model.interface.output_directory,
+                              self.model.identifier + '*_out*.nc']))
+        )
+        # clean up configuration files created
         files.extend(
             glob(os.sep.join([self.model.config_directory,
                               self.model.identifier + '*.yml']))
@@ -117,37 +108,12 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
-    # expected final values for states/transfers after main run
-    # (null initial conditions, no spinup run, 12 iterations)
-    exp_states = {
-        'surfacelayer': {
-            'state_a': 12,
-            'state_b': 24
-        },
-        'subsurface': {
-            'state_a': 12,
-            'state_b': 24
-        },
-        'openwater': {
-            'state_a': 12
-        }
-    }
-    exp_transfers = {
-        'transfer_i': 564,
-        'transfer_j': 762,
-        'transfer_k': 1498,
-        'transfer_l': 738,
-        'transfer_m': 453,
-        'transfer_n': 1926,
-        'transfer_o': 645
-    }
-
     def setUp(self):
         self.simulator = None
 
     def tearDown(self):
         if self.simulator is not None:
-            self.simulator.delete_yml_and_dump()
+            self.simulator.clean_up_files()
 
     def test_init_spinup_simulate_resume(self):
         # generator of all possible component combinations
@@ -192,9 +158,9 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                 )
 
                 # clean up
-                simulator.delete_yml_and_dump()
+                simulator.clean_up_files()
 
-    def test_init_simulate_check_final_states_transfers(self):
+    def test_init_simulate(self):
         doe = ((sl, ss, ow)
                for sl in ('c', 'd')
                for ss in ('c', 'd')
@@ -212,9 +178,13 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
 
                 # check final state and transfer values
                 self.check_final_conditions(simulator.model)
+                # check outputs
+                self.check_outputs(simulator.model)
 
                 # clean up
-                simulator.delete_yml_and_dump()
+                simulator.clean_up_files()
+                # check outputs
+                self.check_outputs(simulator.model)
 
     def test_init_simulate_various_sources(self):
         doe = ((sl, ss, ow)
@@ -236,9 +206,11 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
 
                 # check final state and transfer values
                 self.check_final_conditions(simulator.model)
+                # check outputs
+                self.check_outputs(simulator.model)
 
                 # clean up
-                simulator.delete_yml_and_dump()
+                simulator.clean_up_files()
 
     def test_in_session_vs_through_dump(self):
         # initialise a model, and spin it up
@@ -292,21 +264,16 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
         # if component is "real", otherwise no states
         if not isinstance(component, cm4twc.DataComponent):
             for state in ['state_a', 'state_b']:
-                if self.exp_states[cat].get(state) is None:
+                if exp_outputs_raw[self.t][cat].get(state) is None:
                     # some components feature only one state
                     continue
                 # retrieve last state values
                 arr = component.states[state][-1]
                 # compare both min/max, as arrays are homogeneous
                 try:
-                    if isinstance(component, cm4twc.DataComponent):
-                        # state value should remain at zero
-                        self.assertEqual(np.amin(arr), 0)
-                        self.assertEqual(np.amax(arr), 0)
-                    else:
-                        val = self.exp_states[cat][state]
-                        self.assertEqual(np.amin(arr), val)
-                        self.assertEqual(np.amax(arr), val)
+                    val = exp_outputs_raw[self.t][cat][state][-1]
+                    self.assertEqual(np.amin(arr), val)
+                    self.assertEqual(np.amax(arr), val)
                 except AssertionError as e:
                     raise AssertionError(
                         "error for {}, {}".format(cat, state)
@@ -316,10 +283,10 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
         for transfer in ['transfer_i', 'transfer_j', 'transfer_k',
                          'transfer_l', 'transfer_m', 'transfer_n',
                          'transfer_o']:
-            arr = interface.transfers[transfer][
-                'slices'][-1]
+            arr = interface.transfers[transfer]['slices'][-1]
+            cat = interface.transfers[transfer]['src_cat']
             # compare both min/max, as array should be homogeneous
-            val = self.exp_transfers[transfer]
+            val = exp_outputs_raw[self.t][cat][transfer][-1]
             try:
                 self.assertAlmostEqual(np.amin(arr), val)
                 self.assertAlmostEqual(np.amax(arr), val)
@@ -327,37 +294,53 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
                 raise AssertionError(
                     "error for {}".format(transfer)) from e
 
+    def check_outputs(self, model):
+        for component in [model.surfacelayer,
+                          model.subsurface,
+                          model.openwater]:
+            rtol, atol = cm4twc.rtol(), cm4twc.atol()
+
+            # if component is "real", otherwise no outputs requested
+            cat = component.category
+            if not isinstance(component, cm4twc.DataComponent):
+                for name, frequencies in component.outputs.items():
+                    for delta, methods in frequencies.items():
+                        for method in methods:
+                            exp_t, exp_b, exp_o = get_expected_output(
+                                self.t, component, name, delta, method
+                            )
+                            prd_t, prd_b, prd_o = get_produced_output(
+                                component, name, delta, method
+                            )
+                            try:
+                                np.testing.assert_array_equal(prd_t, exp_t)
+                            except AssertionError as e:
+                                raise AssertionError(
+                                    "error for {} component output {} time:"
+                                    " {}, {}".format(cat, name, delta, method)
+                                ) from e
+                            try:
+                                np.testing.assert_array_equal(prd_b, exp_b)
+                            except AssertionError as e:
+                                raise AssertionError(
+                                    "error for {} component output {} bounds:"
+                                    " {}, {}".format(cat, name, delta, method)
+                                ) from e
+                            try:
+                                np.testing.assert_allclose(prd_o, exp_o,
+                                                           rtol, atol)
+                            except AssertionError as e:
+                                raise AssertionError(
+                                    "error for {} component output {} values:"
+                                    " {}, {}".format(cat, name, delta, method)
+                                ) from e
+
 
 class TestModelDiffTimeSameSpace(TestModelSameTimeSameSpace):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
-
-    # expected final values for states/transfers after main run
-    # (null initial conditions, no spinup run, 12 iterations)
-    exp_states = {
-        'surfacelayer': {
-            'state_a': 12,
-            'state_b': 24
-        },
-        'subsurface': {
-            'state_a': 4,
-            'state_b': 8
-        },
-        'openwater': {
-            'state_a': 6
-        }
-    }
-    exp_transfers = {
-        'transfer_i': 115,
-        'transfer_j': 112.5,
-        'transfer_k': 145.5,
-        'transfer_l': 100,
-        'transfer_m': 102,
-        'transfer_n': 328.5,
-        'transfer_o': 112.5
-    }
 
 
 class TestModelSameTimeDiffSpace(TestModelSameTimeSameSpace):
