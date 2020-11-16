@@ -8,8 +8,7 @@ surfacelayer:
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
-    step:
-      days: 1
+    step: timedelta(days=1)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
@@ -56,8 +55,7 @@ subsurface:
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
-    step:
-      days: 3
+    step: timedelta(days=3)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
@@ -96,8 +94,7 @@ openwater:
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
-    step:
-      days: 2
+    step: timedelta(days=2)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:

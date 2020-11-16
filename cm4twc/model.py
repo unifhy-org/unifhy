@@ -159,6 +159,48 @@ class Model(object):
             'openwater': self.openwater.to_config()
         }
 
+    @staticmethod
+    def _set_up_yaml_loader():
+        # configure yaml for loading datetime.timedelta
+        yaml.add_constructor(
+            u'!timedelta',
+            lambda loader, node: timedelta(
+                **{match[1]: float(match[2]) for match in
+                   re.findall(r"(([a-z]+) *= *([0-9]+\.?[0-9]*))",
+                              loader.construct_scalar(node))}
+            ),
+            Loader=yaml.FullLoader
+        )
+        yaml.add_implicit_resolver(
+            u'!timedelta',
+            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
+        )
+
+    @staticmethod
+    def _set_up_yaml_dumper():
+        # configure the dumping format for sequences
+        for type_ in (list, tuple, set):
+            yaml.add_representer(
+                type_,
+                lambda dumper, data:
+                dumper.represent_sequence(u'tag:yaml.org,2002:seq',
+                                          data, flow_style=True),
+                Dumper=yaml.Dumper
+            )
+        # configure the dumping format for datetime.timedelta
+        yaml.add_representer(
+            timedelta,
+            lambda dumper, data:
+            dumper.represent_scalar(
+                u'!timedelta', 'timedelta(seconds=%s)' % data.total_seconds()
+            ),
+            Dumper=yaml.Dumper
+        )
+        yaml.add_implicit_resolver(
+            u'!timedelta',
+            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
+        )
+
     @classmethod
     def from_yaml(cls, yaml_file):
         """Instantiate a `Model` from a YAML configuration file.
@@ -187,20 +229,7 @@ class Model(object):
         )
 
         """
-        # configure yaml for loading datetime.timedelta
-        yaml.add_constructor(
-            u'!timedelta',
-            lambda loader, node: timedelta(
-                **{match[1]: float(match[2]) for match in
-                   re.findall(r"(([a-z]+) *= *([0-9]+\.?[0-9]*))",
-                              loader.construct_scalar(node))}
-            ),
-            Loader=yaml.FullLoader
-        )
-        yaml.add_implicit_resolver(
-            u'!timedelta',
-            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
-        )
+        cls._set_up_yaml_loader()
 
         with open(yaml_file, 'r') as f:
             cfg = yaml.load(f, yaml.FullLoader)
@@ -208,28 +237,8 @@ class Model(object):
 
     def to_yaml(self):
         """Store configuration of `Model` as a YAML file."""
-        # configure the dumping format for sequences
-        for type_ in (list, tuple, set):
-            yaml.add_representer(
-                type_,
-                lambda dumper, data:
-                dumper.represent_sequence(u'tag:yaml.org,2002:seq',
-                                          data, flow_style=True),
-                Dumper=yaml.Dumper
-            )
-        # configure the dumping format for datetime.timedelta
-        yaml.add_representer(
-            timedelta,
-            lambda dumper, data:
-            dumper.represent_scalar(
-                u'!timedelta', 'timedelta(seconds=%s)' % data.total_seconds()
-            ),
-            Dumper=yaml.Dumper
-        )
-        yaml.add_implicit_resolver(
-            u'!timedelta',
-            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
-        )
+        self._set_up_yaml_dumper()
+
         # dump configuration in yaml file
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'yml'])]), 'w') as f:
@@ -357,10 +366,10 @@ class Model(object):
             'start': start.strftime('%Y-%m-%d %H:%M:%S'),
             'end': end.strftime('%Y-%m-%d %H:%M:%S'),
             'cycles': cycles,
-            'dumping_frequency':
-                {'seconds': dumping_frequency.total_seconds()}
-                if dumping_frequency is not None else None
+            'dumping_frequency': dumping_frequency
+            if dumping_frequency is not None else None
         }
+        self._set_up_yaml_dumper()
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'spin_up', 'yml'])]),
                   'w') as f:
@@ -414,10 +423,10 @@ class Model(object):
         """
         # store spin up configuration in a separate yaml file
         simulate_config = {
-            'dumping_frequency':
-                {'seconds': dumping_frequency.total_seconds()}
-                if dumping_frequency is not None else None
+            'dumping_frequency': dumping_frequency
+            if dumping_frequency is not None else None
         }
+        self._set_up_yaml_dumper()
         with open(sep.join([self.config_directory,
                             '.'.join([self.identifier, 'simulate', 'yml'])]),
                   'w') as f:
@@ -549,6 +558,7 @@ class Model(object):
         # collect simulate arguments stored in yaml file
         yaml_sig = sep.join([self.config_directory,
                              '.'.join([self.identifier, '*', 'yml'])])
+        self._set_up_yaml_loader()
         try:
             with open(yaml_sig.replace('*', method), 'r') as f:
                 cfg = yaml.load(f, yaml.FullLoader)
@@ -607,10 +617,7 @@ class Model(object):
             # resume the spin up run(s)
             start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
             end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
-            dump_freq_sec = (None if cfg['dumping_frequency'] is None else
-                             cfg['dumping_frequency'].get('seconds', None))
-            dumping_frequency = (timedelta(seconds=dump_freq_sec)
-                                 if dump_freq_sec is not None else None)
+            dumping_frequency = cfg['dumping_frequency']
 
             # resume spin up cycle according to the latest dump found
             if at == end:
@@ -657,10 +664,7 @@ class Model(object):
                 component.timedomain = remaining_td
 
             # resume simulation run
-            dump_freq_sec = (None if cfg['dumping_frequency'] is None else
-                             cfg['dumping_frequency'].get('seconds', None))
             self.simulate(
-                dumping_frequency=timedelta(seconds=dump_freq_sec)
-                if dump_freq_sec is not None else None,
+                dumping_frequency=cfg['dumping_frequency'],
                 overwrite=False
             )
