@@ -92,15 +92,19 @@ class Sciencish(SurfaceLayerComponent):
 
         openwater_evaporation = soil_evaporation * 0
 
-        return {
-            # interface fluxes out
-            'throughfall': throughfall + direct_rainfall,
-            'snowmelt': snowmelt,
-            'transpiration': transpiration,
-            'evaporation_soil_surface': canopy_evaporation,
-            'evaporation_ponded_water': soil_evaporation,
-            'evaporation_openwater': openwater_evaporation
-        }
+        return (
+            # to interface
+            {
+                'throughfall': throughfall + direct_rainfall,
+                'snowmelt': snowmelt,
+                'transpiration': transpiration,
+                'evaporation_soil_surface': canopy_evaporation,
+                'evaporation_ponded_water': soil_evaporation,
+                'evaporation_openwater': openwater_evaporation
+            },
+            # component outputs
+            {}
+        )
 
     def finalise(self,
                  # to interface

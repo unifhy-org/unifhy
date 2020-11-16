@@ -784,6 +784,11 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
+        },
+        'water_level': {
+            'units': 'kg m-2',
+            'from': 'openwater',
+            'method': 'mean'
         }
     }
     _outwards_info = {
@@ -818,9 +823,9 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
         }
     }
     _outwards_info = {
-        'discharge': {
-            'units': 'kg m-2 s-1',
-            'to': 'ocean',
+        'water_level': {
+            'units': 'kg m-2',
+            'to': 'subsurface',
             'method': 'mean'
         }
     }

@@ -6,7 +6,7 @@ surfacelayer:
   class: Sciencish
   output_directory: outputs
   timedomain:
-    start: 2019-01-01 09:00:00
+    start: 2019-01-04 09:00:00
     end: 2019-01-07 09:00:00
     step:
       seconds: 86400.0
@@ -40,12 +40,13 @@ surfacelayer:
       select: vegetation_fraction
   parameters: null
   constants: null
+  outputs: null
 subsurface:
   module: tests.components.subsurface.sciencish
   class: Sciencish
   output_directory: outputs
   timedomain:
-    start: 2019-01-01 09:00:00
+    start: 2019-01-04 09:00:00
     end: 2019-01-07 09:00:00
     step:
       seconds: 86400.0
@@ -71,12 +72,13 @@ subsurface:
   parameters:
     saturation_capacity: 600
   constants: null
+  outputs: null
 openwater:
   module: tests.components.openwater.sciencish
   class: Sciencish
   output_directory: outputs
   timedomain:
-    start: 2019-01-01 09:00:00
+    start: 2019-01-04 09:00:00
     end: 2019-01-07 09:00:00
     step:
       seconds: 86400.0
@@ -99,3 +101,6 @@ openwater:
   parameters:
     residence_time: 2400
   constants: null
+  outputs:
+    discharge:
+      timedelta(days=1): [mean]
