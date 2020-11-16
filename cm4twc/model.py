@@ -207,6 +207,7 @@ class Model(object):
         return cls.from_config(cfg)
 
     def to_yaml(self):
+        """Store configuration of `Model` as a YAML file."""
         # configure the dumping format for sequences
         for type_ in (list, tuple, set):
             yaml.add_representer(
@@ -524,7 +525,7 @@ class Model(object):
             tag: `str`
                 The tag for the run to resume. For a main simulation
                 run, this is simply *run*. For a given cycle of a spin
-                up run, this is *spinup#*, where # is the integer
+                up run, this is *spinup#*, where *#* is the integer
                 corresponding to the given spin up cycle (e.g. *1* for
                 first cycle, *2* for second cycle, etc.).
 

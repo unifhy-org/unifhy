@@ -216,5 +216,20 @@ This instance of `Model` can now be used to start a spin up run and/or a main si
 
    >>> model.spin_up(start=datetime(2019, 1, 1, 9, 0, 0),
    ...               end=datetime(2019, 1, 3, 9, 0, 0),
-   ...               cycles=2)
-   >>> outputs = model.simulate()
+   ...               cycles=2,
+   ...               dumping_frequency=timedelta(days=3))
+   >>> model.simulate(dumping_frequency=timedelta(days=2))
+
+If the model has crashed, and *dumping_frequency* were set in the
+*spin-up* and/or *simulate* invocations, a series of snapshots in time
+have been stored in dump files in the *output_directory* of each
+`Component`. A *resume* method for `Model` allows for the given run
+to be resumed to reach completion of the simulation period. The *tag*
+argument must be used to select which run to resume (i.e. any spin-up
+cycle, or the main run), and the *at* argument can be used to select the
+given snapshot in time to restart from.
+
+.. code-block:: python
+   :caption: Resuming the `Model` main simulation run.
+
+   >>> model.resume(tag='run', at=datetime(2019, 1, 7, 9, 0, 0))

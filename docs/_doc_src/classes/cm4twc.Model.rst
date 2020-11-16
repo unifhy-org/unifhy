@@ -18,6 +18,7 @@ Methods
    :template: method.rst
 
    ~cm4twc.Model.from_yaml
+   ~cm4twc.Model.to_yaml
 
 .. rubric:: Simulation
 
@@ -28,3 +29,4 @@ Methods
 
    ~cm4twc.Model.spin_up
    ~cm4twc.Model.simulate
+   ~cm4twc.Model.resume
