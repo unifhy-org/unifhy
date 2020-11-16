@@ -1411,7 +1411,7 @@ class RotatedLatLonGrid(Grid):
 
         if hasattr(field, 'coordinate_reference'):
             conversion = self._check_rotation_parameters(
-                field.coordinate_reference
+                field.coordinate_reference('rotated_latitude_longitude')
             )
         else:
             conversion = False
