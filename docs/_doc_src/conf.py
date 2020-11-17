@@ -202,3 +202,11 @@ intersphinx_mapping = {
 }
 
 intersphinx_cache_limit = 5
+
+# prolog is a string added to every RST file
+# used here to define a Python role 'globally'
+rst_prolog = """
+.. role:: py(code)
+   :language: python
+   :class: highlight
+"""
