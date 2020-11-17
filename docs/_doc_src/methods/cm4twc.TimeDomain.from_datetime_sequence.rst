@@ -1,7 +1,7 @@
 cm4twc.TimeDomain.from_datetime_sequence
 ========================================
 
-.. currentmodule:: cf
+.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. automethod:: cm4twc.TimeDomain.from_datetime_sequence

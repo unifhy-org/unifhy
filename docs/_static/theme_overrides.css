@@ -52,6 +52,11 @@
    color: #3091d1;
 }
 
+/* override literal highlight style to match pygments */
+.rst-content table.docutils code.literal {
+   color: #404040;
+}
+
 /* override vertical menu caption style */
 .wy-menu-vertical p.caption{
    color:#55a5d9;

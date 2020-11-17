@@ -1,7 +1,7 @@
 cm4twc.TimeDomain.units
 =======================
 
-.. currentmodule:: cf
+.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autoattribute:: cm4twc.TimeDomain.units

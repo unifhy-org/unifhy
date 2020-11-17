@@ -1,7 +1,7 @@
 cm4twc.LatLonGrid.axes
 ======================
 
-.. currentmodule:: cf
+.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autoattribute:: cm4twc.LatLonGrid.axes
