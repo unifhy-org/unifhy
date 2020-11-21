@@ -120,7 +120,7 @@ class Simulator(object):
             os.remove(f)
 
 
-class TestModel(unittest.TestCase):
+class TestModel(object):
     # flag to specify whether components are to run at same temporal resolution
     # or at different temporal resolutions
     t = None
@@ -526,28 +526,28 @@ class TestModel(unittest.TestCase):
                                 ) from e
 
 
-class TestModelSameTimeSameSpace(TestModel):
+class TestModelSameTimeSameSpace(TestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
     t = 'sync'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
 
-class TestModelDiffTimeSameSpace(TestModel):
+class TestModelDiffTimeSameSpace(TestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
 
-class TestModelSameTimeDiffSpace(TestModel):
+class TestModelSameTimeDiffSpace(TestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
     t = 'sync'
     # flag to specify that components are to run at different spatial resolutions
     s = 'remap'
 
 
-class TestModelDiffTimeDiffSpace(TestModel):
+class TestModelDiffTimeDiffSpace(TestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at different spatial resolutions
