@@ -135,6 +135,9 @@ class TestModel(unittest.TestCase):
         if self.simulator is not None:
             self.simulator.clean_up_files()
 
+    def shortDescription(self):
+        return None
+
     def test_setup_spinup_simulate_resume(self):
         """
         The purpose of this test is to check that a complete workflow is
