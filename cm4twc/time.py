@@ -732,7 +732,7 @@ class TimeDomain(object):
         return {
             'start': t_bnds[0, 0].strftime('%Y-%m-%d %H:%M:%S'),
             'end': t_bnds[-1, -1].strftime('%Y-%m-%d %H:%M:%S'),
-            'step': {'seconds': self.timedelta.total_seconds()},
+            'step': self.timedelta,
             'units': self.units,
             'calendar': self.calendar
         }

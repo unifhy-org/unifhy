@@ -284,6 +284,30 @@ class TestModelSameTimeSameSpace(unittest.TestCase):
         # clean up
         simulator.clean_up_files()
 
+    def test_setup_yaml_setup_simulate(self):
+        # set up a model
+        simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
+
+        # set up another model using YAML of first model
+        simulator_2 = Simulator(
+            self.t, self.s,
+            cm4twc.Model.from_yaml(
+                os.sep.join([simulator_1.model.output_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # start main run of second model
+        simulator_2.run_model()
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_2.model)
+        # check outputs
+        self.check_outputs(simulator_2.model)
+
+        # clean up
+        simulator_2.clean_up_files()
+
     def check_final_conditions(self, model):
         # check components' final state values
         for comp in [model.surfacelayer,
