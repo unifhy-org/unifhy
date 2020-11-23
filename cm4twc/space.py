@@ -256,6 +256,14 @@ class Grid(SpaceDomain):
         self._check_dimension_bounds_regularity(dimension_bounds, name)
         self._check_dimension_bounds_contiguity(dimension_bounds, name)
 
+        # deal with special case of dimension with only one-element
+        # due to squeeze, dimension is scalar array, dimension_bounds is 1D
+        # cf-python will want 1D dimension coordinates, and 2D
+        # dimension coordinate bounds, respectively
+        if dimension.ndim == 0:
+            dimension = np.array([dimension])
+            dimension_bounds = np.array([dimension_bounds])
+
         # set construct
         axis_ = self._f.set_construct(cf.DomainAxis(dimension.size))
         self._f.set_construct(
@@ -1403,7 +1411,7 @@ class RotatedLatLonGrid(Grid):
 
         if hasattr(field, 'coordinate_reference'):
             conversion = self._check_rotation_parameters(
-                field.coordinate_reference
+                field.coordinate_reference('rotated_latitude_longitude')
             )
         else:
             conversion = False

@@ -1,7 +1,7 @@
 {{ fullname }}
 {{ underline }}
 
-.. currentmodule:: cf
+.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autoattribute:: {{ fullname }}

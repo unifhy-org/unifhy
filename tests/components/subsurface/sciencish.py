@@ -31,6 +31,14 @@ class Sciencish(SubSurfaceComponent):
             'divisions': 1
         }
     }
+    outputs_info = {
+        'stormflow': {
+            'units': 'kg m-2 s-1'
+        },
+        'baseflow': {
+            'units': 'kg m-2 s-1'
+        }
+    }
     solver_history = 1
 
     def initialise(self,
@@ -81,11 +89,18 @@ class Sciencish(SubSurfaceComponent):
         aquifer[0][:] = (soil_moisture[-1]
                          - groundwater_runoff * self.timestepinseconds)
 
-        return {
+        return (
             # to interface
-            'runoff': soil_runoff + surface_runoff + groundwater_runoff,
-            'soil_water_stress': soil_water_stress
-        }
+            {
+                'runoff': soil_runoff + surface_runoff + groundwater_runoff,
+                'soil_water_stress': soil_water_stress
+            },
+            # component outputs
+            {
+                'stormflow': soil_runoff + surface_runoff,
+                'baseflow': groundwater_runoff
+            }
+        )
 
     def finalise(self,
                  # component states

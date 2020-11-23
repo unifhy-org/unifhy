@@ -310,8 +310,10 @@ def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):
         # common to all groups
         # dimensions
         f.createDimension('time', None)
+        f.createDimension('nv', 2)
         # coordinate variables
         t = f.createVariable('time', np.float64, ('time',))
+        t.standard_name = 'time'
         t.units = timedomain.units
         t.calendar = timedomain.calendar
         # for each group (corresponding to each source component)
@@ -319,19 +321,30 @@ def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):
             g = f.createGroup(c)
             spacedomain = spacedomains[c]
             axes = spacedomain.axes
-            # dimensions
+            # dimensions and coordinate variables
             for axis in axes:
+                # dimension (domain axis)
                 g.createDimension(axis, len(getattr(spacedomain, axis)))
-            # coordinate variables
-            for axis in axes:
+                # variables
+                # (domain coordinate)
+                coord = spacedomain.to_field().construct(axis)
                 a = g.createVariable(axis, dtype_float(), (axis,))
-                a[:] = getattr(spacedomain, axis).array
+                a.standard_name = coord.standard_name
+                a.units = coord.units
+                a.bounds = axis + '_bounds'
+                a[:] = coord.data.array
+                # (domain coordinate bounds)
+                b = g.createVariable(axis + '_bounds', dtype_float(),
+                                     (axis, 'nv'))
+                b.units = coord.units
+                b[:] = coord.bounds.data.array
 
         # transfer variables
         for trf in transfers_info:
             s = f.groups[transfers_info[trf]['src_cat']].createVariable(
                 trf, dtype_float(), ('time', *axes)
             )
+            s.standard_name = trf
             s.units = transfers_info[trf]['units']
 
 

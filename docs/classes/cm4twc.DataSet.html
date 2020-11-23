@@ -213,14 +213,14 @@
 <dt id="cm4twc.DataSet">
 <em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">DataSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">files</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.DataSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>DataSet is a dictionary-like data structure which maps variable
-names to <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> objects. Namely, it allows to use custom
-variable names instead of the standard_name attribute of <a class="reference external" href="https://ncas-cms.github.io/cf-python/classes/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
+names to <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> objects. Namely, it allows to use custom
+variable names instead of the standard_name attribute of <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
 to identify them.</p>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>files: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A string or sequence of strings providing the netCDF
+<dt>files: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A string or sequence of strings providing the netCDF
 file names or directory names containing netCDF files
 from which to read the variables.</p>
 <p><em>Parameter example:</em></p>
@@ -233,7 +233,7 @@ from which to read the variables.</p>
 </pre></div>
 </div>
 </dd>
-<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A string or sequence of strings providing the identities
+<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A string or sequence of strings providing the identities
 of the variables to read in the netCDF file. By default,
 all variables in the netCDF file are read.</p>
 <p><em>Parameter example:</em></p>
@@ -241,7 +241,7 @@ all variables in the netCDF file are read.</p>
 </pre></div>
 </div>
 </dd>
-<dt>name_mapping: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>A dictionary with the Field identities as keys and the
+<dt>name_mapping: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>A dictionary with the Field identities as keys and the
 desired new name variables as values. If a Field is read
 from the netCDF file, and its identity is not a key in
 <em>name_mapping</em> (if provided), its ‘standard_name’
@@ -308,7 +308,7 @@ attribute is used instead.</p>
         
         &copy; Copyright 2020, NCAS–UKCEH–BGS.
       <span class="lastupdated">
-        Last updated on Aug 27, 2020.
+        Last updated on Nov 17, 2020.
       </span>
 
     </p>

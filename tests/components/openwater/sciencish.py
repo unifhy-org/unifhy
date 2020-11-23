@@ -10,13 +10,18 @@ class Sciencish(OpenWaterComponent):
     parameters_info = {
         'residence_time': {
             'units': 's'
-        },
+        }
     }
     # constants_info = {},
     states_info = {
         'river_channel': {
             'units': 'kg m-2',
             'divisions': 1
+        }
+    }
+    outputs_info = {
+        'discharge': {
+            'units': 'kg m-2 s-1'
         }
     }
     solver_history = 1
@@ -47,10 +52,16 @@ class Sciencish(OpenWaterComponent):
 
         river_channel[0][:] = np.where(channel_water < 0, 0, channel_water)
 
-        return {
+        return (
             # to interface
-            'discharge': discharge
-        }
+            {
+                'water_level': river_channel[0][:]
+            },
+            # component outputs
+            {
+                'discharge': discharge
+            }
+        )
 
     def finalise(self,
                  # component states

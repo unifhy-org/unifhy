@@ -39,7 +39,8 @@ setup(
 
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython'
     ],
 
@@ -49,7 +50,7 @@ setup(
 
     install_requires=[
         'numpy>=1.16',
-        'cf-python>=3.4',
+        'cf-python>=3.7',
         'cftime',
         'cfunits',
         'netCDF4>=1.5',

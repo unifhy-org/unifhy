@@ -8,7 +8,7 @@ This draft of the modelling framework has a code-name: `cm4twc` for Community
 Model for the Terrestrial Water Cycle.
 
 .. code-block:: python
-   :caption: *Importing the package and checking its version.*
+   :caption: Importing the package and checking its version.
 
    >>> import cm4twc
    >>> print(cm4twc.__version__)
@@ -28,7 +28,7 @@ Time
 `TimeDomain` characterises the time dimension of a `Component`.
 
 .. code-block:: python
-   :caption: *Instantiating a TimeDomain object by specifying its start, end, and step.*
+   :caption: Instantiating a `TimeDomain` object by specifying its start, end, and step.
 
    >>> from datetime import datetime, timedelta
    >>> timedomain = cm4twc.TimeDomain.from_start_end_step(
@@ -52,10 +52,11 @@ Space
 
 `SpaceDomain` characterises the space dimensions of a `Component`.
 It is intended as an umbrella class from which to subclass.
-A first subclass available is the `Grid`, itself discretised into `LatLonGrid` and `RotatedLatLonGrid`.
+Current supported spatial discretisations are `LatLonGrid` and
+`RotatedLatLonGrid`.
 
 .. code-block:: python
-   :caption: *Instantiating a LatLonGrid object from its dimensions' extents and resolutions.*
+   :caption: Instantiating a `LatLonGrid` object from its dimensions' extents and resolutions.
 
    >>> spacedomain = cm4twc.LatLonGrid.from_extent_and_resolution(
    ...    latitude_extent=(51, 55),
@@ -80,11 +81,11 @@ A first subclass available is the `Grid`, itself discretised into `LatLonGrid` a
 Data
 ~~~~
 
-`DataSet` exists to host all of the data required to run a `Component` of `Model` .
+`DataSet` gathers all of the data required to run a `Component` of `Model` .
 It is a dictionary-like object that stores references to `cf.Field` instances.
 
 .. code-block:: python
-   :caption: *Instantiating Dataset objects from a CF-compliant netCDF file.*
+   :caption: Instantiating `DataSet` objects from a CF-compliant netCDF file.
 
    >>> dataset_surfacelayer = cm4twc.DataSet(
    ...     'tests/data/dummy_surfacelayer_data_daily.nc'
@@ -112,7 +113,7 @@ for surface, sub-surface, and open water parts of the water cycle:
 `SurfaceLayerComponent`, `SubSurfaceComponent`, and `OpenWaterComponent` respectively.
 
 .. code-block:: python
-   :caption: *Instantiating a 'dummy' SurfaceLayerComponent.*
+   :caption: Instantiating a 'dummy' `SurfaceLayerComponent`.
 
    >>> import tests
    >>> print(tests.surfacelayer.Dummy)
@@ -133,6 +134,8 @@ for surface, sub-surface, and open water parts of the water cycle:
        states:
            state_a [1]
            state_b [1]
+       outputs:
+           output_x [1]
        solver history: 1
    )
    >>> component = tests.surfacelayer.Dummy(
@@ -140,7 +143,8 @@ for surface, sub-surface, and open water parts of the water cycle:
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
    ...     dataset=dataset_surfacelayer,
-   ...     parameters={}
+   ...     parameters={},
+   ...     outputs={'output_x': {timedelta(days=1): ['sum']}}
    ... )
    >>> print(component)
    Dummy(
@@ -148,6 +152,8 @@ for surface, sub-surface, and open water parts of the water cycle:
        timedomain: period: 12 days, 0:00:00
        spacedomain: shape: (Z: 1, Y: 4, X: 3)
        dataset: 4 variable(s)
+       outputs:
+           output_x: 1 day, 0:00:00 {'sum'}
    )
 
 
@@ -159,7 +165,7 @@ instantiated with three `Component` instances, one for each of the three
 `Component`\s of the water cycle.
 
 .. code-block:: python
-   :caption: *Instantiating a Model.*
+   :caption: Instantiating a `Model`.
 
    >>> model = cm4twc.Model(
    ...     identifier='dummy',
@@ -175,7 +181,11 @@ instantiated with three `Component` instances, one for each of the three
    ...     ),
    ...     openwater=tests.openwater.Dummy(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
-   ...         parameters={'parameter_c': 3}
+   ...         parameters={'parameter_c': 3},
+   ...         outputs={'output_y': {timedelta(days=1): ['point'],
+   ...                               timedelta(days=2): ['sum', 'min']},
+   ...                  'state_a': {timedelta(days=1): ['point']},
+   ...                  'transfer_l': {timedelta(days=2): ['mean']}}
    ...     )
    ... )
    >>> print(model)
@@ -191,7 +201,7 @@ can be saved as a YAML file in the *config_directory* and named using the
 *configurations/dummy.yml*).
 
 .. code-block:: python
-   :caption: *Instantiating a Model.*
+   :caption: Saving `Model` set up in YAML file.
 
    >>> model.to_yaml()
 
@@ -199,12 +209,27 @@ can be saved as a YAML file in the *config_directory* and named using the
 Simulating with a Model
 -----------------------
 
-This instance of `Model` can now be used to start a spin up run and/or a simulation run.
+This instance of `Model` can now be used to start a spin up run and/or a main simulation run.
 
 .. code-block:: python
-   :caption: *Spinning-up and running the Model simulation.*
+   :caption: Spinning-up and running the `Model` simulation.
 
    >>> model.spin_up(start=datetime(2019, 1, 1, 9, 0, 0),
    ...               end=datetime(2019, 1, 3, 9, 0, 0),
-   ...               cycles=2)
-   >>> outputs = model.simulate()
+   ...               cycles=2,
+   ...               dumping_frequency=timedelta(days=3))
+   >>> model.simulate(dumping_frequency=timedelta(days=2))
+
+If the model has crashed, and *dumping_frequency* were set in the
+*spin-up* and/or *simulate* invocations, a series of snapshots in time
+have been stored in dump files in the *output_directory* of each
+`Component`. A *resume* method for `Model` allows for the given run
+to be resumed to reach completion of the simulation period. The *tag*
+argument must be used to select which run to resume (i.e. any spin-up
+cycle, or the main run), and the *at* argument can be used to select the
+given snapshot in time to restart from.
+
+.. code-block:: python
+   :caption: Resuming the `Model` main simulation run.
+
+   >>> model.resume(tag='run', at=datetime(2019, 1, 7, 9, 0, 0))

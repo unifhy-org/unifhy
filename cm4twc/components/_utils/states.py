@@ -95,21 +95,33 @@ def create_states_dump(filepath, states_info, solver_history,
         f.createDimension('history', solver_history + 1)
         for axis in axes:
             f.createDimension(axis, len(getattr(spacedomain, axis)))
+        f.createDimension('nv', 2)
 
         # coordinate variables
         t = f.createVariable('time', np.float64, ('time',))
+        t.standard_name = 'time'
         t.units = timedomain.units
         t.calendar = timedomain.calendar
         h = f.createVariable('history', np.int8, ('history',))
         h[:] = np.arange(-solver_history, 1, 1)
         for axis in axes:
+            coord = spacedomain.to_field().construct(axis)
+            # (domain coordinate)
             a = f.createVariable(axis, dtype_float(), (axis,))
-            a[:] = getattr(spacedomain, axis).array
+            a.standard_name = coord.standard_name
+            a.units = coord.units
+            a.bounds = axis + '_bounds'
+            a[:] = coord.data.array
+            # (domain coordinate bounds)
+            b = f.createVariable(axis + '_bounds', dtype_float(), (axis, 'nv'))
+            b.units = coord.units
+            b[:] = coord.bounds.data.array
 
         # state variables
         for var in states_info:
             s = f.createVariable(var, dtype_float(),
                                  ('time', 'history', *axes))
+            s.standard_name = var
             s.units = states_info[var]['units']
 
 

@@ -722,7 +722,7 @@ class TimeDomain(object):
         return cls.from_start_end_step(
             start=datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S'),
             end=datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S'),
-            step=timedelta(**cfg['step']),
+            step=cfg['step'],
             units=cfg['units'] if 'units' in cfg else None,
             calendar=cfg['calendar'] if 'calendar' in cfg else None
         )
@@ -732,7 +732,7 @@ class TimeDomain(object):
         return {
             'start': t_bnds[0, 0].strftime('%Y-%m-%d %H:%M:%S'),
             'end': t_bnds[-1, -1].strftime('%Y-%m-%d %H:%M:%S'),
-            'step': {'seconds': self.timedelta.total_seconds()},
+            'step': self.timedelta,
             'units': self.units,
             'calendar': self.calendar
         }

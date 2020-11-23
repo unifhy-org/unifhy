@@ -26,9 +26,11 @@ void run_(int nz, int ny, int nx,
           // component states
           double *state_a_m1, double *state_a_0,
           // component constants,
-          double constant_a,
+          double constant_c,
           // from interface
-          double *transfer_l, double *transfer_n, double *transfer_o)
+          double *transfer_l, double *transfer_n, double *transfer_o,
+          // component outputs
+          double *output_x, double *output_y)
 {
   int i, j, k;
   int ijk;
@@ -46,6 +48,10 @@ void run_(int nz, int ny, int nx,
           + state_a_0[ijk];
         transfer_n[ijk] = parameter_c * transfer_j[ijk];
         transfer_o[ijk] = parameter_c + transfer_j[ijk];
+        // compute outputs
+        output_x[ijk] = (parameter_c * transfer_j[ijk]) + constant_c;
+        output_y[ijk] = (ancillary_b[ijk] * transfer_m[ijk])
+          - state_a_0[ijk];
       }
 }
 

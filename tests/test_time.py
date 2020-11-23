@@ -51,6 +51,18 @@ def get_dummy_dumping_frequency(sync):
         return timedelta(days=6)
 
 
+def get_dummy_output_time_and_bounds(resolution, delta):
+    timedomain = get_dummy_timedomain(resolution)
+    timedomain = cm4twc.TimeDomain.from_start_end_step(
+        start=timedomain.bounds.datetime_array[0, 0],
+        end=timedomain.bounds.datetime_array[-1, -1] + delta,
+        step=delta,
+        calendar=timedomain.calendar,
+        units=timedomain.units
+    )
+    return timedomain.time.array[1:], timedomain.bounds.array[:-1, :]
+
+
 class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_standard_on_leap_year(self):

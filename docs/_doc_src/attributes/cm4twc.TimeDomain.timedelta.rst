@@ -1,7 +1,7 @@
 cm4twc.TimeDomain.timedelta
 ===========================
 
-.. currentmodule:: cf
+.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autoattribute:: cm4twc.TimeDomain.timedelta

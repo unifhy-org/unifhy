@@ -7,6 +7,8 @@ from cfunits import Units
 
 from ._utils.states import (State, create_states_dump, update_states_dump,
                             load_states_dump)
+from ._utils.outputs import (StateOutput, InterfaceOutput, OtherOutput,
+                             OutputStream)
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
@@ -21,14 +23,14 @@ class MetaComponent(abc.ABCMeta):
     def __str__(self):
         info = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ''))] +
-                 ["        {} [{}]".format(
-                     n, getattr(self, t + '_info')[n]['units'])
-                     for n in getattr(self, t + '_info')]
+                (["    {}:".format(t[1:] if t[0] == '_' else t).replace('_', ' ')]
+                 + ["        {} [{}]".format(n, info['units'])
+                    for n, info in getattr(self, t + '_info').items()]
                  if getattr(self, t + '_info') else [])
             )
             for t in ['_inwards', '_outwards', 'driving_data',
-                      'ancillary_data', 'parameters', 'constants', 'states']
+                      'ancillary_data', 'parameters', 'constants',
+                      'outputs', 'states']
             if getattr(self, t + '_info')
         ]
         return "\n".join(
@@ -52,10 +54,11 @@ class Component(metaclass=MetaComponent):
     parameters_info = {}
     constants_info = {}
     states_info = {}
+    outputs_info = {}
     solver_history = 0
 
     def __init__(self, output_directory, timedomain, spacedomain,
-                 dataset=None, parameters=None, constants=None):
+                 dataset=None, parameters=None, constants=None, outputs=None):
         """**Initialisation**
 
         :Parameters:
@@ -84,6 +87,47 @@ class Component(metaclass=MetaComponent):
                 The parameter values for the `Component`. Must be
                 provided in the required units.
 
+            outputs: `dict`, optional
+                The desired outputs from the `Component`. Each key
+                must an output available for the component chosen,
+                each value is a `dict` of `datetime.timedelta` for keys
+                and aggregation methods as a sequence of `str` for
+                values.
+
+                *Parameter example:* ::
+
+                    outputs={
+                        'output_a': {
+                            timedelta(days=1): ['sum'],
+                            timedelta(weeks=1): ['min', 'max']
+                        },
+                        'output_b': {
+                            timedelta(days=1): ['mean']
+                        }
+                    }
+
+                The aggregation methods supported are listed in the
+                table below.
+
+                ===============  =======================================
+                method           description
+                ===============  =======================================
+                ``'point'``      The instantaneous value at the given
+                                 elapsed timedelta.
+
+                ``'sum'``        The accumulation of the values during
+                                 the given elapsed timedelta.
+
+                ``'mean'``       The average of the values during the
+                                 given elapsed timedelta.
+
+                ``'min'``        The minimum amongst the values during
+                                 the elapsed timedelta.
+
+                ``'max'``        The maximum amongst the values during
+                                 the elapsed timedelta.
+                ===============  =======================================
+
         """
         # space attributes
         self.spacedomain = spacedomain
@@ -102,6 +146,11 @@ class Component(metaclass=MetaComponent):
 
         # constants attribute
         self.constants = constants
+
+        # outputs attributes
+        self._output_objects = None
+        self._output_streams = None
+        self.outputs = outputs
 
         # states attribute
         self.states = {}
@@ -189,6 +238,29 @@ class Component(metaclass=MetaComponent):
         constants = {} if constants is None else constants
         # # no check because they are optional
         self._constants = constants
+
+    @property
+    def outputs(self):
+        """Return the collection of desired `Output`s to be saved for the
+        Component as a `dict`. Potentially returning an empty dictionary
+        if no outputs are desired."""
+        return self._outputs
+
+    @outputs.setter
+    def outputs(self, outputs):
+        outputs = {} if outputs is None else outputs
+        outputs_ = {}
+        for name, frequencies in outputs.items():
+            # check type and eliminate duplicates in methods
+            outputs_[name] = {}
+            for delta, methods in frequencies.items():
+                if isinstance(methods, (list, tuple, set)):
+                    outputs_[name][delta] = set(methods)
+                else:
+                    raise TypeError('output methods for {} at {} must be a '
+                                    'sequence of strings'.format(name, delta))
+
+        self._outputs = outputs_
 
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
@@ -331,7 +403,8 @@ class Component(metaclass=MetaComponent):
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
             parameters=cfg.get('parameters'),
-            constants=cfg.get('constants')
+            constants=cfg.get('constants'),
+            outputs=cfg.get('outputs')
         )
 
     def to_config(self):
@@ -343,7 +416,8 @@ class Component(metaclass=MetaComponent):
             'spacedomain': self.spacedomain.to_config(),
             'dataset': self.dataset.to_config(),
             'parameters': self.parameters if self.parameters else None,
-            'constants': self.constants if self.constants else None
+            'constants': self.constants if self.constants else None,
+            'outputs': self.outputs if self.outputs else None
         }
         return cfg
 
@@ -365,11 +439,14 @@ class Component(metaclass=MetaComponent):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
         parameters = ["        {}: {} {}".format(
-            p, self.parameters[p], self.parameters_info[p])
+            p, self.parameters[p], self.parameters_info[p]['units'])
             for p in self.parameters] if self.parameters else []
         constants = ["        {}: {} {}".format(
-            p, self.constants[p], self.constants_info[p])
-            for p in self.constants] if self.constants else []
+            c, self.constants[c], self.constants_info[c]['units'])
+            for c in self.constants] if self.constants else []
+        outputs = ["        {}: {} {}".format(
+            o, d, m) for o, f in self.outputs.items()
+            for d, m in f.items()] if self.outputs else []
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    category: {}".format(self._category)]
@@ -379,6 +456,7 @@ class Component(metaclass=MetaComponent):
             + ["    dataset: {} variable(s)".format(len(self.dataset))]
             + (["    parameters:"] if parameters else []) + parameters
             + (["    constants:"] if constants else []) + constants
+            + (["    outputs:"] if outputs else []) + outputs
             + [")"]
         )
 
@@ -388,8 +466,14 @@ class Component(metaclass=MetaComponent):
             self._instantiate_states()
             self.initialise(**self.states)
             self.is_initialised = True
-        # create the dump file for this given run
+        # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
+
+        if self.outputs:
+            # create outputs, output streams, and output stream files
+            self._instantiate_output_objects_and_streams(tag, overwrite)
+            # create dumps for output streams
+            self._initialise_output_streams_dumps(tag, overwrite)
 
     def run_(self, timeindex, from_interface):
         data = {}
@@ -404,8 +488,12 @@ class Component(metaclass=MetaComponent):
             data[d] = from_interface[d]
 
         # run simulation for the component
-        to_interface = self.run(**self.parameters, **self.constants,
-                                **self.states, **data)
+        to_interface, outputs = self.run(**self.parameters, **self.constants,
+                                         **self.states, **data)
+
+        # store outputs
+        for name in self._outputs:
+            self._output_objects[name](self.states, to_interface, outputs)
 
         # increment the component's states by one timestep
         self.increment_states()
@@ -432,11 +520,11 @@ class Component(metaclass=MetaComponent):
                 order=o
             )
 
-    def _initialise_states_dump(self, tag, overwrite_dump):
+    def _initialise_states_dump(self, tag, overwrite):
         self.dump_file = '_'.join([self.identifier, self.category,
                                    tag, 'dump.nc'])
-        if (overwrite_dump or not path.exists(sep.join([self.output_directory,
-                                                        self.dump_file]))):
+        if (overwrite or not path.exists(sep.join([self.output_directory,
+                                                   self.dump_file]))):
             create_states_dump(sep.join([self.output_directory, self.dump_file]),
                                self.states_info, self.solver_history,
                                self.timedomain, self.spacedomain)
@@ -492,6 +580,113 @@ class Component(metaclass=MetaComponent):
         timestamp = self.timedomain.bounds.array[timeindex, 0]
         update_states_dump(sep.join([self.output_directory, self.dump_file]),
                            self.states, timestamp, self.solver_history)
+
+    def _instantiate_output_objects_and_streams(self, tag, overwrite):
+        self._output_objects = {}
+        self._output_streams = {}
+
+        for name, frequencies in self.outputs.items():
+            # create instance of appropriate Output subclass
+            if name in self.outputs_info:
+                self._output_objects[name] = OtherOutput(
+                    name, **self.outputs_info[name]
+                )
+            elif name in self._outwards_info:
+                self._output_objects[name] = InterfaceOutput(
+                    name, **self._outwards_info[name]
+                )
+            elif name in self.states_info:
+                self._output_objects[name] = StateOutput(
+                    name, **self.states_info[name]
+                )
+            else:
+                raise ValueError('{} not available for {} component'.format(
+                    name, self._category))
+
+            for delta, methods in frequencies.items():
+                # instantiate OutputStream if none for given timedelta yet
+                if delta not in self._output_streams:
+                    self._output_streams[delta] = OutputStream(
+                        delta, self.timedomain, self.spacedomain
+                    )
+                # hold reference to output object in stream
+                self._output_streams[delta].add_output(
+                    self._output_objects[name], methods
+                )
+
+        for delta, stream in self._output_streams.items():
+            filename = '_'.join([self.identifier, self._category, tag,
+                                 'out', stream.frequency])
+            file_ = sep.join([self.output_directory, filename + '.nc'])
+
+            if overwrite or not path.exists(file_):
+                stream.create_output_stream_file(file_)
+            else:
+                stream.file = file_
+
+    def _initialise_output_streams_dumps(self, tag, overwrite):
+        for delta, stream in self._output_streams.items():
+            filename = '_'.join([self.identifier, self._category, tag,
+                                 'dump_stream', stream.frequency])
+            file_ = sep.join([self.output_directory, filename + '.nc'])
+
+            if overwrite or not path.exists(file_):
+                stream.create_output_stream_dump(file_)
+            else:
+                stream.dump_file = file_
+
+    def initialise_output_streams_from_dump(self, dump_file_pattern,
+                                            at=None):
+        """Initialise the states of the Component from a dump file.
+
+        :Parameters:
+
+            dump_filepath_pattern: `str`
+                A string providing the path to the netCDF dump file
+                containing values to be used as initial conditions for
+                the output streams of the Component. Note, curly
+                brackets {} should be used where the output stream delta
+                should be used.
+
+                *Parameter example:* ::
+
+                    dump_file_pattern='out/dummy_surfacelayer_run_dump_stream_{}.nc'
+
+            at: datetime object, optional
+                The snapshot in time to be used for the initial
+                conditions. Must be any datetime type (except
+                `numpy.datetime64`). Must be contained in the 'time'
+                variable in dump file. If not provided, the last index
+                in the 'time' variable in dump file will be used.
+
+                Note: if a datetime is provided, there is no enforcement
+                of the fact that this datetime must correspond to the
+                initial datetime in the simulation period for the
+                `Component`, and it is only used as a means to select
+                a specific snapshot in time amongst the ones available
+                in the dump file.
+
+        :Returns:
+
+            datetime object
+                The snapshot in time that was used for the initial
+                conditions.
+
+        """
+        ats = []
+
+        if self.outputs:
+            for delta, stream in self._output_streams.items():
+                file_ = dump_file_pattern.format(stream.frequency)
+                ats.append(stream.load_output_stream_dump(file_, at))
+
+        return ats
+
+    def dump_output_streams(self, timeindex):
+        timestamp = self.timedomain.bounds.array[timeindex, 0]
+        if self.outputs:
+            for delta, stream in self._output_streams.items():
+                stream.update_output_stream_dump(timestamp)
 
     @abc.abstractmethod
     def initialise(self, **kwargs):
@@ -589,6 +784,11 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
+        },
+        'water_level': {
+            'units': 'kg m-2',
+            'from': 'openwater',
+            'method': 'mean'
         }
     }
     _outwards_info = {
@@ -623,9 +823,9 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
         }
     }
     _outwards_info = {
-        'discharge': {
-            'units': 'kg m-2 s-1',
-            'to': 'ocean',
+        'water_level': {
+            'units': 'kg m-2',
+            'to': 'subsurface',
             'method': 'mean'
         }
     }
@@ -738,7 +938,7 @@ class DataComponent(Component):
         return {}
 
     def run(self, *args, **kwargs):
-        return {n: kwargs[n] for n in self._outwards_info}
+        return {n: kwargs[n] for n in self._outwards_info}, {}
 
     def finalise(self, *args, **kwargs):
         pass
@@ -838,7 +1038,7 @@ class NullComponent(Component):
 
     def run(self, *args, **kwargs):
         null_array = np.zeros(self.spaceshape, np.float32)
-        return {n: null_array for n in self._outwards_info}
+        return {n: null_array for n in self._outwards_info}, {}
 
     def finalise(self, *args, **kwargs):
         pass
