@@ -46,11 +46,13 @@ class Dummy(OpenWaterComponent):
             'method': 'mean'
         }
     }
-    # define some dummy driving/ancillary/parameters/constants/states
-    # driving_data_info = {}
-    ancillary_data_info = {
+    # define some dummy inputs/parameters/constants/states/outputs
+    inputs_info = {
         'ancillary_b': {
-            'units': '1'
+            'units': '1',
+            'kind': 'climatologic',
+            'frequency': 'monthly',
+            'description': 'January to December'
         }
     }
     parameters_info = {
@@ -105,14 +107,14 @@ class Dummy(OpenWaterComponent):
         return (
             # to interface
             {
-                'transfer_l': ancillary_b * transfer_m + state_a[0],
+                'transfer_l': ancillary_b[11] * transfer_m + state_a[0],
                 'transfer_n': parameter_c * transfer_j,
                 'transfer_o': constant_c + transfer_j
             },
             # component outputs
             {
                 'output_x': parameter_c * transfer_j + constant_c,
-                'output_y': ancillary_b * transfer_m - state_a[0],
+                'output_y': ancillary_b[11] * transfer_m - state_a[0],
             }
         )
 

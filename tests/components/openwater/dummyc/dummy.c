@@ -32,13 +32,18 @@ void run_(int nz, int ny, int nx,
           // component outputs
           double *output_x, double *output_y)
 {
-  int i, j, k;
-  int ijk;
+  int h, i, j, k;
+  int hijk, ijk;
+
+  // time dimension for monthly ancillary
+  h = 11;
 
   for (i=0; i < nz; i++)
     for (j=0; j < ny; j++)
       for (k=0; k < nx; k++)
       {
+        // vectorisation of 4d-array
+        hijk = k + nx * (j + ny * (i + nz * h));
         // vectorisation of 3d-array
         ijk = k + nx * (j + ny * i);
         // update states

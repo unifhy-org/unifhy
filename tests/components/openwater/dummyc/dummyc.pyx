@@ -23,7 +23,7 @@ def initialise(cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1):
 
 def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_j,
         cnp.ndarray[cnp.npy_float64, ndim=3] transfer_m,
-        cnp.ndarray[cnp.npy_float64, ndim=3] ancillary_b,
+        cnp.ndarray[cnp.npy_float64, ndim=4] ancillary_b,
         double parameter_c,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_a_0,
@@ -45,7 +45,7 @@ def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_j,
         (nz, ny, nx), dtype=np.float64)
 
     run_(nz, ny, nx, &transfer_j[0, 0, 0], &transfer_m[0, 0, 0],
-         &ancillary_b[0, 0, 0], parameter_c, &state_a_m1[0, 0, 0],
+         &ancillary_b[0, 0, 0, 0], parameter_c, &state_a_m1[0, 0, 0],
          &state_a_0[0, 0, 0], constant_c, &transfer_l[0, 0, 0],
          &transfer_n[0, 0, 0], &transfer_o[0, 0, 0],
          &output_x[0, 0, 0], &output_y[0, 0, 0])
