@@ -130,6 +130,9 @@ class Component(metaclass=MetaComponent):
                 ===============  =======================================
 
         """
+        # check class definition attributes
+        self._check_definition()
+
         # space attributes
         self.spacedomain = spacedomain
 
@@ -262,6 +265,49 @@ class Component(metaclass=MetaComponent):
                                     'sequence of strings'.format(name, delta))
 
         self._outputs = outputs_
+
+    def _check_definition(self):
+        # check for units
+        for lead in ['inputs', 'parameters', 'constants',
+                     'outputs', 'states']:
+            attr = getattr(self, '_'.join([lead, 'info']))
+            if attr:
+                for name, info in attr.items():
+                    if 'units' not in info:
+                        raise RuntimeError(
+                            "units missing for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+        # check for kind
+        if self.inputs_info:
+            for name, info in self.inputs_info.items():
+                if 'kind' not in info:
+                    # assume it is a 'standard' input, i.e. dynamic
+                    # (this is also useful for a `DataComponent` which
+                    #  will not have a 'kind' since inputs are inherited
+                    #  from outwards of the component being substituted)
+                    info['kind'] = 'dynamic'
+                else:
+                    if info['kind'] not in ['dynamic', 'static',
+                                            'climatologic']:
+                        raise ValueError(
+                            "invalid type for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+                    if info['kind'] == 'climatologic':
+                        if 'frequency' not in info:
+                            raise RuntimeError(
+                                "frequency missing for {} in {} component "
+                                "definition".format(name, self._category)
+                            )
+                        freq = info['frequency']
+                        if not isinstance(freq, timedelta):
+                            if (isinstance(freq, str) and freq
+                                    not in ['seasonal', 'monthly', 'daily']):
+                                raise TypeError(
+                                    "invalid frequency for {} in {} component "
+                                    "definition".format(name, self._category)
+                                )
 
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
