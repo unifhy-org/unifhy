@@ -331,7 +331,7 @@ class Component(metaclass=MetaComponent):
                 "for spacedomain".format(Grid.__name__))
 
     def _check_dataset(self, dataset):
-        # checks for both driving and ancillary data
+        # checks for input data
 
         # check that the dataset is an instance of DataSet
         if not isinstance(dataset, DataSet):
@@ -344,13 +344,13 @@ class Component(metaclass=MetaComponent):
 
         # check data units compatibility with component
         for data_name, data_info in self.inputs_info.items():
-            # check that all driving data are available in DataSet
+            # check that all input data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
                     "no data '{}' available in {} for {} component '{}'".format(
                         data_name, DataSet.__name__, self._category,
                         self.__class__.__name__))
-            # check that driving data units are compliant with component units
+            # check that input data units are compliant with component units
             if hasattr(dataset[data_name], 'units'):
                 if not Units(data_info['units']).equals(
                         Units(dataset[data_name].units)):
@@ -367,7 +367,7 @@ class Component(metaclass=MetaComponent):
                                          self._category))
 
     def _check_dataset_space(self, dataset, spacedomain):
-        # check space compatibility for both driving and ancillary data
+        # check space compatibility for input data
         for data_name, data_unit in self.inputs_info.items():
             # check that the data and component space domains are compatible
             if not spacedomain.is_space_equal_to(dataset[data_name]):
@@ -391,7 +391,7 @@ class Component(metaclass=MetaComponent):
                 if self.dataset[data_name].subspace(
                         'test',
                         T=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
-                    # subspace in time
+                    # subspace in time and assign to data subset
                     self.datasubset[data_name] = (
                         self.dataset[data_name].subspace(
                             T=cf.wi(
@@ -426,10 +426,11 @@ class Component(metaclass=MetaComponent):
                 if self.dataset[data_name].construct('time').size != length:
                     raise error
 
+                # copy reference for climatologic input data
                 self.datasubset[data_name] = self.dataset[data_name]
 
             else:  # type_ == 'static':
-                # copy reference for ancillary data
+                # copy reference for static input data
                 if self.dataset[data_name].has_construct('time'):
                     if self.dataset[data_name].construct('time').size == 1:
                         self.datasubset[data_name] = (
@@ -960,10 +961,9 @@ class DataComponent(Component):
         # override outwards with the ones of component being substituted
         self._outwards_info = substituting_class.get_class_outwards_info()
 
-        # override driving data info with the outwards of component
-        # being substituted (so that the dataset is checked for time
-        # and space compatibility as a 'standard' dataset would be)
-        self.driving_data_info = substituting_class.get_class_outwards_info()
+        # override inputs info with the outwards of component being
+        # substituted (so that the dataset is checked for time and space
+        # compatibility as a 'standard' dataset would be)
         self.inputs_info = substituting_class.get_class_outwards_info()
 
         # initialise as a Component
