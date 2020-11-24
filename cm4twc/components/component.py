@@ -964,6 +964,7 @@ class DataComponent(Component):
         # being substituted (so that the dataset is checked for time
         # and space compatibility as a 'standard' dataset would be)
         self.driving_data_info = substituting_class.get_class_outwards_info()
+        self.inputs_info = substituting_class.get_class_outwards_info()
 
         # initialise as a Component
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
