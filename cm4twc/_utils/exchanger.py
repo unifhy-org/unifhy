@@ -102,17 +102,20 @@ class Exchanger(MutableMapping):
                 self.transfers[t]['weights'] = self._calculate_weights(
                     from_, to_, clock.length
                 )
-                if self.transfers[t]['method'] == 'sum':
-                    # need to add dimensions of size 1 for numpy broadcasting
-                    self.transfers[t]['weights'] = np.expand_dims(
-                        self.transfers[t]['weights'],
-                        axis=[-(i+1) for i in range(len(shape))]
-                    )
 
                 # history is the number of timesteps that are stored
                 self.transfers[t]['history'] = (
                     self.transfers[t]['weights'].shape[-1]
                 )
+
+                # special case if method is sum
+                if self.transfers[t]['method'] == 'sum':
+                    # need to add dimensions of size 1 for numpy
+                    # broadcasting in weighted sum
+                    self.transfers[t]['weights'] = np.expand_dims(
+                        self.transfers[t]['weights'],
+                        axis=[-(i+1) for i in range(len(shape))]
+                    )
 
                 # initialise iterator that allows the exchanger to know
                 # which weights to use
