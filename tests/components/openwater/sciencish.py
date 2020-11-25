@@ -5,8 +5,7 @@ from cm4twc.components import OpenWaterComponent
 
 class Sciencish(OpenWaterComponent):
 
-    # driving_data_info = {}
-    # ancillary_data_info = {}
+    # inputs_info = {}
     parameters_info = {
         'residence_time': {
             'units': 's'
