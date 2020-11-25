@@ -5,12 +5,12 @@ from cm4twc.components import SubSurfaceComponent
 
 class Sciencish(SubSurfaceComponent):
 
-    driving_data_info = {
+    inputs_info = {
         'soil_temperature': {
-            'units': 'K'
-        },
+            'units': 'K',
+            'kind': 'dynamic'
+        }
     }
-    # ancillary_data_info = {},
     parameters_info = {
         'saturation_capacity': {
             'units': 'kg m-2'
