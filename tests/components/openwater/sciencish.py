@@ -33,7 +33,7 @@ class Sciencish(OpenWaterComponent):
         river_channel[-1][:] = 1e3
 
     def run(self,
-            # from interface
+            # from exchanger
             evaporation_openwater, runoff,
             # component driving data
             # component ancillary data
@@ -53,7 +53,7 @@ class Sciencish(OpenWaterComponent):
         river_channel[0][:] = np.where(channel_water < 0, 0, channel_water)
 
         return (
-            # to interface
+            # to exchanger
             {
                 'water_level': river_channel[0][:]
             },

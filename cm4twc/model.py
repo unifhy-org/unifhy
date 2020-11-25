@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import re
 import yaml
 
-from ._utils import Interface, Clock, Compass
-from ._utils.interface import load_transfers_dump
+from ._utils import Exchanger, Clock, Compass
+from ._utils.exchanger import load_transfers_dump
 from .components import (SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
 from .time import TimeDomain
@@ -34,7 +34,7 @@ class Model(object):
 
             output_directory: `str`
                 The path to the directory where to save the model
-                interface dump files and model output files.
+                exchanger dump files and model output files.
 
             surfacelayer: `SurfaceLayerComponent` object
                 The `Component` responsible for the surface layer
@@ -74,14 +74,14 @@ class Model(object):
         if _to_yaml:
             self.to_yaml()
 
-        # define attribute interface for transfers between components
-        self.interface = None
+        # define attribute exchanger for transfers between components
+        self.exchanger = None
 
     @staticmethod
     def _process_component_type(component, expected_component):
         if isinstance(component, expected_component):
-            # check inwards interface
-            # check outwards interface
+            # check inwards exchanger
+            # check outwards exchanger
             return component
         elif isinstance(component, (DataComponent, NullComponent)):
             if component.category != expected_component.get_class_category():
@@ -244,14 +244,14 @@ class Model(object):
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def initialise_transfers_from_dump(self, dump_file, at=None):
-        """Initialise the transfers of the Interface from a dump file.
+        """Initialise the transfers of the Exchanger from a dump file.
 
         :Parameters:
 
             dump_file: `str`
                 A string providing the path to the netCDF dump file
                 containing values to be used as initial conditions for
-                the transfers of the Interface.
+                the transfers of the Exchanger.
 
             at: datetime object, optional
                 The snapshot in time to be used for the initial
@@ -284,23 +284,23 @@ class Model(object):
                        'subsurface': self.subsurface.timedomain,
                        'openwater': self.openwater.timedomain})
 
-        # set up interface responsible for transfers between components
-        self.interface = Interface({'surfacelayer': self.surfacelayer,
+        # set up exchanger responsible for transfers between components
+        self.exchanger = Exchanger({'surfacelayer': self.surfacelayer,
                                     'subsurface': self.subsurface,
                                     'openwater': self.openwater},
                                    clock, compass, self.identifier,
                                    self.output_directory)
 
         transfers, at = load_transfers_dump(dump_file, at,
-                                            self.interface.transfers)
-        for tr in self.interface.transfers:
+                                            self.exchanger.transfers)
+        for tr in self.exchanger.transfers:
             if tr in transfers:
-                if self.interface.transfers[tr].get('from') is None:
+                if self.exchanger.transfers[tr].get('from') is None:
                     continue
                 else:
-                    self.interface.transfers[tr]['slices'][-1] = transfers[tr]
+                    self.exchanger.transfers[tr]['slices'][-1] = transfers[tr]
             else:
-                raise KeyError("initial conditions for interface transfer "
+                raise KeyError("initial conditions for exchanger transfer "
                                "'{}' not in dump".format(tr))
 
         return at
@@ -455,10 +455,10 @@ class Model(object):
         if dumping_frequency is not None:
             clock.set_dumping_frequency(dumping_frequency)
 
-        # set up interface responsible for transfers between components
-        if self.interface is None:
-            # generate an instance of Interface
-            self.interface = Interface({'surfacelayer': self.surfacelayer,
+        # set up exchanger responsible for transfers between components
+        if self.exchanger is None:
+            # generate an instance of Exchanger
+            self.exchanger = Exchanger({'surfacelayer': self.surfacelayer,
                                         'subsurface': self.subsurface,
                                         'openwater': self.openwater},
                                        clock, compass, self.identifier,
@@ -467,14 +467,14 @@ class Model(object):
             # no need for a new instance, but need to re-run the setup
             # of the existing instance because time or space information
             # may have been changed for one or more components
-            self.interface.set_up(clock, compass)
-        self.interface.initialise_(tag, overwrite)
+            self.exchanger.set_up(clock, compass)
+        self.exchanger.initialise_(tag, overwrite)
 
         # run components
         for (run_surfacelayer, run_subsurface, run_openwater,
              dumping) in clock:
 
-            to_interface = {}
+            to_exchanger = {}
 
             if dumping:
                 ti = clock.get_current_timeindex('surfacelayer')
@@ -486,35 +486,35 @@ class Model(object):
                 ti = clock.get_current_timeindex('openwater')
                 self.openwater.dump_states(ti)
                 self.openwater.dump_output_streams(ti)
-                self.interface.dump_transfers(
+                self.exchanger.dump_transfers(
                     clock.get_current_timestamp()
                 )
 
             if run_surfacelayer:
-                to_interface.update(
+                to_exchanger.update(
                     self.surfacelayer.run_(
                         clock.get_current_timeindex('surfacelayer'),
-                        self.interface
+                        self.exchanger
                     )
                 )
 
             if run_subsurface:
-                to_interface.update(
+                to_exchanger.update(
                     self.subsurface.run_(
                         clock.get_current_timeindex('subsurface'),
-                        self.interface
+                        self.exchanger
                     )
                 )
 
             if run_openwater:
-                to_interface.update(
+                to_exchanger.update(
                     self.openwater.run_(
                         clock.get_current_timeindex('openwater'),
-                        self.interface
+                        self.exchanger
                     )
                 )
 
-            self.interface.update(to_interface)
+            self.exchanger.update(to_exchanger)
 
     def _finalise(self):
         # finalise components
@@ -522,7 +522,7 @@ class Model(object):
         self.subsurface.finalise_()
         self.openwater.finalise_()
         # finalise model
-        self.interface.finalise_()
+        self.exchanger.finalise_()
 
     def resume(self, tag, at=None):
         """Resume model spin up or main simulation run on latest
@@ -596,9 +596,9 @@ class Model(object):
         if data_or_null == 3:
             return
 
-        # initialise model interface transfers from dump file
+        # initialise model exchanger transfers from dump file
         dump_file = sep.join([self.output_directory,
-                              '_'.join([self.identifier, 'interface',
+                              '_'.join([self.identifier, 'exchanger',
                                         tag, 'dump.nc'])])
 
         ats.append(self.initialise_transfers_from_dump(dump_file, at))

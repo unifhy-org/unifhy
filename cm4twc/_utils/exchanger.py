@@ -8,7 +8,7 @@ import numpy as np
 from ..settings import dtype_float
 
 
-class Interface(MutableMapping):
+class Exchanger(MutableMapping):
 
     def __init__(self, components, clock, compass,
                  identifier, output_directory):
@@ -44,7 +44,7 @@ class Interface(MutableMapping):
         # assign identifier
         self.identifier = identifier
 
-        # assign clock and compass for interface to remain aware of space/time
+        # assign clock and compass for exchanger to remain aware of space/time
         self.clock = clock
         self.compass = compass
 
@@ -96,7 +96,7 @@ class Interface(MutableMapping):
                         compass.spacedomains[self.transfers[t]['to']].to_field()
                     )
 
-                # determine the weights that will be used by the interface
+                # determine the weights that will be used by the exchanger
                 # on the stored timesteps when a transfer is asked (i.e.
                 # when __getitem__ is called)
                 self.transfers[t]['weights'] = self._calculate_weights(
@@ -114,7 +114,7 @@ class Interface(MutableMapping):
                     self.transfers[t]['weights'].shape[-1]
                 )
 
-                # initialise iterator that allows the interface to know
+                # initialise iterator that allows the exchanger to know
                 # which weights to use
                 self.transfers[t]['iter'] = 0
 
@@ -211,12 +211,12 @@ class Interface(MutableMapping):
 
         weights = np.array(weights)
 
-        assert keep == weights.shape[-1], 'error in interface weights'
+        assert keep == weights.shape[-1], 'error in exchanger weights'
 
         return weights
 
     def initialise_(self, tag, overwrite=True):
-        self.dump_file = '_'.join([self.identifier, 'interface',
+        self.dump_file = '_'.join([self.identifier, 'exchanger',
                                    tag, 'dump.nc'])
         if (overwrite or not path.exists(sep.join([self.output_directory,
                                                    self.dump_file]))):
@@ -261,7 +261,7 @@ class Interface(MutableMapping):
         elif self.transfers[key]['method'] == 'maximum':
             value = np.amax(self.transfers[key]['slices'], axis=0)
         else:
-            raise ValueError('method for interface transfer unknown')
+            raise ValueError('method for exchanger transfer unknown')
 
         # remap value from supermesh resolution to destination resolution
         # # NOT IMPLEMENTED

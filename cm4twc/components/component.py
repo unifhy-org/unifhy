@@ -561,7 +561,7 @@ class Component(metaclass=MetaComponent):
             # create dumps for output streams
             self._initialise_output_streams_dumps(tag, overwrite)
 
-    def run_(self, timeindex, from_interface):
+    def run_(self, timeindex, from_exchanger):
         data = {}
         # collect required ancillary data from dataset
         for d in self.inputs_info:
@@ -570,22 +570,22 @@ class Component(metaclass=MetaComponent):
                 data[d] = self.datasubset[d].array[timeindex, ...]
             else:
                 data[d] = self.datasubset[d].array[...]
-        # collect required transfers from interface
+        # collect required transfers from exchanger
         for d in self._inwards_info:
-            data[d] = from_interface[d]
+            data[d] = from_exchanger[d]
 
         # run simulation for the component
-        to_interface, outputs = self.run(**self.parameters, **self.constants,
+        to_exchanger, outputs = self.run(**self.parameters, **self.constants,
                                          **self.states, **data)
 
         # store outputs
         for name in self._outputs:
-            self._output_objects[name](self.states, to_interface, outputs)
+            self._output_objects[name](self.states, to_exchanger, outputs)
 
         # increment the component's states by one timestep
         self.increment_states()
 
-        return to_interface
+        return to_exchanger
 
     def finalise_(self):
         timestamp = self.timedomain.bounds.array[-1, -1]

@@ -80,7 +80,7 @@ class Dummy(SubSurfaceComponent):
         state_b[-1][:] = 0
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_i, transfer_n,
             # component driving data
             driving_a,
@@ -96,7 +96,7 @@ class Dummy(SubSurfaceComponent):
         state_b[0][:] = state_b[-1] + 2
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_k': driving_a * parameter_a + transfer_n + state_a[0],
                 'transfer_m': driving_a * parameter_a + transfer_i + state_b[0]
@@ -108,7 +108,7 @@ class Dummy(SubSurfaceComponent):
         )
 
     def finalise(self,
-                 # to interface
+                 # to exchanger
                  state_a, state_b,
                  **kwargs):
         pass
@@ -136,7 +136,7 @@ class DummyFortran(Dummy):
         dummyfortran.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_i, transfer_n,
             # component driving data
             driving_a,
@@ -155,7 +155,7 @@ class DummyFortran(Dummy):
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_k': transfer_k,
                 'transfer_m': transfer_m
@@ -182,7 +182,7 @@ class DummyC(Dummy):
         dummyc.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_i, transfer_n,
             # component driving data
             driving_a,
@@ -201,7 +201,7 @@ class DummyC(Dummy):
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_k': transfer_k,
                 'transfer_m': transfer_m

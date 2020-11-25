@@ -53,7 +53,7 @@ class Sciencish(SurfaceLayerComponent):
         snowpack[-1][:] = 2
 
     def run(self,
-            # from interface
+            # from exchanger
             soil_water_stress,
             # component driving data
             rainfall, snowfall, air_temperature,
@@ -93,7 +93,7 @@ class Sciencish(SurfaceLayerComponent):
         openwater_evaporation = soil_evaporation * 0
 
         return (
-            # to interface
+            # to exchanger
             {
                 'throughfall': throughfall + direct_rainfall,
                 'snowmelt': snowmelt,
@@ -107,7 +107,7 @@ class Sciencish(SurfaceLayerComponent):
         )
 
     def finalise(self,
-                 # to interface
+                 # to exchanger
                  canopy, snowpack,
                  **kwargs):
         pass

@@ -104,7 +104,7 @@ class Dummy(SurfaceLayerComponent):
         state_b[-1][:] = 0
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_k, transfer_l,
             # component driving data
             driving_a, driving_b, driving_c,
@@ -120,7 +120,7 @@ class Dummy(SurfaceLayerComponent):
         state_b[0][:] = state_b[-1] + 2
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_i':
                     driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
@@ -163,7 +163,7 @@ class DummyFortran(Dummy):
         dummyfortran.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_k, transfer_l,
             # component driving data
             driving_a, driving_b, driving_c,
@@ -183,7 +183,7 @@ class DummyFortran(Dummy):
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_i': transfer_i,
                 'transfer_j': transfer_j
@@ -210,7 +210,7 @@ class DummyC(Dummy):
         dummyc.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_k, transfer_l,
             # component driving data
             driving_a, driving_b, driving_c,
@@ -230,7 +230,7 @@ class DummyC(Dummy):
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_i': transfer_i,
                 'transfer_j': transfer_j

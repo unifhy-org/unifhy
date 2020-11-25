@@ -83,21 +83,21 @@ class Output(object):
 
 class StateOutput(Output):
 
-    def __call__(self, states, to_interface, outputs):
+    def __call__(self, states, to_exchanger, outputs):
         for s in self.streams:
             s.update_output(self.name, states[self.name][0])
 
 
 class InterfaceOutput(Output):
 
-    def __call__(self, states, to_interface, outputs):
+    def __call__(self, states, to_exchanger, outputs):
         for s in self.streams:
-            s.update_output(self.name, to_interface[self.name])
+            s.update_output(self.name, to_exchanger[self.name])
 
 
 class OtherOutput(Output):
 
-    def __call__(self, states, to_interface, outputs):
+    def __call__(self, states, to_exchanger, outputs):
         for s in self.streams:
             s.update_output(self.name, outputs[self.name])
 

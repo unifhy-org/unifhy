@@ -89,7 +89,7 @@ class Dummy(OpenWaterComponent):
         state_a[-1][:] = 0
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_j, transfer_m,
             # component driving data
             # component ancillary data
@@ -105,7 +105,7 @@ class Dummy(OpenWaterComponent):
         state_a[0][:] = state_a[-1] + 1
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_l': ancillary_b[11] * transfer_m + state_a[0],
                 'transfer_n': parameter_c * transfer_j,
@@ -142,7 +142,7 @@ class DummyFortran(Dummy):
         dummyfortran.initialise(state_a[-1])
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_j, transfer_m,
             # component driving data
             # component ancillary data
@@ -163,7 +163,7 @@ class DummyFortran(Dummy):
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_l': transfer_l,
                 'transfer_n': transfer_n,
@@ -192,7 +192,7 @@ class DummyC(Dummy):
         dummyc.initialise(state_a[-1])
 
     def run(self,
-            # from interface
+            # from exchanger
             transfer_j, transfer_m,
             # component driving data
             # component ancillary data
@@ -213,7 +213,7 @@ class DummyC(Dummy):
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_l': transfer_l,
                 'transfer_n': transfer_n,
