@@ -32,12 +32,12 @@ class Dummy(SubSurfaceComponent):
     _outwards_info = {
         'transfer_k': {
             'units': '1',
-            'to': 'surfacelayer',
+            'to': ['surfacelayer'],
             'method': 'mean'
         },
         'transfer_m': {
             'units': '1',
-            'to': 'openwater',
+            'to': ['openwater'],
             'method': 'mean'
         }
     }

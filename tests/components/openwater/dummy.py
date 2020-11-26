@@ -32,17 +32,17 @@ class Dummy(OpenWaterComponent):
     _outwards_info = {
         'transfer_l': {
             'units': '1',
-            'to': 'surfacelayer',
+            'to': ['surfacelayer'],
             'method': 'mean'
         },
         'transfer_n': {
             'units': '1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'transfer_o': {
             'units': '1',
-            'to': 'ocean',
+            'to': ['ocean'],
             'method': 'mean'
         }
     }
