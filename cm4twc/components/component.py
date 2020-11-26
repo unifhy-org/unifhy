@@ -561,7 +561,7 @@ class Component(metaclass=MetaComponent):
             # create dumps for output streams
             self._initialise_output_streams_dumps(tag, overwrite)
 
-    def run_(self, timeindex, from_exchanger):
+    def run_(self, timeindex, exchanger):
         data = {}
         # collect required ancillary data from dataset
         for d in self.inputs_info:
@@ -572,7 +572,7 @@ class Component(metaclass=MetaComponent):
                 data[d] = self.datasubset[d].array[...]
         # collect required transfers from exchanger
         for d in self._inwards_info:
-            data[d] = from_exchanger[d]
+            data[d] = exchanger.get_transfer(d, self._category)
 
         # run simulation for the component
         to_exchanger, outputs = self.run(**self.parameters, **self.constants,
@@ -805,37 +805,42 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
             'units': '1',
             'from': 'subsurface',
             'method': 'mean'
+        },
+        'water_level': {
+            'units': 'kg m-2',
+            'from': 'openwater',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'throughfall': {
             'units': 'kg m-2 s-1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'snowmelt': {
             'units': 'kg m-2 s-1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'transpiration': {
             'units': 'kg m-2 s-1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'evaporation_soil_surface': {
             'units': 'kg m-2 s-1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'evaporation_ponded_water': {
             'units': 'kg m-2 s-1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'evaporation_openwater': {
             'units': 'kg m-2 s-1',
-            'to': 'openwater',
+            'to': ['openwater'],
             'method': 'mean'
         }
     }
@@ -881,12 +886,12 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     _outwards_info = {
         'runoff': {
             'units': 'kg m-2 s-1',
-            'to': 'openwater',
+            'to': ['openwater'],
             'method': 'mean'
         },
         'soil_water_stress': {
             'units': '1',
-            'to': 'surfacelayer',
+            'to': ['surfacelayer'],
             'method': 'mean'
         }
     }
@@ -912,7 +917,7 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     _outwards_info = {
         'water_level': {
             'units': 'kg m-2',
-            'to': 'subsurface',
+            'to': ['surfacelayer', 'subsurface'],
             'method': 'mean'
         }
     }

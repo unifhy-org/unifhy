@@ -514,7 +514,7 @@ class Model(object):
                     )
                 )
 
-            self.exchanger.update(to_exchanger)
+            self.exchanger.update_transfers(to_exchanger)
 
     def _finalise(self):
         # finalise components
