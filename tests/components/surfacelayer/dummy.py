@@ -27,6 +27,11 @@ class Dummy(SurfaceLayerComponent):
             'units': '1',
             'from': 'openwater',
             'method': 'mean'
+        },
+        'transfer_n': {
+            'units': '1',
+            'from': 'openwater',
+            'method': 'mean'
         }
     }
     _outwards_info = {
@@ -105,7 +110,7 @@ class Dummy(SurfaceLayerComponent):
 
     def run(self,
             # from exchanger
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
@@ -130,7 +135,7 @@ class Dummy(SurfaceLayerComponent):
             # component outputs
             {
                 'output_x':
-                    driving_a + driving_b + driving_c + transfer_k - state_a[0]
+                    driving_a + driving_b + driving_c + transfer_n - state_a[0]
             }
         )
 
@@ -164,7 +169,7 @@ class DummyFortran(Dummy):
 
     def run(self,
             # from exchanger
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
@@ -176,7 +181,7 @@ class DummyFortran(Dummy):
             **kwargs):
 
         transfer_i, transfer_j, output_x = dummyfortran.run(
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             driving_a, driving_b, driving_c,
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
@@ -211,7 +216,7 @@ class DummyC(Dummy):
 
     def run(self,
             # from exchanger
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
@@ -223,7 +228,7 @@ class DummyC(Dummy):
             **kwargs):
 
         transfer_i, transfer_j, output_x = dummyc.run(
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             driving_a, driving_b, driving_c,
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]

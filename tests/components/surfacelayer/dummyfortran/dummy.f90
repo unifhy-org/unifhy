@@ -12,7 +12,7 @@ subroutine initialise(z, y, x, state_a_m1, state_b_m1)
 end subroutine initialise
 
 subroutine run(z, y, x, &
-               transfer_k, transfer_l, &
+               transfer_k, transfer_l, transfer_n, &
                driving_a, driving_b, driving_c, &
                ancillary_c, &
                state_a_m1, state_a_0, state_b_m1, state_b_0, &
@@ -24,7 +24,8 @@ subroutine run(z, y, x, &
     ! spaceshape
     integer, intent(in) :: z, y, x
     ! from exchanger
-    real(kind=8), intent(in), dimension(z, y, x) :: transfer_k, transfer_l
+    real(kind=8), intent(in), dimension(z, y, x) :: &
+        transfer_k, transfer_l, transfer_n
     ! component driving data
     real(kind=8), intent(in), dimension(z, y, x) :: &
         driving_a, driving_b, driving_c
@@ -44,7 +45,7 @@ subroutine run(z, y, x, &
     transfer_i = driving_a + driving_b + transfer_l + (ancillary_c * state_a_0)
     transfer_j = driving_a + driving_b + driving_c + transfer_k + state_b_0
 
-    output_x = driving_a + driving_b + driving_c + transfer_k - state_a_0
+    output_x = driving_a + driving_b + driving_c + transfer_n - state_a_0
 
 end subroutine run
 

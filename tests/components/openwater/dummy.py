@@ -37,7 +37,7 @@ class Dummy(OpenWaterComponent):
         },
         'transfer_n': {
             'units': '1',
-            'to': ['subsurface'],
+            'to': ['surfacelayer', 'subsurface'],
             'method': 'mean'
         },
         'transfer_o': {

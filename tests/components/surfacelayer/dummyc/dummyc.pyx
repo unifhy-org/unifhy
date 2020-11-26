@@ -7,10 +7,10 @@ cdef extern from "dummy.h":
                      double *state_b_m1)
 
     void run_(int nz, int ny, int nx, double *transfer_k, double *transfer_l,
-              double *driving_a, double *driving_b, double *driving_c,
-              double *ancillary_c, double *state_a_m1, double *state_a_0,
-              double *state_b_m1, double *state_b_0, double *transfer_i,
-              double *transfer_j, double *output_x)
+              double *transfer_n, double *driving_a, double *driving_b,
+              double *driving_c, double *ancillary_c, double *state_a_m1,
+              double *state_a_0, double *state_b_m1, double *state_b_0,
+              double *transfer_i, double *transfer_j, double *output_x)
 
     void finalise_()
 
@@ -25,6 +25,7 @@ def initialise(cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1,
 
 def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_k,
         cnp.ndarray[cnp.npy_float64, ndim=3] transfer_l,
+        cnp.ndarray[cnp.npy_float64, ndim=3] transfer_n,
         cnp.ndarray[cnp.npy_float64, ndim=3] driving_a,
         cnp.ndarray[cnp.npy_float64, ndim=3] driving_b,
         cnp.ndarray[cnp.npy_float64, ndim=3] driving_c,
@@ -46,10 +47,10 @@ def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_k,
         (nz, ny, nx), dtype=np.float64)
 
     run_(nz, ny, nx, &transfer_k[0, 0, 0], &transfer_l[0, 0, 0],
-         &driving_a[0, 0, 0], &driving_b[0, 0, 0], &driving_c[0, 0, 0],
-         &ancillary_c[0, 0, 0], &state_a_m1[0, 0, 0], &state_a_0[0, 0, 0],
-         &state_b_m1[0, 0, 0], &state_b_0[0, 0, 0], &transfer_i[0, 0, 0],
-         &transfer_j[0, 0, 0], &output_x[0, 0, 0])
+         &transfer_n[0, 0, 0], &driving_a[0, 0, 0], &driving_b[0, 0, 0],
+         &driving_c[0, 0, 0], &ancillary_c[0, 0, 0], &state_a_m1[0, 0, 0],
+         &state_a_0[0, 0, 0], &state_b_m1[0, 0, 0], &state_b_0[0, 0, 0],
+         &transfer_i[0, 0, 0], &transfer_j[0, 0, 0], &output_x[0, 0, 0])
 
     return transfer_i, transfer_j, output_x
 

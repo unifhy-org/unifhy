@@ -19,7 +19,7 @@ void initialise_(int nz, int ny, int nx,
 
 void run_(int nz, int ny, int nx,
           // from exchanger
-          double *transfer_k, double *transfer_l,
+          double *transfer_k, double *transfer_l, double *transfer_n,
           // component driving data
           double *driving_a, double *driving_b, double *driving_c,
           // component ancillary data
@@ -51,7 +51,7 @@ void run_(int nz, int ny, int nx,
           + transfer_k[ijk] + state_b_0[ijk];
         // compute outputs
         output_x[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
-          + transfer_k[ijk] - state_a_0[ijk];
+          + transfer_n[ijk] - state_a_0[ijk];
       }
 }
 
