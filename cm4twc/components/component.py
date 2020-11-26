@@ -94,7 +94,7 @@ class Component(metaclass=MetaComponent):
                                         (i.e. from January to December).
 
                 ``'day_of_year'``       Length of 366, corresponding to
-                                        the months in the calendar year
+                                        the days in the calendar year
                                         (i.e. from January 1st to
                                         December 31st, including value
                                         for February 29th).
