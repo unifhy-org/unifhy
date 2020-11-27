@@ -3,7 +3,7 @@ from netCDF4 import Dataset
 
 import cm4twc
 from tests.test_time import get_dummy_output_time_and_bounds
-from tests.test_component import time_resolutions
+from tests.test_components.test_component import time_resolutions
 
 # expected raw values for states/transfers/outputs after main run
 # (null initial conditions, no spinup run, 12-day period)

@@ -9,10 +9,10 @@ import cm4twc
 from tests.test_time import (get_dummy_timedomain,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
-from tests.test_component import get_dummy_component
-from tests.test_states import compare_states
-from tests.test_outputs import (get_expected_output, get_produced_output,
-                                exp_outputs_raw)
+from tests.test_components.test_component import get_dummy_component
+from tests.test_components.test_utils.test_states import compare_states
+from tests.test_components.test_utils.test_outputs import (get_expected_output, get_produced_output,
+                                                           exp_outputs_raw)
 
 
 class Simulator(object):
