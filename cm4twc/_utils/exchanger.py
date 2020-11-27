@@ -114,6 +114,8 @@ class Exchanger(object):
 
                     # special case if method is sum
                     if self.transfers[t]['method'] == 'sum':
+                        # weights need to sum to one
+                        weights = weights / to_
                         # need to add dimensions of size 1 for numpy
                         # broadcasting in weighted sum
                         weights = np.expand_dims(
