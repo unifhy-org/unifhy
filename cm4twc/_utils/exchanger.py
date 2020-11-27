@@ -149,6 +149,24 @@ class Exchanger(object):
 
     @staticmethod
     def _calculate_weights(from_, to_, length):
+        """**Examples:**
+
+        >>> Exchanger._calculate_weights(3, 7, 42)
+        array([[3, 3, 1],
+               [2, 3, 2],
+               [1, 3, 3],
+               [3, 3, 1],
+               [2, 3, 2],
+               [1, 3, 3]])
+        >>> Exchanger._calculate_weights(7, 3, 21)
+        array([[0, 3],
+               [0, 3],
+               [1, 2],
+               [0, 3],
+               [2, 1],
+               [0, 3],
+               [0, 3]])
+        """
         weights = []
 
         if to_ == from_:
