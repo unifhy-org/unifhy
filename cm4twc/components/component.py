@@ -78,7 +78,27 @@ class Component(metaclass=MetaComponent):
                 The input data must be compatible in space with
                 *spacedomain*, and compatible in time with *timedomain*
                 for the 'dynamic' type, and with the 'frequency' for
-                the 'climatologic' type.
+                the 'climatologic' type (see table below for details).
+
+                ======================  ================================
+                climatologic frequency  length of time dimension in data
+                ======================  ================================
+                ``'seasonal'``          Length of 4, corresponding to
+                                        the meteorological seasons (i.e.
+                                        Winter [DJF], Spring [MAM],
+                                        Summer [JJA], Autumn [SON], in
+                                        this order).
+
+                ``'monthly'``           Length of 12, corresponding to
+                                        the months in the calendar year
+                                        (i.e. from January to December).
+
+                ``'day_of_year'``       Length of 366, corresponding to
+                                        the days in the calendar year
+                                        (i.e. from January 1st to
+                                        December 31st, including value
+                                        for February 29th).
+                ======================  ================================
 
             parameters: `dict`, optional
                 The parameter values for the `Component`. Must be
@@ -409,9 +429,9 @@ class Component(metaclass=MetaComponent):
 
             elif kind == 'climatologic':
                 lengths = {
-                    'seasonal': 4,  # MAM-JJA-SON-DJF
-                    'monthly': 12,
-                    'day_of_year': 366
+                    'seasonal': 4,  # DJF-MAM-JJA-SON
+                    'monthly': 12,  # January to December
+                    'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
                 }
                 freq = self.inputs_info[data_name]['frequency']
                 if isinstance(freq, str):
