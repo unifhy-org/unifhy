@@ -41,17 +41,17 @@ class Dummy(SubSurfaceComponent):
             'method': 'mean'
         }
     }
-    # define some dummy driving/ancillary/parameters/constants/states
-    driving_data_info = {
+    # define some dummy inputs/parameters/constants/states/outputs
+    inputs_info = {
         'driving_a': {
-            'units': '1'
-        },
+            'units': '1',
+            'kind': 'dynamic'
+        }
     }
-    # ancillary_data_info = {}
     parameters_info = {
         'parameter_a': {
             'units': '1'
-        },
+        }
     }
     # constants_info = {}
     states_info = {

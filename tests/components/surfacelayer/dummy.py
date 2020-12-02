@@ -41,7 +41,25 @@ class Dummy(SurfaceLayerComponent):
             'method': 'mean'
         }
     }
-    # define some dummy driving/ancillary/parameters/constants/states
+    # define some dummy inputs/parameters/constants/states/outputs
+    inputs_info = {
+        'driving_a': {
+            'units': '1',
+            'kind': 'dynamic'
+        },
+        'driving_b': {
+            'units': '1',
+            'kind': 'dynamic'
+        },
+        'driving_c': {
+            'units': '1',
+            'kind': 'dynamic'
+        },
+        'ancillary_c': {
+            'units': '1',
+            'kind': 'static'
+        }
+    }
     driving_data_info = {
         'driving_a': {
             'units': '1'

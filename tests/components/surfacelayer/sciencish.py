@@ -5,20 +5,22 @@ from cm4twc.components import SurfaceLayerComponent
 
 class Sciencish(SurfaceLayerComponent):
 
-    driving_data_info = {
+    inputs_info = {
         'rainfall': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'kind': 'dynamic'
         },
         'snowfall': {
-            'units': 'kg m-2 s-1'
+            'units': 'kg m-2 s-1',
+            'kind': 'dynamic'
         },
         'air_temperature': {
-            'units': 'K'
+            'units': 'K',
+            'kind': 'dynamic'
         },
-    }
-    ancillary_data_info = {
         'vegetation_fraction': {
-            'units': '1'
+            'units': '1',
+            'kind': 'static'
         }
     }
     # parameters_info = {}

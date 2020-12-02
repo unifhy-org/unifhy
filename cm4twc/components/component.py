@@ -2,6 +2,7 @@ import abc
 from importlib import import_module
 import numpy as np
 from os import path, sep
+from datetime import timedelta
 import cf
 from cfunits import Units
 
@@ -28,9 +29,8 @@ class MetaComponent(abc.ABCMeta):
                     for n, info in getattr(self, t + '_info').items()]
                  if getattr(self, t + '_info') else [])
             )
-            for t in ['_inwards', '_outwards', 'driving_data',
-                      'ancillary_data', 'parameters', 'constants',
-                      'outputs', 'states']
+            for t in ['_inwards', '_outwards',
+                      'inputs', 'parameters', 'constants', 'outputs', 'states']
             if getattr(self, t + '_info')
         ]
         return "\n".join(
@@ -49,8 +49,7 @@ class Component(metaclass=MetaComponent):
     _outwards_info = None
 
     # definition attributes (set to default)
-    driving_data_info = {}
-    ancillary_data_info = {}
+    inputs_info = {}
     parameters_info = {}
     constants_info = {}
     states_info = {}
@@ -74,10 +73,37 @@ class Component(metaclass=MetaComponent):
                 The spatial dimension of the `Component`.
 
             dataset: `DataSet` object, optional
-                The dataset containing the substitute data substituting
-                the `Component`\'s simulated time series. The data is
-                dataset must be compatible in time with *timedomain* and
-                compatible in space with *spacedomain*.
+                The collection of input data required by the `Component`
+                (i.e. 'dynamic' and/or 'static' and/or 'climatologic').
+                The input data must be compatible in space with
+                *spacedomain*, and compatible in time with *timedomain*
+                for the 'dynamic' type, and with the 'frequency' for
+                the 'climatologic' type (see table below for details).
+
+                ======================  ================================
+                climatologic frequency  length of time dimension in data
+                ======================  ================================
+                ``'seasonal'``          Length of 4, corresponding to
+                                        the meteorological seasons (i.e.
+                                        Winter [DJF], Spring [MAM],
+                                        Summer [JJA], Autumn [SON], in
+                                        this order).
+
+                ``'monthly'``           Length of 12, corresponding to
+                                        the months in the calendar year
+                                        (i.e. from January to December).
+
+                ``'day_of_year'``       Length of 366, corresponding to
+                                        the days in the calendar year
+                                        (i.e. from January 1st to
+                                        December 31st, including value
+                                        for February 29th).
+
+                `int`                   Length according to the integer
+                                        value (e.g. a value of 6 means
+                                        6 climatologic values for the
+                                        calendar year).
+                ======================  ================================
 
             parameters: `dict`, optional
                 The parameter values for the `Component`. Must be
@@ -129,6 +155,9 @@ class Component(metaclass=MetaComponent):
                 ===============  =======================================
 
         """
+        # check class definition attributes
+        self._check_definition()
+
         # space attributes
         self.spacedomain = spacedomain
 
@@ -262,6 +291,49 @@ class Component(metaclass=MetaComponent):
 
         self._outputs = outputs_
 
+    def _check_definition(self):
+        # check for units
+        for lead in ['inputs', 'parameters', 'constants',
+                     'outputs', 'states']:
+            attr = getattr(self, '_'.join([lead, 'info']))
+            if attr:
+                for name, info in attr.items():
+                    if 'units' not in info:
+                        raise RuntimeError(
+                            "units missing for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+        # check for kind
+        if self.inputs_info:
+            for name, info in self.inputs_info.items():
+                if 'kind' not in info:
+                    # assume it is a 'standard' input, i.e. dynamic
+                    # (this is also useful for a `DataComponent` which
+                    #  will not have a 'kind' since inputs are inherited
+                    #  from outwards of the component being substituted)
+                    info['kind'] = 'dynamic'
+                else:
+                    if info['kind'] not in ['dynamic', 'static',
+                                            'climatologic']:
+                        raise ValueError(
+                            "invalid type for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+                    if info['kind'] == 'climatologic':
+                        if 'frequency' not in info:
+                            raise RuntimeError(
+                                "frequency missing for {} in {} component "
+                                "definition".format(name, self._category)
+                            )
+                        freq = info['frequency']
+                        if not isinstance(freq, int):
+                            if (isinstance(freq, str) and freq
+                                    not in ['seasonal', 'monthly', 'daily']):
+                                raise TypeError(
+                                    "invalid frequency for {} in {} component "
+                                    "definition".format(name, self._category)
+                                )
+
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
         of the right type.
@@ -284,7 +356,7 @@ class Component(metaclass=MetaComponent):
                 "for spacedomain".format(Grid.__name__))
 
     def _check_dataset(self, dataset):
-        # checks for both driving and ancillary data
+        # checks for input data
 
         # check that the dataset is an instance of DataSet
         if not isinstance(dataset, DataSet):
@@ -296,15 +368,14 @@ class Component(metaclass=MetaComponent):
                     DataSet.__name__))
 
         # check data units compatibility with component
-        for data_name, data_info in {**self.driving_data_info,
-                                     **self.ancillary_data_info}.items():
-            # check that all driving data are available in DataSet
+        for data_name, data_info in self.inputs_info.items():
+            # check that all input data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
                     "no data '{}' available in {} for {} component '{}'".format(
                         data_name, DataSet.__name__, self._category,
                         self.__class__.__name__))
-            # check that driving data units are compliant with component units
+            # check that input data units are compliant with component units
             if hasattr(dataset[data_name], 'units'):
                 if not Units(data_info['units']).equals(
                         Units(dataset[data_name].units)):
@@ -321,9 +392,8 @@ class Component(metaclass=MetaComponent):
                                          self._category))
 
     def _check_dataset_space(self, dataset, spacedomain):
-        # check space compatibility for both driving and ancillary data
-        for data_name, data_unit in {**self.driving_data_info,
-                                     **self.ancillary_data_info}.items():
+        # check space compatibility for input data
+        for data_name, data_unit in self.inputs_info.items():
             # check that the data and component space domains are compatible
             if not spacedomain.is_space_equal_to(dataset[data_name]):
                 raise ValueError(
@@ -332,28 +402,66 @@ class Component(metaclass=MetaComponent):
                         data_name, self._category, self.__class__.__name__))
 
     def _check_dataset_time(self, timedomain):
-        # check time compatibility for driving data
-        for data_name in self.driving_data_info:
+        # check time compatibility for 'dynamic' input data
+        for data_name in self.inputs_info:
             error = ValueError(
                 "timedomain of data '{}' not compatible with "
                 "timedomain of {} component '{}'".format(
                     data_name, self._category, self.__class__.__name__)
             )
-            # try to subspace in time
-            if self.dataset[data_name].subspace(
-                    'test', T=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
-                # subspace in time
-                self.datasubset[data_name] = self.dataset[data_name].subspace(
-                    T=cf.wi(*timedomain.time.datetime_array[[0, -1]]))
-            else:
-                raise error
 
-            # check that the data and component time domains are compatible
-            if not timedomain.is_time_equal_to(self.datasubset[data_name]):
-                raise error
-        # copy reference for ancillary data
-        for data_name in self.ancillary_data_info:
-            self.datasubset[data_name] = self.dataset[data_name]
+            kind = self.inputs_info[data_name]['kind']
+            if kind == 'dynamic':
+                # try to subspace in time
+                if self.dataset[data_name].subspace(
+                        'test',
+                        T=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
+                    # subspace in time and assign to data subset
+                    self.datasubset[data_name] = (
+                        self.dataset[data_name].subspace(
+                            T=cf.wi(
+                                *timedomain.time.datetime_array[[0, -1]]
+                            )
+                        )
+                    )
+                else:
+                    raise error
+
+                # check that data and component time domains are compatible
+                if not timedomain.is_time_equal_to(
+                        self.datasubset[data_name]):
+                    raise error
+
+            elif kind == 'climatologic':
+                lengths = {
+                    'seasonal': 4,  # DJF-MAM-JJA-SON
+                    'monthly': 12,  # January to December
+                    'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
+                }
+                freq = self.inputs_info[data_name]['frequency']
+                if isinstance(freq, str):
+                    length = lengths[freq]
+                else:  # isinstance(freq, int):
+                    length = int(freq)
+
+                # check that time dimension is of expected length
+                if self.dataset[data_name].construct('time').size != length:
+                    raise error
+
+                # copy reference for climatologic input data
+                self.datasubset[data_name] = self.dataset[data_name]
+
+            else:  # type_ == 'static':
+                # copy reference for static input data
+                if self.dataset[data_name].has_construct('time'):
+                    if self.dataset[data_name].construct('time').size == 1:
+                        self.datasubset[data_name] = (
+                            self.dataset[data_name].squeeze('time')
+                        )
+                    else:
+                        raise error
+                else:
+                    self.datasubset[data_name] = self.dataset[data_name]
 
     def _check_parameters(self, parameters):
         """The purpose of this method is to check that parameter values
@@ -478,11 +586,12 @@ class Component(metaclass=MetaComponent):
     def run_(self, timeindex, from_interface):
         data = {}
         # collect required ancillary data from dataset
-        for d in self.ancillary_data_info:
-            data[d] = self.datasubset[d].array[...]
-        # collect required driving data from dataset
-        for d in self.driving_data_info:
-            data[d] = self.datasubset[d].array[timeindex, ...]
+        for d in self.inputs_info:
+            kind = self.inputs_info[d]['kind']
+            if kind == 'dynamic':
+                data[d] = self.datasubset[d].array[timeindex, ...]
+            else:
+                data[d] = self.datasubset[d].array[...]
         # collect required transfers from interface
         for d in self._inwards_info:
             data[d] = from_interface[d]
@@ -600,7 +709,7 @@ class Component(metaclass=MetaComponent):
                     name, **self.states_info[name]
                 )
             else:
-                raise ValueError('{} not available for {} component'.format(
+                raise ValueError("{} not available for {} component".format(
                     name, self._category))
 
             for delta, methods in frequencies.items():
@@ -874,10 +983,10 @@ class DataComponent(Component):
         # override outwards with the ones of component being substituted
         self._outwards_info = substituting_class.get_class_outwards_info()
 
-        # override driving data info with the outwards of component
-        # being substituted (so that the dataset is checked for time
-        # and space compatibility as a 'standard' dataset would be)
-        self.driving_data_info = substituting_class.get_class_outwards_info()
+        # override inputs info with the outwards of component being
+        # substituted (so that the dataset is checked for time and space
+        # compatibility as a 'standard' dataset would be)
+        self.inputs_info = substituting_class.get_class_outwards_info()
 
         # initialise as a Component
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
