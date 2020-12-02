@@ -38,22 +38,22 @@ class Exchanger(object):
 
         self.transfers = transfers
         # set up transfers according to components' time-/spacedomains
+        self.clock = None
+        self.compass = None
         self.set_up(clock, compass)
 
         # assign identifier
         self.identifier = identifier
-
-        # assign clock and compass for exchanger to remain aware of space/time
-        self.clock = clock
-        self.compass = compass
 
         # directories and files
         self.output_directory = output_directory
         self.dump_file = None
 
     def set_up(self, clock, compass, overwrite=False):
+        # (re)assign clock and compass to exchanger
         self.clock = clock
         self.compass = compass
+
         # determine how many iterations of the clock
         # each component covers (i.e. steps)
         steps = {
