@@ -2,7 +2,6 @@ import abc
 from importlib import import_module
 import numpy as np
 from os import path, sep
-from datetime import timedelta
 import cf
 from cfunits import Units
 
