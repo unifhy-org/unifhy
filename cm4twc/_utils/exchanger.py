@@ -71,12 +71,11 @@ class Exchanger(object):
             # remain possible until Ocean and Atmosphere components are
             # implemented in the framework)
             if self.transfers[t].get('from') is None:
-                # in this case only __setitem__ will be called,
-                # no component is going to call __getitem__, so no need
+                # in this case only set_transfer will be called,
+                # no component is going to call get_transfer, so no need
                 # for weights, but because transfers still need to be
                 # stored for dump, need to define 'history' for creation
                 # of 'array' and 'slices'
-                self.transfers[t]['history'] = 1
                 histories.append(1)
             else:
                 from_ = steps[self.transfers[t]['from']]
