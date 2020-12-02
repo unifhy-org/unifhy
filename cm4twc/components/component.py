@@ -2,6 +2,7 @@ import abc
 from importlib import import_module
 import numpy as np
 from os import path, sep
+from datetime import timedelta
 import cf
 from cfunits import Units
 
@@ -591,6 +592,7 @@ class Component(metaclass=MetaComponent):
                 data[d] = self.datasubset[d].array[timeindex, ...]
             else:
                 data[d] = self.datasubset[d].array[...]
+
         # collect required transfers from exchanger
         for d in self._inwards_info:
             data[d] = exchanger.get_transfer(d, self._category)
