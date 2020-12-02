@@ -98,6 +98,11 @@ class Component(metaclass=MetaComponent):
                                         (i.e. from January 1st to
                                         December 31st, including value
                                         for February 29th).
+
+                `int`                   Length according to the integer
+                                        value (e.g. a value of 6 means
+                                        6 climatologic values for the
+                                        calendar year).
                 ======================  ================================
 
             parameters: `dict`, optional
@@ -321,7 +326,7 @@ class Component(metaclass=MetaComponent):
                                 "definition".format(name, self._category)
                             )
                         freq = info['frequency']
-                        if not isinstance(freq, timedelta):
+                        if not isinstance(freq, int):
                             if (isinstance(freq, str) and freq
                                     not in ['seasonal', 'monthly', 'daily']):
                                 raise TypeError(
@@ -436,11 +441,8 @@ class Component(metaclass=MetaComponent):
                 freq = self.inputs_info[data_name]['frequency']
                 if isinstance(freq, str):
                     length = lengths[freq]
-                else:  # isinstance(freq, timedelta):
-                    length = int(timedelta(days=366).total_seconds()
-                                 // freq.total_seconds())
-                    if (timedelta(days=366) % freq) != timedelta(days=0):
-                        length += 1
+                else:  # isinstance(freq, int):
+                    length = int(freq)
 
                 # check that time dimension is of expected length
                 if self.dataset[data_name].construct('time').size != length:
