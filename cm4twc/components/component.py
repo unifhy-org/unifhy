@@ -167,6 +167,7 @@ class Component(metaclass=MetaComponent):
         self.datasubset = DataSet()
 
         # time attributes
+        self._current_datetime = None
         self.timedomain = timedomain
 
         # parameters attribute
@@ -204,6 +205,7 @@ class Component(metaclass=MetaComponent):
         self._check_timedomain(timedomain)
         self._check_dataset_time(timedomain)
         self._timedomain = timedomain
+        self._current_datetime = timedomain.time.datetime_array[0]
 
     @property
     def timestepinseconds(self):
@@ -211,6 +213,12 @@ class Component(metaclass=MetaComponent):
         timestamps in the temporal configuration of the Component
         as a float."""
         return self.timedomain.timedelta.total_seconds()
+
+    @property
+    def current_datetime(self):
+        """Return the current datetime at any stage during the
+        simulation as a datetime object."""
+        return self._current_datetime
 
     @property
     def spacedomain(self):
@@ -591,6 +599,9 @@ class Component(metaclass=MetaComponent):
                 data[d] = self.datasubset[d].array[timeindex, ...]
             else:
                 data[d] = self.datasubset[d].array[...]
+
+        # determine current datetime in simulation
+        self._current_datetime = self.timedomain.time.datetime_array[timeindex]
 
         # collect required transfers from exchanger
         for d in self._inwards_info:
