@@ -167,6 +167,7 @@ class Component(metaclass=MetaComponent):
         self.datasubset = DataSet()
 
         # time attributes
+        self._timedelta_in_seconds = None
         self._current_datetime = None
         self.timedomain = timedomain
 
@@ -205,14 +206,15 @@ class Component(metaclass=MetaComponent):
         self._check_timedomain(timedomain)
         self._check_dataset_time(timedomain)
         self._timedomain = timedomain
+        self._timedelta_in_seconds = timedomain.timedelta.total_seconds()
         self._current_datetime = timedomain.time.datetime_array[0]
 
     @property
-    def timestepinseconds(self):
+    def timedelta_in_seconds(self):
         """Return the number of seconds separating two consecutive
         timestamps in the temporal configuration of the Component
-        as a float."""
-        return self.timedomain.timedelta.total_seconds()
+        as a `float`."""
+        return self._timedelta_in_seconds
 
     @property
     def current_datetime(self):
