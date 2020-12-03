@@ -26,8 +26,7 @@ class MetaComponent(abc.ABCMeta):
             "\n".join(
                 (["    {}:".format(t[1:] if t[0] == '_' else t).replace('_', ' ')]
                  + ["        {} [{}]".format(n, info['units'])
-                    for n, info in getattr(self, t + '_info').items()]
-                 if getattr(self, t + '_info') else [])
+                    for n, info in getattr(self, t + '_info').items()])
             )
             for t in ['_inwards', '_outwards',
                       'inputs', 'parameters', 'constants', 'outputs', 'states']
