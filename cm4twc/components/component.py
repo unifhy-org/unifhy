@@ -54,7 +54,7 @@ class Component(metaclass=MetaComponent):
     constants_info = {}
     states_info = {}
     outputs_info = {}
-    solver_history = 0
+    solver_history = 1
 
     def __init__(self, output_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, outputs=None):
@@ -957,6 +957,9 @@ class DataComponent(Component):
     _inwards_info = {}
     _outwards_info = {}
 
+    # definition attributes
+    solver_history = 0
+
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
         """**Initialisation**
 
@@ -1069,6 +1072,9 @@ class NullComponent(Component):
     _category = 'null'
     _inwards_info = {}
     _outwards_info = {}
+
+    # definition attributes
+    solver_history = 0
 
     def __init__(self, timedomain, spacedomain, substituting_class, **kwargs):
         """**Initialisation**
