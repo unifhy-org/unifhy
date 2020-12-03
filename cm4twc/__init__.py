@@ -17,7 +17,7 @@ from .data import DataSet
 from .components import (surfacelayer, subsurface, openwater,
                          SurfaceLayerComponent, SubSurfaceComponent,
                          OpenWaterComponent, DataComponent, NullComponent)
-from .settings import atol, rtol, decr
+from .settings import atol, rtol, decr, dtype_float
 
 # import modelling component classes defined in configuration file
 _cfg = ConfigParser()
