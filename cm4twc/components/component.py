@@ -919,7 +919,12 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
         }
     }
     _outwards_info = {
-        'runoff': {
+        'surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'subsurface_runoff': {
             'units': 'kg m-2 s-1',
             'to': ['openwater'],
             'method': 'mean'
@@ -943,7 +948,12 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'runoff': {
+        'surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'subsurface_runoff': {
             'units': 'kg m-2 s-1',
             'from': 'subsurface',
             'method': 'mean'
