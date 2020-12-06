@@ -16,6 +16,7 @@ import os
 import sys
 from git import Repo
 sys.path.insert(0, os.path.abspath('../..'))
+sys.path.append(os.path.abspath("./_doc_ext"))
 
 
 with open('../../cm4twc/version.py') as fv:
@@ -23,7 +24,7 @@ with open('../../cm4twc/version.py') as fv:
 
 # -- Project information -----------------------------------------------------
 project = 'cm4twc'
-copyright = '{}, NCAS–UKCEH–BGS.'.format(
+copyright = '{}, UKRI.'.format(
     datetime.now().year
 )
 author = 'Thibault Hallouin'
@@ -49,7 +50,8 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.githubpages',
     'nbsphinx',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    'autocomponent'
 ]
 
 # Boolean indicating whether to scan all found documents for

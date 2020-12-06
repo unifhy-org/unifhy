@@ -9,19 +9,24 @@
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Blueprint
 
    overview
 
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Implementation
+   :caption: Guide for Users
 
+   components
    tutorial
-   api
    files
 
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Guide for Contributors
+
+   api
 
 .. toctree::
    :hidden:
