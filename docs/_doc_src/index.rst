@@ -17,20 +17,14 @@
    :maxdepth: 1
    :caption: Guide for Users
 
-   components
-   tutorial
-   files
+   for_users/getting_started
+   for_users/components_available
+   for_users/api
+   for_users/configuration_files
 
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Guide for Contributors
-
-   api
-
-.. toctree::
-   :hidden:
-   :maxdepth: 1
-   :caption: Appendix
+   :caption: Appendices
 
    genindex
