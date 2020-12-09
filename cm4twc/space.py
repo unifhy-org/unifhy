@@ -676,7 +676,7 @@ class Grid(SpaceDomain):
 
         :Parameters:
 
-            timedomain: `Grid`
+            grid: `Grid`
                 The other Grid to be compared against Grid.
 
             ignore_z: `bool`, optional
