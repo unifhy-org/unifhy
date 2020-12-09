@@ -569,15 +569,15 @@ class Grid(SpaceDomain):
 
     def is_space_equal_to(self, field, ignore_z=False):
         """Compare equality between the Grid and the spatial (X, Y,
-        and Z) dimension coordinate in a `cf.Field`.
+        and Z) dimension coordinates in a `cf.Field`.
 
-        The coordinate values, the bounds, and the units of the field
-        are compared against those of the Grid.
+        The coordinate values, the bounds (if field has some), and the
+        units of the field are compared against those of the Grid.
 
         :Parameters:
 
             field: `cf.Field`
-                The field that needs to be compared against TimeDomain.
+                The field that needs to be compared against SpaceDomain.
 
             ignore_z: `bool`, optional
                 Option to ignore the dimension coordinate along the Z
@@ -587,31 +587,47 @@ class Grid(SpaceDomain):
         """
         rtol_ = rtol()
         atol_ = atol()
-        # check whether X/Y(/Z if not ignored) constructs are identical
-        y_x = (
-            self._f.construct(self._Y_name).equals(
-                field.construct(re.compile(r'name={}$'.format(self._Y_name)),
-                                default=None),
-                rtol=rtol_, atol=atol_,
-                ignore_data_type=True,
-                ignore_properties=('standard_name',
-                                   'long_name',
-                                   'computed_standard_name'))
-            and self._f.construct(self._X_name).equals(
-                field.construct(re.compile(r'name={}$'.format(self._X_name)),
-                                default=None),
-                rtol=rtol_, atol=atol_,
-                ignore_data_type=True,
-                ignore_properties=('standard_name',
-                                   'long_name',
-                                   'computed_standard_name'))
-        )
+
+        # check whether X/Y constructs are identical
+        x_y = []
+        for axis_name in [self._X_name, self._Y_name]:
+            # try to retrieve construct using name
+            dim_coord = field.dimension_coordinate(
+                re.compile(r'name={}$'.format(axis_name)), default=None
+            )
+
+            if dim_coord is not None:
+                # if field has no bounds, remove them from spacedomain
+                bounds = None
+                if not dim_coord.has_bounds():
+                    bounds = self._f.construct(axis_name).del_bounds()
+
+                # compare constructs
+                try:
+                    x_y.append(
+                        self._f.construct(axis_name).equals(
+                            dim_coord,
+                            rtol=rtol_, atol=atol_,
+                            ignore_data_type=True,
+                            ignore_properties=('standard_name',
+                                               'long_name',
+                                               'computed_standard_name')
+                        )
+                    )
+                finally:
+                    # if bounds were removed, append them back to spacedomain
+                    if bounds is not None:
+                        self._f.construct(axis_name).set_bounds(bounds)
+            else:
+                x_y.append(False)
+
+        # check whether Z constructs are identical (if not ignored)
         if ignore_z:
             z = True
         else:
             if self._f.has_construct('Z'):
                 z = self._f.construct('Z').equals(
-                    field.construct(
+                    field.dimension_coordinate(
                         re.compile(r'name={}$'.format(self._Z_name)),
                         default=None),
                     rtol=rtol_, atol=atol_,
@@ -624,7 +640,7 @@ class Grid(SpaceDomain):
             else:
                 z = True
 
-        return y_x and z
+        return all(x_y) and z
 
     def spans_same_region_as(self, grid, ignore_z=False):
         """Compare equality in region spanned between the Grid
