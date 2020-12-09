@@ -403,12 +403,37 @@ class Component(metaclass=MetaComponent):
     def _check_dataset_space(self, dataset, spacedomain):
         # check space compatibility for input data
         for data_name, data_unit in self.inputs_info.items():
-            # check that the data and component space domains are compatible
+            error = ValueError(
+                "spacedomain of data '{}' not compatible with "
+                "spacedomain of {} component '{}'".format(
+                    data_name, self._category, self.__class__.__name__)
+            )
+
+            # if regular grid, try to subset
+            if isinstance(spacedomain, Grid):
+                # try to subset in space
+                if dataset[data_name].subspace(
+                        'test',
+                        **{spacedomain.X_name:
+                               cf.wi(*spacedomain.X.array[[0, -1]]),
+                           spacedomain.Y_name:
+                               cf.wi(*spacedomain.Y.array[[0, -1]])}
+                ):
+                    # subset in space
+                    dataset[data_name] = (
+                        dataset[data_name].subspace(
+                            **{spacedomain.X_name:
+                                   cf.wi(*spacedomain.X.array[[0, -1]]),
+                               spacedomain.Y_name:
+                                   cf.wi(*spacedomain.Y.array[[0, -1]])}
+                        )
+                    )
+                else:
+                    raise error
+
+            # check that data and component spacedomains are compatible
             if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise ValueError(
-                    "spacedomain of data '{}' not compatible with "
-                    "spacedomain of {} component '{}'".format(
-                        data_name, self._category, self.__class__.__name__))
+                raise error
 
     def _check_dataset_time(self, timedomain):
         # check time compatibility for 'dynamic' input data
@@ -421,14 +446,14 @@ class Component(metaclass=MetaComponent):
 
             kind = self.inputs_info[data_name]['kind']
             if kind == 'dynamic':
-                # try to subspace in time
+                # try to subset in time
                 if self.dataset[data_name].subspace(
                         'test',
-                        T=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
-                    # subspace in time and assign to data subset
+                        time=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
+                    # subset in time and assign to data subset
                     self.datasubset[data_name] = (
                         self.dataset[data_name].subspace(
-                            T=cf.wi(
+                            time=cf.wi(
                                 *timedomain.time.datetime_array[[0, -1]]
                             )
                         )
@@ -436,7 +461,7 @@ class Component(metaclass=MetaComponent):
                 else:
                     raise error
 
-                # check that data and component time domains are compatible
+                # check that data and component timedomains are compatible
                 if not timedomain.is_time_equal_to(
                         self.datasubset[data_name]):
                     raise error
