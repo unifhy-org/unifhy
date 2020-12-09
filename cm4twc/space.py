@@ -145,6 +145,31 @@ class Grid(SpaceDomain):
         """
         return self._f.construct('X').bounds.data
 
+    @property
+    def Z_name(self):
+        """Return the name of the Z-axis of the SpaceDomain instance
+        as a `str` if the Z-axis exists, otherwise
+        return None.
+        """
+        if self._f.has_construct('Z'):
+            return self._f.construct('Z').standard_name
+        else:
+            return None
+
+    @property
+    def Y_name(self):
+        """Return the name of the Y-axis of the SpaceDomain instance
+        as a `str`.
+        """
+        return self._f.construct('Y').standard_name
+
+    @property
+    def X_name(self):
+        """Return the name of the X-axis of the SpaceDomain instance
+        as a `str`.
+        """
+        return self._f.construct('X').standard_name
+
     @staticmethod
     def _check_dimension_regularity(dimension, name):
         """**Examples:**
