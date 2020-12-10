@@ -15,6 +15,7 @@ if __name__ == '__main__':
     test_suite.addTests(doctest.DocTestSuite(cm4twc.time))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.space))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc._utils.exchanger))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

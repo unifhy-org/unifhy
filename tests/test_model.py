@@ -9,10 +9,10 @@ import cm4twc
 from tests.test_time import (get_dummy_timedomain,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
-from tests.test_component import get_dummy_component
-from tests.test_states import compare_states
-from tests.test_outputs import (get_expected_output, get_produced_output,
-                                exp_outputs_raw)
+from tests.test_components.test_component import get_dummy_component
+from tests.test_components.test_utils.test_states import compare_states
+from tests.test_components.test_utils.test_outputs import (get_expected_output, get_produced_output,
+                                                           exp_outputs_raw)
 
 
 class Simulator(object):
@@ -102,12 +102,12 @@ class Simulator(object):
         files = []
         # clean up dump files potentially created
         files.extend(
-            glob(os.sep.join([self.model.interface.output_directory,
+            glob(os.sep.join([self.model.exchanger.output_directory,
                               self.model.identifier + '*_dump*.nc']))
         )
         # clean up output files potentially created
         files.extend(
-            glob(os.sep.join([self.model.interface.output_directory,
+            glob(os.sep.join([self.model.exchanger.output_directory,
                               self.model.identifier + '*_out*.nc']))
         )
         # clean up configuration files created
@@ -224,7 +224,7 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final interface transfer values;
+        - checking the correctness of the final exchanger transfer values;
         - checking the correctness of the all component outputs (i.e.
           all component states, all component transfers, and all
           component outputs).
@@ -271,7 +271,7 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final interface transfer values;
+        - checking the correctness of the final exchanger transfer values;
         - checking the correctness of the all component outputs (i.e.
           all component states, all component transfers, and all
           component outputs).
@@ -317,7 +317,7 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final interface transfer values.
+        - checking the correctness of the final exchanger transfer values.
 
         Note, since simulate period is of 12 days, and each spinup cycle
         is of 6 days, and given that the driving data is constant for
@@ -350,8 +350,8 @@ class TestModel(object):
         )
 
         simulator_2.model.initialise_transfers_from_dump(
-            os.sep.join([simulator_1.model.interface.output_directory,
-                         simulator_1.model.interface.dump_file])
+            os.sep.join([simulator_1.model.exchanger.output_directory,
+                         simulator_1.model.exchanger.dump_file])
         )
 
         # spin second model up
@@ -370,7 +370,7 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final interface transfer values.
+        - checking the correctness of the final exchanger transfer values.
         """
         # set up a model from yaml configuration file
         simulator = Simulator.from_yaml(self.t, self.s)
@@ -397,7 +397,7 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final interface transfer values.
+        - checking the correctness of the final exchanger transfer values.
         """
         # set up a model
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
@@ -425,7 +425,7 @@ class TestModel(object):
     def check_final_conditions(self, model):
         """
         This method checks that the final values of all component states
-        values, and the final values of interface transfers are correct.
+        values, and the final values of exchanger transfers are correct.
         """
         # check components' final state values
         for comp in [model.surfacelayer,
@@ -434,7 +434,7 @@ class TestModel(object):
             self.check_component_states(comp)
 
         # check final transfer values
-        self.check_interface_transfers(model.interface)
+        self.check_exchanger_transfers(model.exchanger)
 
     def check_component_states(self, component):
         """
@@ -460,16 +460,16 @@ class TestModel(object):
                         "error for {}, {}".format(cat, state)
                     ) from e
 
-    def check_interface_transfers(self, interface):
+    def check_exchanger_transfers(self, exchanger):
         """
-        This method checks that the final values of interface transfers
+        This method checks that the final values of exchanger transfers
         are correct.
         """
         for transfer in ['transfer_i', 'transfer_j', 'transfer_k',
                          'transfer_l', 'transfer_m', 'transfer_n',
                          'transfer_o']:
-            arr = interface.transfers[transfer]['slices'][-1]
-            cat = interface.transfers[transfer]['src_cat']
+            arr = exchanger.transfers[transfer]['slices'][-1]
+            cat = exchanger.transfers[transfer]['src_cat']
             # compare both min/max, as array should be homogeneous
             val = exp_outputs_raw[self.t][cat][transfer][-1]
             try:

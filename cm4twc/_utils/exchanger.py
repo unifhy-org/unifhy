@@ -1,4 +1,3 @@
-from collections.abc import MutableMapping
 from os import path, sep
 from netCDF4 import Dataset
 from datetime import datetime
@@ -8,7 +7,7 @@ import numpy as np
 from ..settings import dtype_float
 
 
-class Interface(MutableMapping):
+class Exchanger(object):
 
     def __init__(self, components, clock, compass,
                  identifier, output_directory):
@@ -39,22 +38,22 @@ class Interface(MutableMapping):
 
         self.transfers = transfers
         # set up transfers according to components' time-/spacedomains
+        self.clock = None
+        self.compass = None
         self.set_up(clock, compass)
 
         # assign identifier
         self.identifier = identifier
-
-        # assign clock and compass for interface to remain aware of space/time
-        self.clock = clock
-        self.compass = compass
 
         # directories and files
         self.output_directory = output_directory
         self.dump_file = None
 
     def set_up(self, clock, compass, overwrite=False):
+        # (re)assign clock and compass to exchanger
         self.clock = clock
         self.compass = compass
+
         # determine how many iterations of the clock
         # each component covers (i.e. steps)
         steps = {
@@ -64,59 +63,73 @@ class Interface(MutableMapping):
 
         # set up each transfer
         for t in self.transfers:
+            histories = []
             shape = self.transfers[t]['src_sd'].shape
+
             # special case for transfers towards a DataComponent or
             # a NullComponent (or towards outside framework, which will
             # remain possible until Ocean and Atmosphere components are
             # implemented in the framework)
             if self.transfers[t].get('from') is None:
-                # in this case only __setitem__ will be called,
-                # no component is going to call __getitem__, so no need
+                # in this case only set_transfer will be called,
+                # no component is going to call get_transfer, so no need
                 # for weights, but because transfers still need to be
                 # stored for dump, need to define 'history' for creation
                 # of 'array' and 'slices'
-                self.transfers[t]['history'] = 1
+                histories.append(1)
             else:
-                to_ = steps[self.transfers[t]['to']]
                 from_ = steps[self.transfers[t]['from']]
-                # check if spacedomains are different, if identical set
-                # to None to avoid unnecessary remapping
-                if self.transfers[t]['src_sd'].is_space_equal_to(
-                    compass.spacedomains[self.transfers[t]['to']].to_field(),
-                    ignore_z=True
-                ):
-                    self.transfers[t]['remap'] = None
-                else:
-                    # now assign a tuple to 'remap' where first and
-                    # second items are the source's and destination's
-                    # resolutions, respectively (as Fields, not as
-                    # SpaceDomains)
-                    self.transfers[t]['remap'] = (
-                        self.transfers[t]['src_sd'].to_field(),
-                        compass.spacedomains[self.transfers[t]['to']].to_field()
-                    )
+                for c in self.transfers[t]['to']:
+                    to_ = steps[c]
+                    # add a key to store info specific to receiving component
+                    self.transfers[t][c] = {}
 
-                # determine the weights that will be used by the interface
-                # on the stored timesteps when a transfer is asked (i.e.
-                # when __getitem__ is called)
-                self.transfers[t]['weights'] = self._calculate_weights(
-                    from_, to_, clock.length
-                )
-                if self.transfers[t]['method'] == 'sum':
-                    # need to add dimensions of size 1 for numpy broadcasting
-                    self.transfers[t]['weights'] = np.expand_dims(
-                        self.transfers[t]['weights'],
-                        axis=[-(i+1) for i in range(len(shape))]
-                    )
+                    # check if spacedomains are different, if identical set
+                    # to None to avoid unnecessary remapping
+                    if self.transfers[t]['src_sd'].is_space_equal_to(
+                        compass.spacedomains[c].to_field(),
+                        ignore_z=True
+                    ):
+                        self.transfers[t][c]['remap'] = None
+                    else:
+                        # now assign a tuple to 'remap' where first and
+                        # second items are the source's and destination's
+                        # resolutions, respectively (as Fields, not as
+                        # SpaceDomains)
+                        self.transfers[t][c]['remap'] = (
+                            self.transfers[t]['src_sd'].to_field(),
+                            compass.spacedomains[c].to_field()
+                        )
 
-                # history is the number of timesteps that are stored
-                self.transfers[t]['history'] = (
-                    self.transfers[t]['weights'].shape[-1]
-                )
+                    # determine the weights that will be used by the exchanger
+                    # on the stored timesteps when a transfer is asked (i.e.
+                    # when __getitem__ is called)
+                    weights = self._calculate_weights(from_, to_, clock.length)
 
-                # initialise iterator that allows the interface to know
-                # which weights to use
-                self.transfers[t]['iter'] = 0
+                    # history is the number of timesteps that are stored
+                    history = weights.shape[-1]
+                    self.transfers[t][c]['history'] = history
+                    histories.append(history)
+
+                    # special case if method is sum
+                    if self.transfers[t]['method'] == 'sum':
+                        # weights need to sum to one
+                        weights = weights / to_
+                        # need to add dimensions of size 1 for numpy
+                        # broadcasting in weighted sum
+                        weights = np.expand_dims(
+                            weights, axis=[-(i+1) for i in range(len(shape))]
+                        )
+
+                    self.transfers[t][c]['weights'] = weights
+
+                    # initialise iterator that allows the exchanger to know
+                    # which weights to use
+                    self.transfers[t][c]['iter'] = 0
+
+            # determine maximum history to be stored for this transfer
+            history = max(histories)
+            self.transfers[t]['history'] = history
 
             # if required or requested, initialise array to store
             # required timesteps
@@ -125,19 +138,36 @@ class Interface(MutableMapping):
                     or ('array' not in self.transfers[t])
                     or ('array' in self.transfers[t]
                         and (self.transfers[t]['array'].shape
-                             != ((self.transfers[t]['history'],) + shape)))
+                             != ((history,) + shape)))
             ):
-                arr = np.zeros((self.transfers[t]['history'],) + shape,
-                               dtype_float())
+                arr = np.zeros((history,) + shape, dtype_float())
                 self.transfers[t]['array'] = arr
                 # set up slices that are views of the array that is be
                 # rolled out each time a transfer is asked
                 self.transfers[t]['slices'] = [
-                    arr[i] for i in range(self.transfers[t]['history'])
+                    arr[i] for i in range(history)
                 ]
 
     @staticmethod
     def _calculate_weights(from_, to_, length):
+        """**Examples:**
+
+        >>> Exchanger._calculate_weights(3, 7, 42)
+        array([[3, 3, 1],
+               [2, 3, 2],
+               [1, 3, 3],
+               [3, 3, 1],
+               [2, 3, 2],
+               [1, 3, 3]])
+        >>> Exchanger._calculate_weights(7, 3, 21)
+        array([[0, 3],
+               [0, 3],
+               [1, 2],
+               [0, 3],
+               [2, 1],
+               [0, 3],
+               [0, 3]])
+        """
         weights = []
 
         if to_ == from_:
@@ -211,12 +241,12 @@ class Interface(MutableMapping):
 
         weights = np.array(weights)
 
-        assert keep == weights.shape[-1], 'error in interface weights'
+        assert keep == weights.shape[-1], 'error in exchanger weights'
 
         return weights
 
     def initialise_(self, tag, overwrite=True):
-        self.dump_file = '_'.join([self.identifier, 'interface',
+        self.dump_file = '_'.join([self.identifier, 'exchanger',
                                    tag, 'dump.nc'])
         if (overwrite or not path.exists(sep.join([self.output_directory,
                                                    self.dump_file]))):
@@ -239,66 +269,62 @@ class Interface(MutableMapping):
             self.transfers, timestamp
         )
 
-    def __getitem__(self, key):
-        i = self.transfers[key]['iter']
+    def get_transfer(self, name, component):
+        i = self.transfers[name][component]['iter']
+        history = self.transfers[name][component]['history']
 
         # customise the action between existing and incoming arrays
         # depending on method for that particular transfer
-        if self.transfers[key]['method'] == 'mean':
+        if self.transfers[name]['method'] == 'mean':
             value = np.average(
-                self.transfers[key]['slices'],
-                weights=self.transfers[key]['weights'][i], axis=0
+                self.transfers[name]['slices'][-history:],
+                weights=self.transfers[name][component]['weights'][i], axis=0
             )
-        elif self.transfers[key]['method'] == 'sum':
+        elif self.transfers[name]['method'] == 'sum':
             value = np.sum(
-                self.transfers[key]['slices']
-                * self.transfers[key]['weights'][i], axis=0
+                self.transfers[name]['slices'][-history:]
+                * self.transfers[name][component]['weights'][i], axis=0
             )
-        elif self.transfers[key]['method'] == 'point':
-            value = self.transfers[key]['slices'][-1]
-        elif self.transfers[key]['method'] == 'minimum':
-            value = np.amin(self.transfers[key]['slices'], axis=0)
-        elif self.transfers[key]['method'] == 'maximum':
-            value = np.amax(self.transfers[key]['slices'], axis=0)
+        elif self.transfers[name]['method'] == 'point':
+            value = self.transfers[name]['slices'][-1]
+        elif self.transfers[name]['method'] == 'minimum':
+            value = np.amin(self.transfers[name]['slices'][-history:], axis=0)
+        elif self.transfers[name]['method'] == 'maximum':
+            value = np.amax(self.transfers[name]['slices'][-history:], axis=0)
         else:
-            raise ValueError('method for interface transfer unknown')
+            raise ValueError('method for exchanger transfer unknown')
 
         # remap value from supermesh resolution to destination resolution
         # # NOT IMPLEMENTED
         # # REPLACED BY:
         # remap value from source resolution to destination resolution
-        if self.transfers[key]['remap'] is not None:
-            from_, to_ = self.transfers[key]['remap']
+        if self.transfers[name][component]['remap'] is not None:
+            from_, to_ = self.transfers[name][component]['remap']
             from_[:] = value
             value = from_.regrids(to_, 'conservative').array
 
         # record that another value was retrieved by incrementing count
-        self.transfers[key]['iter'] += 1
+        self.transfers[name][component]['iter'] += 1
 
         return value
 
-    def __setitem__(self, key, value):
+    def set_transfer(self, name, array):
         # remap value from source resolution to supermesh resolution
         # # NOT IMPLEMENTED
 
         # make room for new value by time incrementing
-        lhs = [a for a in self.transfers[key]['slices']]
-        rhs = ([a for a in self.transfers[key]['slices'][1:]]
-               + [self.transfers[key]['slices'][0]])
+        lhs = [a for a in self.transfers[name]['slices']]
+        rhs = ([a for a in self.transfers[name]['slices'][1:]]
+               + [self.transfers[name]['slices'][0]])
 
         lhs[:] = rhs[:]
 
-        self.transfers[key]['slices'][:] = lhs
-        self.transfers[key]['slices'][-1] = value
+        self.transfers[name]['slices'][:] = lhs
+        self.transfers[name]['slices'][-1] = array
 
-    def __delitem__(self, key):
-        del self.transfers[key]
-
-    def __iter__(self):
-        return iter(self.transfers)
-
-    def __len__(self):
-        return len(self.transfers)
+    def update_transfers(self, transfers):
+        for name, array in transfers.items():
+            self.set_transfer(name, array)
 
 
 def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):

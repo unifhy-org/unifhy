@@ -23,7 +23,7 @@ subroutine run(z, y, x, &
 
     ! spaceshape
     integer, intent(in) :: z, y, x
-    ! from interface
+    ! from exchanger
     real(kind=8), intent(in), dimension(z, y, x) :: transfer_i, transfer_n
     ! component driving data
     real(kind=8), intent(in), dimension(z, y, x) :: driving_a
@@ -32,7 +32,7 @@ subroutine run(z, y, x, &
     ! component states
     real(kind=8), intent(in), dimension(z, y, x) :: state_a_m1, state_b_m1
     real(kind=8), intent(inout), dimension(z, y, x) :: state_a_0, state_b_0
-    ! to interface
+    ! to exchanger
     real(kind=8), intent(out), dimension(z, y, x) :: transfer_k, transfer_m
     ! component outputs
     real(kind=8), intent(out), dimension(z, y, x) :: output_x

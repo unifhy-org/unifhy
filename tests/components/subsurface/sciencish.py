@@ -49,7 +49,7 @@ class Sciencish(SubSurfaceComponent):
         aquifer[-1][:] = 1e3
 
     def run(self,
-            # from interface
+            # from exchanger
             evaporation_soil_surface, evaporation_ponded_water,
             transpiration, throughfall, snowmelt,
             # component driving data
@@ -90,7 +90,7 @@ class Sciencish(SubSurfaceComponent):
                          - groundwater_runoff * self.timestepinseconds)
 
         return (
-            # to interface
+            # to exchanger
             {
                 'runoff': soil_runoff + surface_runoff + groundwater_runoff,
                 'soil_water_stress': soil_water_stress

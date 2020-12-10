@@ -27,17 +27,22 @@ class Dummy(SurfaceLayerComponent):
             'units': '1',
             'from': 'openwater',
             'method': 'mean'
+        },
+        'transfer_n': {
+            'units': '1',
+            'from': 'openwater',
+            'method': 'mean'
         }
     }
     _outwards_info = {
         'transfer_i': {
             'units': '1',
-            'to': 'subsurface',
+            'to': ['subsurface'],
             'method': 'mean'
         },
         'transfer_j': {
             'units': '1',
-            'to': 'openwater',
+            'to': ['openwater'],
             'method': 'mean'
         }
     }
@@ -104,8 +109,8 @@ class Dummy(SurfaceLayerComponent):
         state_b[-1][:] = 0
 
     def run(self,
-            # from interface
-            transfer_k, transfer_l,
+            # from exchanger
+            transfer_k, transfer_l, transfer_n,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
@@ -120,7 +125,7 @@ class Dummy(SurfaceLayerComponent):
         state_b[0][:] = state_b[-1] + 2
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_i':
                     driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
@@ -130,7 +135,7 @@ class Dummy(SurfaceLayerComponent):
             # component outputs
             {
                 'output_x':
-                    driving_a + driving_b + driving_c + transfer_k - state_a[0]
+                    driving_a + driving_b + driving_c + transfer_n - state_a[0]
             }
         )
 
@@ -163,8 +168,8 @@ class DummyFortran(Dummy):
         dummyfortran.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # from interface
-            transfer_k, transfer_l,
+            # from exchanger
+            transfer_k, transfer_l, transfer_n,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
@@ -176,14 +181,14 @@ class DummyFortran(Dummy):
             **kwargs):
 
         transfer_i, transfer_j, output_x = dummyfortran.run(
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             driving_a, driving_b, driving_c,
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_i': transfer_i,
                 'transfer_j': transfer_j
@@ -210,8 +215,8 @@ class DummyC(Dummy):
         dummyc.initialise(state_a[-1], state_b[-1])
 
     def run(self,
-            # from interface
-            transfer_k, transfer_l,
+            # from exchanger
+            transfer_k, transfer_l, transfer_n,
             # component driving data
             driving_a, driving_b, driving_c,
             # component ancillary data
@@ -223,14 +228,14 @@ class DummyC(Dummy):
             **kwargs):
 
         transfer_i, transfer_j, output_x = dummyc.run(
-            transfer_k, transfer_l,
+            transfer_k, transfer_l, transfer_n,
             driving_a, driving_b, driving_c,
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
         return (
-            # to interface
+            # to exchanger
             {
                 'transfer_i': transfer_i,
                 'transfer_j': transfer_j
