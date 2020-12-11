@@ -17,6 +17,9 @@ class SpaceDomain(object):
 
     def __init__(self):
         self._f = cf.Field()
+        self._routing_info = None
+        self._routing_out_mask = None
+        self._routing_masks = {}
 
     @property
     def shape(self):
@@ -68,6 +71,28 @@ class Grid(SpaceDomain):
     _Y_units = []
     _X_units = []
 
+    # characterise the routing directions as relative (Y, X)
+    _routing_cardinal_map = {
+        'N': (1, 0),
+        'NE': (1, 1),
+        'E': (0, 1),
+        'SE': (-1, 1),
+        'S': (-1, 0),
+        'SW': (-1, -1),
+        'W': (0, -1),
+        'NW': (1, -1)
+    }
+    _routing_digits_map = {
+        1: (1, 0),
+        2: (1, 1),
+        3: (0, 1),
+        4: (-1, 1),
+        5: (-1, 0),
+        6: (-1, -1),
+        7: (0, -1),
+        8: (1, -1)
+    }
+
     # supported locations to generate grid
     _YX_loc_map = {
         'centre': ('centre', 'center', '0', 0),
@@ -93,6 +118,9 @@ class Grid(SpaceDomain):
 
     @property
     def axes(self):
+        """Return the name of the properties to use to get access to
+        the axes defined for the SpaceDomain instance as a tuple.
+        """
         has_z = self._f.has_construct(self._Z_name)
         return ('Z', 'Y', 'X') if has_z else ('Y', 'X')
 
@@ -169,6 +197,261 @@ class Grid(SpaceDomain):
         as a `str`.
         """
         return self._f.construct('X').standard_name
+
+    @property
+    def routing_info(self):
+        """The information necessary to move any variable laterally
+        (i.e. along Y and/or X) to its nearest receiving neighbour in
+        the Grid as a `numpy.ndarray`.
+
+        :Parameters:
+
+            directions: `numpy.ndarray`
+                The array containing the direction where to move the
+                variable. The supported kinds of directional information
+                are listed in the table below. The shape of the array
+                must be the same as the Grid, except for the relative
+                kind, where an additional trailing axis of size two
+                holding the pairs must be present.
+
+                =================  =====================================
+                kind               information
+                =================  =====================================
+                cardinal           The array contains the direction
+                                   using `str` for the eight following
+                                   cardinal points: 'N' for North, 'NE'
+                                   for North-East, 'E' for East,
+                                   'SE' for South East, 'S' for South,
+                                   'SW' for South West, 'W' for West,
+                                   'NW' for North West.
+
+                digits             The array contains the direction
+                                   using `int` for the eight following
+                                   cardinal points: 1 for North, 2 for
+                                   North-East, 3 for East, 4 for South
+                                   East, 5 for South, 6 for South West,
+                                   7 for West, 8 for North West.
+
+                relative           The array contains the direction
+                                   using pairs of 'int' (Y, X) for the
+                                   eight following cardinal points:
+                                   (1, 0) for North, (1, 1) for
+                                   North-East, (0, 1) for East, (-1, 1)
+                                   for South East, (-1, 0) for South,
+                                   (-1, -1) for South West, (0, -1)
+                                   for West, (1, -1) for North West.
+                =================  =====================================
+
+        :Returns:
+
+            `numpy.ndarray`
+                The information to route any variable to its destination
+                in the Grid in the relative format (see table above). If
+                not set, return None.
+
+        **Examples**
+
+        >>> import numpy
+        >>> grid = LatLonGrid.from_extent_and_resolution(
+        ...     latitude_extent=(51, 55),
+        ...     latitude_resolution=1,
+        ...     longitude_extent=(-2, 1),
+        ...     longitude_resolution=1
+        ... )
+        >>> print(grid.routing_info)
+        None
+        >>> grid.routing_info = numpy.array([['SE', 'S', 'E'],
+        ...                                  ['NE', 'E', 'N'],
+        ...                                  ['S', 'S', 'W'],
+        ...                                  ['NW', 'E', 'SW']])
+        >>> print(grid.routing_info)
+        [[[-1  1]
+          [-1  0]
+          [ 0  1]]
+        <BLANKLINE>
+         [[ 1  1]
+          [ 0  1]
+          [ 1  0]]
+        <BLANKLINE>
+         [[-1  0]
+          [-1  0]
+          [ 0 -1]]
+        <BLANKLINE>
+         [[ 1 -1]
+          [ 0  1]
+          [-1 -1]]]
+        >>> routing_info = grid.routing_info
+        >>> grid.routing_info = numpy.array([[4, 5, 3],
+        ...                                  [2, 3, 1],
+        ...                                  [5, 5, 7],
+        ...                                  [8, 3, 6]])
+        >>> numpy.array_equal(routing_info, grid.routing_info)
+        True
+        >>> grid.routing_info = numpy.array([[[-1, 1], [-1, 0], [0, 1]],
+        ...                                  [[1, 1], [0, 1], [1, 0]],
+        ...                                  [[-1, 0], [-1, 0], [0, -1]],
+        ...                                  [[1, -1], [0, 1], [-1, -1]]])
+        >>> numpy.array_equal(routing_info, grid.routing_info)
+        True
+        """
+        return self._routing_info
+
+    @property
+    def routing_out_mask(self):
+        """Return a mask identifying the locations in the Grid where any
+        routed variable exits the domain as a `numpy.ndarray`. If
+        *routing_info* not set, return None.
+        """
+        return self._routing_out_mask
+
+    @routing_info.setter
+    def routing_info(self, directions):
+        # initialise info array by extending by one leading axis of
+        # size 2 (for relative Y movement, and relative X movement)
+        info = np.zeros(self.shape + (2,), int)
+        info[:] = -9
+
+        error_valid = RuntimeError('routing info contains invalid data')
+        error_dim = RuntimeError('routing info dimensions not '
+                                 'compatible with Grid')
+
+        # convert directions to relative Y X movement
+        if isinstance(directions, np.ndarray):
+            if directions.dtype == np.dtype('<U2'):
+                # cardinal
+                if not directions.shape == self.shape:
+                    raise error_dim
+
+                directions = np.char.strip(np.char.upper(directions))
+                for card, yx_rel in self._routing_cardinal_map.items():
+                    info[directions == card] = yx_rel
+            elif issubclass(directions.dtype.type, np.integer):
+                if info.shape == directions.shape:
+                    # relative
+                    if np.amin(directions) < -1 or np.amax(directions) > 1:
+                        raise error_valid
+                    info[:] = directions
+                elif self.shape == directions.shape:
+                    # digits
+                    for digit, yx_rel in self._routing_digits_map.items():
+                        info[directions == digit] = yx_rel
+                else:
+                    raise error_dim
+            else:
+                raise error_valid
+        else:
+            raise error_valid
+
+        # check that match found for everywhere in grid
+        if not np.sum(info == -9) == 0:
+            raise error_valid
+
+        # assign main routing mask
+        self._routing_info = info
+
+        # find outflow towards outside domain
+        info_ = np.zeros(self.shape + (2,), int)
+        info_[:] = info
+        # northwards on north edge
+        info_[..., 0, :, 0][info_[..., 0, :, 0] == 1] = 9
+        # southwards on south edge
+        info_[..., -1, :, 0][info_[..., -1, :, 0] == -1] = 9
+        # eastwards on east edge
+        info_[..., :, -1, 1][info_[..., :, -1, 1] == 1] = 9
+        # westwards on west edge
+        info_[..., :, 0, 1][info_[..., :, 0, 1] == -1] = 9
+
+        # pre-process some convenience masks out of main routing mask
+        # to avoid generating them every time *route* method is called
+
+        # Y-wards movement
+        for j in [-1, 0, 1]:
+            # X-wards movement
+            for i in [-1, 0, 1]:
+                self._routing_masks[(j, i)] = (
+                        (info_[..., 0] == j) & (info_[..., 1] == i)
+                )
+        # OUT-wards movement
+        self._routing_out_mask = (info_[..., 0] == 9) | (info_[..., 1] == 9)
+
+    def route(self, variable_to_route):
+        """Perform the movement of the given variable values from
+        their current location to the next nearest receiving neighbour
+        according to the *routing_info* property of the Grid.
+
+        :Parameters:
+
+            variable_to_route: `numpy.ndarray`
+                The array containing the values for the variable to
+                route according to the *routing_info* property of the
+                Grid. The shape of this array must comply with the Grid.
+
+        :Returns:
+
+            variable_routed: `numpy.ndarray`
+                The array containing the values routed according to the
+                *routing_info* property of the Grid for the
+                *variable_to_route*. The shape of this array is the same
+                as the Grid.
+
+            variable_out: `numpy.ndarray`
+                The array containing the values routed according to the
+                *routing_info* property of the Grid which left the
+                domain for the *variable_to_route*. The shape of this
+                array is one-dimensional, of size equal to the number of
+                outlets for the domain defined by the Grid according to
+                the *routing_info*. These values can be remapped on the
+                Grid using the *routing_out_mask* property.
+
+        **Examples**
+
+        >>> import numpy
+        >>> grid = LatLonGrid.from_extent_and_resolution(
+        ...     latitude_extent=(51, 55),
+        ...     latitude_resolution=1,
+        ...     longitude_extent=(-2, 1),
+        ...     longitude_resolution=1
+        ... )
+        >>> variable = numpy.arange(12).reshape(4, 3) + 1
+        >>> routing_info = numpy.array([['SE', 'S', 'E'],
+        ...                             ['NE', 'E', 'N'],
+        ...                             ['S', 'S', 'W'],
+        ...                             ['NW', 'E', 'SW']])
+        >>> grid.routing_info = routing_info
+        >>> moved, outed = grid.route(variable)
+        >>> print(moved)
+        [[ 0  4  6]
+         [ 0  3  5]
+         [ 0  9  0]
+         [ 7  8 11]]
+        >>> print(outed)
+        [ 3 10 12]
+        >>> remap = numpy.zeros(variable.shape, variable.dtype)
+        >>> remap[grid.routing_out_mask] = outed
+        >>> print(remap)
+        [[ 0  0  3]
+         [ 0  0  0]
+         [ 0  0  0]
+         [10  0 12]]
+
+        """
+        # collect the values routed towards outside the domain
+        out_mask = self._routing_out_mask
+        variable_out = variable_to_route[out_mask]
+
+        # perform the routing using the routing mask
+        variable_routed = np.zeros(variable_to_route.shape,
+                                   variable_to_route.dtype)
+        # Y-wards movement
+        for j in [-1, 0, 1]:
+            # X-wards movement
+            for i in [-1, 0, 1]:
+                routing_mask = self._routing_masks[(j, i)]
+                variable_routed += np.roll(variable_to_route * routing_mask,
+                                         shift=(-j, i),
+                                         axis=(-2, -1))
+
+        return variable_routed, variable_out
 
     @staticmethod
     def _check_dimension_regularity(dimension, name):
