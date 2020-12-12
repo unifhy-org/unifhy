@@ -1,26 +1,28 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-**cm4twc python package**
-#########################
-
-.. include:: overview.rst
+.. include:: ../../README.rst
 
 .. toctree::
    :hidden:
-   :maxdepth: 1
 
-   overview
+   self
 
 .. toctree::
    :hidden:
    :maxdepth: 1
    :caption: Guide for Users
 
-   for_users/getting_started
-   for_users/components_available
+   for_users/installation
+   for_users/tutorial
+   for_users/science_repository
    for_users/api
-   for_users/configuration_files
+   for_users/files
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Guide for Contributors
 
 .. toctree::
    :hidden:
@@ -28,3 +30,4 @@
    :caption: Appendices
 
    genindex
+   licence

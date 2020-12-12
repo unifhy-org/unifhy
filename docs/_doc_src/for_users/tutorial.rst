@@ -1,8 +1,8 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-Getting Started
-===============
+Tutorial
+========
 
 This section showcases the basic usage of modelling framework `cm4twc`
 (Community Model for the Terrestrial Water Cycle).
@@ -15,8 +15,9 @@ This section showcases the basic usage of modelling framework `cm4twc`
    0.0.1
 
 The central object in the framework is the `Model`, which is composed of
-`Component`\s for the three compartments of the hydrological cycle (see
-the list of :doc:`available components <components_available>`).
+`Component`\s for the three compartments of the terrestrial water cycle
+(see the :doc:`science repository <science_repository>` for the options
+currently available).
 
 Each component needs to be spatio-temporally configured through `SpaceDomain`
 and `TimeDomain` objects, to be given data contained in a `DataSet` instance,
@@ -113,8 +114,8 @@ instances.
    ... )
 
 
-Processes
-~~~~~~~~~
+Science
+~~~~~~~
 
 `Component` is an umbrella class which is subclassed into three distinct classes
 for surface, sub-surface, and open water parts of the water cycle:
@@ -214,8 +215,14 @@ can be saved as a YAML file in the *config_directory* and named using the
    >>> model.to_yaml()
 
 
+See the :doc:`files <files>` section for an example of such model
+configuration YAML file.
+
 Simulating with a Model
 -----------------------
+
+Spin-Up and Simulate
+~~~~~~~~~~~~~~~~~~~~
 
 Once configured, the instance of `Model` can be used to start a spin up run
 and/or a main simulation run.
@@ -228,6 +235,10 @@ and/or a main simulation run.
    ...               cycles=2,
    ...               dumping_frequency=timedelta(days=3))
    >>> model.simulate(dumping_frequency=timedelta(days=2))
+
+
+Resume
+~~~~~~
 
 If the model has crashed, and *dumping_frequency* was set in the
 *spin-up* and/or *simulate* invocations, a series of snapshots in time

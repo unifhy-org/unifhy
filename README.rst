@@ -1,8 +1,5 @@
-.. currentmodule:: cm4twc
-.. default-role:: obj
-
-Overview
-========
+**cm4twc python package**
+#########################
 
 The Python package `cm4twc` (Community Model for the Terrestrial Water
 Cycle) is a hydrological modelling framework which combines interchangeable

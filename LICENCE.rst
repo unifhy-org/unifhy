@@ -1,3 +1,6 @@
+Licence
+#######
+
 BSD 3-Clause Licence
 
 Copyright (c) 2020, UKRI.

@@ -51,6 +51,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'nbsphinx',
     'sphinx.ext.mathjax',
+    # internal extensions
     'autocomponent'
 ]
 
