@@ -917,9 +917,11 @@ class Grid(SpaceDomain):
                             dim_coord,
                             rtol=rtol_, atol=atol_,
                             ignore_data_type=True,
+                            ignore_fill_value=True,
                             ignore_properties=('standard_name',
                                                'long_name',
-                                               'computed_standard_name')
+                                               'computed_standard_name',
+                                               '_FillValue')
                         )
                     )
                 finally:
