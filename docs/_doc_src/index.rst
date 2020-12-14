@@ -1,10 +1,14 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
+Overview
+========
+
 .. include:: ../../README.rst
 
 .. toctree::
    :hidden:
+   :titlesonly:
 
    self
 

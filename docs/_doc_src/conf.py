@@ -147,7 +147,8 @@ html_sidebars = {
 html_theme_options = {
     'canonical_url': 'https://hydro-jules.github.io/cm4twc/',
     'prev_next_buttons_location': None,
-    'navigation_depth': 3
+    'navigation_depth': 4,
+    'collapse_navigation': False
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page

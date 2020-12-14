@@ -3,14 +3,17 @@
 
 API
 ===
-.. rubric:: Model
+
+Model
+-----
 
 .. toctree::
    :maxdepth: 1
 
    ../classes/cm4twc.Model.rst
 
-.. rubric:: Components
+Components
+----------
 
 .. toctree::
    :maxdepth: 1
@@ -21,14 +24,16 @@ API
    ../classes/cm4twc.DataComponent.rst
    ../classes/cm4twc.NullComponent.rst
 
-.. rubric:: Time
+Time
+----
 
 .. toctree::
    :maxdepth: 1
 
    ../classes/cm4twc.TimeDomain.rst
 
-.. rubric:: Space
+Space
+-----
 
 .. toctree::
    :maxdepth: 1
@@ -36,7 +41,8 @@ API
    ../classes/cm4twc.LatLonGrid.rst
    ../classes/cm4twc.RotatedLatLonGrid.rst
 
-.. rubric:: Data
+Data
+----
 
 .. toctree::
    :maxdepth: 1
