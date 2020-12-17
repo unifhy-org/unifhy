@@ -359,9 +359,9 @@ class Grid(SpaceDomain):
         info_ = np.zeros(self.shape + (2,), int)
         info_[:] = info
         # northwards on north edge
-        info_[..., 0, :, 0][info_[..., 0, :, 0] == 1] = 9
+        info_[..., 0, :, 0][info_[..., 0, :, 0] == -1] = 9
         # southwards on south edge
-        info_[..., -1, :, 0][info_[..., -1, :, 0] == -1] = 9
+        info_[..., -1, :, 0][info_[..., -1, :, 0] == 1] = 9
         # eastwards on east edge
         info_[..., :, -1, 1][info_[..., :, -1, 1] == 1] = 9
         # westwards on west edge
@@ -419,10 +419,15 @@ class Grid(SpaceDomain):
         ...     longitude_resolution=1
         ... )
         >>> variable = numpy.arange(12).reshape(4, 3) + 1
-        >>> routing_info = numpy.array([['SE', 'S', 'E'],
-        ...                             ['NE', 'E', 'N'],
-        ...                             ['S', 'S', 'W'],
-        ...                             ['NW', 'E', 'SW']])
+        >>> print(variable)
+        [[ 1  2  3]
+         [ 4  5  6]
+         [ 7  8  9]
+         [10 11 12]]
+        >>> routing_info = numpy.array([['NE', 'N', 'E'],
+        ...                             ['SE', 'E', 'S'],
+        ...                             ['N', 'N', 'W'],
+        ...                             ['SW', 'E', 'NW']])
         >>> grid.routing_info = routing_info
         >>> moved, outed = grid.route(variable)
         >>> print(moved)
@@ -439,7 +444,6 @@ class Grid(SpaceDomain):
          [ 0  0  0]
          [ 0  0  0]
          [10  0 12]]
-
         """
         # collect the values routed towards outside the domain
         out_mask = self._routing_out_mask
@@ -454,8 +458,8 @@ class Grid(SpaceDomain):
             for i in [-1, 0, 1]:
                 routing_mask = self._routing_masks[(j, i)]
                 variable_routed += np.roll(variable_to_route * routing_mask,
-                                         shift=(-j, i),
-                                         axis=(-2, -1))
+                                           shift=(j, i),
+                                           axis=(-2, -1))
 
         return variable_routed, variable_out
 
