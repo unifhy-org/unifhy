@@ -70,6 +70,12 @@ class Grid(SpaceDomain):
     _Z_units = []
     _Y_units = []
     _X_units = []
+    _Z_limits = None
+    _Y_limits = None
+    _X_limits = None
+    _Z_is_cyclic = False
+    _Y_is_cyclic = False
+    _X_is_cyclic = False
 
     # characterise the routing directions as relative (Y, X)
     _routing_cardinal_map = {
@@ -454,38 +460,337 @@ class Grid(SpaceDomain):
         return variable_routed, variable_out
 
     @staticmethod
-    def _check_dimension_regularity(dimension, name):
+    def _check_dimension_limits(dimension, name, limits):
         """**Examples:**
 
         >>> import numpy
-        >>> Grid._check_dimension_regularity(numpy.array([0., 1., 2.]), 'test')
-        >>> Grid._check_dimension_regularity(numpy.array([0., .9, 1.]), 'test')
+        >>> Grid._check_dimension_limits(  # scalar
+        ...     numpy.array(-1.), 'test', (-2, 2))
+        >>> Grid._check_dimension_limits(  # no wrap around
+        ...     numpy.array([-1., 0., 1., 2.]), 'test', (-2, 2))
+        >>> Grid._check_dimension_limits(  # wrap around
+        ...     numpy.array([0.5, 1.5, -1.5]), 'test', (-2, 2))
+        >>> Grid._check_dimension_limits(  # exceed lower limit
+        ...     numpy.array([-3., -2., -1.]), 'test', (-2, 2))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension beyond limits [-2, 2]
+        >>> Grid._check_dimension_limits(  # exceed upper limit
+        ...     numpy.array([1., 2., 3.]), 'test', (-2, 2))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension beyond limits [-2, 2]
+
+        >>> Grid._check_dimension_limits(  # wrapping around repetition
+        ...     numpy.array([0., 1., 2., -1., 0.]), 'test', (-2, 2))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: duplicates in test dimension: [0.]
+        """
+        # check for values outside of limits
+        if limits is not None:
+            if np.amin(dimension) < limits[0] or np.amax(dimension) > limits[1]:
+                raise RuntimeError("{} dimension beyond limits "
+                                   "[{}, {}]".format(name, *limits))
+
+        # check for duplicated coordinates, meaning domain overlap
+        # for cyclic dimensions, but should not happen anyway so check
+        # for non-cyclic dimensions too
+        if dimension.ndim > 0:
+            sort_dim = np.sort(dimension)
+            dup_dim = sort_dim[1:][sort_dim[1:] == sort_dim[:-1]]
+            if dup_dim.size > 0:
+                raise RuntimeError("duplicates in {} dimension: "
+                                   "{}".format(name, dup_dim))
+
+    @staticmethod
+    def _check_dimension_direction(dimension, name, limits, is_cyclic):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_direction(  # scalar
+        ...     numpy.array(1.), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_direction(  # not cyclic, no wrap around
+        ...     numpy.array([0., 1., 2.]), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_direction(  # cyclic, no wrap around
+        ...     numpy.array([0., 1., 2.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_direction(  # cyclic, wrap around, sign case 1
+        ...     numpy.array([-1., 0., 2.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_direction(  # cyclic, wrap around, sign case 2
+        ...     numpy.array([-1., 0., -2.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_direction(  # cyclic, wrap around, end
+        ...     numpy.array([0., 2., -2.]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_direction(  # cyclic, wrap around, start
+        ...     numpy.array([2., -2., 0.]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_direction(  # negative direction
+        ...     numpy.array([2., 1., 0.]), 'test', (-2, 2), True)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension not directed positively
+        """
+        error = RuntimeError("{} dimension not directed "
+                             "positively".format(name))
+
+        if dimension.ndim > 0:
+            space_diff = np.diff(dimension)
+            if is_cyclic:
+                if np.all(space_diff < 0):
+                    raise error
+                elif np.any(space_diff < 0):
+                    # add one full rotation to first negative difference
+                    # to assume it is wrapping around (since positive
+                    # direction is required, and cross-over can happen
+                    # at most once without domain wrapping on itself)
+                    neg = space_diff[space_diff < 0]
+                    neg[0] += limits[1] - limits[0]
+                    space_diff[space_diff < 0] = neg
+        else:
+            # it is a scalar, set difference to one to pass next check
+            space_diff = 1
+        if not np.all(space_diff > 0):
+            # if not all positive, at least one space gap is in
+            # negative direction
+            raise error
+
+    @staticmethod
+    def _check_dimension_regularity(dimension, name, limits, is_cyclic):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_regularity(  # scalar
+        ...     numpy.array(1.), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_regularity(  # not cyclic, no wrap around
+        ...     numpy.array([0., 1., 2.]), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_regularity(  # cyclic, no wrap around
+        ...     numpy.array([0., 1., 2.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_regularity(  # cyclic, wrap around, sign case 1
+        ...     numpy.array([-2., 0., 2.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_regularity(  # cyclic, wrap around, sign case 2
+        ...     numpy.array([-2., 0., -2.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_regularity(  # cyclic, wrap around, end
+        ...     numpy.array([.9, 1.9, -1.1]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_regularity(  # cyclic, wrap around, start
+        ...     numpy.array([1.9, -1.1, -0.1]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_regularity(  # irregular, not cyclic
+        ...     numpy.array([0., .9, 1.]), 'test', (-2, 2), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test space gap not constant across region
+        >>> Grid._check_dimension_regularity(  # irregular, cyclic
+        ...     numpy.array([1., 1.9, -1]), 'test', (-2, 2), True)
         Traceback (most recent call last):
             ...
         RuntimeError: test space gap not constant across region
         """
-        space_diff = np.diff(dimension) if dimension.ndim > 0 else 0
+        if dimension.ndim > 0:
+            space_diff = np.diff(dimension)
+            if is_cyclic:
+                if np.any(space_diff < 0):
+                    # add one full rotation to first negative difference
+                    # to assume it is wrapping around (since positive
+                    # direction is required, and cross-over can happen
+                    # at most once without domain wrapping on itself)
+                    neg = space_diff[space_diff < 0]
+                    neg[0] += limits[1] - limits[0]
+                    space_diff[space_diff < 0] = neg
+        else:
+            # it is a scalar, set difference to one to pass next check
+            space_diff = 1
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol(), atol()):
             raise RuntimeError(
                 "{} space gap not constant across region".format(name))
 
     @staticmethod
-    def _check_dimension_bounds_regularity(bounds, name):
+    def _check_dimension_bounds_limits(bounds, name, limits):
         """**Examples:**
 
         >>> import numpy
-        >>> Grid._check_dimension_bounds_regularity(
-        ...     numpy.array([0., 1.]), 'test')
-        >>> Grid._check_dimension_bounds_regularity(
-        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]), 'test')
-        >>> Grid._check_dimension_bounds_regularity(
-        ...     numpy.array([[0., .9], [.9, 2.], [2., 3.]]), 'test')
+        >>> Grid._check_dimension_bounds_limits(  # 1D
+        ...     numpy.array([0., -1.]), 'test', (-2, 2))
+        >>> Grid._check_dimension_bounds_limits(  # 2D, edging upper limit
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]), 'test', (-3, 3))
+        >>> Grid._check_dimension_bounds_limits(  # 2D, edging lower limit
+        ...     numpy.array([[-3., -2.], [-2., -1.], [-1., 0.]]), 'test', (-3, 3))
+        >>> Grid._check_dimension_bounds_limits(  # 1D, beyond upper limit
+        ...     numpy.array([0., 3.]), 'test', (-2, 2))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds beyond limits [-2, 2]
+        >>> Grid._check_dimension_bounds_limits(  # 2D, beyond upper limit
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]), 'test', (-2, 2))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds beyond limits [-2, 2]
+        >>> Grid._check_dimension_bounds_limits(  # 2D, beyond lower limit
+        ...     numpy.array([[-3., -2.], [-2., -1.], [-1., 0.]]), 'test', (-2, 2))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds beyond limits [-2, 2]
+        """
+        if limits is not None:
+            if np.amin(bounds) < limits[0] or np.amax(bounds) > limits[1]:
+                raise RuntimeError("{} dimension bounds beyond limits "
+                                   "[{}, {}]".format(name, *limits))
+
+    @staticmethod
+    def _check_dimension_bounds_direction(bounds, name, limits, is_cyclic):
+        """
+        TODO: Last example should raise error because last pair of
+              bounds is either in the negative direction or a second
+              wrap around, but because the algorithm allows for up to
+              two negative differences to cover for a pair of bounds
+              across the limits, the negative value for this last pair
+              is caught in the assumption it is a wrap around, while the
+              first wrap around only generated one negative difference,
+              so the second negative difference was tolerated
+              erroneously. This is likely to be really an edge case, so
+              it is kept as is for now. Plus, it is caught as an error
+              in _check_dimension_bounds_regularity.
+
+        **Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_bounds_direction(  # 1D, not cyclic
+        ...     numpy.array([0., 1.]), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_bounds_direction(  # 1D, cyclic, no wrap around
+        ...     numpy.array([0., 1.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_bounds_direction(  # 1D, cyclic, wrap around
+        ...     numpy.array([0., -1.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, not cyclic
+        ...     numpy.array([[-1., 0.], [0., 1.], [1., 2.]]), 'test', (-3, 3), False)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, cyclic
+        ...     numpy.array([[-1., 0.], [0., 1.], [1., 2.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, cyclic, wrap around, bound across
+        ...     numpy.array([[1.5, 2.5], [2.5, -2.5], [-2.5, -1.5]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, cyclic, wrap around, bound edging, sign case 1
+        ...     numpy.array([[1., 2.], [2., 3.], [3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, cyclic, wrap around, bound edging, sign case 2
+        ...     numpy.array([[1., 2.], [2., 3.], [-3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, cyclic, wrap around, bound edging, sign case 3
+        ...     numpy.array([[1., 2.], [2., -3.], [3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_direction(  # 2D, cyclic, wrap around, bound edging, sign case 4
+        ...     numpy.array([[1., 2.], [2., -3.], [-3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_direction(  # negative direction
+        ...     numpy.array([2., 1.]), 'test', (-2, 2), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds not directed positively
+        >>> Grid._check_dimension_bounds_direction(  # not cyclic but wrap around
+        ...     numpy.array([0., -1.]), 'test', (-2, 2), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds not directed positively
+        >>> Grid._check_dimension_bounds_direction(  # negative direction, not cyclic
+        ...     numpy.array([[3., 2.], [2., 1.], [1., 0.]]), 'test', (-3, 3), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds not directed positively
+        >>> Grid._check_dimension_bounds_direction(  # negative direction, cyclic
+        ...     numpy.array([[3., 2.], [2., 1.], [1., 0.]]), 'test', (-3, 3), True)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds not directed positively
+        >>> Grid._check_dimension_bounds_direction(  # wrap around, negative after
+        ...     numpy.array([[2., 3.], [-3., -2.], [-1., -2.]]), 'test', (-3, 3), True)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test dimension bounds not directed positively
+        >>> Grid._check_dimension_bounds_direction(  # [!] current bug
+        ...     numpy.array([[1., 2.], [-2., -1.], [-1., -2]]), 'test', (-2, 2), True)
+        """
+        # replace lower limit by upper limit to acknowledge it is same
+        # location (e.g. -180degE same as +180degE, so replace -180degE
+        # by +180degE)
+        bnds = deepcopy(bounds)
+        if is_cyclic:
+            bnds[np.isclose(bnds, limits[0], rtol(), atol())] = limits[1]
+
+        error = RuntimeError("{} dimension bounds not directed "
+                             "positively".format(name))
+
+        if bnds.ndim > 0:
+            space_diff = np.diff(bnds, axis=0)
+            if is_cyclic:
+                if np.any(space_diff < 0):
+                    # add one full rotation to first and second negative
+                    # differences to assume it is wrapping around (since
+                    # positive  direction is required, and cross-over
+                    # can happen at most once without domain wrapping on
+                    # itself)
+                    neg = space_diff[space_diff < 0]
+                    neg[0:2] += limits[1] - limits[0]
+                    space_diff[space_diff < 0] = neg
+        else:
+            # it is a scalar, set difference to one to pass next check
+            space_diff = 1
+        if not np.all(space_diff > 0):
+            raise error
+
+        if bnds.ndim > 1:
+            space_diff = np.diff(bnds, axis=1)
+            if is_cyclic:
+                if np.any(space_diff < 0):
+                    # add one full rotation to first negative difference
+                    # to assume it is wrapping around (since positive
+                    # direction is required, and cross-over can happen
+                    # at most once without domain wrapping on itself)
+                    neg = space_diff[space_diff < 0]
+                    neg[0] += limits[1] - limits[0]
+                    space_diff[space_diff < 0] = neg
+        else:
+            # it is a scalar, set difference to one to pass next check
+            space_diff = 1
+        if not np.all(space_diff > 0):
+            raise error
+
+    @staticmethod
+    def _check_dimension_bounds_regularity(bounds, name, limits, is_cyclic):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid._check_dimension_bounds_regularity(  # 1D, not cyclic
+        ...     numpy.array([0., 1.]), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_bounds_regularity(  # 1D, cyclic, no wrap around
+        ...     numpy.array([0., 1.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic, wrap around
+        ...     numpy.array([0., -1.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, not cyclic
+        ...     numpy.array([[-1., 0.], [0., 1.], [1., 2.]]), 'test', (-3, 3), False)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic
+        ...     numpy.array([[-1., 0.], [0., 1.], [1., 2.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic, wrap around, bound across
+        ...     numpy.array([[1.5, 2.5], [2.5, -2.5], [-2.5, -1.5]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic, wrap around, bound edging, sign case 1
+        ...     numpy.array([[1., 2.], [2., 3.], [3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic, wrap around, bound edging, sign case 2
+        ...     numpy.array([[1., 2.], [2., 3.], [-3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic, wrap around, bound edging, sign case 3
+        ...     numpy.array([[1., 2.], [2., -3.], [3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_regularity(  # 2D, cyclic, wrap around, bound edging, sign case 4
+        ...     numpy.array([[1., 2.], [2., -3.], [-3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_regularity(  # irregular (not cyclic)
+        ...     numpy.array([[0., .9], [.9, 2.], [2., 3.]]), 'test', (0, 3), False)
         Traceback (most recent call last):
             ...
         RuntimeError: test bounds space gap not constant across region
-        >>> Grid._check_dimension_bounds_regularity(
-        ...     numpy.array([[0., 1.], [2., 3.], [2., 3.]]), 'test')
+        >>> Grid._check_dimension_bounds_regularity(  # irregular (cyclic)
+        ...     numpy.array([[0., .9], [.9, 2.], [2., 3.]]), 'test', (-2, 2), True)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds space gap not constant across region
+        >>> Grid._check_dimension_bounds_regularity(  # not cyclic, no wrap around
+        ...     numpy.array([[1., 2.], [2., -1.], [-1., 0.]]), 'test', (-2, 2), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds space gap not constant across region
+        >>> Grid._check_dimension_bounds_regularity(  # gap
+        ...     numpy.array([[-1., 0.], [0., 1.], [2., 3.]]), 'test', (-3, 3), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds space gap not constant across region
+        >>> Grid._check_dimension_bounds_regularity(  # inverted direction
+        ...     numpy.array([[1., 2.], [-2., -1.], [-1., -2]]), 'test', (-2, 2), True)
         Traceback (most recent call last):
             ...
         RuntimeError: test bounds space gap not constant across region
@@ -493,57 +798,242 @@ class Grid(SpaceDomain):
         rtol_ = rtol()
         atol_ = atol()
 
-        space_diff = np.diff(bounds, axis=0) if bounds.ndim > 0 else 0
+        # replace lower limit by upper limit to acknowledge it is same
+        # location (e.g. -180degE same as +180degE, so replace -180degE
+        # by +180degE)
+        bnds = deepcopy(bounds)
+        if is_cyclic:
+            bnds[np.isclose(bnds, limits[0], rtol_, atol_)] = limits[1]
+
+        error = RuntimeError("{} bounds space gap not constant "
+                             "across region".format(name))
+
+        if bnds.ndim > 0:
+            space_diff = np.diff(bnds, axis=0)
+            if is_cyclic:
+                if np.any(space_diff < 0):
+                    # add one full rotation to first and second negative
+                    # differences to assume it is wrapping around (since
+                    # positive  direction is required, and cross-over
+                    # can happen at most once without domain wrapping on
+                    # itself)
+                    neg = space_diff[space_diff < 0]
+                    neg[0:2] += limits[1] - limits[0]
+                    space_diff[space_diff < 0] = neg
+        else:
+            space_diff = 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol_, atol_):
-            raise RuntimeError(
-                "{} bounds space gap not constant across region".format(name))
-        space_diff = np.diff(bounds, axis=1) if bounds.ndim > 1 else 0
+            raise error
+
+        if bnds.ndim > 1:
+            space_diff = np.diff(bnds, axis=1)
+            if is_cyclic:
+                if np.any(space_diff < 0):
+                    # add one full rotation to first negative difference
+                    # to assume it is wrapping around (since positive
+                    # direction is required, and cross-over can happen
+                    # at most once without domain wrapping on itself)
+                    neg = space_diff[space_diff < 0]
+                    neg[0] += limits[1] - limits[0]
+                    space_diff[space_diff < 0] = neg
+        else:
+            space_diff = 0
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol_, atol_):
-            raise RuntimeError(
-                "{} bounds space gap not constant across region".format(name))
+            raise error
 
     @staticmethod
-    def _check_dimension_bounds_contiguity(bounds, name):
+    def _check_dimension_bounds_contiguity(bounds, name, limits, is_cyclic):
         """**Examples:**
 
         >>> import numpy
-        >>> Grid._check_dimension_bounds_contiguity(
-        ...     numpy.array([0., 1.]), 'test')
-        >>> Grid._check_dimension_bounds_contiguity(
-        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]), 'test')
-        >>> Grid._check_dimension_bounds_contiguity(
-        ...     numpy.array([[0.0, 0.9], [1.0, 1.9], [2.0, 2.9]]), 'test')
+        >>> Grid._check_dimension_bounds_contiguity(  # 1D, not cyclic
+        ...     numpy.array([0., 1.]), 'test', (-2, 2), False)
+        >>> Grid._check_dimension_bounds_contiguity(  # 1D, cyclic, no wrap around
+        ...     numpy.array([0., 1.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic, wrap around
+        ...     numpy.array([0., -1.]), 'test', (-2, 2), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, not cyclic
+        ...     numpy.array([[-1., 0.], [0., 1.], [1., 2.]]), 'test', (-3, 3), False)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic
+        ...     numpy.array([[-1., 0.], [0., 1.], [1., 2.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic, wrap around, bound across
+        ...     numpy.array([[1.5, 2.5], [2.5, -2.5], [-2.5, -1.5]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic, wrap around, bound edging, sign case 1
+        ...     numpy.array([[1., 2.], [2., 3.], [3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic, wrap around, bound edging, sign case 2
+        ...     numpy.array([[1., 2.], [2., 3.], [-3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic, wrap around, bound edging, sign case 3
+        ...     numpy.array([[1., 2.], [2., -3.], [3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # 2D, cyclic, wrap around, bound edging, sign case 4
+        ...     numpy.array([[1., 2.], [2., -3.], [-3., -2.], [-2., -1.]]), 'test', (-3, 3), True)
+        >>> Grid._check_dimension_bounds_contiguity(  # gaps (not cyclic)
+        ...     numpy.array([[0.0, 0.9], [1.0, 1.9], [2.0, 2.9]]), 'test', (-3, 3), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test bounds not contiguous across region
+        >>> Grid._check_dimension_bounds_contiguity(  # gaps (cyclic)
+        ...     numpy.array([[0.0, 0.9], [1.0, 1.9], [-2.0, -1.1]]), 'test', (-2, 2), False)
         Traceback (most recent call last):
             ...
         RuntimeError: test bounds not contiguous across region
         """
-        prev_to_next = bounds[1:, 0] - bounds[:-1, 1] \
-            if bounds.ndim > 1 else 0
-        if not np.allclose(prev_to_next, 0, rtol(), atol()):
+        rtol_ = rtol()
+        atol_ = atol()
+
+        # replace lower limit by upper limit to acknowledge it is same
+        # location (e.g. -180degE same as +180degE, so replace -180degE
+        # by +180degE)
+        bnds = deepcopy(bounds)
+        if is_cyclic:
+            bnds[np.isclose(bnds, limits[0], rtol_, atol_)] = limits[1]
+
+        # compare previous upper bound to next lower bound
+        prev_to_next = (bnds[1:, 0] - bnds[:-1, 1]
+                        if bnds.ndim > 1 else 0)
+        if not np.allclose(prev_to_next, 0, rtol_, atol_):
             raise RuntimeError(
                 "{} bounds not contiguous across region".format(name))
 
-    def _set_space(self, dimension, dimension_bounds, name, units, axis):
+    @staticmethod
+    def _check_dimension_in_bounds(dimension, bounds, name, limits, is_cyclic):
         """**Examples:**
 
         >>> import numpy
-        >>> Grid()._set_space([[0.5]], [0., 1.], 'test', '1', 'I')
+        >>> Grid._check_dimension_in_bounds(  # 1 coord, not cyclic
+        ...     numpy.array(.5), numpy.array([0., 1.]), 'test', (0, 2), False)
+        >>> Grid._check_dimension_in_bounds(  # 1 coord, cyclic, no wrap around
+        ...     numpy.array(.5), numpy.array([0., 1.]), 'test', (0, 2), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, not cyclic
+        ...     numpy.array([0.5, 1.5, 2.5]),
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]),
+        ...     'test', (0, 3), False)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, no wrap around
+        ...     numpy.array([0.5, 1.5, 2.5]),
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]),
+        ...     'test', (0, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around
+        ...     numpy.array([0.5, 1.5, -1.5]),
+        ...     numpy.array([[0., 1.], [1., 2.], [2., -1.]]),
+        ...     'test', (-2, 2), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around, bound across, sign case 1
+        ...     numpy.array([2., 3., -2.]),
+        ...     numpy.array([[1.5, 2.5], [2.5, -2.5], [-2.5, -1.5]]),
+        ...     'test', (-3, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around, bound across, sign case 2
+        ...     numpy.array([2., -3., -2.]),
+        ...     numpy.array([[1.5, 2.5], [2.5, -2.5], [-2.5, -1.5]]),
+        ...     'test', (-3, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around, bound edging, sign case 1
+        ...     numpy.array([1.5, 2.5, -2.5, -1.5]),
+        ...     numpy.array([[1., 2.], [2., 3.], [3., -2.], [-2., -1.]]),
+        ...     'test', (-3, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around, bound edging, sign case 2
+        ...     numpy.array([1.5, 2.5, -2.5, -1.5]),
+        ...     numpy.array([[1., 2.], [2., 3.], [-3., -2.], [-2., -1.]]),
+        ...     'test', (-3, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around, bound edging, sign case 3
+        ...     numpy.array([1.5, 2.5, -2.5, -1.5]),
+        ...     numpy.array([[1., 2.], [2., -3.], [3., -2.], [-2., -1.]]),
+        ...     'test', (-3, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # x coords, cyclic, wrap around, bound edging, sign case 4
+        ...     numpy.array([1.5, 2.5, -2.5, -1.5]),
+        ...     numpy.array([[1., 2.], [2., -3.], [-3., -2.], [-2., -1.]]),
+        ...     'test', (-3, 3), True)
+        >>> Grid._check_dimension_in_bounds(  # last coord not in its bounds, not cyclic
+        ...     numpy.array([0.5, 1.5, 1.9]),
+        ...     numpy.array([[0., 1.], [1., 2.], [2., 3.]]),
+        ...     'test', (0, 3), False)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test coordinates not all in their bounds
+        >>> Grid._check_dimension_in_bounds(  # last coord not in its bounds, cyclic, wrap around
+        ...     numpy.array([2., -2., -2.]),
+        ...     numpy.array([[1.5, 2.5], [2.5, -2.5], [-2.5, -1.5]]),
+        ...     'test', (-3, 3), True)
+        Traceback (most recent call last):
+            ...
+        RuntimeError: test coordinates not all in their bounds
+        """
+        # replace lower limit by upper limit to acknowledge it is same
+        # location (e.g. -180degE same as +180degE, so replace -180degE
+        # by +180degE)
+        bnds = deepcopy(bounds)
+        if is_cyclic:
+            bnds[np.isclose(bnds, limits[0], rtol(), atol())] = limits[1]
+
+        # check if coordinates inside their bounds
+        if dimension.ndim > 0:
+            inside = (bnds[:, 0] <= dimension) & (dimension <= bnds[:, 1])
+            if is_cyclic:
+                if np.sum(~inside) >= 1:
+                    not_in_dim = dimension[~inside]
+                    not_in_bnds = bnds[~inside]
+                    not_in = inside[~inside]
+                    # add one full rotation to upper bound in first
+                    # inequality to assume it is wrapping around
+                    if ((not_in_bnds[0, 0] <= not_in_dim[0])
+                            & (not_in_dim[0] > not_in_bnds[0, 1])):
+                        not_in[0] = ((not_in_bnds[0, 0] <= not_in_dim[0])
+                                     & (not_in_dim[0] <= (not_in_bnds[0, 1]
+                                                          + limits[1]
+                                                          - limits[0])))
+                    # remove one full rotation to lower bound in first
+                    # inequality to assume it is wrapping around
+                    elif ((not_in_bnds[0, 0] > not_in_dim[0])
+                          & (not_in_dim[0] <= not_in_bnds[0, 1])):
+                        not_in[0] = (
+                                ((not_in_bnds[0, 0] - limits[1] + limits[0])
+                                 <= not_in_dim[0])
+                                & (not_in_dim[0] <= not_in_bnds[0, 1])
+                        )
+                    inside[~inside] = not_in
+        else:
+            inside = (bnds[0] <= dimension) & (dimension <= bnds[1])
+            if is_cyclic:
+                if not inside:
+                    # add one full rotation to upper bound in first
+                    # inequality to assume it is wrapping around
+                    if (bnds[0] <= dimension) & (dimension > bnds[1]):
+                        inside = (
+                                (bnds[0] <= dimension)
+                                & (dimension <= (bnds[1]
+                                                 + limits[1] - limits[0]))
+                        )
+                    # remove one full rotation to lower bound in first
+                    # inequality to assume it is wrapping around
+                    elif (bnds[0] > dimension) & (dimension <= bnds[1]):
+                        inside = (
+                                ((bnds[0] - limits[1] + limits[0])
+                                 <= dimension)
+                                & (dimension <= bnds[1])
+                        )
+
+        if not np.all(inside):
+            raise RuntimeError(
+                "{} coordinates not all in their bounds".format(name))
+
+    def _set_space(self, dimension, dimension_bounds, name,
+                   units, axis, limits, is_cyclic):
+        """**Examples:**
+
+        >>> import numpy
+        >>> Grid()._set_space([[0.5]], [0., 1.], 'test', '1', 'I', (0, 2), False)
         >>> Grid()._set_space([[0, 1], [1, 2]], [[0., 1.], [1., 2.], [2., 3.]],
-        ...                   'test', '1', 'I')
+        ...                   'test', '1', 'I', (-3, 3), True)
         Traceback (most recent call last):
             ...
         RuntimeError: Grid test not convertible to 1D-array
         >>> Grid()._set_space([0.5, 1.5, 2.5], [[0., 1.], [1., 2.], [2., 3.]],
-        ...                   'test', '1', 'I')
+        ...                   'test', '1', 'I', (-3, 3), True)
         >>> Grid()._set_space([0.5, 1.5], [[0., 1.], [1., 2.], [2., 3.]],
-        ...                   'test', '1', 'I')
+        ...                   'test', '1', 'I', (-3, 3), True)
         Traceback (most recent call last):
             ...
         RuntimeError: Grid test bounds not compatible in size with test
         """
-        # checks on dimension
+        # checks on dimension coordinates
         if not isinstance(dimension, np.ndarray):
             dimension = np.asarray(dimension)
         dimension = np.squeeze(dimension)
@@ -551,9 +1041,11 @@ class Grid(SpaceDomain):
             raise RuntimeError(
                 "{} {} not convertible to 1D-array".format(
                     self.__class__.__name__, name))
-        self._check_dimension_regularity(dimension, name)
+        self._check_dimension_limits(dimension, name, limits)
+        self._check_dimension_direction(dimension, name, limits, is_cyclic)
+        self._check_dimension_regularity(dimension, name, limits, is_cyclic)
 
-        # checks on dimension bounds
+        # checks on dimension coordinate bounds
         if not isinstance(dimension_bounds, np.ndarray):
             dimension_bounds = np.asarray(dimension_bounds)
         dimension_bounds = np.squeeze(dimension_bounds)
@@ -561,8 +1053,21 @@ class Grid(SpaceDomain):
             raise RuntimeError(
                 "{} {} bounds not compatible in size with {}".format(
                     self.__class__.__name__, name, name))
-        self._check_dimension_bounds_regularity(dimension_bounds, name)
-        self._check_dimension_bounds_contiguity(dimension_bounds, name)
+        self._check_dimension_bounds_limits(dimension_bounds, name, limits)
+        self._check_dimension_bounds_direction(
+            dimension_bounds, name, limits, is_cyclic
+        )
+        self._check_dimension_bounds_regularity(
+            dimension_bounds, name, limits, is_cyclic
+        )
+        self._check_dimension_bounds_contiguity(
+            dimension_bounds, name, limits, is_cyclic
+        )
+
+        # check coordinates in their bounds
+        self._check_dimension_in_bounds(
+            dimension, dimension_bounds, name, limits, is_cyclic
+        )
 
         # deal with special case of dimension with only one-element
         # due to squeeze, dimension is scalar array, dimension_bounds is 1D
@@ -613,10 +1118,12 @@ class Grid(SpaceDomain):
 
         # determine Y and X coordinates and their bounds
         y, y_bounds = cls._get_dimension_from_extent_and_resolution(
-            y_extent, y_resolution, y_span, cls._Y_name
+            y_extent, y_resolution, y_span, cls._Y_name,
+            cls._Y_limits, cls._Y_is_cyclic
         )
         x, x_bounds = cls._get_dimension_from_extent_and_resolution(
-            x_extent, x_resolution, x_span, cls._X_name
+            x_extent, x_resolution, x_span, cls._X_name,
+            cls._X_limits, cls._X_is_cyclic
         )
 
         # infer Z span in relation to coordinate from location
@@ -634,7 +1141,8 @@ class Grid(SpaceDomain):
 
             # determine latitude and longitude coordinates and their bounds
             z, z_bounds = cls._get_dimension_from_extent_and_resolution(
-                z_extent, z_resolution, z_span, cls._Z_name
+                z_extent, z_resolution, z_span, cls._Z_name,
+                cls._Z_limits, cls._Z_is_cyclic
             )
         else:
             z = None
@@ -649,11 +1157,31 @@ class Grid(SpaceDomain):
 
     @staticmethod
     def _get_dimension_from_extent_and_resolution(extent, resolution, span,
-                                                  name):
+                                                  name, limits, is_cyclic):
+        # check sign of resolution
+        if resolution <= 0:
+            raise ValueError(
+                "{} resolution must be positive".format(name))
+
+        # check extent
+        dim_start, dim_end = extent
+        if dim_start == dim_end:
+            raise ValueError(
+                "{} extent empty".format(name, *limits))
+        if limits is not None:
+            if (dim_start < limits[0]) or (dim_start > limits[1]):
+                raise ValueError(
+                    "{} extent start beyond limits [{}, {}]".format(name, *limits))
+            if (dim_end < limits[0]) or (dim_end > limits[1]):
+                raise ValueError(
+                    "{} extent end beyond limits [{}, {}]".format(name, *limits))
+
+        if is_cyclic:
+            if dim_end < dim_start:
+                dim_end += limits[1] - limits[0]
+
         # check compatibility between extent and resolution
         # (i.e. need to produce a whole number of grid cells)
-        dim_start, dim_end = extent
-
         rtol_ = rtol()
         atol_ = atol()
         if np.isclose((dim_end - dim_start) % resolution, 0, rtol_, atol_):
@@ -677,6 +1205,11 @@ class Grid(SpaceDomain):
                 dim.reshape((dim.size, -1)) +
                 np.array(span) * resolution
         )
+
+        # deal with wrap around values
+        if is_cyclic:
+            dim[dim > limits[1]] -= limits[1] - limits[0]
+            dim_bounds[dim_bounds > limits[1]] -= limits[1] - limits[0]
 
         # round the arrays and return them
         decr_ = decr()
@@ -1039,6 +1572,12 @@ class LatLonGrid(Grid):
                 'degreesN', 'degreeN']
     _X_units = ['degrees_east', 'degree_east', 'degrees_E',
                 'degree_E', 'degreesE', 'degreeE']
+    _Z_limits = None
+    _Y_limits = (-90, 90)
+    _X_limits = (-180, 180)
+    _Z_is_cyclic = False
+    _Y_is_cyclic = False
+    _X_is_cyclic = True
 
     def __init__(self, latitude, longitude, latitude_bounds,
                  longitude_bounds, altitude=None, altitude_bounds=None):
@@ -1050,7 +1589,7 @@ class LatLonGrid(Grid):
                 The array of latitude coordinates in degrees North
                 defining the temporal dimension. May be any type that
                 can be cast to a `numpy.ndarray`. Must contain numerical
-                values.
+                values. Coordinates must be ordered from South to North.
 
                 *Parameter example:* ::
 
@@ -1064,7 +1603,7 @@ class LatLonGrid(Grid):
                 The array of longitude coordinates in degrees East
                 defining the temporal dimension. May be any type that
                 can be cast to a `numpy.ndarray`. Must contain numerical
-                values.
+                values. Coordinates must be ordered from West to East.
 
                 *Parameter example:* ::
 
@@ -1179,18 +1718,30 @@ class LatLonGrid(Grid):
             Y_bounds (180, 2): [[-90, ..., 90]] degrees_north
             X_bounds (360, 2): [[-180, ..., 180]] degrees_east
         )
+        >>> sd = LatLonGrid(
+        ...     latitude=[75, 45, 25],
+        ...     longitude=[30, 90, 150],
+        ...     latitude_bounds=[[90, 60], [60, 30], [30, 0]],
+        ...     longitude_bounds=[[0, 60], [60, 120], [120, 180]]
+        ... )
+        Traceback (most recent call last):
+            ...
+        RuntimeError: latitude dimension not directed positively
         """
         super(LatLonGrid, self).__init__()
 
         if altitude is not None and altitude_bounds is not None:
             self._set_space(altitude, altitude_bounds, name=self._Z_name,
-                            units=self._Z_units[0], axis='Z')
+                            units=self._Z_units[0], axis='Z',
+                            limits=self._Z_limits, is_cyclic=self._Z_is_cyclic)
             self._f.construct('Z').set_property('positive', 'up')
 
         self._set_space(latitude, latitude_bounds,
-                        name=self._Y_name, units=self._Y_units[0], axis='Y')
+                        name=self._Y_name, units=self._Y_units[0], axis='Y',
+                        limits=self._Y_limits, is_cyclic=self._Y_is_cyclic)
         self._set_space(longitude, longitude_bounds,
-                        name=self._X_name, units=self._X_units[0], axis='X')
+                        name=self._X_name, units=self._X_units[0], axis='X',
+                        limits=self._X_limits, is_cyclic=self._X_is_cyclic)
 
         # set dummy data needed for using inner field for remapping
         self._set_dummy_data()
@@ -1213,8 +1764,9 @@ class LatLonGrid(Grid):
                 the location of the start of the extent along the
                 latitude coordinate, the second element of the pair is
                 the location of the end of the extent along the latitude
-                coordinate. May be any type that can be unpacked (e.g.
-                `tuple`, `list`, `numpy.ndarray`).
+                coordinate. Extent must be from South to North. May be
+                any type that can be unpacked (e.g. `tuple`, `list`,
+                `numpy.ndarray`).
 
                 *Parameter example:* ::
 
@@ -1226,8 +1778,9 @@ class LatLonGrid(Grid):
                 the location of the start of the extent along the
                 longitude coordinate, the second element of the pair is
                 the location of the end of the extent along the
-                longitude coordinate. May be any type that can be
-                unpacked (e.g. `tuple`, `list`, `numpy.ndarray`).
+                longitude coordinate. Extent must be from West to East.
+                May be any type that can be unpacked (e.g. `tuple`,
+                `list`, `numpy.ndarray`).
 
                 *Parameter example:* ::
 
@@ -1235,7 +1788,7 @@ class LatLonGrid(Grid):
 
             latitude_resolution: `float` or `int`
                 The spacing between two consecutive latitude coordinates
-                in degrees North for the desired grid.
+                in degrees North for the desired grid. Must be positive.
 
                 *Parameter example:* ::
 
@@ -1243,7 +1796,8 @@ class LatLonGrid(Grid):
 
             longitude_resolution: `float` or `int`
                 The spacing between two consecutive longitude
-                coordinates in degrees East for the desired grid.
+                coordinates in degrees East for the desired grid. Must
+                be positive.
 
                 *Parameter example:* ::
 
@@ -1541,6 +2095,12 @@ class RotatedLatLonGrid(Grid):
     _Z_units = ['m', 'metre', 'meter', 'metres', 'meters']
     _Y_units = ['degrees', 'degree']
     _X_units = ['degrees', 'degree']
+    _Z_limits = None
+    _Y_limits = (-90, 90)
+    _X_limits = (-180, 180)
+    _Z_is_cyclic = False
+    _Y_is_cyclic = False
+    _X_is_cyclic = True
 
     def __init__(self, grid_latitude, grid_longitude, grid_latitude_bounds,
                  grid_longitude_bounds, earth_radius, grid_north_pole_latitude,
@@ -1643,10 +2203,10 @@ class RotatedLatLonGrid(Grid):
         **Examples**
 
         >>> sd = RotatedLatLonGrid(
-        ...     grid_latitude=[0.88, 0.44, 0., -0.44, -0.88],
+        ...     grid_latitude=[-0.88, -0.44, 0., 0.44, 0.88],
         ...     grid_longitude=[-2.5, -2.06, -1.62, -1.18],
-        ...     grid_latitude_bounds=[[1.1, 0.66], [0.66, 0.22], [0.22, -0.22],
-        ...                           [-0.22, -0.66], [-0.66, -1.1]],
+        ...     grid_latitude_bounds=[[-1.1, -0.66], [-0.66, -0.22], [-0.22, 0.22],
+        ...                           [0.22, 0.66], [0.66, 1.1]],
         ...     grid_longitude_bounds=[[-2.72, -2.28], [-2.28, -1.84],
         ...                            [-1.84, -1.4], [-1.4, -0.96]],
         ...     earth_radius=6371007,
@@ -1659,10 +2219,10 @@ class RotatedLatLonGrid(Grid):
         RotatedLatLonGrid(
             shape {Z, Y, X}: (1, 5, 4)
             Z, altitude (1,): [10] m
-            Y, grid_latitude (5,): [0.88, ..., -0.88] degrees
+            Y, grid_latitude (5,): [-0.88, ..., 0.88] degrees
             X, grid_longitude (4,): [-2.5, ..., -1.18] degrees
             Z_bounds (1, 2): [[0, 20]] m
-            Y_bounds (5, 2): [[1.1, ..., -1.1]] degrees
+            Y_bounds (5, 2): [[-1.1, ..., 1.1]] degrees
             X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
         )
         """
@@ -1670,13 +2230,16 @@ class RotatedLatLonGrid(Grid):
 
         if altitude is not None and altitude_bounds is not None:
             self._set_space(altitude, altitude_bounds, name=self._Z_name,
-                            units=self._Z_units[0], axis='Z')
+                            units=self._Z_units[0], axis='Z',
+                            limits=self._Z_limits, is_cyclic=self._Z_is_cyclic)
             self._f.construct('Z').set_property('positive', 'up')
 
         self._set_space(grid_latitude, grid_latitude_bounds,
-                        name=self._Y_name, units=self._Y_units[0], axis='Y')
+                        name=self._Y_name, units=self._Y_units[0], axis='Y',
+                        limits=self._Y_limits, is_cyclic=self._Y_is_cyclic)
         self._set_space(grid_longitude, grid_longitude_bounds,
-                        name=self._X_name, units=self._X_units[0], axis='X')
+                        name=self._X_name, units=self._X_units[0], axis='X',
+                        limits=self._X_limits, is_cyclic=self._X_is_cyclic)
 
         self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
                                       grid_north_pole_longitude)
@@ -1817,10 +2380,10 @@ class RotatedLatLonGrid(Grid):
         ...         properties={'standard_name': 'grid_latitude',
         ...                     'units': 'degrees',
         ...                     'axis': 'Y'},
-        ...         data=cf.Data([0.88, 0.44, 0., -0.44, -0.88]),
-        ...         bounds=cf.Bounds(data=cf.Data([[1.1, 0.66], [0.66, 0.22],
-        ...                                        [0.22, -0.22], [-0.22, -0.66],
-        ...                                        [-0.66, -1.1]]))
+        ...         data=cf.Data([-0.88, -0.44, 0., 0.44, 0.88]),
+        ...         bounds=cf.Bounds(data=cf.Data([[-1.1, -0.66], [-0.66, -0.22],
+        ...                                        [-0.22, 0.22], [0.22, 0.66],
+        ...                                        [0.66, 1.1]]))
         ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=5))
         ... )
@@ -1860,10 +2423,10 @@ class RotatedLatLonGrid(Grid):
         RotatedLatLonGrid(
             shape {Z, Y, X}: (1, 5, 4)
             Z, altitude (1,): [10] m
-            Y, grid_latitude (5,): [0.88, ..., -0.88] degrees
+            Y, grid_latitude (5,): [-0.88, ..., 0.88] degrees
             X, grid_longitude (4,): [-2.5, ..., -1.18] degrees
             Z_bounds (1, 2): [[0, 20]] m
-            Y_bounds (5, 2): [[1.1, ..., -1.1]] degrees
+            Y_bounds (5, 2): [[-1.1, ..., 1.1]] degrees
             X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
         )
         """
