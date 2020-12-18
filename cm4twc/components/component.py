@@ -2,7 +2,6 @@ import abc
 from importlib import import_module
 import numpy as np
 from os import path, sep
-from datetime import timedelta
 import cf
 from cfunits import Units
 
@@ -14,7 +13,7 @@ from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
 from ..data import DataSet
-from ..settings import dtype_float, array_order
+from ..settings import dtype_float, array_order, decr
 
 
 class MetaComponent(abc.ABCMeta):
@@ -411,6 +410,10 @@ class Component(metaclass=MetaComponent):
 
             # if regular grid, try to subset
             if isinstance(spacedomain, Grid):
+                # avoid floating-point error problems by rounding up
+                for axis in [spacedomain.X_name, spacedomain.Y_name]:
+                    dataset[data_name].dim(axis).round(decr(), inplace=True)
+
                 # try to subset in space
                 if dataset[data_name].subspace(
                         'test',
