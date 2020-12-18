@@ -169,12 +169,38 @@ class DataSet(MutableMapping):
 
     @staticmethod
     def _get_dict_variables_from_file(files, name_mapping, select):
-        return {
-            name_mapping[field.standard_name]
-            if name_mapping and (field.standard_name in name_mapping)
-            else field.standard_name: cf.Field(source=field, copy=False)
-            for field in cf.read(files, select=select)
-        }
+        variables = {}
+
+        for field in cf.read(files, select=select):
+            # look for name to use as key in variables dict
+            field_names = []
+            name_in_mapping = None
+
+            # loop by increasing order of priority
+            for attrib in ['long_name', 'computed_standard_name',
+                           'standard_name']:
+                if hasattr(field, attrib):
+                    field_names.append(getattr(field, attrib))
+                    if name_mapping and getattr(field, attrib) in name_mapping:
+                        name_in_mapping = name_mapping[getattr(field, attrib)]
+
+            if name_in_mapping is None:
+                # try to use the latest (highest priority) name found
+                try:
+                    key = field_names[-1]
+                except IndexError:
+                    raise RuntimeError(
+                        'variable {} is missing CF name'.format(
+                            field.nc_get_variable())
+                    )
+            else:
+                # use the renaming requested
+                key = name_in_mapping
+
+            # assign field to variables dict
+            variables[key] = cf.Field(source=field, copy=False)
+
+        return variables
 
     @classmethod
     def from_config(cls, cfg):
@@ -189,9 +215,19 @@ class DataSet(MutableMapping):
         return inst
 
     def to_config(self):
-        return {
-            var: {
+        cfg = {}
+
+        for var in self:
+            name = None
+            # loop by increasing order of priority
+            for attrib in ['long_name', 'computed_standard_name',
+                           'standard_name']:
+                if hasattr(self[var], attrib):
+                    name = getattr(self[var], attrib)
+
+            cfg[var] = {
                 'files': self[var].data.get_filenames(),
-                'select': self[var].standard_name
-            } for var in self
-        }
+                'select': name
+            }
+
+        return cfg
