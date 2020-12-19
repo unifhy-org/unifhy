@@ -86,7 +86,8 @@ class Grid(SpaceDomain):
         'S': (-1, 0),
         'SW': (-1, -1),
         'W': (0, -1),
-        'NW': (1, -1)
+        'NW': (1, -1),
+        'O': (0, 0)
     }
     _routing_digits_map = {
         1: (1, 0),
@@ -96,7 +97,8 @@ class Grid(SpaceDomain):
         5: (-1, 0),
         6: (-1, -1),
         7: (0, -1),
-        8: (1, -1)
+        8: (1, -1),
+        0: (0, 0)
     }
 
     # supported locations to generate grid
