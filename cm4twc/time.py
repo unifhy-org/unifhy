@@ -303,7 +303,8 @@ class TimeDomain(object):
 
         return not self.__eq__(other)
 
-    def is_time_equal_to(self, field, _leading_truncation_idx=None,
+    def is_time_equal_to(self, field, ignore_bounds=True,
+                         _leading_truncation_idx=None,
                          _trailing_truncation_idx=None):
         """Compare equality between the TimeDomain and the 'time'
         dimension  coordinate in a `cf.Field`.
@@ -362,10 +363,13 @@ class TimeDomain(object):
             field.construct('time').data
         )
 
-        bounds_match = (
-            self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
-            field.construct('time').bounds.data
-        )
+        if ignore_bounds:
+            bounds_match = cf.Data([True])
+        else:
+            bounds_match = (
+                self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
+                field.construct('time').bounds.data
+            )
 
         # use a trick by checking the minimum value of the boolean arrays
         # (False if any value is False, i.e. at least one value is not equal
