@@ -10,6 +10,7 @@ LatLonGrid
 
 Methods
 -------
+
 .. rubric:: Construction
 
 .. autosummary::
@@ -59,4 +60,5 @@ Attributes
    ~cm4twc.LatLonGrid.X_name
    ~cm4twc.LatLonGrid.Y_name
    ~cm4twc.LatLonGrid.Z_name
+   ~cm4twc.LatLonGrid.land_sea_mask
    ~cm4twc.LatLonGrid.routing_info

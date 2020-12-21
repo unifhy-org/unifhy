@@ -20,6 +20,7 @@ class SpaceDomain(object):
         self._routing_info = None
         self._routing_out_mask = None
         self._routing_masks = {}
+        self._land_sea_mask = None
 
     @property
     def shape(self):
@@ -36,6 +37,43 @@ class SpaceDomain(object):
         access to the coordinate values along each axis.
         """
         return None
+
+    @property
+    def land_sea_mask(self):
+        """The land-sea mask for the SpaceDomain as a `numpy.ndarray`
+        of `bool` (True for land, False for sea).
+
+        :Parameters:
+
+            mask: `numpy.ndarray`
+                The array containing the land-sea information. The
+                shape of the array must be the same as the SpaceDomain.
+                The array must contain boolean values (True for land,
+                False for sea).
+
+        :Returns:
+
+            `numpy.ndarray`
+                The array containing the land-sea information as boolean
+                values (True for land, False for sea). The shape of the
+                array is the same as of the SpaceDomain. If not set,
+                return None.
+        """
+        return self._land_sea_mask
+
+    @land_sea_mask.setter
+    def land_sea_mask(self, mask):
+        if not isinstance(mask, np.ndarray):
+            raise TypeError('mask must be an array')
+        if not mask.dtype == np.dtype(bool):
+            if (np.sum(mask == 1) + np.sum(mask == 0)) == mask.size:
+                mask = np.asarray(mask, dtype=bool)
+            else:
+                raise TypeError('mask must contain boolean values')
+        if not mask.shape == self.shape:
+            raise RuntimeError('mask shape incompatible with SpaceDomain')
+
+        self._land_sea_mask = mask
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -184,8 +222,7 @@ class Grid(SpaceDomain):
     @property
     def Z_name(self):
         """Return the name of the Z-axis of the SpaceDomain instance
-        as a `str` if the Z-axis exists, otherwise
-        return None.
+        as a `str` if the Z-axis exists, otherwise return None.
         """
         if self._f.has_construct('Z'):
             return self._f.construct('Z').standard_name
@@ -329,14 +366,6 @@ class Grid(SpaceDomain):
         """
         return self._routing_info
 
-    @property
-    def routing_out_mask(self):
-        """Return a mask identifying the locations in the Grid where any
-        routed variable exits the domain as a `numpy.ndarray`. If
-        *routing_info* not set, return None.
-        """
-        return self._routing_out_mask
-
     @routing_info.setter
     def routing_info(self, directions):
         """
@@ -467,6 +496,14 @@ class Grid(SpaceDomain):
         # OUT-wards movement
         # (i.e. towards outside domain or towards masked location)
         self._routing_out_mask = to_out | to_msk
+
+    @property
+    def routing_out_mask(self):
+        """Return a mask identifying the locations in the Grid where any
+        routed variable exits the domain as a `numpy.ndarray`. If
+        *routing_info* not set, return None.
+        """
+        return self._routing_out_mask
 
     def route(self, variable_to_route):
         """Perform the movement of the given variable values from

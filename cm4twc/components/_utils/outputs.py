@@ -259,7 +259,9 @@ class OutputStream(object):
                         value = np.nanmax(self.arrays[name], axis=0)
 
                     # store result in file
-                    f.variables[name_method][t] = value
+                    f.variables[name_method][t] = np.ma.array(
+                        value, mask=self.spacedomain.land_sea_mask
+                    )
 
                 # reset array tracker to point to start of array again
                 self.array_trackers[name] = 0
