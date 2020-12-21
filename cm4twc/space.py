@@ -301,6 +301,31 @@ class Grid(SpaceDomain):
         ...                                  [[1, -1], [0, 1], [-1, -1]]])
         >>> numpy.array_equal(routing_info, grid.routing_info)
         True
+        >>> grid.routing_info = numpy.ma.array(
+        ...     [['SE', 'S', 'E'],
+        ...      ['NE', 'E', 'N'],
+        ...      ['S', 'S', 'W'],
+        ...      ['NW', 'E', 'SW']],
+        ...     mask=[[1, 0, 0],
+        ...           [1, 0, 0],
+        ...           [1, 1, 0],
+        ...           [0, 0, 0]])
+        >>> print(grid.routing_info)
+        [[[-- --]
+          [-1 0]
+          [0 1]]
+        <BLANKLINE>
+         [[-- --]
+          [0 1]
+          [1 0]]
+        <BLANKLINE>
+         [[-- --]
+          [-- --]
+          [0 -1]]
+        <BLANKLINE>
+         [[1 -1]
+          [0 1]
+          [-1 -1]]]
         """
         return self._routing_info
 
@@ -314,39 +339,66 @@ class Grid(SpaceDomain):
 
     @routing_info.setter
     def routing_info(self, directions):
-        # initialise info array by extending by one leading axis of
-        # size 2 (for relative Y movement, and relative X movement)
-        info = np.zeros(self.shape + (2,), int)
-        info[:] = -9
-
+        """
+        TODO: support domain wrap around (e.g. for global runs), to do
+              so, need to adjust section on flows towards outside domain
+        """
         error_valid = RuntimeError('routing info contains invalid data')
         error_dim = RuntimeError('routing info dimensions not '
                                  'compatible with Grid')
 
-        # convert directions to relative Y X movement
+        # initialise info array by extending by one trailing axis of
+        # size 2 (for relative Y movement, and relative X movement)
         if isinstance(directions, np.ndarray):
-            if directions.dtype == np.dtype('<U2'):
-                # cardinal
-                if not directions.shape == self.shape:
-                    raise error_dim
-
-                directions = np.char.strip(np.char.upper(directions))
-                for card, yx_rel in self._routing_cardinal_map.items():
-                    info[directions == card] = yx_rel
-            elif issubclass(directions.dtype.type, np.integer):
-                if info.shape == directions.shape:
-                    # relative
-                    if np.amin(directions) < -1 or np.amax(directions) > 1:
-                        raise error_valid
-                    info[:] = directions
+            # if masked array, use same mask on info
+            if np.ma.is_masked(directions):
+                if (self.shape + (2,)) == directions.shape:
+                    info = np.ma.masked_array(
+                        np.zeros(self.shape + (2,), int),
+                        mask=directions.mask
+                    )
                 elif self.shape == directions.shape:
-                    # digits
-                    for digit, yx_rel in self._routing_digits_map.items():
-                        info[directions == digit] = yx_rel
+                    info = np.ma.masked_array(
+                        np.zeros(self.shape + (2,), int),
+                        mask=np.tile(directions.mask[..., np.newaxis], 2)
+                    )
                 else:
                     raise error_dim
+                info[~info.mask] = -9
             else:
-                raise error_valid
+                info = np.zeros(self.shape + (2,), int)
+                info[:] = -9
+        else:
+            raise error_valid
+
+        # convert directions to relative Y X movement
+        if directions.dtype == np.dtype('<U2'):
+            # cardinal
+            if not directions.shape == self.shape:
+                raise error_dim
+
+            # strip and capitalise strings
+            if np.ma.is_masked(directions):
+                directions[~directions.mask] = np.char.strip(
+                    np.char.upper(directions[~directions.mask])
+                )
+            else:
+                directions = np.char.strip(np.char.upper(directions))
+
+            for card, yx_rel in self._routing_cardinal_map.items():
+                info[directions == card] = yx_rel
+        elif issubclass(directions.dtype.type, np.integer):
+            if info.shape == directions.shape:
+                # relative
+                if np.amin(directions) < -1 or np.amax(directions) > 1:
+                    raise error_valid
+                info[:] = directions
+            elif self.shape == directions.shape:
+                # digits
+                for digit, yx_rel in self._routing_digits_map.items():
+                    info[directions == digit] = yx_rel
+            else:
+                raise error_dim
         else:
             raise error_valid
 
@@ -358,6 +410,7 @@ class Grid(SpaceDomain):
         self._routing_info = info
 
         # find outflow towards outside domain
+        # to set relative direction special value 9
         info_ = np.zeros(self.shape + (2,), int)
         info_[:] = info
         # northwards on north edge
@@ -369,6 +422,36 @@ class Grid(SpaceDomain):
         # westwards on west edge
         info_[..., :, 0, 1][info_[..., :, 0, 1] == -1] = 9
 
+        # create mask for location with outflow towards outside domain
+        to_out = (info_[..., 0] == 9) | (info_[..., 1] == 9)
+
+        # find outflow towards masked location
+        if np.ma.is_masked(directions):
+            # get absolute destination from relative directions
+            y, x = to_out.shape[-2:]
+            abs_dst = np.zeros(info_.shape, dtype=int)
+            abs_dst[..., 0][~to_out] = (np.arange(y, dtype=int)[:, np.newaxis]
+                                        + info_[..., 0])[~to_out]
+            abs_dst[..., 1][~to_out] = (np.arange(x, dtype=int)[np.newaxis, :]
+                                        + info_[..., 1])[~to_out]
+            # avoid IndexError by arbitrarily setting (0, 0) where domain outflow
+            abs_dst[..., 0][to_out] = 0
+            abs_dst[..., 1][to_out] = 0
+
+            # use destination on mask to determine if towards masked location
+            to_msk = directions.mask[tuple(abs_dst.T)].T
+
+            # eliminate previous arbitrary action that avoided IndexError
+            to_msk[to_out] = False
+
+            # set relative direction to special value 9
+            # where outflow towards masked location
+            info_[..., 0][to_msk] = 9
+            info_[..., 1][to_msk] = 9
+
+        else:
+            to_msk = np.zeros(self.shape, dtype=bool)
+
         # pre-process some convenience masks out of main routing mask
         # to avoid generating them every time *route* method is called
 
@@ -376,11 +459,14 @@ class Grid(SpaceDomain):
         for j in [-1, 0, 1]:
             # X-wards movement
             for i in [-1, 0, 1]:
+                # note: special value 9 set previously allows here to
+                # ignore them in the routing masks
                 self._routing_masks[(j, i)] = (
                         (info_[..., 0] == j) & (info_[..., 1] == i)
                 )
         # OUT-wards movement
-        self._routing_out_mask = (info_[..., 0] == 9) | (info_[..., 1] == 9)
+        # (i.e. towards outside domain or towards masked location)
+        self._routing_out_mask = to_out | to_msk
 
     def route(self, variable_to_route):
         """Perform the movement of the given variable values from
@@ -400,16 +486,17 @@ class Grid(SpaceDomain):
                 The array containing the values routed according to the
                 *routing_info* property of the Grid for the
                 *variable_to_route*. The shape of this array is the same
-                as the Grid.
+                as of the Grid.
 
             variable_out: `numpy.ndarray`
                 The array containing the values routed according to the
                 *routing_info* property of the Grid which left the
-                domain for the *variable_to_route*. The shape of this
-                array is one-dimensional, of size equal to the number of
-                outlets for the domain defined by the Grid according to
-                the *routing_info*. These values can be remapped on the
-                Grid using the *routing_out_mask* property.
+                domain for the *variable_to_route* (a variable is
+                considered to leave the domain if it is directed
+                towards beyond the bounds of the domain, or towards
+                a masked location within the domain, if the
+                *routing_info* is maked). The shape this array is the
+                same as of the Grid.
 
         **Examples**
 
@@ -438,30 +525,73 @@ class Grid(SpaceDomain):
          [ 0  9  0]
          [ 7  8 11]]
         >>> print(outed)
-        [ 3 10 12]
-        >>> remap = numpy.zeros(variable.shape, variable.dtype)
-        >>> remap[grid.routing_out_mask] = outed
-        >>> print(remap)
         [[ 0  0  3]
          [ 0  0  0]
          [ 0  0  0]
          [10  0 12]]
+        >>> grid.routing_info = numpy.ma.array(
+        ...     [['NE', 'N', 'E'],
+        ...      ['SE', 'E', 'S'],
+        ...      ['N', 'N', 'W'],
+        ...      ['SW', 'E', 'NW']],
+        ...     mask=[[1, 0, 0],
+        ...           [1, 0, 0],
+        ...           [1, 1, 0],
+        ...           [0, 0, 0]])
+        >>> moved, outed = grid.route(variable)
+        >>> print(moved)
+        [[-- 0 6]
+         [-- 2 5]
+         [-- -- 0]
+         [0 0 11]]
+        >>> print(outed)
+        [[-- 0 3]
+         [-- 0 0]
+         [-- -- 9]
+         [10 0 12]]
         """
+        # check whether method can be used
+        if self.routing_info is None:
+            raise RuntimeError("method 'route' requires setting "
+                               "property 'routing_info'")
+
+        # initialise routed and out arrays depending on mask/no-mask
+        if np.ma.is_masked(self.routing_info):
+            mask = self.routing_info.mask[..., 0]
+            variable_routed = np.ma.array(
+                np.zeros(variable_to_route.shape, variable_to_route.dtype),
+                mask=mask
+            )
+            variable_out = np.ma.array(
+                np.zeros(variable_to_route.shape, variable_to_route.dtype),
+                mask=mask
+            )
+        else:
+            mask = None
+            variable_routed = np.zeros(variable_to_route.shape,
+                                       variable_to_route.dtype)
+            variable_out = np.zeros(variable_to_route.shape,
+                                    variable_to_route.dtype)
+        # if no mask, keep as is, if not, take logical negation of it
+        mask = None if mask is None else ~mask
+
         # collect the values routed towards outside the domain
         out_mask = self._routing_out_mask
-        variable_out = variable_to_route[out_mask]
+        if np.ma.is_masked(self.routing_info):
+            variable_out[out_mask & mask] = variable_to_route[out_mask & mask]
+        else:
+            variable_out[out_mask] = variable_to_route[out_mask]
 
         # perform the routing using the routing mask
-        variable_routed = np.zeros(variable_to_route.shape,
-                                   variable_to_route.dtype)
         # Y-wards movement
         for j in [-1, 0, 1]:
             # X-wards movement
             for i in [-1, 0, 1]:
                 routing_mask = self._routing_masks[(j, i)]
-                variable_routed += np.roll(variable_to_route * routing_mask,
-                                           shift=(j, i),
-                                           axis=(-2, -1))
+                variable_routed[mask] += np.roll(variable_to_route
+                                                 * routing_mask,
+                                                 shift=(j, i),
+                                                 axis=(-2, -1))[mask]
 
         return variable_routed, variable_out
 
