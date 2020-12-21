@@ -34,11 +34,13 @@ class AutoComponentDirective(SphinxDirective):
             for k, v in inspect.signature(cls_.run).parameters.items()
             if v.default is not inspect.Parameter.empty
         }
-        for definition in ['inputs', 'parameters', 'constants',
-                           'states', 'outputs']:
+        for definition in ['inputs', '_inwards', 'outputs', '_outwards',
+                           'parameters', 'constants', 'states']:
             if getattr(cls_, definition + '_info'):
                 attribute = getattr(cls_, definition + '_info')
                 para = nodes.paragraph()
+                if definition[0] == '_':
+                    definition = definition[1:]
                 rubric = nodes.rubric(nodes.Text(definition.capitalize()),
                                       nodes.Text(definition.capitalize()))
                 para += rubric
