@@ -260,7 +260,7 @@ class OutputStream(object):
 
                     # store result in file
                     f.variables[name_method][t] = np.ma.array(
-                        value, mask=self.spacedomain.land_sea_mask
+                        value, mask=~self.spacedomain.land_sea_mask
                     )
 
                 # reset array tracker to point to start of array again
