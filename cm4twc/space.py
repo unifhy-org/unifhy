@@ -2181,12 +2181,13 @@ class LatLonGrid(Grid):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `LatLonGrid` from a cf.Field instance.
+        """Initialise a `LatLonGrid` from spatial dimension coordinates
+        of a `cf.Field`.
 
         :Parameters:
 
             field: cf.Field object
-                The field object who will be used to initialise a
+                The field object that will be used to initialise a
                 `LatLonGrid` instance. This field must feature a
                 'latitude' and a 'longitude' constructs, and these
                 constructs must feature bounds. This field may
@@ -2528,15 +2529,16 @@ class RotatedLatLonGrid(Grid):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `RotatedLatLonGrid` from a cf.Field instance.
+        """Initialise a `RotatedLatLonGrid` from spatial dimension
+        coordinates of a `cf.Field`.
 
         :Parameters:
 
             field: cf.Field object
-                The field object who will be used to initialise a
+                The field object that will be used to initialise a
                 `RotatedLatLonGrid` instance. This field must feature a
-                'latitude' and a 'longitude' constructs, and these
-                constructs must feature bounds. In addition, the
+                'grid_latitude' and a 'grid_longitude' constructs, and
+                these constructs must feature bounds. In addition, the
                 parameters required for the conversion of the grid to a
                 true latitude-longitude reference system must be set
                 (i.e. earth_radius, grid_north_pole_latitude,
@@ -2663,7 +2665,7 @@ class RotatedLatLonGrid(Grid):
                                     altitude_location='centre'):
         """Initialise a `RotatedLatLonGrid` from the extent and the
         resolution of grid_latitude and grid_longitude coordinates (and
-        optionally altitude coordinate).
+        optional altitude coordinates).
         """
         return cls(
             **cls._get_grid_from_extent_and_resolution(

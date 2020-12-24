@@ -514,7 +514,7 @@ class TimeDomain(object):
 
     @classmethod
     def from_start_end_step(cls, start, end, step, units=None, calendar=None):
-        """Initialise a `TimeDomain` from a sequence of datetime objects.
+        """Initialise a `TimeDomain` from start, end, and step for period.
 
         :Parameters:
 
@@ -660,12 +660,13 @@ class TimeDomain(object):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `TimeDomain` from a `cf.Field` instance.
+        """Initialise a `TimeDomain` from temporal dimension coordinate
+        of a `cf.Field`.
 
         :Parameters:
 
             field: `cf.Field` object
-                The field object who will be used to initialise a
+                The field object that will be used to initialise a
                 `TimeDomain` instance. This field must feature a 'time'
                 construct with bounds, and this construct must feature
                 'units' and 'calendar' properties.
@@ -701,8 +702,8 @@ class TimeDomain(object):
         return cls.from_start_end_step(**cls._extract_time_from_field(field))
 
     def to_field(self):
-        """Return a deep copy of the inner cf.Field used to characterise
-        the TimeDomain.
+        """Return a deep copy of the inner `cf.Field` used to
+        characterise the TimeDomain.
 
         **Examples**
         >>> td = TimeDomain.from_start_end_step(
