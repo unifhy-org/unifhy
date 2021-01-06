@@ -65,22 +65,6 @@ class Dummy(SurfaceLayerComponent):
             'kind': 'static'
         }
     }
-    driving_data_info = {
-        'driving_a': {
-            'units': '1'
-        },
-        'driving_b': {
-            'units': '1'
-        },
-        'driving_c': {
-            'units': '1'
-        },
-    }
-    ancillary_data_info = {
-        'ancillary_c': {
-            'units': '1'
-        }
-    }
     # parameters_info = {}
     # constants_info = {}
     states_info = {
