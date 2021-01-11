@@ -56,7 +56,7 @@ constants = {
     },
 }
 
-outputs = {
+records = {
     'surfacelayer': {
         'sync': {'output_x': {timedelta(days=1): ['instantaneous'],
                               timedelta(days=6): ['cumulative', 'average',
@@ -133,13 +133,13 @@ def get_dummy_component(category, kind, time_, space_, source):
 
     if kind == 'c':
         return component_class(
-            output_directory='outputs',
+            saving_directory='outputs',
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
             parameters=parameters[category],
             constants=constants[category],
-            outputs=outputs[category][time_]
+            records=records[category][time_]
         )
     elif kind == 'd':
         return cm4twc.DataComponent(

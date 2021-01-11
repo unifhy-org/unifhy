@@ -7,7 +7,7 @@ from tests.test_components.test_component import time_resolutions
 
 # expected raw values for states/transfers/outputs after main run
 # (null initial conditions, no spinup run, 12-day period)
-exp_outputs_raw = {
+exp_records_raw = {
     'sync': {
         'surfacelayer': {
             'state_a': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -59,7 +59,7 @@ exp_outputs_raw = {
 }
 
 
-def aggregate_raw_output(values, method, slice_):
+def aggregate_raw_record(values, method, slice_):
     length = len(values)
 
     if method == 'sum':
@@ -81,15 +81,15 @@ def aggregate_raw_output(values, method, slice_):
     return np.array(result)
 
 
-def get_expected_output(time_, component, name, delta, method):
+def get_expected_record(time_, component, name, delta, method):
     category = component.category
 
     # map to default for alias methods
-    method = cm4twc.components._utils.outputs._methods_map[method]
+    method = cm4twc.components._utils.records._methods_map[method]
 
-    # aggregate raw output using method and relevant slices
-    expected_output = aggregate_raw_output(
-        exp_outputs_raw[time_][category][name],
+    # aggregate raw record using method and relevant slices
+    expected_record = aggregate_raw_record(
+        exp_records_raw[time_][category][name],
         method,
         delta // component.timedomain.timedelta
     )
@@ -99,17 +99,17 @@ def get_expected_output(time_, component, name, delta, method):
         time_resolutions[category][time_], delta
     )
 
-    return expected_time, expected_bounds, expected_output
+    return expected_time, expected_bounds, expected_record
 
 
-def get_produced_output(component, name, delta, method):
+def get_produced_record(component, name, delta, method):
     rtol, atol = cm4twc.rtol(), cm4twc.atol()
 
     # map to default for alias methods
-    method = cm4twc.components._utils.outputs._methods_map[method]
+    method = cm4twc.components._utils.records._methods_map[method]
 
-    # load output from stream file
-    with Dataset(component._output_streams[delta].file, 'r') as f:
+    # load record from stream file
+    with Dataset(component._record_streams[delta].file, 'r') as f:
         values = f.variables['_'.join([name, method])][:]
         time = f.variables['time'][:]
         bounds = f.variables['time_bounds'][:]

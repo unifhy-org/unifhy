@@ -10,7 +10,7 @@ from ..settings import dtype_float
 class Exchanger(object):
 
     def __init__(self, components, clock, compass,
-                 identifier, output_directory):
+                 identifier, saving_directory):
         # transfers that are both inwards and outwards will exist
         # only once because dictionary keys are unique
         transfers = {}
@@ -46,7 +46,7 @@ class Exchanger(object):
         self.identifier = identifier
 
         # directories and files
-        self.output_directory = output_directory
+        self.saving_directory = saving_directory
         self.dump_file = None
 
     def set_up(self, clock, compass, overwrite=False):
@@ -248,24 +248,24 @@ class Exchanger(object):
     def initialise_(self, tag, overwrite=True):
         self.dump_file = '_'.join([self.identifier, 'exchanger',
                                    tag, 'dump.nc'])
-        if (overwrite or not path.exists(sep.join([self.output_directory,
+        if (overwrite or not path.exists(sep.join([self.saving_directory,
                                                    self.dump_file]))):
             create_transfers_dump(
-                sep.join([self.output_directory, self.dump_file]),
+                sep.join([self.saving_directory, self.dump_file]),
                 self.transfers, self.clock.timedomain,
                 self.compass.spacedomains
             )
 
     def dump_transfers(self, timestamp):
         update_transfers_dump(
-            sep.join([self.output_directory, self.dump_file]),
+            sep.join([self.saving_directory, self.dump_file]),
             self.transfers, timestamp
         )
 
     def finalise_(self):
         timestamp = self.clock.timedomain.bounds.array[-1, -1]
         update_transfers_dump(
-            sep.join([self.output_directory, self.dump_file]),
+            sep.join([self.saving_directory, self.dump_file]),
             self.transfers, timestamp
         )
 

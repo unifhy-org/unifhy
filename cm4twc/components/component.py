@@ -7,8 +7,8 @@ from cfunits import Units
 
 from ._utils.states import (State, create_states_dump, update_states_dump,
                             load_states_dump)
-from ._utils.outputs import (StateOutput, InterfaceOutput, OtherOutput,
-                             OutputStream)
+from ._utils.records import (StateRecord, OutwardRecord, OutputRecord,
+                             RecordStream)
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
@@ -54,15 +54,15 @@ class Component(metaclass=MetaComponent):
     outputs_info = {}
     solver_history = 1
 
-    def __init__(self, output_directory, timedomain, spacedomain,
-                 dataset=None, parameters=None, constants=None, outputs=None):
+    def __init__(self, saving_directory, timedomain, spacedomain,
+                 dataset=None, parameters=None, constants=None, records=None):
         """**Initialisation**
 
         :Parameters:
 
-            output_directory: `str`
+            saving_directory: `str`
                 The path to the directory where to save the component
-                dump and output files.
+                dump and record files.
 
             timedomain: `TimeDomain` object
                 The temporal dimension of the `Component`.
@@ -111,16 +111,16 @@ class Component(metaclass=MetaComponent):
                 The parameter values for the `Component`. Must be
                 provided in the required units.
 
-            outputs: `dict`, optional
-                The desired outputs from the `Component`. Each key
-                must an output available for the component chosen,
-                each value is a `dict` of `datetime.timedelta` for keys
-                and aggregation methods as a sequence of `str` for
-                values.
+            records: `dict`, optional
+                The desired records from the `Component`. Each key
+                must be a valid variable recordable for the component
+                chosen (i.e. outwards, outputs, and states), each value
+                is a `dict` of `datetime.timedelta` for keys and
+                aggregation methods as a sequence of `str` for values.
 
                 *Parameter example:* ::
 
-                    outputs={
+                    records={
                         'output_a': {
                             timedelta(days=1): ['sum'],
                             timedelta(weeks=1): ['min', 'max']
@@ -176,10 +176,10 @@ class Component(metaclass=MetaComponent):
         # constants attribute
         self.constants = constants
 
-        # outputs attributes
-        self._output_objects = None
-        self._output_streams = None
-        self.outputs = outputs
+        # records attributes
+        self._record_objects = None
+        self._record_streams = None
+        self.records = records
 
         # states attribute
         self.states = {}
@@ -188,7 +188,7 @@ class Component(metaclass=MetaComponent):
         self.identifier = None
 
         # directories and files
-        self.output_directory = output_directory
+        self.saving_directory = saving_directory
         self.dump_file = None
 
         # flag to check whether spin_up/initialise_states_from_dump used
@@ -277,27 +277,27 @@ class Component(metaclass=MetaComponent):
         self._constants = constants
 
     @property
-    def outputs(self):
-        """Return the collection of desired `Output`s to be saved for the
+    def records(self):
+        """Return the collection of desired `Record`s to be saved for the
         Component as a `dict`. Potentially returning an empty dictionary
-        if no outputs are desired."""
-        return self._outputs
+        if no record are desired."""
+        return self._records
 
-    @outputs.setter
-    def outputs(self, outputs):
-        outputs = {} if outputs is None else outputs
-        outputs_ = {}
-        for name, frequencies in outputs.items():
+    @records.setter
+    def records(self, records):
+        records = {} if records is None else records
+        records_ = {}
+        for name, frequencies in records.items():
             # check type and eliminate duplicates in methods
-            outputs_[name] = {}
+            records_[name] = {}
             for delta, methods in frequencies.items():
                 if isinstance(methods, (list, tuple, set)):
-                    outputs_[name][delta] = set(methods)
+                    records_[name][delta] = set(methods)
                 else:
-                    raise TypeError('output methods for {} at {} must be a '
+                    raise TypeError('recording methods for {} at {} must be a '
                                     'sequence of strings'.format(name, delta))
 
-        self._outputs = outputs_
+        self._records = records_
 
     def _check_definition(self):
         # check for units
@@ -543,26 +543,26 @@ class Component(metaclass=MetaComponent):
     def from_config(cls, cfg):
         spacedomain = getattr(space, cfg['spacedomain']['class'])
         return cls(
-            output_directory=cfg['output_directory'],
+            saving_directory=cfg['saving_directory'],
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
             parameters=cfg.get('parameters'),
             constants=cfg.get('constants'),
-            outputs=cfg.get('outputs')
+            records=cfg.get('records')
         )
 
     def to_config(self):
         cfg = {
             'module': self.__module__,
             'class': self.__class__.__name__,
-            'output_directory': self.output_directory,
+            'saving_directory': self.saving_directory,
             'timedomain': self.timedomain.to_config(),
             'spacedomain': self.spacedomain.to_config(),
             'dataset': self.dataset.to_config(),
             'parameters': self.parameters if self.parameters else None,
             'constants': self.constants if self.constants else None,
-            'outputs': self.outputs if self.outputs else None
+            'records': self.records if self.records else None
         }
         return cfg
 
@@ -589,19 +589,19 @@ class Component(metaclass=MetaComponent):
         constants = ["        {}: {} {}".format(
             c, self.constants[c], self.constants_info[c]['units'])
             for c in self.constants] if self.constants else []
-        outputs = ["        {}: {} {}".format(
-            o, d, m) for o, f in self.outputs.items()
-            for d, m in f.items()] if self.outputs else []
+        records = ["        {}: {} {}".format(
+            o, d, m) for o, f in self.records.items()
+            for d, m in f.items()] if self.records else []
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    category: {}".format(self._category)]
-            + ["    output directory: {}".format(self.output_directory)]
+            + ["    saving directory: {}".format(self.saving_directory)]
             + ["    timedomain: period: {}".format(self.timedomain.period)]
             + ["    spacedomain: shape: ({})".format(shape)]
             + ["    dataset: {} variable(s)".format(len(self.dataset))]
             + (["    parameters:"] if parameters else []) + parameters
             + (["    constants:"] if constants else []) + constants
-            + (["    outputs:"] if outputs else []) + outputs
+            + (["    records:"] if records else []) + records
             + [")"]
         )
 
@@ -614,11 +614,11 @@ class Component(metaclass=MetaComponent):
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
 
-        if self.outputs:
-            # create outputs, output streams, and output stream files
-            self._instantiate_output_objects_and_streams(tag, overwrite)
-            # create dumps for output streams
-            self._initialise_output_streams_dumps(tag, overwrite)
+        if self.records:
+            # create records, record streams, and record stream files
+            self._instantiate_record_objects_and_streams(tag, overwrite)
+            # create dumps for record streams
+            self._initialise_record_streams_dumps(tag, overwrite)
 
     def run_(self, timeindex, exchanger):
         data = {}
@@ -641,9 +641,9 @@ class Component(metaclass=MetaComponent):
         to_exchanger, outputs = self.run(**self.parameters, **self.constants,
                                          **self.states, **data)
 
-        # store outputs
-        for name in self._outputs:
-            self._output_objects[name](self.states, to_exchanger, outputs)
+        # store variables to record
+        for name in self._records:
+            self._record_objects[name](self.states, to_exchanger, outputs)
 
         # increment the component's states by one timestep
         self.increment_states()
@@ -652,7 +652,7 @@ class Component(metaclass=MetaComponent):
 
     def finalise_(self):
         timestamp = self.timedomain.bounds.array[-1, -1]
-        update_states_dump(sep.join([self.output_directory, self.dump_file]),
+        update_states_dump(sep.join([self.saving_directory, self.dump_file]),
                            self.states, timestamp, self.solver_history)
         self.finalise(**self.states)
 
@@ -673,9 +673,9 @@ class Component(metaclass=MetaComponent):
     def _initialise_states_dump(self, tag, overwrite):
         self.dump_file = '_'.join([self.identifier, self.category,
                                    tag, 'dump.nc'])
-        if (overwrite or not path.exists(sep.join([self.output_directory,
+        if (overwrite or not path.exists(sep.join([self.saving_directory,
                                                    self.dump_file]))):
-            create_states_dump(sep.join([self.output_directory, self.dump_file]),
+            create_states_dump(sep.join([self.saving_directory, self.dump_file]),
                                self.states_info, self.solver_history,
                                self.timedomain, self.spacedomain)
 
@@ -728,25 +728,25 @@ class Component(metaclass=MetaComponent):
 
     def dump_states(self, timeindex):
         timestamp = self.timedomain.bounds.array[timeindex, 0]
-        update_states_dump(sep.join([self.output_directory, self.dump_file]),
+        update_states_dump(sep.join([self.saving_directory, self.dump_file]),
                            self.states, timestamp, self.solver_history)
 
-    def _instantiate_output_objects_and_streams(self, tag, overwrite):
-        self._output_objects = {}
-        self._output_streams = {}
+    def _instantiate_record_objects_and_streams(self, tag, overwrite):
+        self._record_objects = {}
+        self._record_streams = {}
 
-        for name, frequencies in self.outputs.items():
-            # create instance of appropriate Output subclass
+        for name, frequencies in self.records.items():
+            # create instance of appropriate Record subclass
             if name in self.outputs_info:
-                self._output_objects[name] = OtherOutput(
+                self._record_objects[name] = OutputRecord(
                     name, **self.outputs_info[name]
                 )
             elif name in self._outwards_info:
-                self._output_objects[name] = InterfaceOutput(
+                self._record_objects[name] = OutwardRecord(
                     name, **self._outwards_info[name]
                 )
             elif name in self.states_info:
-                self._output_objects[name] = StateOutput(
+                self._record_objects[name] = StateRecord(
                     name, **self.states_info[name]
                 )
             else:
@@ -754,38 +754,38 @@ class Component(metaclass=MetaComponent):
                     name, self._category))
 
             for delta, methods in frequencies.items():
-                # instantiate OutputStream if none for given timedelta yet
-                if delta not in self._output_streams:
-                    self._output_streams[delta] = OutputStream(
+                # instantiate RecordStream if none for given timedelta yet
+                if delta not in self._record_streams:
+                    self._record_streams[delta] = RecordStream(
                         delta, self.timedomain, self.spacedomain
                     )
-                # hold reference to output object in stream
-                self._output_streams[delta].add_output(
-                    self._output_objects[name], methods
+                # hold reference to record object in stream
+                self._record_streams[delta].add_record(
+                    self._record_objects[name], methods
                 )
 
-        for delta, stream in self._output_streams.items():
+        for delta, stream in self._record_streams.items():
             filename = '_'.join([self.identifier, self._category, tag,
                                  'out', stream.frequency])
-            file_ = sep.join([self.output_directory, filename + '.nc'])
+            file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
-                stream.create_output_stream_file(file_)
+                stream.create_record_stream_file(file_)
             else:
                 stream.file = file_
 
-    def _initialise_output_streams_dumps(self, tag, overwrite):
-        for delta, stream in self._output_streams.items():
+    def _initialise_record_streams_dumps(self, tag, overwrite):
+        for delta, stream in self._record_streams.items():
             filename = '_'.join([self.identifier, self._category, tag,
                                  'dump_stream', stream.frequency])
-            file_ = sep.join([self.output_directory, filename + '.nc'])
+            file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
-                stream.create_output_stream_dump(file_)
+                stream.create_record_stream_dump(file_)
             else:
                 stream.dump_file = file_
 
-    def initialise_output_streams_from_dump(self, dump_file_pattern,
+    def initialise_record_streams_from_dump(self, dump_file_pattern,
                                             at=None):
         """Initialise the states of the Component from a dump file.
 
@@ -794,8 +794,8 @@ class Component(metaclass=MetaComponent):
             dump_filepath_pattern: `str`
                 A string providing the path to the netCDF dump file
                 containing values to be used as initial conditions for
-                the output streams of the Component. Note, curly
-                brackets {} should be used where the output stream delta
+                the record streams of the Component. Note, curly
+                brackets {} should be used where the record stream delta
                 should be used.
 
                 *Parameter example:* ::
@@ -825,18 +825,18 @@ class Component(metaclass=MetaComponent):
         """
         ats = []
 
-        if self.outputs:
-            for delta, stream in self._output_streams.items():
+        if self.records:
+            for delta, stream in self._record_streams.items():
                 file_ = dump_file_pattern.format(stream.frequency)
-                ats.append(stream.load_output_stream_dump(file_, at))
+                ats.append(stream.load_record_stream_dump(file_, at))
 
         return ats
 
-    def dump_output_streams(self, timeindex):
+    def dump_record_streams(self, timeindex):
         timestamp = self.timedomain.bounds.array[timeindex, 0]
-        if self.outputs:
-            for delta, stream in self._output_streams.items():
-                stream.update_output_stream_dump(timestamp)
+        if self.records:
+            for delta, stream in self._record_streams.items():
+                stream.update_record_stream_dump(timestamp)
 
     @abc.abstractmethod
     def initialise(self, **kwargs):

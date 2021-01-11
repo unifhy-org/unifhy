@@ -11,8 +11,9 @@ from tests.test_time import (get_dummy_timedomain,
                              get_dummy_dumping_frequency)
 from tests.test_components.test_component import get_dummy_component
 from tests.test_components.test_utils.test_states import compare_states
-from tests.test_components.test_utils.test_outputs import (get_expected_output, get_produced_output,
-                                                           exp_outputs_raw)
+from tests.test_components.test_utils.test_records import (get_expected_record,
+                                                           get_produced_record,
+                                                           exp_records_raw)
 
 
 class Simulator(object):
@@ -72,7 +73,7 @@ class Simulator(object):
                 '' if id_trail is None else id_trail
             ),
             config_directory='outputs',
-            output_directory='outputs',
+            saving_directory='outputs',
             surfacelayer=surfacelayer,
             subsurface=subsurface,
             openwater=openwater
@@ -102,12 +103,12 @@ class Simulator(object):
         files = []
         # clean up dump files potentially created
         files.extend(
-            glob(os.sep.join([self.model.exchanger.output_directory,
+            glob(os.sep.join([self.model.exchanger.saving_directory,
                               self.model.identifier + '*_dump*.nc']))
         )
-        # clean up output files potentially created
+        # clean up record files potentially created
         files.extend(
-            glob(os.sep.join([self.model.exchanger.output_directory,
+            glob(os.sep.join([self.model.exchanger.saving_directory,
                               self.model.identifier + '*_out*.nc']))
         )
         # clean up configuration files created
@@ -159,7 +160,7 @@ class TestModel(object):
 
         Note, this test does not check for correctness of final
         states and transfers conditions, nor correctness of final
-        outputs because when one or more `NullComponent` is used in the
+        records because when one or more `NullComponent` is used in the
         combination, the final conditions are not expected to be
         'correct', and even less so 'consistent' from one combination
         to the next.
@@ -225,7 +226,7 @@ class TestModel(object):
         - completing with no error;
         - checking the correctness of the final component state values;
         - checking the correctness of the final exchanger transfer values;
-        - checking the correctness of the all component outputs (i.e.
+        - checking the correctness of the all component records (i.e.
           all component states, all component transfers, and all
           component outputs).
         """
@@ -247,8 +248,8 @@ class TestModel(object):
 
                 # check final state and transfer values
                 self.check_final_conditions(simulator.model)
-                # check outputs
-                self.check_outputs(simulator.model)
+                # check records
+                self.check_records(simulator.model)
 
                 # clean up
                 simulator.clean_up_files()
@@ -272,7 +273,7 @@ class TestModel(object):
         - completing with no error;
         - checking the correctness of the final component state values;
         - checking the correctness of the final exchanger transfer values;
-        - checking the correctness of the all component outputs (i.e.
+        - checking the correctness of the all component records (i.e.
           all component states, all component transfers, and all
           component outputs).
         """
@@ -296,8 +297,8 @@ class TestModel(object):
 
                 # check final state and transfer values
                 self.check_final_conditions(simulator.model)
-                # check outputs
-                self.check_outputs(simulator.model)
+                # check records
+                self.check_records(simulator.model)
 
                 # clean up
                 simulator.clean_up_files()
@@ -324,7 +325,7 @@ class TestModel(object):
         the 12-day period, the final conditions with spinup+spinup
         will be the same as with simulate without spinup, which means
         that correctness of final conditions can be checked, but not
-        outputs because they are scattered across two files of for
+        records because they are scattered across two files of for
         simulation periods 6 days each.
         """
         # set up a model, and spin it up
@@ -337,20 +338,20 @@ class TestModel(object):
 
         # use dump of first model as initial conditions for second model
         simulator_2.model.surfacelayer.initialise_states_from_dump(
-            os.sep.join([simulator_1.model.surfacelayer.output_directory,
+            os.sep.join([simulator_1.model.surfacelayer.saving_directory,
                          simulator_1.model.surfacelayer.dump_file])
         )
         simulator_2.model.subsurface.initialise_states_from_dump(
-            os.sep.join([simulator_1.model.subsurface.output_directory,
+            os.sep.join([simulator_1.model.subsurface.saving_directory,
                          simulator_1.model.subsurface.dump_file])
         )
         simulator_2.model.openwater.initialise_states_from_dump(
-            os.sep.join([simulator_1.model.openwater.output_directory,
+            os.sep.join([simulator_1.model.openwater.saving_directory,
                          simulator_1.model.openwater.dump_file])
         )
 
         simulator_2.model.initialise_transfers_from_dump(
-            os.sep.join([simulator_1.model.exchanger.output_directory,
+            os.sep.join([simulator_1.model.exchanger.saving_directory,
                          simulator_1.model.exchanger.dump_file])
         )
 
@@ -380,8 +381,8 @@ class TestModel(object):
 
         # check final state and transfer values
         self.check_final_conditions(simulator.model)
-        # check outputs
-        self.check_outputs(simulator.model)
+        # check records
+        self.check_records(simulator.model)
 
         # clean up
         simulator.clean_up_files()
@@ -406,7 +407,7 @@ class TestModel(object):
         simulator_2 = Simulator(
             self.t, self.s,
             cm4twc.Model.from_yaml(
-                os.sep.join([simulator_1.model.output_directory,
+                os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
         )
@@ -416,8 +417,8 @@ class TestModel(object):
 
         # check final state and transfer values
         self.check_final_conditions(simulator_2.model)
-        # check outputs
-        self.check_outputs(simulator_2.model)
+        # check records
+        self.check_records(simulator_2.model)
 
         # clean up
         simulator_2.clean_up_files()
@@ -445,14 +446,14 @@ class TestModel(object):
         # if component is "real", otherwise no states
         if not isinstance(component, cm4twc.DataComponent):
             for state in ['state_a', 'state_b']:
-                if exp_outputs_raw[self.t][cat].get(state) is None:
+                if exp_records_raw[self.t][cat].get(state) is None:
                     # some components feature only one state
                     continue
                 # retrieve last state values
                 arr = component.states[state][-1]
                 # compare both min/max, as arrays are homogeneous
                 try:
-                    val = exp_outputs_raw[self.t][cat][state][-1]
+                    val = exp_records_raw[self.t][cat][state][-1]
                     self.assertEqual(np.amin(arr), val)
                     self.assertEqual(np.amax(arr), val)
                 except AssertionError as e:
@@ -471,7 +472,7 @@ class TestModel(object):
             arr = exchanger.transfers[transfer]['slices'][-1]
             cat = exchanger.transfers[transfer]['src_cat']
             # compare both min/max, as array should be homogeneous
-            val = exp_outputs_raw[self.t][cat][transfer][-1]
+            val = exp_records_raw[self.t][cat][transfer][-1]
             try:
                 self.assertAlmostEqual(np.amin(arr), val)
                 self.assertAlmostEqual(np.amax(arr), val)
@@ -479,10 +480,10 @@ class TestModel(object):
                 raise AssertionError(
                     "error for {}".format(transfer)) from e
 
-    def check_outputs(self, model):
+    def check_records(self, model):
         """
         This method checks that all values of all component states
-        component transfers, component outputs are correct, from start
+        component transfers, component records are correct, from start
         to end.
         """
         for component in [model.surfacelayer,
@@ -490,16 +491,16 @@ class TestModel(object):
                           model.openwater]:
             rtol, atol = cm4twc.rtol(), cm4twc.atol()
 
-            # if component is "real", otherwise no outputs requested
+            # if component is "real", otherwise no records requested
             cat = component.category
             if not isinstance(component, cm4twc.DataComponent):
-                for name, frequencies in component.outputs.items():
+                for name, frequencies in component.records.items():
                     for delta, methods in frequencies.items():
                         for method in methods:
-                            exp_t, exp_b, exp_o = get_expected_output(
+                            exp_t, exp_b, exp_o = get_expected_record(
                                 self.t, component, name, delta, method
                             )
-                            prd_t, prd_b, prd_o = get_produced_output(
+                            prd_t, prd_b, prd_o = get_produced_record(
                                 component, name, delta, method
                             )
                             try:

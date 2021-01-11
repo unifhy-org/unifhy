@@ -18,7 +18,7 @@ class Model(object):
     compatibility between `Component`\s, and controlling the simulation
     workflow.
     """
-    def __init__(self, identifier, config_directory, output_directory,
+    def __init__(self, identifier, config_directory, saving_directory,
                  surfacelayer, subsurface, openwater,
                  _to_yaml=True):
         """**Initialisation**
@@ -26,15 +26,15 @@ class Model(object):
         :Parameters:
 
             identifier: `str`
-                A name to identify the model output files.
+                A name to identify the model record files.
 
             config_directory: `str`
                 The path to the directory where to save the model
                 configuration files.
 
-            output_directory: `str`
+            saving_directory: `str`
                 The path to the directory where to save the model
-                exchanger dump files and model output files.
+                exchanger dump files and model record files.
 
             surfacelayer: `SurfaceLayerComponent` object
                 The `Component` responsible for the surface layer
@@ -68,7 +68,7 @@ class Model(object):
 
         # assign directories
         self.config_directory = config_directory
-        self.output_directory = output_directory
+        self.saving_directory = saving_directory
 
         # save model configuration in yaml file
         if _to_yaml:
@@ -104,7 +104,7 @@ class Model(object):
             ["{}(".format(self.__class__.__name__)] +
             ["    identifier: {}".format(self.identifier)] +
             ["    config directory: {}".format(self.config_directory)] +
-            ["    output directory: {}".format(self.output_directory)] +
+            ["    saving directory: {}".format(self.saving_directory)] +
             ["    surfacelayer: {}".format(
                 self.surfacelayer.__class__.__name__)] +
             ["    subsurface: {}".format(
@@ -138,7 +138,7 @@ class Model(object):
         return cls(
             identifier=cfg['identifier'],
             config_directory=cfg['config_directory'],
-            output_directory=cfg['output_directory'],
+            saving_directory=cfg['saving_directory'],
             surfacelayer=surfacelayer.from_config(
                 cfg['surfacelayer']),
             subsurface=subsurface.from_config(
@@ -152,7 +152,7 @@ class Model(object):
         return {
             'identifier': self.identifier,
             'config_directory': self.config_directory,
-            'output_directory': self.output_directory,
+            'saving_directory': self.saving_directory,
             'surfacelayer': self.surfacelayer.to_config(),
             'subsurface': self.subsurface.to_config(),
             'openwater': self.openwater.to_config()
@@ -221,7 +221,7 @@ class Model(object):
         Model(
             identifier: test-dummy-sync-match
             config directory: outputs
-            output directory: outputs
+            saving directory: outputs
             surfacelayer: Dummy
             subsurface: Dummy
             openwater: Dummy
@@ -289,7 +289,7 @@ class Model(object):
                                     'subsurface': self.subsurface,
                                     'openwater': self.openwater},
                                    clock, compass, self.identifier,
-                                   self.output_directory)
+                                   self.saving_directory)
 
         transfers, at = load_transfers_dump(dump_file, at,
                                             self.exchanger.transfers)
@@ -462,7 +462,7 @@ class Model(object):
                                         'subsurface': self.subsurface,
                                         'openwater': self.openwater},
                                        clock, compass, self.identifier,
-                                       self.output_directory)
+                                       self.saving_directory)
         else:
             # no need for a new instance, but need to re-run the setup
             # of the existing instance because time or space information
@@ -479,13 +479,13 @@ class Model(object):
             if dumping:
                 ti = clock.get_current_timeindex('surfacelayer')
                 self.surfacelayer.dump_states(ti)
-                self.surfacelayer.dump_output_streams(ti)
+                self.surfacelayer.dump_record_streams(ti)
                 ti = clock.get_current_timeindex('subsurface')
                 self.subsurface.dump_states(ti)
-                self.subsurface.dump_output_streams(ti)
+                self.subsurface.dump_record_streams(ti)
                 ti = clock.get_current_timeindex('openwater')
                 self.openwater.dump_states(ti)
-                self.openwater.dump_output_streams(ti)
+                self.openwater.dump_record_streams(ti)
                 self.exchanger.dump_transfers(
                     clock.get_current_timestamp()
                 )
@@ -567,7 +567,7 @@ class Model(object):
         # initialise list to hold snapshot retrieved from each dump file
         ats = []
 
-        # initialise component states and output streams from dump files
+        # initialise component states and record streams from dump files
         data_or_null = 0
         for component in [self.surfacelayer, self.subsurface, self.openwater]:
             # skip DataComponent and NullComponent
@@ -576,20 +576,20 @@ class Model(object):
                 continue
 
             # initialise component states from dump file
-            dump_file = sep.join([self.output_directory,
+            dump_file = sep.join([self.saving_directory,
                                   '_'.join([component.identifier,
                                             component.category,
                                             tag, 'dump.nc'])])
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
-            # initialise component output streams from dump file
-            dump_file = sep.join([self.output_directory,
+            # initialise component record streams from dump file
+            dump_file = sep.join([self.saving_directory,
                                   '_'.join([component.identifier,
                                             component.category,
                                             tag, 'dump_stream_{}.nc'])])
 
-            ats.extend(component.initialise_output_streams_from_dump(dump_file,
+            ats.extend(component.initialise_record_streams_from_dump(dump_file,
                                                                      at))
 
         # if all components are Data or Null, exit resume
@@ -597,7 +597,7 @@ class Model(object):
             return
 
         # initialise model exchanger transfers from dump file
-        dump_file = sep.join([self.output_directory,
+        dump_file = sep.join([self.saving_directory,
                               '_'.join([self.identifier, 'exchanger',
                                         tag, 'dump.nc'])])
 
