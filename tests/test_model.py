@@ -121,7 +121,7 @@ class Simulator(object):
             os.remove(f)
 
 
-class TestModel(object):
+class BasicTestModel(object):
     # flag to specify whether components are to run at same temporal resolution
     # or at different temporal resolutions
     t = None
@@ -138,170 +138,6 @@ class TestModel(object):
 
     def shortDescription(self):
         return None
-
-    def test_setup_spinup_simulate_resume(self):
-        """
-        The purpose of this test is to check that a complete workflow is
-        functional, i.e.:
-        - configure model;
-        - spin-up model;
-        - simulate model main run;
-        - resume model main run at second-to-last snapshot.
-
-        The test generates a 'design of experiment' (doe) to consider
-        all possible combinations of actual `Component`, `DataComponent`,
-        and `NullComponent`. Then, each experiment (i.e. each
-        combination) is used as a subtest.
-
-        The functional character of the workflow is tested through:
-        - completing with no error;
-        - checking equality of the final component states at the end of
-          simulate and at the end of resume.
-
-        Note, this test does not check for correctness of final
-        states and transfers conditions, nor correctness of final
-        records because when one or more `NullComponent` is used in the
-        combination, the final conditions are not expected to be
-        'correct', and even less so 'consistent' from one combination
-        to the next.
-        """
-        # generator of all possible component combinations
-        # (i.e. full factorial design of experiment) as
-        # tuple(surfacelayer kind, subsurface kind, openwater kind)
-        # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
-        doe = ((sl, ss, ow)
-               for sl in ('c', 'd', 'n')
-               for ss in ('c', 'd', 'n')
-               for ow in ('c', 'd', 'n'))
-
-        # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind in doe:
-            with self.subTest(surfacelayer=sl_kind,
-                              subsurface=ss_kind,
-                              openwater=ow_kind):
-                # set up, spinup, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   sl_kind, ss_kind, ow_kind)
-                simulator.spinup_model()
-                simulator.run_model()
-
-                # store the last component states
-                last_states_sl = deepcopy(simulator.model.surfacelayer.states)
-                last_states_ss = deepcopy(simulator.model.subsurface.states)
-                last_states_ow = deepcopy(simulator.model.openwater.states)
-
-                # resume model
-                simulator.resume_model()
-
-                # check final state values are coherent
-                self.assertTrue(
-                    compare_states(last_states_sl,
-                                   simulator.model.surfacelayer.states)
-                )
-                self.assertTrue(
-                    compare_states(last_states_ss,
-                                   simulator.model.subsurface.states)
-                )
-                self.assertTrue(
-                    compare_states(last_states_ow,
-                                   simulator.model.openwater.states)
-                )
-
-                # clean up
-                simulator.clean_up_files()
-
-    def test_setup_simulate(self):
-        """
-        The purpose of this test is to check that a standard workflow
-        is functional, i.e.:
-        - configure model;
-        - simulate model main run.
-
-        The test generates a 'design of experiment' (doe) to consider
-        all possible combinations of actual `Component` and
-        `DataComponent`. Then, each experiment (i.e. each combination)
-        is used as a subtest.
-
-        The functional character of the workflow is tested through:
-        - completing with no error;
-        - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values;
-        - checking the correctness of the all component records (i.e.
-          all component states, all component transfers, and all
-          component outputs).
-        """
-        doe = ((sl, ss, ow)
-               for sl in ('c', 'd')
-               for ss in ('c', 'd')
-               for ow in ('c', 'd'))
-
-        # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind in doe:
-            with self.subTest(surfacelayer=sl_kind,
-                              subsurface=ss_kind,
-                              openwater=ow_kind):
-
-                # set up, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   sl_kind, ss_kind, ow_kind)
-                simulator.run_model()
-
-                # check final state and transfer values
-                self.check_final_conditions(simulator.model)
-                # check records
-                self.check_records(simulator.model)
-
-                # clean up
-                simulator.clean_up_files()
-
-    def test_setup_simulate_various_sources(self):
-        """
-        The purpose of this test is to check that, no matter the
-        language of the component source code, a standard workflow
-        is functional, i.e.:
-        - configure model;
-        - simulate model main run.
-
-        The test generates a 'design of experiment' (doe) to consider
-        all possible combinations of source code in Python, Fortran, and
-        C. Then, each experiment (i.e. each combination)  is used as a
-        subtest.
-
-        The test only works with one combination of actual components.
-
-        The functional character of the workflow is tested through:
-        - completing with no error;
-        - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values;
-        - checking the correctness of the all component records (i.e.
-          all component states, all component transfers, and all
-          component outputs).
-        """
-        doe = ((sl, ss, ow)
-               for sl in ('Python', 'Fortran', 'C')
-               for ss in ('Python', 'Fortran', 'C')
-               for ow in ('Python', 'Fortran', 'C'))
-
-        # loop through all possible combinations of component sources
-        for sl_src, ss_src, ow_src in doe:
-            with self.subTest(surfacelayer=sl_src,
-                              subsurface=ss_src,
-                              openwater=ow_src):
-                # set up, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   'c', 'c', 'c',
-                                                   {'surfacelayer': sl_src,
-                                                    'subsurface': ss_src,
-                                                    'openwater': ow_src})
-                simulator.run_model()
-
-                # check final state and transfer values
-                self.check_final_conditions(simulator.model)
-                # check records
-                self.check_records(simulator.model)
-
-                # clean up
-                simulator.clean_up_files()
 
     def test_spinup_dump_init_spinup(self):
         """
@@ -527,28 +363,194 @@ class TestModel(object):
                                 ) from e
 
 
-class TestModelSameTimeSameSpace(TestModel, unittest.TestCase):
+class AdvancedTestModel(BasicTestModel):
+
+    def test_setup_spinup_simulate_resume(self):
+        """
+        The purpose of this test is to check that a complete workflow is
+        functional, i.e.:
+        - configure model;
+        - spin-up model;
+        - simulate model main run;
+        - resume model main run at second-to-last snapshot.
+
+        The test generates a 'design of experiment' (doe) to consider
+        all possible combinations of actual `Component`, `DataComponent`,
+        and `NullComponent`. Then, each experiment (i.e. each
+        combination) is used as a subtest.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking equality of the final component states at the end of
+          simulate and at the end of resume.
+
+        Note, this test does not check for correctness of final
+        states and transfers conditions, nor correctness of final
+        records because when one or more `NullComponent` is used in the
+        combination, the final conditions are not expected to be
+        'correct', and even less so 'consistent' from one combination
+        to the next.
+        """
+        # generator of all possible component combinations
+        # (i.e. full factorial design of experiment) as
+        # tuple(surfacelayer kind, subsurface kind, openwater kind)
+        # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
+        doe = ((sl, ss, ow)
+               for sl in ('c', 'd', 'n')
+               for ss in ('c', 'd', 'n')
+               for ow in ('c', 'd', 'n'))
+
+        # loop through all possible combinations of components
+        for sl_kind, ss_kind, ow_kind in doe:
+            with self.subTest(surfacelayer=sl_kind,
+                              subsurface=ss_kind,
+                              openwater=ow_kind):
+                # set up, spinup, and run model
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   sl_kind, ss_kind, ow_kind)
+                simulator.spinup_model()
+                simulator.run_model()
+
+                # store the last component states
+                last_states_sl = deepcopy(simulator.model.surfacelayer.states)
+                last_states_ss = deepcopy(simulator.model.subsurface.states)
+                last_states_ow = deepcopy(simulator.model.openwater.states)
+
+                # resume model
+                simulator.resume_model()
+
+                # check final state values are coherent
+                self.assertTrue(
+                    compare_states(last_states_sl,
+                                   simulator.model.surfacelayer.states)
+                )
+                self.assertTrue(
+                    compare_states(last_states_ss,
+                                   simulator.model.subsurface.states)
+                )
+                self.assertTrue(
+                    compare_states(last_states_ow,
+                                   simulator.model.openwater.states)
+                )
+
+                # clean up
+                simulator.clean_up_files()
+
+    def test_setup_simulate(self):
+        """
+        The purpose of this test is to check that a standard workflow
+        is functional, i.e.:
+        - configure model;
+        - simulate model main run.
+
+        The test generates a 'design of experiment' (doe) to consider
+        all possible combinations of actual `Component` and
+        `DataComponent`. Then, each experiment (i.e. each combination)
+        is used as a subtest.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values;
+        - checking the correctness of the all component records (i.e.
+          all component states, all component transfers, and all
+          component outputs).
+        """
+        doe = ((sl, ss, ow)
+               for sl in ('c', 'd')
+               for ss in ('c', 'd')
+               for ow in ('c', 'd'))
+
+        # loop through all possible combinations of components
+        for sl_kind, ss_kind, ow_kind in doe:
+            with self.subTest(surfacelayer=sl_kind,
+                              subsurface=ss_kind,
+                              openwater=ow_kind):
+
+                # set up, and run model
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   sl_kind, ss_kind, ow_kind)
+                simulator.run_model()
+
+                # check final state and transfer values
+                self.check_final_conditions(simulator.model)
+                # check records
+                self.check_records(simulator.model)
+
+                # clean up
+                simulator.clean_up_files()
+
+    def test_setup_simulate_various_sources(self):
+        """
+        The purpose of this test is to check that, no matter the
+        language of the component source code, a standard workflow
+        is functional, i.e.:
+        - configure model;
+        - simulate model main run.
+
+        The test generates a 'design of experiment' (doe) to consider
+        all possible combinations of source code in Python, Fortran, and
+        C. Then, each experiment (i.e. each combination)  is used as a
+        subtest.
+
+        The test only works with one combination of actual components.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values;
+        - checking the correctness of the all component records (i.e.
+          all component states, all component transfers, and all
+          component outputs).
+        """
+        doe = ((sl, ss, ow)
+               for sl in ('Python', 'Fortran', 'C')
+               for ss in ('Python', 'Fortran', 'C')
+               for ow in ('Python', 'Fortran', 'C'))
+
+        # loop through all possible combinations of component sources
+        for sl_src, ss_src, ow_src in doe:
+            with self.subTest(surfacelayer=sl_src,
+                              subsurface=ss_src,
+                              openwater=ow_src):
+                # set up, and run model
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   'c', 'c', 'c',
+                                                   {'surfacelayer': sl_src,
+                                                    'subsurface': ss_src,
+                                                    'openwater': ow_src})
+                simulator.run_model()
+
+                # check final state and transfer values
+                self.check_final_conditions(simulator.model)
+                # check records
+                self.check_records(simulator.model)
+
+                # clean up
+                simulator.clean_up_files()
+
+class TestModelSameTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
     t = 'sync'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
 
-class TestModelDiffTimeSameSpace(TestModel, unittest.TestCase):
+class TestModelDiffTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
 
-class TestModelSameTimeDiffSpace(TestModel, unittest.TestCase):
+class TestModelSameTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
     t = 'sync'
     # flag to specify that components are to run at different spatial resolutions
     s = 'remap'
 
 
-class TestModelDiffTimeDiffSpace(TestModel, unittest.TestCase):
+class TestModelDiffTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at different spatial resolutions
