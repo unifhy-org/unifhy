@@ -73,11 +73,11 @@ class Sciencish(SurfaceLayerComponent):
         direct_rainfall = (1 - vegetation_fraction) * rainfall
         canopy_rainfall = rainfall - direct_rainfall
 
-        canopy_evaporation = canopy[-1] / self.timestepinseconds * 0.1
+        canopy_evaporation = canopy[-1] / self.timedelta_in_seconds * 0.1
         interception = interception_fraction * canopy_rainfall
         throughfall = canopy_rainfall - interception
         canopy[0][:] = canopy[-1] + ((interception - canopy_evaporation)
-                                     * self.timestepinseconds)
+                                     * self.timedelta_in_seconds)
 
         transpiration = (vegetation_fraction * soil_water_stress *
                          average_evaporation_rate)
@@ -86,11 +86,11 @@ class Sciencish(SurfaceLayerComponent):
 
         snowmelt = np.where(
             air_temperature > melting_temperature,
-            snowpack[-1] * 0.10 / self.timestepinseconds,
+            snowpack[-1] * 0.10 / self.timedelta_in_seconds,
             0
         )
         snowpack[0][:] = snowpack[-1] + ((snowfall - snowmelt)
-                                         * self.timestepinseconds)
+                                         * self.timedelta_in_seconds)
 
         openwater_evaporation = soil_evaporation * 0
 

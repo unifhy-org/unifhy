@@ -31,14 +31,6 @@ class Sciencish(SubSurfaceComponent):
             'divisions': 1
         }
     }
-    outputs_info = {
-        'stormflow': {
-            'units': 'kg m-2 s-1'
-        },
-        'baseflow': {
-            'units': 'kg m-2 s-1'
-        }
-    }
     solver_history = 1
 
     def initialise(self,
@@ -64,10 +56,10 @@ class Sciencish(SubSurfaceComponent):
             **kwargs):
 
         soil_water = (soil_moisture[-1]
-                      + (throughfall + snowmelt) * self.timestepinseconds)
+                      + (throughfall + snowmelt) * self.timedelta_in_seconds)
         surface_runoff = np.where(
             soil_water > saturation_capacity,
-            (soil_water - saturation_capacity) / self.timestepinseconds,
+            (soil_water - saturation_capacity) / self.timedelta_in_seconds,
             0
         )
         soil_water = np.where(
@@ -77,29 +69,27 @@ class Sciencish(SubSurfaceComponent):
         )
         soil_runoff = np.where(
             soil_temperature > freezing_temperature,
-            soil_water / self.timestepinseconds * 0.1,
+            soil_water / self.timedelta_in_seconds * 0.1,
             0
         )
         soil_moisture[0][:] = (soil_water
-                               - soil_runoff * self.timestepinseconds)
+                               - soil_runoff * self.timedelta_in_seconds)
 
         soil_water_stress = soil_moisture[0] / saturation_capacity
 
-        groundwater_runoff = aquifer[-1] / self.timestepinseconds * 0.05
+        groundwater_runoff = aquifer[-1] / self.timedelta_in_seconds * 0.05
         aquifer[0][:] = (soil_moisture[-1]
-                         - groundwater_runoff * self.timestepinseconds)
+                         - groundwater_runoff * self.timedelta_in_seconds)
 
         return (
             # to exchanger
             {
-                'runoff': soil_runoff + surface_runoff + groundwater_runoff,
+                'surface_runoff': surface_runoff,
+                'subsurface_runoff': soil_runoff + groundwater_runoff,
                 'soil_water_stress': soil_water_stress
             },
             # component outputs
-            {
-                'stormflow': soil_runoff + surface_runoff,
-                'baseflow': groundwater_runoff
-            }
+            {}
         )
 
     def finalise(self,

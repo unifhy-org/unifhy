@@ -47,7 +47,7 @@ class Sciencish(OpenWaterComponent):
 
         channel_water = (river_channel[-1]
                          + (runoff - evaporation_openwater - discharge)
-                         * self.timestepinseconds)
+                         * self.timedelta_in_seconds)
 
         river_channel[0][:] = np.where(channel_water < 0, 0, channel_water)
 
