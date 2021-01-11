@@ -47,7 +47,7 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
-    inputs_info = {
+    _inputs_info = {
         'driving_a': {
             'units': '1',
             'kind': 'dynamic'
@@ -65,9 +65,9 @@ class Dummy(SurfaceLayerComponent):
             'kind': 'static'
         }
     }
-    # parameters_info = {}
-    # constants_info = {}
-    states_info = {
+    # _parameters_info = {}
+    # _constants_info = {}
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1
@@ -77,12 +77,12 @@ class Dummy(SurfaceLayerComponent):
             'divisions': 1
         }
     }
-    outputs_info = {
+    _outputs_info = {
         'output_x': {
             'units': '1'
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states
@@ -132,7 +132,7 @@ class Dummy(SurfaceLayerComponent):
 
 class DummyFortran(Dummy):
     # overwrite states to explicitly set array order
-    states_info = {
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1,

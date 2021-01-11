@@ -17,42 +17,89 @@ from ..settings import dtype_float, array_order, decr
 
 
 class MetaComponent(abc.ABCMeta):
-    """MetaComponent is a metaclass for `Component` which provides a
-    custom method `__str__` to display its class attributes.
-    """
-    def __str__(self):
+    """MetaComponent is a metaclass for `Component`."""
+    # intrinsic attributes
+    _category = None
+    _inwards_info = None
+    _outwards_info = None
+
+    # definition attributes
+    _inputs_info = None
+    _parameters_info = None
+    _constants_info = None
+    _states_info = None
+    _outputs_info = None
+    _solver_history = None
+
+    @property
+    def category(cls):
+        return cls._category
+
+    @property
+    def inwards_info(cls):
+        return cls._inwards_info
+
+    @property
+    def outwards_info(cls):
+        return cls._inwards_info
+
+    @property
+    def inputs_info(cls):
+        return cls._inputs_info
+
+    @property
+    def parameters_info(cls):
+        return cls._parameters_info
+
+    @property
+    def constants_info(cls):
+        return cls._constants_info
+
+    @property
+    def states_info(cls):
+        return cls._states_info
+
+    @property
+    def outputs_info(cls):
+        return cls._outputs_info
+
+    @property
+    def solver_history(cls):
+        return cls._solver_history
+
+    def __str__(cls):
         info = [
             "\n".join(
-                (["    {}:".format(t[1:] if t[0] == '_' else t).replace('_', ' ')]
+                (["    {}:".format(t.replace('_', ' '))]
                  + ["        {} [{}]".format(n, info['units'])
-                    for n, info in getattr(self, t + '_info').items()])
+                    for n, info in getattr(cls, '_{}_info'.format(t)).items()])
             )
-            for t in ['_inwards', '_outwards',
+            for t in ['inwards', 'outwards',
                       'inputs', 'parameters', 'constants', 'outputs', 'states']
-            if getattr(self, t + '_info')
+            if getattr(cls, t + '_info')
         ]
         return "\n".join(
-            ["{}(".format(self.__name__)]
-            + ["    category: {}".format(getattr(self, '_category'))]
+            ["{}(".format(cls.__name__)]
+            + ["    category: {}".format(getattr(cls, '_category'))]
             + info
-            + ["    solver history: {}".format(getattr(self, 'solver_history'))]
+            + ["    solver history: {}".format(getattr(cls, 'solver_history'))]
             + [")"]
         )
 
 
 class Component(metaclass=MetaComponent):
-
-    _category = None
-    _inwards_info = None
-    _outwards_info = None
+    # intrinsic attributes (set to default)
+    _category = ''
+    _inwards_info = {}
+    _outwards_info = {}
 
     # definition attributes (set to default)
-    inputs_info = {}
-    parameters_info = {}
-    constants_info = {}
-    states_info = {}
-    outputs_info = {}
-    solver_history = 1
+    _inputs_info = {}
+    _parameters_info = {}
+    _constants_info = {}
+    _states_info = {}
+    _outputs_info = {}
+    _solver_history = 1
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None):
@@ -278,7 +325,7 @@ class Component(metaclass=MetaComponent):
 
     @property
     def records(self):
-        """Return the collection of desired `Record`s to be saved for the
+        """Return the collection of desired records to be saved for the
         Component as a `dict`. Potentially returning an empty dictionary
         if no record are desired."""
         return self._records
@@ -299,21 +346,22 @@ class Component(metaclass=MetaComponent):
 
         self._records = records_
 
-    def _check_definition(self):
+    @classmethod
+    def _check_definition(cls):
         # check for units
         for lead in ['inputs', 'parameters', 'constants',
                      'outputs', 'states']:
-            attr = getattr(self, '_'.join([lead, 'info']))
+            attr = getattr(cls, '_'.join([lead, 'info']))
             if attr:
                 for name, info in attr.items():
                     if 'units' not in info:
                         raise RuntimeError(
                             "units missing for {} in {} component "
-                            "definition".format(name, self._category)
+                            "definition".format(name, cls._category)
                         )
         # check for kind
-        if self.inputs_info:
-            for name, info in self.inputs_info.items():
+        if cls._inputs_info:
+            for name, info in cls._inputs_info.items():
                 if 'kind' not in info:
                     # assume it is a 'standard' input, i.e. dynamic
                     # (this is also useful for a `DataComponent` which
@@ -325,13 +373,13 @@ class Component(metaclass=MetaComponent):
                                             'climatologic']:
                         raise ValueError(
                             "invalid type for {} in {} component "
-                            "definition".format(name, self._category)
+                            "definition".format(name, cls._category)
                         )
                     if info['kind'] == 'climatologic':
                         if 'frequency' not in info:
                             raise RuntimeError(
                                 "frequency missing for {} in {} component "
-                                "definition".format(name, self._category)
+                                "definition".format(name, cls._category)
                             )
                         freq = info['frequency']
                         if not isinstance(freq, int):
@@ -339,7 +387,7 @@ class Component(metaclass=MetaComponent):
                                     not in ['seasonal', 'monthly', 'daily']):
                                 raise TypeError(
                                     "invalid frequency for {} in {} component "
-                                    "definition".format(name, self._category)
+                                    "definition".format(name, cls._category)
                                 )
 
     def _check_timedomain(self, timedomain):
@@ -376,7 +424,7 @@ class Component(metaclass=MetaComponent):
                     DataSet.__name__))
 
         # check data units compatibility with component
-        for data_name, data_info in self.inputs_info.items():
+        for data_name, data_info in self._inputs_info.items():
             # check that all input data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
@@ -401,7 +449,7 @@ class Component(metaclass=MetaComponent):
 
     def _check_dataset_space(self, dataset, spacedomain):
         # check space compatibility for input data
-        for data_name, data_unit in self.inputs_info.items():
+        for data_name, data_unit in self._inputs_info.items():
             error = ValueError(
                 "spacedomain of data '{}' not compatible with "
                 "spacedomain of {} component '{}'".format(
@@ -440,14 +488,14 @@ class Component(metaclass=MetaComponent):
 
     def _check_dataset_time(self, timedomain):
         # check time compatibility for 'dynamic' input data
-        for data_name in self.inputs_info:
+        for data_name in self._inputs_info:
             error = ValueError(
                 "timedomain of data '{}' not compatible with "
                 "timedomain of {} component '{}'".format(
                     data_name, self._category, self.__class__.__name__)
             )
 
-            kind = self.inputs_info[data_name]['kind']
+            kind = self._inputs_info[data_name]['kind']
             if kind == 'dynamic':
                 # try to subset in time
                 if self.dataset[data_name].subspace(
@@ -475,7 +523,7 @@ class Component(metaclass=MetaComponent):
                     'monthly': 12,  # January to December
                     'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
                 }
-                freq = self.inputs_info[data_name]['frequency']
+                freq = self._inputs_info[data_name]['frequency']
                 if isinstance(freq, str):
                     length = lengths[freq]
                 else:  # isinstance(freq, int):
@@ -505,12 +553,12 @@ class Component(metaclass=MetaComponent):
         are given for the corresponding component.
         """
         # check that all parameters are provided
-        if not all([i in parameters for i in self.parameters_info]):
+        if not all([i in parameters for i in self._parameters_info]):
             raise RuntimeError(
                 "one or more parameters are missing in {} component '{}': "
                 "{} all required".format(
                     self._category, self.__class__.__name__,
-                    self.parameters_info))
+                    self._parameters_info))
 
     @property
     def category(self):
@@ -526,18 +574,6 @@ class Component(metaclass=MetaComponent):
     def outwards_info(self):
         """Return the outgoing information provided by the `Component`."""
         return self._outwards_info
-
-    @classmethod
-    def get_class_category(cls):
-        return cls._category
-
-    @classmethod
-    def get_class_inwards_info(cls):
-        return cls._inwards_info
-
-    @classmethod
-    def get_class_outwards_info(cls):
-        return cls._outwards_info
 
     @classmethod
     def from_config(cls, cfg):
@@ -584,10 +620,10 @@ class Component(metaclass=MetaComponent):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
         parameters = ["        {}: {} {}".format(
-            p, self.parameters[p], self.parameters_info[p]['units'])
+            p, self.parameters[p], self._parameters_info[p]['units'])
             for p in self.parameters] if self.parameters else []
         constants = ["        {}: {} {}".format(
-            c, self.constants[c], self.constants_info[c]['units'])
+            c, self.constants[c], self._constants_info[c]['units'])
             for c in self.constants] if self.constants else []
         records = ["        {}: {} {}".format(
             o, d, m) for o, f in self.records.items()
@@ -623,8 +659,8 @@ class Component(metaclass=MetaComponent):
     def run_(self, timeindex, exchanger):
         data = {}
         # collect required ancillary data from dataset
-        for d in self.inputs_info:
-            kind = self.inputs_info[d]['kind']
+        for d in self._inputs_info:
+            kind = self._inputs_info[d]['kind']
             if kind == 'dynamic':
                 data[d] = self.datasubset[d].array[timeindex, ...]
             else:
@@ -653,30 +689,30 @@ class Component(metaclass=MetaComponent):
     def finalise_(self):
         timestamp = self.timedomain.bounds.array[-1, -1]
         update_states_dump(sep.join([self.saving_directory, self.dump_file]),
-                           self.states, timestamp, self.solver_history)
+                           self.states, timestamp, self._solver_history)
         self.finalise(**self.states)
 
     def _instantiate_states(self):
         # get a State object for each state and initialise to zero
-        for s in self.states_info:
-            d = self.states_info[s].get('divisions', 1)
-            o = self.states_info[s].get('order', array_order())
+        for s in self._states_info:
+            d = self._states_info[s].get('divisions', 1)
+            o = self._states_info[s].get('order', array_order())
             self.states[s] = State(
                 np.zeros(
-                    (self.solver_history+1, *self.spaceshape, d) if d > 1
-                    else (self.solver_history+1, *self.spaceshape),
+                    (self._solver_history + 1, *self.spaceshape, d) if d > 1
+                    else (self._solver_history + 1, *self.spaceshape),
                     dtype_float(), order=o
                 ),
                 order=o
             )
 
     def _initialise_states_dump(self, tag, overwrite):
-        self.dump_file = '_'.join([self.identifier, self.category,
+        self.dump_file = '_'.join([self.identifier, self._category,
                                    tag, 'dump.nc'])
         if (overwrite or not path.exists(sep.join([self.saving_directory,
                                                    self.dump_file]))):
             create_states_dump(sep.join([self.saving_directory, self.dump_file]),
-                               self.states_info, self.solver_history,
+                               self._states_info, self._solver_history,
                                self.timedomain, self.spacedomain)
 
     def initialise_states_from_dump(self, dump_file, at=None):
@@ -710,10 +746,10 @@ class Component(metaclass=MetaComponent):
                 conditions.
 
         """
-        states, at = load_states_dump(dump_file, at, self.states_info)
-        for s in self.states_info:
+        states, at = load_states_dump(dump_file, at, self._states_info)
+        for s in self._states_info:
             if s in states:
-                o = self.states_info[s].get('order', array_order())
+                o = self._states_info[s].get('order', array_order())
                 self.states[s] = State(states[s], order=o)
             else:
                 raise KeyError("initial conditions for {} component state "
@@ -729,7 +765,7 @@ class Component(metaclass=MetaComponent):
     def dump_states(self, timeindex):
         timestamp = self.timedomain.bounds.array[timeindex, 0]
         update_states_dump(sep.join([self.saving_directory, self.dump_file]),
-                           self.states, timestamp, self.solver_history)
+                           self.states, timestamp, self._solver_history)
 
     def _instantiate_record_objects_and_streams(self, tag, overwrite):
         self._record_objects = {}
@@ -737,17 +773,17 @@ class Component(metaclass=MetaComponent):
 
         for name, frequencies in self.records.items():
             # create instance of appropriate Record subclass
-            if name in self.outputs_info:
+            if name in self._outputs_info:
                 self._record_objects[name] = OutputRecord(
-                    name, **self.outputs_info[name]
+                    name, **self._outputs_info[name]
                 )
             elif name in self._outwards_info:
                 self._record_objects[name] = OutwardRecord(
                     name, **self._outwards_info[name]
                 )
-            elif name in self.states_info:
+            elif name in self._states_info:
                 self._record_objects[name] = StateRecord(
-                    name, **self.states_info[name]
+                    name, **self._states_info[name]
                 )
             else:
                 raise ValueError("{} not available for {} component".format(
@@ -1008,7 +1044,7 @@ class DataComponent(Component):
     _outwards_info = {}
 
     # definition attributes
-    solver_history = 0
+    _solver_history = 0
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
         """**Initialisation**
@@ -1037,15 +1073,15 @@ class DataComponent(Component):
         self._substituting_class = substituting_class
 
         # override category to the one of substituting component
-        self._category = substituting_class.get_class_category()
+        self._category = substituting_class.category
 
         # override outwards with the ones of component being substituted
-        self._outwards_info = substituting_class.get_class_outwards_info()
+        self._outwards_info = substituting_class.outwards_info
 
         # override inputs info with the outwards of component being
         # substituted (so that the dataset is checked for time and space
         # compatibility as a 'standard' dataset would be)
-        self.inputs_info = substituting_class.get_class_outwards_info()
+        self.inputs_info = substituting_class.outwards_info
 
         # initialise as a Component
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
@@ -1124,7 +1160,7 @@ class NullComponent(Component):
     _outwards_info = {}
 
     # definition attributes
-    solver_history = 0
+    _solver_history = 0
 
     def __init__(self, timedomain, spacedomain, substituting_class, **kwargs):
         """**Initialisation**
@@ -1147,11 +1183,11 @@ class NullComponent(Component):
         self._substituting_class = substituting_class
 
         # override category with the one of component being substituted
-        self._category = substituting_class.get_class_category()
+        self._category = substituting_class.category
 
         # override inwards and outwards with the ones of component
         # being substituted
-        self._outwards_info = substituting_class.get_class_outwards_info()
+        self._outwards_info = substituting_class.outwards_info
 
         # initialise as a Component
         super(NullComponent, self).__init__(None, timedomain, spacedomain)

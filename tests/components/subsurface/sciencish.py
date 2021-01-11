@@ -5,23 +5,23 @@ from cm4twc.components import SubSurfaceComponent
 
 class Sciencish(SubSurfaceComponent):
 
-    inputs_info = {
+    _inputs_info = {
         'soil_temperature': {
             'units': 'K',
             'kind': 'dynamic'
         }
     }
-    parameters_info = {
+    _parameters_info = {
         'saturation_capacity': {
             'units': 'kg m-2'
         }
     }
-    constants_info = {
+    _constants_info = {
         'freezing_temperature': {
             'units': 'K'
         }
     },
-    states_info = {
+    _states_info = {
         'soil_moisture': {
             'units': 'kg m-2',
             'divisions': 1
@@ -31,7 +31,7 @@ class Sciencish(SubSurfaceComponent):
             'divisions': 1
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states

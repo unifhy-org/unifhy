@@ -34,7 +34,7 @@ class AutoComponentDirective(SphinxDirective):
             for k, v in inspect.signature(cls_.run).parameters.items()
             if v.default is not inspect.Parameter.empty
         }
-        for definition in ['inputs', '_inwards', 'outputs', '_outwards',
+        for definition in ['inputs', 'inwards', 'outputs', 'outwards',
                            'parameters', 'constants', 'states']:
             if getattr(cls_, definition + '_info'):
                 attribute = getattr(cls_, definition + '_info')

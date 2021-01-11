@@ -5,7 +5,7 @@ from cm4twc.components import SurfaceLayerComponent
 
 class Sciencish(SurfaceLayerComponent):
 
-    inputs_info = {
+    _inputs_info = {
         'rainfall': {
             'units': 'kg m-2 s-1',
             'kind': 'dynamic'
@@ -23,8 +23,8 @@ class Sciencish(SurfaceLayerComponent):
             'kind': 'static'
         }
     }
-    # parameters_info = {}
-    constants_info = {
+    # _parameters_info = {}
+    _constants_info = {
         'evaporation_rate': {
             'units': 'kg m-2 s-1'
         },
@@ -35,7 +35,7 @@ class Sciencish(SurfaceLayerComponent):
             'units': '1'
         }
     }
-    states_info = {
+    _states_info = {
         'canopy': {
             'units': 'kg m-2',
             'divisions': 1
@@ -45,7 +45,7 @@ class Sciencish(SurfaceLayerComponent):
             'divisions': 1
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states

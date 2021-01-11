@@ -78,26 +78,25 @@ class Model(object):
         self.exchanger = None
 
     @staticmethod
-    def _process_component_type(component, expected_component):
-        if isinstance(component, expected_component):
+    def _process_component_type(component, expected_type):
+        if isinstance(component, expected_type):
             # check inwards exchanger
             # check outwards exchanger
             return component
         elif isinstance(component, (DataComponent, NullComponent)):
-            if component.category != expected_component.get_class_category():
+            if component.category != expected_type.category:
                 raise TypeError(
                     "'{}' component given must be substituting type {}".format(
-                        expected_component.get_class_category(),
-                        expected_component.__name__))
+                        expected_type.category,
+                        expected_type.__name__))
             else:
                 return component
         else:
             raise TypeError(
                 "'{}' component given must either be of type {}, {}, "
                 "or {}".format(
-                    expected_component.get_class_category(),
-                    expected_component.__name__, DataComponent.__name__,
-                    NullComponent.__name__))
+                    expected_type.category, expected_type.__name__,
+                    DataComponent.__name__, NullComponent.__name__))
 
     def __str__(self):
         return "\n".join(

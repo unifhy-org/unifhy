@@ -5,25 +5,25 @@ from cm4twc.components import OpenWaterComponent
 
 class Sciencish(OpenWaterComponent):
 
-    # inputs_info = {}
-    parameters_info = {
+    # _inputs_info = {}
+    _parameters_info = {
         'residence_time': {
             'units': 's'
         }
     }
-    # constants_info = {},
-    states_info = {
+    # _constants_info = {},
+    _states_info = {
         'river_channel': {
             'units': 'kg m-2',
             'divisions': 1
         }
     }
-    outputs_info = {
+    _outputs_info = {
         'discharge': {
             'units': 'kg m-2 s-1'
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states
