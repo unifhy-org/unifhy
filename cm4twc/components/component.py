@@ -41,7 +41,7 @@ class MetaComponent(abc.ABCMeta):
 
     @property
     def outwards_info(cls):
-        return cls._inwards_info
+        return cls._outwards_info
 
     @property
     def inputs_info(cls):
@@ -346,22 +346,21 @@ class Component(metaclass=MetaComponent):
 
         self._records = records_
 
-    @classmethod
-    def _check_definition(cls):
+    def _check_definition(self):
         # check for units
         for lead in ['inputs', 'parameters', 'constants',
                      'outputs', 'states']:
-            attr = getattr(cls, '_'.join([lead, 'info']))
+            attr = getattr(self, '_{}_info'.format(lead))
             if attr:
                 for name, info in attr.items():
                     if 'units' not in info:
                         raise RuntimeError(
                             "units missing for {} in {} component "
-                            "definition".format(name, cls._category)
+                            "definition".format(name, self._category)
                         )
         # check for kind
-        if cls._inputs_info:
-            for name, info in cls._inputs_info.items():
+        if self._inputs_info:
+            for name, info in self._inputs_info.items():
                 if 'kind' not in info:
                     # assume it is a 'standard' input, i.e. dynamic
                     # (this is also useful for a `DataComponent` which
@@ -373,13 +372,13 @@ class Component(metaclass=MetaComponent):
                                             'climatologic']:
                         raise ValueError(
                             "invalid type for {} in {} component "
-                            "definition".format(name, cls._category)
+                            "definition".format(name, self._category)
                         )
                     if info['kind'] == 'climatologic':
                         if 'frequency' not in info:
                             raise RuntimeError(
                                 "frequency missing for {} in {} component "
-                                "definition".format(name, cls._category)
+                                "definition".format(name, self._category)
                             )
                         freq = info['frequency']
                         if not isinstance(freq, int):
@@ -387,7 +386,7 @@ class Component(metaclass=MetaComponent):
                                     not in ['seasonal', 'monthly', 'daily']):
                                 raise TypeError(
                                     "invalid frequency for {} in {} component "
-                                    "definition".format(name, cls._category)
+                                    "definition".format(name, self._category)
                                 )
 
     def _check_timedomain(self, timedomain):
@@ -1081,7 +1080,7 @@ class DataComponent(Component):
         # override inputs info with the outwards of component being
         # substituted (so that the dataset is checked for time and space
         # compatibility as a 'standard' dataset would be)
-        self.inputs_info = substituting_class.outwards_info
+        self._inputs_info = substituting_class.outwards_info
 
         # initialise as a Component
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
