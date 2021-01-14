@@ -16,11 +16,18 @@ class SpaceDomain(object):
     """
 
     def __init__(self):
+        # inner CF data model
         self._f = cf.Field()
-        self._routing_info = None
+
+        # optional flow direction attributes
+        self._flow_direction = None
+        self._flow_direction_field = None
         self._routing_out_mask = None
         self._routing_masks = {}
+
+        # optional land sea mask attributes
         self._land_sea_mask = None
+        self._land_sea_mask_field = None
 
     @property
     def shape(self):
@@ -39,41 +46,12 @@ class SpaceDomain(object):
         return None
 
     @property
+    def flow_direction(self):
+        return self._flow_direction
+
+    @property
     def land_sea_mask(self):
-        """The land-sea mask for the SpaceDomain as a `numpy.ndarray`
-        of `bool` (True for land, False for sea).
-
-        :Parameters:
-
-            mask: `numpy.ndarray`
-                The array containing the land-sea information. The
-                shape of the array must be the same as the SpaceDomain.
-                The array must contain boolean values (True for land,
-                False for sea).
-
-        :Returns:
-
-            `numpy.ndarray`
-                The array containing the land-sea information as boolean
-                values (True for land, False for sea). The shape of the
-                array is the same as of the SpaceDomain. If not set,
-                return None.
-        """
         return self._land_sea_mask
-
-    @land_sea_mask.setter
-    def land_sea_mask(self, mask):
-        if not isinstance(mask, np.ndarray):
-            raise TypeError('mask must be an array')
-        if not mask.dtype == np.dtype(bool):
-            if (np.sum(mask == 1) + np.sum(mask == 0)) == mask.size:
-                mask = np.asarray(mask, dtype=bool)
-            else:
-                raise TypeError('mask must contain boolean values')
-        if not mask.shape == self.shape:
-            raise RuntimeError('mask shape incompatible with SpaceDomain')
-
-        self._land_sea_mask = mask
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -244,25 +222,125 @@ class Grid(SpaceDomain):
         return self._f.construct('X').standard_name
 
     @property
-    def routing_info(self):
-        """The information necessary to move any variable laterally
-        (i.e. along Y and/or X) to its nearest receiving neighbour in
-        the Grid as a `numpy.ndarray`.
+    def land_sea_mask(self):
+        """The land-sea mask for the SpaceDomain of boolean/binary
+        values (i.e. True/1 for land, False/0 for sea) given as a
+        `cf.Field` and returned as a processed `numpy.ndarray`.
 
         :Parameters:
 
-            directions: `numpy.ndarray`
-                The array containing the direction where to move the
-                variable. The supported kinds of directional information
-                are listed in the table below. The shape of the array
-                must be the same as the Grid, except for the relative
-                kind, where an additional trailing axis of size two
-                holding the pairs must be present.
+            mask: `cf.Field`
+                The field containing the land-sea information. The
+                shape of the data array must be the same as the
+                SpaceDomain. The field data must contain boolean/binary
+                values (True/1 for land, False/0 for sea).
+
+        :Returns:
+
+            `numpy.ndarray`
+                The array containing the land-sea information as boolean
+                values (True for land, False for sea). The shape of the
+                array is the same as of the SpaceDomain. If not set,
+                return None.
+
+        >>> import numpy
+        >>> grid = LatLonGrid.from_extent_and_resolution(
+        ...     latitude_extent=(51, 55),
+        ...     latitude_resolution=1,
+        ...     longitude_extent=(-2, 1),
+        ...     longitude_resolution=1
+        ... )
+        >>> print(grid.land_sea_mask)
+        None
+        >>> mask = grid.to_field()
+        >>> mask.set_data(numpy.array([[0, 1, 1],
+        ...                            [1, 1, 0],
+        ...                            [0, 1, 0],
+        ...                            [0, 0, 0]]))
+        >>> grid.land_sea_mask = mask
+        >>> print(grid.land_sea_mask)
+        [[False  True  True]
+         [ True  True False]
+         [False  True False]
+         [False False False]]
+        >>> mask.set_data(numpy.array([[False, True, True],
+        ...                            [True, True, False],
+        ...                            [False, True, False],
+        ...                            [False, False, False]]))
+        >>> print(grid.land_sea_mask)
+        [[False  True  True]
+         [ True  True False]
+         [False  True False]
+         [False False False]]
+        """
+        return self._land_sea_mask
+
+    @land_sea_mask.setter
+    def land_sea_mask(self, mask):
+        error = RuntimeError(
+            "mask shape incompatible with {}".format(self.__class__.__name__)
+        )
+
+        # check type
+        if not isinstance(mask, cf.Field):
+            raise TypeError("mask not a cf.Field")
+        # store given field for config file
+        self._land_sea_mask_field = mask
+
+        # avoid floating-point error problems by rounding up
+        for axis in [self.X_name, self.Y_name]:
+            mask.dim(axis).round(decr(), inplace=True)
+
+        # try to subset in space
+        if mask.subspace('test',
+                         **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
+                            self.Y_name: cf.wi(*self.Y.array[[0, -1]])}):
+            # subset in space
+            mask = mask.subspace(
+                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
+                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
+            )
+        else:
+            raise error
+
+        # check that data and component spacedomains are compatible
+        if not self.is_space_equal_to(mask):
+            raise error
+
+        # get field's data array
+        mask = mask.array
+        # convert binary to boolean if necessary
+        if not mask.dtype == np.dtype(bool):
+            if (np.sum(mask == 1) + np.sum(mask == 0)) == mask.size:
+                mask = np.asarray(mask, dtype=bool)
+            else:
+                raise TypeError("mask must contain boolean/binary values")
+        if not mask.shape == self.shape:
+            raise error
+
+        self._land_sea_mask = mask
+
+    @property
+    def flow_direction(self):
+        """The information necessary to move any variable laterally
+        (i.e. along Y and/or X) to its nearest receiving neighbour in
+        the Grid given as a `cf.Field` and returned as a processed
+        `numpy.ndarray`.
+
+        :Parameters:
+
+            directions: `cf.Field`
+                The field containing flow direction. The supported kinds
+                of directional information are listed in the table
+                below. The shape of the array must be the same as the
+                Grid, except for the relative kind, where an additional
+                trailing axis of size two holding the pairs must be
+                present.
 
                 =================  =====================================
                 kind               information
                 =================  =====================================
-                cardinal           The array contains the direction
+                cardinal           The field data contains the direction
                                    using `str` for the eight following
                                    cardinal points: 'N' for North, 'NE'
                                    for North-East, 'E' for East,
@@ -270,14 +348,14 @@ class Grid(SpaceDomain):
                                    'SW' for South West, 'W' for West,
                                    'NW' for North West.
 
-                digits             The array contains the direction
+                digits             The field data contains the direction
                                    using `int` for the eight following
                                    cardinal points: 1 for North, 2 for
                                    North-East, 3 for East, 4 for South
                                    East, 5 for South, 6 for South West,
                                    7 for West, 8 for North West.
 
-                relative           The array contains the direction
+                relative           The field data contains the direction
                                    using pairs of 'int' (Y, X) for the
                                    eight following cardinal points:
                                    (1, 0) for North, (1, 1) for
@@ -303,13 +381,15 @@ class Grid(SpaceDomain):
         ...     longitude_extent=(-2, 1),
         ...     longitude_resolution=1
         ... )
-        >>> print(grid.routing_info)
+        >>> print(grid.flow_direction)
         None
-        >>> grid.routing_info = numpy.array([['SE', 'S', 'E'],
+        >>> directions = grid.to_field()
+        >>> directions.set_data(numpy.array([['SE', 'S', 'E'],
         ...                                  ['NE', 'E', 'N'],
         ...                                  ['S', 'S', 'W'],
-        ...                                  ['NW', 'E', 'SW']])
-        >>> print(grid.routing_info)
+        ...                                  ['NW', 'E', 'SW']]))
+        >>> grid.flow_direction = directions
+        >>> print(grid.flow_direction)
         [[[-1  1]
           [-1  0]
           [ 0  1]]
@@ -325,20 +405,31 @@ class Grid(SpaceDomain):
          [[ 1 -1]
           [ 0  1]
           [-1 -1]]]
-        >>> routing_info = grid.routing_info
-        >>> grid.routing_info = numpy.array([[4, 5, 3],
+        >>> flow_direction = grid.flow_direction
+        >>> directions.set_data(numpy.array([[4, 5, 3],
         ...                                  [2, 3, 1],
         ...                                  [5, 5, 7],
-        ...                                  [8, 3, 6]])
-        >>> numpy.array_equal(routing_info, grid.routing_info)
+        ...                                  [8, 3, 6]]))
+        >>> grid.flow_direction = directions
+        >>> numpy.array_equal(flow_direction, grid.flow_direction)
         True
-        >>> grid.routing_info = numpy.array([[[-1, 1], [-1, 0], [0, 1]],
+        >>> import cf
+        >>> ax = directions.set_construct(cf.DomainAxis(2))
+        >>> dim = cf.DimensionCoordinate(
+        ...     properties={'name': 'relative flow direction along y and x components',
+        ...                 'units': '1'},
+        ...     data=cf.Data(['y_rel', 'x_rel']))
+        >>> dim = directions.set_construct(dim, axes=ax)
+        >>> directions.set_data(numpy.array([[[-1, 1], [-1, 0], [0, 1]],
         ...                                  [[1, 1], [0, 1], [1, 0]],
         ...                                  [[-1, 0], [-1, 0], [0, -1]],
-        ...                                  [[1, -1], [0, 1], [-1, -1]]])
-        >>> numpy.array_equal(routing_info, grid.routing_info)
+        ...                                  [[1, -1], [0, 1], [-1, -1]]]),
+        ...                     axes=('Y', 'X', dim))
+        >>> grid.flow_direction = directions
+        >>> numpy.array_equal(flow_direction, grid.flow_direction)
         True
-        >>> grid.routing_info = numpy.ma.array(
+        >>> directions = grid.to_field()
+        >>> directions.set_data(numpy.ma.array(
         ...     [['SE', 'S', 'E'],
         ...      ['NE', 'E', 'N'],
         ...      ['S', 'S', 'W'],
@@ -346,8 +437,9 @@ class Grid(SpaceDomain):
         ...     mask=[[1, 0, 0],
         ...           [1, 0, 0],
         ...           [1, 1, 0],
-        ...           [0, 0, 0]])
-        >>> print(grid.routing_info)
+        ...           [0, 0, 0]]))
+        >>> grid.flow_direction = directions
+        >>> print(grid.flow_direction)
         [[[-- --]
           [-1 0]
           [0 1]]
@@ -364,41 +456,66 @@ class Grid(SpaceDomain):
           [0 1]
           [-1 -1]]]
         """
-        return self._routing_info
+        return self._flow_direction
 
-    @routing_info.setter
-    def routing_info(self, directions):
+    @flow_direction.setter
+    def flow_direction(self, directions):
         """
         TODO: support domain wrap around (e.g. for global runs), to do
               so, need to adjust section on flows towards outside domain
         """
-        error_valid = RuntimeError('routing info contains invalid data')
-        error_dim = RuntimeError('routing info dimensions not '
-                                 'compatible with Grid')
+        error_valid = RuntimeError("flow direction contains invalid data")
+        error_dim = RuntimeError(
+            "flow direction dimensions not compatible with {}".format(
+                self.__class__.__name__)
+        )
+
+        # check type
+        if not isinstance(directions, cf.Field):
+            raise TypeError("flow direction not a cf.Field")
+        # store given field for config file
+        self._flow_direction_field = directions
+
+        # avoid floating-point error problems by rounding up
+        for axis in [self.X_name, self.Y_name]:
+            directions.dim(axis).round(decr(), inplace=True)
+
+        # try to subset in space
+        if directions.subspace('test',
+                               **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
+                                  self.Y_name: cf.wi(*self.Y.array[[0, -1]])}):
+            # subset in space
+            directions = directions.subspace(
+                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
+                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
+            )
+        else:
+            raise error_dim
+
+        # get field's data array
+        directions = directions.array
 
         # initialise info array by extending by one trailing axis of
         # size 2 (for relative Y movement, and relative X movement)
-        if isinstance(directions, np.ndarray):
-            # if masked array, use same mask on info
-            if np.ma.is_masked(directions):
-                if (self.shape + (2,)) == directions.shape:
-                    info = np.ma.masked_array(
-                        np.zeros(self.shape + (2,), int),
-                        mask=directions.mask
-                    )
-                elif self.shape == directions.shape:
-                    info = np.ma.masked_array(
-                        np.zeros(self.shape + (2,), int),
-                        mask=np.tile(directions.mask[..., np.newaxis], 2)
-                    )
-                else:
-                    raise error_dim
-                info[~info.mask] = -9
+
+        # if masked array, use same mask on info
+        if np.ma.is_masked(directions):
+            if (self.shape + (2,)) == directions.shape:
+                info = np.ma.masked_array(
+                    np.zeros(self.shape + (2,), int),
+                    mask=directions.mask
+                )
+            elif self.shape == directions.shape:
+                info = np.ma.masked_array(
+                    np.zeros(self.shape + (2,), int),
+                    mask=np.tile(directions.mask[..., np.newaxis], 2)
+                )
             else:
-                info = np.zeros(self.shape + (2,), int)
-                info[:] = -9
+                raise error_dim
+            info[~info.mask] = -9
         else:
-            raise error_valid
+            info = np.zeros(self.shape + (2,), int)
+            info[:] = -9
 
         # convert directions to relative Y X movement
         if directions.dtype == np.dtype('<U2'):
@@ -436,7 +553,7 @@ class Grid(SpaceDomain):
             raise error_valid
 
         # assign main routing mask
-        self._routing_info = info
+        self._flow_direction = info
 
         # find outflow towards outside domain
         # to set relative direction special value 9
@@ -497,42 +614,34 @@ class Grid(SpaceDomain):
         # (i.e. towards outside domain or towards masked location)
         self._routing_out_mask = to_out | to_msk
 
-    @property
-    def routing_out_mask(self):
-        """Return a mask identifying the locations in the Grid where any
-        routed variable exits the domain as a `numpy.ndarray`. If
-        *routing_info* not set, return None.
-        """
-        return self._routing_out_mask
-
     def route(self, variable_to_route):
         """Perform the movement of the given variable values from
         their current location to the next nearest receiving neighbour
-        according to the *routing_info* property of the Grid.
+        according to the *flow_direction* property of the Grid.
 
         :Parameters:
 
             variable_to_route: `numpy.ndarray`
                 The array containing the values for the variable to
-                route according to the *routing_info* property of the
+                route according to the *flow_direction* property of the
                 Grid. The shape of this array must comply with the Grid.
 
         :Returns:
 
             variable_routed: `numpy.ndarray`
                 The array containing the values routed according to the
-                *routing_info* property of the Grid for the
+                *flow_direction* property of the Grid for the
                 *variable_to_route*. The shape of this array is the same
                 as of the Grid.
 
             variable_out: `numpy.ndarray`
                 The array containing the values routed according to the
-                *routing_info* property of the Grid which left the
+                *flow_direction* property of the Grid which left the
                 domain for the *variable_to_route* (a variable is
                 considered to leave the domain if it is directed
                 towards beyond the bounds of the domain, or towards
                 a masked location within the domain, if the
-                *routing_info* is maked). The shape this array is the
+                *flow_direction* is masked). The shape this array is the
                 same as of the Grid.
 
         **Examples**
@@ -550,11 +659,12 @@ class Grid(SpaceDomain):
          [ 4  5  6]
          [ 7  8  9]
          [10 11 12]]
-        >>> routing_info = numpy.array([['NE', 'N', 'E'],
-        ...                             ['SE', 'E', 'S'],
-        ...                             ['N', 'N', 'W'],
-        ...                             ['SW', 'E', 'NW']])
-        >>> grid.routing_info = routing_info
+        >>> directions = grid.to_field()
+        >>> directions.set_data(numpy.array([['NE', 'N', 'E'],
+        ...                                  ['SE', 'E', 'S'],
+        ...                                  ['N', 'N', 'W'],
+        ...                                  ['SW', 'E', 'NW']]))
+        >>> grid.flow_direction = directions
         >>> moved, outed = grid.route(variable)
         >>> print(moved)
         [[ 0  4  6]
@@ -566,7 +676,7 @@ class Grid(SpaceDomain):
          [ 0  0  0]
          [ 0  0  0]
          [10  0 12]]
-        >>> grid.routing_info = numpy.ma.array(
+        >>> directions.set_data(numpy.ma.array(
         ...     [['NE', 'N', 'E'],
         ...      ['SE', 'E', 'S'],
         ...      ['N', 'N', 'W'],
@@ -574,7 +684,8 @@ class Grid(SpaceDomain):
         ...     mask=[[1, 0, 0],
         ...           [1, 0, 0],
         ...           [1, 1, 0],
-        ...           [0, 0, 0]])
+        ...           [0, 0, 0]]))
+        >>> grid.flow_direction = directions
         >>> moved, outed = grid.route(variable)
         >>> print(moved)
         [[-- 0 6]
@@ -588,13 +699,13 @@ class Grid(SpaceDomain):
          [10 0 12]]
         """
         # check whether method can be used
-        if self.routing_info is None:
+        if self.flow_direction is None:
             raise RuntimeError("method 'route' requires setting "
-                               "property 'routing_info'")
+                               "property 'flow_direction'")
 
         # initialise routed and out arrays depending on mask/no-mask
-        if np.ma.is_masked(self.routing_info):
-            mask = self.routing_info.mask[..., 0]
+        if np.ma.is_masked(self.flow_direction):
+            mask = self.flow_direction.mask[..., 0]
             variable_routed = np.ma.array(
                 np.zeros(variable_to_route.shape, variable_to_route.dtype),
                 mask=mask
@@ -614,7 +725,7 @@ class Grid(SpaceDomain):
 
         # collect the values routed towards outside the domain
         out_mask = self._routing_out_mask
-        if np.ma.is_masked(self.routing_info):
+        if np.ma.is_masked(self.flow_direction):
             variable_out[out_mask & mask] = variable_to_route[out_mask & mask]
         else:
             variable_out[out_mask] = variable_to_route[out_mask]
@@ -2186,7 +2297,7 @@ class LatLonGrid(Grid):
 
         :Parameters:
 
-            field: cf.Field object
+            field: `cf.Field`
                 The field object that will be used to initialise a
                 `LatLonGrid` instance. This field must feature a
                 'latitude' and a 'longitude' constructs, and these
