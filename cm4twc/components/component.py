@@ -801,7 +801,7 @@ class Component(metaclass=MetaComponent):
 
         for delta, stream in self._record_streams.items():
             filename = '_'.join([self.identifier, self._category, tag,
-                                 'out', stream.frequency])
+                                 'records', stream.frequency])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):

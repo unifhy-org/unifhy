@@ -128,7 +128,7 @@ class RecordStream(object):
         # mapping to store record arrays (keys are record names)
         self.arrays = {}
         # mapping for integer tracker to know where in array to write next
-        # (keys are output name)
+        # (keys are record names)
         self.array_trackers = {}
 
         # instantiate attributes to hold time iterators
@@ -215,7 +215,7 @@ class RecordStream(object):
             b.calendar = self.timedomain.calendar
 
             for name, record in self.records.items():
-                # output variable
+                # record variable
                 for method in self.methods[name]:
                     name_method = '_'.join([name, method])
                     v = f.createVariable(name_method, dtype_float(),
@@ -376,7 +376,7 @@ class RecordStream(object):
                     )
                 except KeyError:
                     raise RuntimeError(
-                        '{} missing in output stream dump'.format(name))
+                        '{} missing in record stream dump'.format(name))
             # retrieve stream trackers
             self.time_tracker = f.variables['time_tracker'][t]
             self.trigger_tracker = f.variables['trigger_tracker'][t]
