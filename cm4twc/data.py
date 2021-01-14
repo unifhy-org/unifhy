@@ -177,12 +177,19 @@ class DataSet(MutableMapping):
             name_in_mapping = None
 
             # loop by increasing order of priority
-            for attrib in ['long_name', 'computed_standard_name',
-                           'standard_name']:
+            for attrib in ['long_name', 'standard_name']:
                 if hasattr(field, attrib):
                     field_names.append(getattr(field, attrib))
-                    if name_mapping and getattr(field, attrib) in name_mapping:
-                        name_in_mapping = name_mapping[getattr(field, attrib)]
+                    if name_mapping:
+                        if ('{}={}'.format(attrib, getattr(field, attrib))
+                                in name_mapping):
+                            name_in_mapping = name_mapping[
+                                '{}={}'.format(attrib, getattr(field, attrib))
+                            ]
+                        elif getattr(field, attrib) in name_mapping:
+                            name_in_mapping = name_mapping[
+                                getattr(field, attrib)
+                            ]
 
             if name_in_mapping is None:
                 # try to use the latest (highest priority) name found
@@ -190,8 +197,8 @@ class DataSet(MutableMapping):
                     key = field_names[-1]
                 except IndexError:
                     raise RuntimeError(
-                        'variable {} is missing CF name'.format(
-                            field.nc_get_variable())
+                        'variable {} missing standard_name or long_name '
+                        'attribute'.format(field.nc_get_variable())
                     )
             else:
                 # use the renaming requested
@@ -204,6 +211,25 @@ class DataSet(MutableMapping):
 
     @classmethod
     def from_config(cls, cfg):
+        """**Examples**
+
+        >>> config = {
+        ...     'rainfall': {
+        ...         'files': 'data/sciencish_driving_data_daily.nc',
+        ...         'select': 'rainfall_flux'
+        ...     },
+        ...     'snowfall_flux': {
+        ...         'files': ['data/sciencish_driving_data_daily.nc'],
+        ...         'select': 'snowfall_flux'
+        ...     }
+        ... }
+        >>> ds = DataSet.from_config(config)
+        >>> print(ds)
+        DataSet{
+            rainfall: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+        }
+        """
         inst = cls()
         if cfg:
             for var in cfg:
@@ -215,19 +241,37 @@ class DataSet(MutableMapping):
         return inst
 
     def to_config(self):
+        """**Examples**
+
+        >>> ds = DataSet(
+        ...     files='data/sciencish_driving_data_daily.nc',
+        ...     select=['rainfall_flux', 'standard_name=snowfall_flux'],
+        ...     name_mapping={'standard_name=rainfall_flux': 'rainfall'}
+        ... )
+        >>> config = ds.to_config()
+        >>> import json
+        >>> print(json.dumps(config, sort_keys=True, indent=4))
+        {
+            "rainfall": {
+                "files": [
+                    "/Users/thibhlln/PycharmProjects/cm4twc/cm4twc/tests/data/sciencish_driving_data_daily.nc"
+                ],
+                "select": "rainfall_flux"
+            },
+            "snowfall_flux": {
+                "files": [
+                    "/Users/thibhlln/PycharmProjects/cm4twc/cm4twc/tests/data/sciencish_driving_data_daily.nc"
+                ],
+                "select": "snowfall_flux"
+            }
+        }
+        """
         cfg = {}
 
         for var in self:
-            name = None
-            # loop by increasing order of priority
-            for attrib in ['long_name', 'computed_standard_name',
-                           'standard_name']:
-                if hasattr(self[var], attrib):
-                    name = getattr(self[var], attrib)
-
             cfg[var] = {
-                'files': self[var].data.get_filenames(),
-                'select': name
+                'files': list(self[var].data.get_filenames()),
+                'select': self[var].identity()
             }
 
         return cfg
