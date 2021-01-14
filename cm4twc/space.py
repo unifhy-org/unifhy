@@ -1837,7 +1837,21 @@ class Grid(SpaceDomain):
             '{}_resolution'.format(self._Z_name):
                 self._get_dimension_resolution('Z'),
             '{}_location'.format(self._Z_name):
-                self._get_z_location()
+                self._get_z_location(),
+            'land_sea_mask': (
+                {'files': self._land_sea_mask_field.get_filenames(),
+                 'select': self._land_sea_mask_field.identity()}
+                if (self._land_sea_mask_field
+                    and self._land_sea_mask_field.get_filenames())
+                else None
+            ),
+            'flow_direction': (
+                {'files': self._flow_direction_field.get_filenames(),
+                 'select': self._flow_direction_field.identity()}
+                if (self._flow_direction_field
+                    and self._flow_direction_field.get_filenames())
+                else None
+            )
         }
 
 
@@ -2364,7 +2378,22 @@ class LatLonGrid(Grid):
     def from_config(cls, cfg):
         cfg = cfg.copy()
         cfg.pop('class')
-        return cls.from_extent_and_resolution(**cfg)
+
+        lsm = cfg.pop('land_sea_mask', None)
+        fd = cfg.pop('flow_direction', None)
+
+        inst = cls.from_extent_and_resolution(**cfg)
+
+        if lsm is not None:
+            inst.land_sea_mask = (
+                cf.read(lsm['files']).select_field(lsm['select'])
+            )
+        if fd is not None:
+            inst.flow_direction = (
+                cf.read(fd['files']).select_field(fd['select'])
+            )
+
+        return inst
 
 
 class RotatedLatLonGrid(Grid):
@@ -2800,4 +2829,19 @@ class RotatedLatLonGrid(Grid):
     def from_config(cls, cfg):
         cfg = cfg.copy()
         cfg.pop('class')
-        return cls._from_extent_and_resolution(**cfg)
+
+        lsm = cfg.pop('land_sea_mask', None)
+        fd = cfg.pop('flow_direction', None)
+
+        inst = cls._from_extent_and_resolution(**cfg)
+
+        if lsm is not None:
+            inst.land_sea_mask = (
+                cf.read(lsm['files']).select_field(lsm['select'])
+            )
+        if fd is not None:
+            inst.flow_direction = (
+                cf.read(fd['files']).select_field(fd['select'])
+            )
+
+        return inst
