@@ -578,7 +578,7 @@ class Model(object):
             dump_file = sep.join([self.saving_directory,
                                   '_'.join([component.identifier,
                                             component.category,
-                                            tag, 'dump.nc'])])
+                                            tag, 'dump_states.nc'])])
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
@@ -586,7 +586,7 @@ class Model(object):
             dump_file = sep.join([self.saving_directory,
                                   '_'.join([component.identifier,
                                             component.category,
-                                            tag, 'dump_stream_{}.nc'])])
+                                            tag, 'dump_record_stream_{}.nc'])])
 
             ats.extend(component.initialise_record_streams_from_dump(dump_file,
                                                                      at))
@@ -598,7 +598,7 @@ class Model(object):
         # initialise model exchanger transfers from dump file
         dump_file = sep.join([self.saving_directory,
                               '_'.join([self.identifier, 'exchanger',
-                                        tag, 'dump.nc'])])
+                                        tag, 'dump_transfers.nc'])])
 
         ats.append(self.initialise_transfers_from_dump(dump_file, at))
 

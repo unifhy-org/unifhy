@@ -247,7 +247,7 @@ class Exchanger(object):
 
     def initialise_(self, tag, overwrite=True):
         self.dump_file = '_'.join([self.identifier, 'exchanger',
-                                   tag, 'dump.nc'])
+                                   tag, 'dump_transfers.nc'])
         if (overwrite or not path.exists(sep.join([self.saving_directory,
                                                    self.dump_file]))):
             create_transfers_dump(

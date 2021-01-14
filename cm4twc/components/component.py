@@ -707,7 +707,7 @@ class Component(metaclass=MetaComponent):
 
     def _initialise_states_dump(self, tag, overwrite):
         self.dump_file = '_'.join([self.identifier, self._category,
-                                   tag, 'dump.nc'])
+                                   tag, 'dump_states.nc'])
         if (overwrite or not path.exists(sep.join([self.saving_directory,
                                                    self.dump_file]))):
             create_states_dump(sep.join([self.saving_directory, self.dump_file]),
@@ -812,7 +812,7 @@ class Component(metaclass=MetaComponent):
     def _initialise_record_streams_dumps(self, tag, overwrite):
         for delta, stream in self._record_streams.items():
             filename = '_'.join([self.identifier, self._category, tag,
-                                 'dump_stream', stream.frequency])
+                                 'dump_record_stream', stream.frequency])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
@@ -835,7 +835,7 @@ class Component(metaclass=MetaComponent):
 
                 *Parameter example:* ::
 
-                    dump_file_pattern='out/dummy_surfacelayer_run_dump_stream_{}.nc'
+                    dump_file_pattern='out/dummy_surfacelayer_run_dump_record_stream_{}.nc'
 
             at: datetime object, optional
                 The snapshot in time to be used for the initial
