@@ -30,6 +30,8 @@ class MetaComponent(abc.ABCMeta):
     _states_info = None
     _outputs_info = None
     _solver_history = None
+    _land_sea_mask = None
+    _flow_direction = None
 
     @property
     def category(cls):
@@ -67,22 +69,33 @@ class MetaComponent(abc.ABCMeta):
     def solver_history(cls):
         return cls._solver_history
 
+    @property
+    def flow_direction(cls):
+        return cls._flow_direction
+
+    @property
+    def land_sea_mask(cls):
+        return cls._land_sea_mask
+
     def __str__(cls):
         info = [
             "\n".join(
                 (["    {}:".format(t.replace('_', ' '))]
                  + ["        {} [{}]".format(n, info['units'])
-                    for n, info in getattr(cls, '_{}_info'.format(t)).items()])
+                    for n, info in getattr(cls, '_' + t).items()])
             )
-            for t in ['inwards', 'outwards',
-                      'inputs', 'parameters', 'constants', 'outputs', 'states']
-            if getattr(cls, t + '_info')
+            for t in ['inwards_info', 'outwards_info', 'inputs_info',
+                      'parameters_info', 'constants_info', 'outputs_info',
+                      'states_info']
+            if getattr(cls, t)
         ]
         return "\n".join(
             ["{}(".format(cls.__name__)]
             + ["    category: {}".format(getattr(cls, '_category'))]
             + info
-            + ["    solver history: {}".format(getattr(cls, 'solver_history'))]
+            + ["    solver history: {}".format(getattr(cls, '_solver_history'))]
+            + ["    land sea mask: {}".format(getattr(cls, '_land_sea_mask'))]
+            + ["    flow direction: {}".format(getattr(cls, '_flow_direction'))]
             + [")"]
         )
 
@@ -100,6 +113,8 @@ class Component(metaclass=MetaComponent):
     _states_info = {}
     _outputs_info = {}
     _solver_history = 1
+    _land_sea_mask = False
+    _flow_direction = False
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None):
@@ -398,8 +413,9 @@ class Component(metaclass=MetaComponent):
                 TimeDomain.__name__, self._category))
 
     def _check_spacedomain(self, spacedomain):
-        """The purpose of this method is to check that the spacedomain is
-        of the right type.
+        """The purpose of this method is to check that the spacedomain
+        is of the right type and that special properties land_sea_mask
+        and flow_direction are set if required by component.
         """
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError("not an instance of {} for {}".format(
@@ -409,6 +425,24 @@ class Component(metaclass=MetaComponent):
             raise NotImplementedError(
                 "only {} currently supported by framework "
                 "for spacedomain".format(Grid.__name__))
+
+        if self._land_sea_mask:
+            if spacedomain.land_sea_mask is None:
+                raise RuntimeError(
+                    "'land_sea_mask' must be set in {} of {} "
+                    "component '{}'".format(SpaceDomain.__name__,
+                                            self._category,
+                                            self.__class__.__name__)
+                )
+
+        if self._flow_direction:
+            if spacedomain.flow_direction is None:
+                raise RuntimeError(
+                    "'flow_direction' must be set in {} of {} "
+                    "component '{}'".format(SpaceDomain.__name__,
+                                            self._category,
+                                            self.__class__.__name__)
+                )
 
     def _check_dataset(self, dataset):
         # checks for input data
