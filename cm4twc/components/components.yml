@@ -1,9 +1,0 @@
-surfacelayer:
-  # e.g.
-  # Dummy: .components.surfacelayer.dummy
-subsurface:
-  # e.g.
-  # Dummy: .components.subsurface.dummy
-openwater:
-  # e.g.
-  # Dummy: .components.openwater.dummy
