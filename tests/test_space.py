@@ -1,6 +1,7 @@
 import numpy as np
 import unittest
 import doctest
+import cf
 
 import cm4twc
 from tests.test_data import get_dummy_dataset
@@ -34,6 +35,18 @@ def get_dummy_spacedomain(resolution):
             altitude_extent=(0, 4),
             altitude_resolution=4
         )
+
+
+def get_dummy_land_sea_mask_field(resolution):
+    return cf.read(
+        'data/dummy_global_land_sea_mask_{}.nc'.format(resolution)
+    ).select_field('land_sea_mask')
+
+
+def get_dummy_flow_direction_field(resolution):
+    return cf.read(
+        'data/dummy_global_flow_direction_{}.nc'.format(resolution)
+    ).select_field('flow_direction')
 
 
 def get_sciencish_spacedomain():

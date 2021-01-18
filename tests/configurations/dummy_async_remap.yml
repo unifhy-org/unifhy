@@ -21,6 +21,12 @@ surfacelayer:
     altitude_extent: [0, 4]
     altitude_resolution: 4
     altitude_location: centre
+    land_sea_mask:
+      files: [ /Users/thibhlln/PycharmProjects/cm4twc/cm4twc/tests/data/dummy_global_land_sea_mask_1deg.nc ]
+      select: land_sea_mask
+    flow_direction:
+      files: [ /Users/thibhlln/PycharmProjects/cm4twc/cm4twc/tests/data/dummy_global_flow_direction_1deg.nc ]
+      select: flow_direction
   dataset:
     driving_a:
       files: [data/dummy_surfacelayer_data_daily_1deg.nc]
@@ -68,6 +74,8 @@ subsurface:
     altitude_extent: [0, 4]
     altitude_resolution: 4
     altitude_location: centre
+    land_sea_mask: null
+    flow_direction: null
   dataset:
     driving_a:
       files: [data/dummy_subsurface_data_3daily_pt5deg.nc]
@@ -107,6 +115,8 @@ openwater:
     altitude_extent: [0, 4]
     altitude_resolution: 4
     altitude_location: centre
+    land_sea_mask: null
+    flow_direction: null
   dataset:
     ancillary_b:
       files: [data/dummy_openwater_data_2daily_pt2deg.nc]

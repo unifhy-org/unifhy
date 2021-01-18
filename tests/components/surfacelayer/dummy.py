@@ -83,6 +83,8 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     _solver_history = 1
+    _land_sea_mask = True
+    _flow_direction = True
 
     def initialise(self,
                    # component states
@@ -108,6 +110,9 @@ class Dummy(SurfaceLayerComponent):
         state_a[0][:] = state_a[-1] + 1
         state_b[0][:] = state_b[-1] + 2
 
+        output_x, _ = self.spacedomain.route(driving_a + driving_b + driving_c
+                                             + transfer_n - state_a[0])
+
         return (
             # to exchanger
             {
@@ -119,7 +124,7 @@ class Dummy(SurfaceLayerComponent):
             # component outputs
             {
                 'output_x':
-                    driving_a + driving_b + driving_c + transfer_n - state_a[0]
+                    output_x
             }
         )
 
@@ -171,6 +176,8 @@ class DummyFortran(Dummy):
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
 
+        output_x, _ = self.spacedomain.route(output_x)
+
         return (
             # to exchanger
             {
@@ -217,6 +224,8 @@ class DummyC(Dummy):
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
+
+        output_x, _ = self.spacedomain.route(output_x)
 
         return (
             # to exchanger
