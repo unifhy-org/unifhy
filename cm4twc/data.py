@@ -10,7 +10,7 @@ class DataSet(MutableMapping):
     """
 
     def __init__(self, files=None, name_mapping=None, select=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 

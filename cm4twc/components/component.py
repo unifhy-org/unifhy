@@ -118,7 +118,7 @@ class Component(metaclass=MetaComponent):
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 
@@ -1080,7 +1080,7 @@ class DataComponent(Component):
     _solver_history = 0
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 
@@ -1196,7 +1196,7 @@ class NullComponent(Component):
     _solver_history = 0
 
     def __init__(self, timedomain, spacedomain, substituting_class, **kwargs):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 

@@ -1879,7 +1879,7 @@ class LatLonGrid(Grid):
 
     def __init__(self, latitude, longitude, latitude_bounds,
                  longitude_bounds, altitude=None, altitude_bounds=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 
@@ -2420,7 +2420,7 @@ class RotatedLatLonGrid(Grid):
                  grid_longitude_bounds, earth_radius, grid_north_pole_latitude,
                  grid_north_pole_longitude, altitude=None,
                  altitude_bounds=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 

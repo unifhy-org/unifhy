@@ -47,7 +47,7 @@ class TimeDomain(object):
     _timestep_span = (0, 1)
 
     def __init__(self, timestamps, units, calendar=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 

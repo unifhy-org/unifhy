@@ -21,7 +21,7 @@ class Model(object):
     def __init__(self, identifier, config_directory, saving_directory,
                  surfacelayer, subsurface, openwater,
                  _to_yaml=True):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 
