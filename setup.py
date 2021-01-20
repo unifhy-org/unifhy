@@ -55,5 +55,14 @@ setup(
         'cfunits',
         'netCDF4>=1.5',
         'pyyaml>=5.3'
-    ]
+    ],
+
+    extras_require={
+        'docs': [
+            'sphinx',
+            'nbsphinx',
+            'sphinx_rtd_theme',
+            'gitpython'
+        ]
+    }
 )

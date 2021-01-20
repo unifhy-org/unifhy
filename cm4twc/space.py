@@ -2854,19 +2854,160 @@ class RotatedLatLonGrid(Grid):
         }
 
     @classmethod
-    def _from_extent_and_resolution(cls, grid_latitude_extent,
-                                    grid_longitude_extent,
-                                    grid_latitude_resolution,
-                                    grid_longitude_resolution,
-                                    earth_radius, grid_north_pole_latitude,
-                                    grid_north_pole_longitude,
-                                    grid_latitude_grid_longitude_location='centre',
-                                    altitude_extent=None,
-                                    altitude_resolution=None,
-                                    altitude_location='centre'):
-        """Initialise a `RotatedLatLonGrid` from the extent and the
+    def from_extent_and_resolution(cls, grid_latitude_extent,
+                                   grid_longitude_extent,
+                                   grid_latitude_resolution,
+                                   grid_longitude_resolution,
+                                   earth_radius, grid_north_pole_latitude,
+                                   grid_north_pole_longitude,
+                                   grid_latitude_grid_longitude_location='centre',
+                                   altitude_extent=None,
+                                   altitude_resolution=None,
+                                   altitude_location='centre'):
+        """Instantiate a `RotatedLatLonGrid` from the extent and the
         resolution of grid_latitude and grid_longitude coordinates (and
         optional altitude coordinates).
+
+        :Parameters:
+
+            grid_latitude_extent: pair of `float` or `int`
+                The extent of grid_latitude coordinates in degrees for
+                the desired grid. The first element of the pair is the
+                location of the start of the extent along the
+                grid_latitude coordinate, the second element of the pair
+                is the location of the end of the extent along the
+                grid_latitude coordinate. Extent must be oriented
+                positively. May be any type that can be unpacked (e.g.
+                `tuple`, `list`, `numpy.ndarray`).
+
+                *Parameter example:* ::
+
+                    grid_latitude_extent=(30, 70)
+
+            longitude_extent: pair of `float` or `int`
+                The extent of grid_longitude coordinates in degrees for
+                the desired grid. The first element of the pair is the
+                location of the start of the extent along the
+                grid_longitude coordinate, the second element of the
+                pair is the location of the end of the extent along the
+                grid_latitude coordinate. Extent must be oriented
+                positively. May be any type that can be unpacked (e.g.
+                `tuple`, `list`, `numpy.ndarray`).
+
+                *Parameter example:* ::
+
+                    grid_longitude_extent=(0, 90)
+
+            grid_latitude_resolution: `float` or `int`
+                The spacing between two consecutive grid_latitude
+                coordinates in degrees for the desired grid. Must be
+                positive.
+
+                *Parameter example:* ::
+
+                    grid_latitude_resolution=10
+
+            grid_longitude_resolution: `float` or `int`
+                The spacing between two consecutive grid_longitude
+                coordinates in degrees for the desired grid. Must be
+                positive.
+
+                *Parameter example:* ::
+
+                    grid_longitude_resolution=10
+
+            grid_latitude_grid_longitude_location: `str` or `int`, optional
+                The location of the grid_latitude and grid_longitude
+                coordinates in relation to their grid cells (i.e. their
+                bounds). This information is required to generate the
+                grid_latitude and grid_longitude bounds for each grid
+                coordinate. If not provided, set to default 'centre'.
+
+                The locations left and right are related to the
+                grid_longitude coordinates (X-axis), while the locations
+                lower and upper are related to the grid_latitude
+                coordinates (Y-axis). The orientation of the coordinate
+                system considered is detailed below.
+
+                .. seealso:: `LatLonGrid.from_extent_and_resolution`
+
+            earth_radius: `int` or `float`
+                The radius of the spherical figure used to approximate
+                the shape of the Earth in metres. This parameter is
+                required to project the rotated grid into a true
+                latitude-longitude coordinate system.
+
+            grid_north_pole_latitude: `int` or `float`
+                The true latitude of the north pole of the rotated grid
+                in degrees North. This parameter is required to project
+                the rotated grid into a true latitude-longitude
+                coordinate system.
+
+            grid_north_pole_longitude: `int` or `float`
+                The true longitude of the north pole of the rotated grid
+                in degrees East. This parameter is required to project
+                the rotated grid into a true latitude-longitude
+                coordinate system.
+
+            altitude_extent: pair of `float` or `int`, optional
+                The extent of altitude coordinate in metres for the
+                desired grid. The first element of the pair is the
+                location of the start of the extent along the altitude
+                coordinate, the second element of the pair is the
+                location of the end of the extent along the altitude
+                coordinate. May be any type that can be unpacked (e.g.
+                `tuple`, `list`, `numpy.ndarray`).
+
+                *Parameter example:* ::
+
+                    altitude_extent=(0, 20)
+
+            altitude_resolution: `float` or `int`, optional
+                The spacing between two consecutive altitude coordinates
+                in metres for the desired grid.
+
+                *Parameter example:* ::
+
+                    altitude_resolution=20
+
+            altitude_location: `str` or `int`, optional
+                The location of the altitude coordinates in relation to
+                their grid cells (i.e. their bounds). This information
+                is required to generate the altitude bounds for each
+                grid coordinate. If not provided, set to default
+                'centre'.
+
+                The locations top and bottom are related to the
+                altitude coordinate (Z-axis). The orientation of the
+                coordinate system considered is such that the positive
+                direction is upwards.
+
+                .. seealso:: `LatLonGrid.from_extent_and_resolution`
+
+                *Parameter example:* ::
+
+                    altitude_location='centre'
+
+        **Examples**
+
+        >>> sd = RotatedLatLonGrid.from_extent_and_resolution(
+        ...     grid_latitude_extent=(-1.1, 1.1),
+        ...     grid_longitude_extent=(-2.72, -0.96),
+        ...     grid_latitude_resolution=0.44,
+        ...     grid_longitude_resolution=0.44,
+        ...     earth_radius=6371007,
+        ...     grid_north_pole_latitude=38.0,
+        ...     grid_north_pole_longitude=190.0
+        ... )
+        >>> print(sd)
+        RotatedLatLonGrid(
+            shape {Y, X}: (5, 4)
+            Y, grid_latitude (5,): [-0.88, ..., 0.88] degrees
+            X, grid_longitude (4,): [-2.5, ..., -1.18] degrees
+            Y_bounds (5, 2): [[-1.1, ..., 1.1]] degrees
+            X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
+        )
+
         """
         return cls(
             **cls._get_grid_from_extent_and_resolution(
@@ -2894,7 +3035,7 @@ class RotatedLatLonGrid(Grid):
         lsm = cfg.pop('land_sea_mask', None)
         fd = cfg.pop('flow_direction', None)
 
-        inst = cls._from_extent_and_resolution(**cfg)
+        inst = cls.from_extent_and_resolution(**cfg)
 
         if lsm is not None:
             inst.land_sea_mask = (
