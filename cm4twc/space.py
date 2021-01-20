@@ -2,6 +2,7 @@ import numpy as np
 from copy import deepcopy
 import re
 import cf
+import pyproj
 
 from .settings import atol, rtol, decr, dtype_float
 
@@ -135,9 +136,9 @@ class Grid(SpaceDomain):
     def shape(self):
         has_z = self._f.has_construct(self._Z_name)
         return (
-            (self._f.construct('Z').shape if has_z else ())
-            + self._f.construct('Y').shape
-            + self._f.construct('X').shape
+            (self._f.dim('Z').shape if has_z else ())
+            + self._f.dim('Y').shape
+            + self._f.dim('X').shape
         )
 
     @property
@@ -145,7 +146,7 @@ class Grid(SpaceDomain):
         """Return the name of the properties to use to get access to
         the axes defined for the SpaceDomain instance as a tuple.
         """
-        has_z = self._f.has_construct(self._Z_name)
+        has_z = self._f.dim(self._Z_name, default=False)
         return ('Z', 'Y', 'X') if has_z else ('Y', 'X')
 
     @property
@@ -153,8 +154,8 @@ class Grid(SpaceDomain):
         """Return the Z-axis of the SpaceDomain instance as a `cf.Data`
         instance if the Z-axis exists, otherwise return None.
         """
-        if self._f.has_construct('Z'):
-            return self._f.construct('Z').data
+        if self._f.dim('Z', default=False):
+            return self._f.dim('Z').data
         else:
             return None
 
@@ -163,14 +164,14 @@ class Grid(SpaceDomain):
         """Return the Y-axis of the SpaceDomain instance as a `cf.Data`
         instance.
         """
-        return self._f.construct('Y').data
+        return self._f.dim('Y').data
 
     @property
     def X(self):
         """Return the X-axis of the SpaceDomain instance as a `cf.Data`
         instance.
         """
-        return self._f.construct('X').data
+        return self._f.dim('X').data
 
     @property
     def Z_bounds(self):
@@ -178,8 +179,8 @@ class Grid(SpaceDomain):
         as a `cf.Data` instance if the Z-axis exists, otherwise
         return None.
         """
-        if self._f.has_construct('Z'):
-            return self._f.construct('Z').bounds.data
+        if self._f.dim('Z', default=False):
+            return self._f.dim('Z').bounds.data
         else:
             return None
 
@@ -188,22 +189,22 @@ class Grid(SpaceDomain):
         """Return the bounds of the Y-axis of the SpaceDomain instance
         as a `cf.Data` instance.
         """
-        return self._f.construct('Y').bounds.data
+        return self._f.dim('Y').bounds.data
 
     @property
     def X_bounds(self):
         """Return the bounds of the X-axis of the SpaceDomain instance
         as a `cf.Data` instance.
         """
-        return self._f.construct('X').bounds.data
+        return self._f.dim('X').bounds.data
 
     @property
     def Z_name(self):
         """Return the name of the Z-axis of the SpaceDomain instance
         as a `str` if the Z-axis exists, otherwise return None.
         """
-        if self._f.has_construct('Z'):
-            return self._f.construct('Z').standard_name
+        if self._f.dim('Z', default=False):
+            return self._f.dim('Z').standard_name
         else:
             return None
 
@@ -212,14 +213,14 @@ class Grid(SpaceDomain):
         """Return the name of the Y-axis of the SpaceDomain instance
         as a `str`.
         """
-        return self._f.construct('Y').standard_name
+        return self._f.dim('Y').standard_name
 
     @property
     def X_name(self):
         """Return the name of the X-axis of the SpaceDomain instance
         as a `str`.
         """
-        return self._f.construct('X').standard_name
+        return self._f.dim('X').standard_name
 
     @property
     def land_sea_mask(self):
@@ -1669,26 +1670,26 @@ class Grid(SpaceDomain):
             ["{}(".format(self.__class__.__name__)]
             + ["    shape {{{}}}: {}".format(", ".join(self.axes), self.shape)]
             + (["    Z, {} {}: {}".format(
-                self._f.construct('Z').standard_name,
-                self._f.construct('Z').data.shape,
-                self._f.construct('Z').data)] if has_z else [])
+                self._f.dim('Z').standard_name,
+                self._f.dim('Z').data.shape,
+                self._f.dim('Z').data)] if has_z else [])
             + ["    Y, {} {}: {}".format(
-                self._f.construct('Y').standard_name,
-                self._f.construct('Y').data.shape,
-                self._f.construct('Y').data)]
+                self._f.dim('Y').standard_name,
+                self._f.dim('Y').data.shape,
+                self._f.dim('Y').data)]
             + ["    X, {} {}: {}".format(
-                self._f.construct('X').standard_name,
-                self._f.construct('X').data.shape,
-                self._f.construct('X').data)]
+                self._f.dim('X').standard_name,
+                self._f.dim('X').data.shape,
+                self._f.dim('X').data)]
             + (["    Z_bounds {}: {}".format(
-                 self._f.construct('Z').bounds.data.shape,
-                 self._f.construct('Z').bounds.data)] if has_z else [])
+                 self._f.dim('Z').bounds.data.shape,
+                 self._f.dim('Z').bounds.data)] if has_z else [])
             + ["    Y_bounds {}: {}".format(
-                self._f.construct('Y').bounds.data.shape,
-                self._f.construct('Y').bounds.data)]
+                self._f.dim('Y').bounds.data.shape,
+                self._f.dim('Y').bounds.data)]
             + ["    X_bounds {}: {}".format(
-                self._f.construct('X').bounds.data.shape,
-                self._f.construct('X').bounds.data)]
+                self._f.dim('X').bounds.data.shape,
+                self._f.dim('X').bounds.data)]
             + [")"]
         )
 
@@ -1752,8 +1753,8 @@ class Grid(SpaceDomain):
         if ignore_z:
             z = True
         else:
-            if self._f.has_construct('Z'):
-                z = self._f.construct('Z').equals(
+            if self._f.dim('Z', default=False):
+                z = self._f.dim('Z').equals(
                     field.dimension_coordinate(
                         re.compile(r'name={}$'.format(self._Z_name)),
                         default=None),
@@ -1762,7 +1763,7 @@ class Grid(SpaceDomain):
                     ignore_properties=('standard_name',
                                        'long_name',
                                        'computed_standard_name'))
-            elif field.has_construct('Z'):
+            elif field.dim('Z', default=False):
                 z = False
             else:
                 z = True
@@ -2032,7 +2033,7 @@ class LatLonGrid(Grid):
             self._set_space(altitude, altitude_bounds, name=self._Z_name,
                             units=self._Z_units[0], axis='Z',
                             limits=self._Z_limits, is_cyclic=self._Z_is_cyclic)
-            self._f.construct('Z').set_property('positive', 'up')
+            self._f.dim('Z').set_property('positive', 'up')
 
         self._set_space(latitude, latitude_bounds,
                         name=self._Y_name, units=self._Y_units[0], axis='Y',
@@ -2051,7 +2052,7 @@ class LatLonGrid(Grid):
                                    altitude_extent=None,
                                    altitude_resolution=None,
                                    altitude_location='centre'):
-        """Initialise a `LatLonGrid` from the extent and the resolution
+        """Instantiate a `LatLonGrid` from the extent and the resolution
         of latitude, longitude (and optionally altitude) coordinates.
 
         :Parameters:
@@ -2306,13 +2307,13 @@ class LatLonGrid(Grid):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `LatLonGrid` from spatial dimension coordinates
+        """Instantiate a `LatLonGrid` from spatial dimension coordinates
         of a `cf.Field`.
 
         :Parameters:
 
             field: `cf.Field`
-                The field object that will be used to initialise a
+                The field object that will be used to instantiate a
                 `LatLonGrid` instance. This field must feature a
                 'latitude' and a 'longitude' constructs, and these
                 constructs must feature bounds. This field may
@@ -2546,7 +2547,7 @@ class RotatedLatLonGrid(Grid):
             self._set_space(altitude, altitude_bounds, name=self._Z_name,
                             units=self._Z_units[0], axis='Z',
                             limits=self._Z_limits, is_cyclic=self._Z_is_cyclic)
-            self._f.construct('Z').set_property('positive', 'up')
+            self._f.dim('Z').set_property('positive', 'up')
 
         self._set_space(grid_latitude, grid_latitude_bounds,
                         name=self._Y_name, units=self._Y_units[0], axis='Y',
@@ -2556,6 +2557,9 @@ class RotatedLatLonGrid(Grid):
                         limits=self._X_limits, is_cyclic=self._X_is_cyclic)
 
         self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
+                                      grid_north_pole_longitude)
+
+        self._project_and_set_lat_lon(earth_radius, grid_north_pole_latitude,
                                       grid_north_pole_longitude)
 
         # set dummy data needed for using inner field for remapping
@@ -2581,7 +2585,64 @@ class RotatedLatLonGrid(Grid):
                 datum=cf.Datum(
                     parameters={'earth_radius': earth_radius}),
                 coordinate_conversion=coord_conversion,
-                coordinates=[self._Y_name, self._X_name])
+                coordinates=[self._Y_name, self._X_name]),
+        )
+
+    def _project_and_set_lat_lon(self, earth_radius, grid_north_pole_latitude,
+                                 grid_north_pole_longitude):
+        # define transformation from rotated lat/lon to 'true' lat/lon
+        trans = pyproj.Transformer.from_crs(
+            # Rotated Grid
+            '+proj=ob_tran +o_proj=lonlat +ellps=WGS84 +datum=WGS84 '
+            '+o_lat_p=0{} +o_lon_p={} +R={}'.format(grid_north_pole_latitude,
+                                                    grid_north_pole_longitude,
+                                                    earth_radius),
+            # WGS84
+            'epsg:4326',  # WGS84
+            always_xy=True
+        )
+
+        # project coordinates
+        lon, lat = trans.transform(*np.meshgrid(self.X.array, self.Y.array))
+
+        # project coordinate bounds
+        lon_bnds = np.zeros(lon.shape + (4,), lon.dtype)
+        lat_bnds = np.zeros(lat.shape + (4,), lat.dtype)
+        lon_bnds[..., 0], lat_bnds[..., 0] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 0],
+                         self.Y_bounds.array[..., 0])
+        )
+        lon_bnds[..., 1], lat_bnds[..., 1] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 1],
+                         self.Y_bounds.array[..., 0])
+        )
+        lon_bnds[..., 2], lat_bnds[..., 2] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 1],
+                         self.Y_bounds.array[..., 1])
+        )
+        lon_bnds[..., 3], lat_bnds[..., 3] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 0],
+                         self.Y_bounds.array[..., 1])
+        )
+
+        # set constructs
+        self._f.set_construct(
+            cf.AuxiliaryCoordinate(
+                      properties={'standard_name': 'latitude',
+                                  'units': 'degrees_north'},
+                      data=cf.Data(lat),
+                      bounds=cf.Bounds(data=cf.Data(lat_bnds))
+            ),
+            axes=['Y', 'X']
+        )
+        self._f.set_construct(
+            cf.AuxiliaryCoordinate(
+                properties={'standard_name': 'longitude',
+                            'units': 'degrees_east'},
+                data=cf.Data(lon),
+                bounds=cf.Bounds(data=cf.Data(lon_bnds))
+            ),
+            axes=['Y', 'X']
         )
 
     def is_space_equal_to(self, field, ignore_z=False):
@@ -2669,13 +2730,13 @@ class RotatedLatLonGrid(Grid):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `RotatedLatLonGrid` from spatial dimension
+        """Instantiate a `RotatedLatLonGrid` from spatial dimension
         coordinates of a `cf.Field`.
 
         :Parameters:
 
             field: cf.Field object
-                The field object that will be used to initialise a
+                The field object that will be used to instantiate a
                 `RotatedLatLonGrid` instance. This field must feature a
                 'grid_latitude' and a 'grid_longitude' constructs, and
                 these constructs must feature bounds. In addition, the
