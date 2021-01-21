@@ -1886,9 +1886,10 @@ class LatLonGrid(Grid):
 
             latitude: one-dimensional array-like object
                 The array of latitude coordinates in degrees North
-                defining the temporal dimension. May be any type that
-                can be cast to a `numpy.ndarray`. Must contain numerical
-                values. Coordinates must be ordered from South to North.
+                defining a spatial dimension of the domain. May be any
+                type that can be cast to a `numpy.ndarray`. Must contain
+                numerical values. Coordinates must be ordered from South
+                to North.
 
                 *Parameter example:* ::
 
@@ -1900,9 +1901,10 @@ class LatLonGrid(Grid):
 
             longitude: one-dimensional array-like object
                 The array of longitude coordinates in degrees East
-                defining the temporal dimension. May be any type that
-                can be cast to a `numpy.ndarray`. Must contain numerical
-                values. Coordinates must be ordered from West to East.
+                defining a spatial dimension of the domain. May be any
+                type that can be cast to a `numpy.ndarray`. Must contain
+                numerical values. Coordinates must be ordered from West
+                to East.
 
                 *Parameter example:* ::
 
@@ -1934,8 +1936,8 @@ class LatLonGrid(Grid):
                 The array of longitude coordinate bounds in degrees
                 East defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
-                `numpy.ndarray`. Must feature two dimensional with the
-                first dimension equal to the size of *longitude* and the
+                `numpy.ndarray`. Must be two dimensional with the first
+                dimension equal to the size of *longitude* and the
                 second dimension equal to 2. Must contain numerical
                 values.
 
@@ -1952,8 +1954,8 @@ class LatLonGrid(Grid):
                     )
 
             altitude: one-dimensional array-like object, optional
-                The array of altitude coordinates in metres defining the
-                temporal dimension (with upwards as the positive
+                The array of altitude coordinates in metres defining a
+                spatial dimension (with upwards as the positive
                 direction). May be any type that can be cast to a
                 `numpy.ndarray`. Must contain numerical values. Ignored
                 if *altitude_bounds* not also provided.
@@ -1968,7 +1970,7 @@ class LatLonGrid(Grid):
                 coordinate (with upwards as the positive direction).
                 May be any type that can be cast to a `numpy.ndarray`.
                 Must be two dimensional with the first dimension equal
-                to the size of `altitude` and the second dimension equal
+                to the size of *altitude* and the second dimension equal
                 to 2. Must contain numerical values. Ignored if
                 *altitude* not also provided.
 
@@ -2398,9 +2400,9 @@ class LatLonGrid(Grid):
 
 
 class RotatedLatLonGrid(Grid):
-    """LatLonGrid characterises the spatial dimension for a `Component`
-    as a regular grid on a spherical domain whose coordinates are
-    latitudes and longitudes, and whose rotation axis is not aligned
+    """RotatedLatLonGrid characterises the spatial dimension for a
+    `Component` as a regular grid on a spherical domain whose coordinates
+    are latitudes and longitudes, and whose rotation axis is not aligned
     with the North pole.
     """
     # characteristics of the dimension coordinates
@@ -2418,17 +2420,18 @@ class RotatedLatLonGrid(Grid):
     _X_is_cyclic = True
 
     def __init__(self, grid_latitude, grid_longitude, grid_latitude_bounds,
-                 grid_longitude_bounds, earth_radius, grid_north_pole_latitude,
-                 grid_north_pole_longitude, altitude=None,
-                 altitude_bounds=None):
+                 grid_longitude_bounds, grid_north_pole_latitude,
+                 grid_north_pole_longitude, north_pole_grid_longitude=0.,
+                 altitude=None, altitude_bounds=None):
         """**Instantiation**
 
         :Parameters:
 
             grid_latitude: one-dimensional array-like object
                 The array of latitude coordinates in degrees defining
-                the temporal dimension. May be any type that can be cast
-                to a `numpy.ndarray`. Must contain numerical values.
+                a spatial dimension of the domain. May be any type that
+                can be cast to a `numpy.ndarray`. Must contain numerical
+                values.
 
                 *Parameter example:* ::
 
@@ -2436,8 +2439,9 @@ class RotatedLatLonGrid(Grid):
 
             grid_longitude: one-dimensional array-like object
                 The array of longitude coordinates in degrees defining
-                the temporal dimension. May be any type that can be cast
-                to a `numpy.ndarray`. Must contain numerical values.
+                a spatial dimension of the domain. May be any type that
+                can be cast to a `numpy.ndarray`. Must contain numerical
+                values.
 
                 *Parameter example:* ::
 
@@ -2462,10 +2466,10 @@ class RotatedLatLonGrid(Grid):
                 The array of longitude coordinate bounds in degrees
                 defining the extent of the grid cell around the
                 coordinate. May be any type that can be cast to a
-                `numpy.ndarray`. Must feature two dimensional with the
-                first dimension equal to the size of *grid_longitude*
-                and the second dimension equal to 2. Must contain
-                numerical values.
+                `numpy.ndarray`. Must be two dimensional with the first
+                dimension equal to the size of *grid_longitude* and the
+                second dimension equal to 2. Must contain numerical
+                values.
 
                 *Parameter example:* ::
 
@@ -2490,12 +2494,18 @@ class RotatedLatLonGrid(Grid):
                 the rotated grid into a true latitude-longitude
                 coordinate system.
 
+            north_pole_grid_longitude: `int` or `float`, optional
+                The longitude of the true north pole in the rotated grid
+                in degrees. This parameter is optional to project the
+                rotated grid into a true latitude-longitude coordinate
+                system. If not provided, set to default value 0.
+
             altitude: one-dimensional array-like object, optional
-                The array of altitude coordinates in metres defining the
-                temporal dimension (with upwards as the positive
-                direction). May be any type that can be cast to a
-                `numpy.ndarray`. Must contain numerical values. Ignored
-                if *altitude_bounds* not also provided.
+                The array of altitude coordinates in metres defining a
+                spatial dimension of the domain (with upwards as the
+                positive direction). May be any type that can be cast to
+                a `numpy.ndarray`. Must contain numerical values.
+                Ignored if *altitude_bounds* not also provided.
 
                 *Parameter example:* ::
 
@@ -2524,7 +2534,6 @@ class RotatedLatLonGrid(Grid):
         ...                           [0.22, 0.66], [0.66, 1.1]],
         ...     grid_longitude_bounds=[[-2.72, -2.28], [-2.28, -1.84],
         ...                            [-1.84, -1.4], [-1.4, -0.96]],
-        ...     earth_radius=6371007,
         ...     grid_north_pole_latitude=38.0,
         ...     grid_north_pole_longitude=190.0,
         ...     altitude=[10],
@@ -2556,11 +2565,13 @@ class RotatedLatLonGrid(Grid):
                         name=self._X_name, units=self._X_units[0], axis='X',
                         limits=self._X_limits, is_cyclic=self._X_is_cyclic)
 
-        self._set_rotation_parameters(earth_radius, grid_north_pole_latitude,
-                                      grid_north_pole_longitude)
+        self._rotate_and_set_lat_lon(grid_north_pole_latitude,
+                                     grid_north_pole_longitude,
+                                     north_pole_grid_longitude)
 
-        self._project_and_set_lat_lon(earth_radius, grid_north_pole_latitude,
-                                      grid_north_pole_longitude)
+        self._set_crs_parameters(grid_north_pole_latitude,
+                                 grid_north_pole_longitude,
+                                 north_pole_grid_longitude)
 
         # set dummy data needed for using inner field for remapping
         self._set_dummy_data()
@@ -2570,8 +2581,9 @@ class RotatedLatLonGrid(Grid):
                                    grid_longitude_extent,
                                    grid_latitude_resolution,
                                    grid_longitude_resolution,
-                                   earth_radius, grid_north_pole_latitude,
+                                   grid_north_pole_latitude,
                                    grid_north_pole_longitude,
+                                   north_pole_grid_longitude=0.,
                                    grid_latitude_grid_longitude_location='centre',
                                    altitude_extent=None,
                                    altitude_resolution=None,
@@ -2596,7 +2608,7 @@ class RotatedLatLonGrid(Grid):
 
                     grid_latitude_extent=(30, 70)
 
-            longitude_extent: pair of `float` or `int`
+            grid_longitude_extent: pair of `float` or `int`
                 The extent of grid_longitude coordinates in degrees for
                 the desired grid. The first element of the pair is the
                 location of the start of the extent along the
@@ -2643,12 +2655,6 @@ class RotatedLatLonGrid(Grid):
 
                 .. seealso:: `LatLonGrid.from_extent_and_resolution`
 
-            earth_radius: `int` or `float`
-                The radius of the spherical figure used to approximate
-                the shape of the Earth in metres. This parameter is
-                required to project the rotated grid into a true
-                latitude-longitude coordinate system.
-
             grid_north_pole_latitude: `int` or `float`
                 The true latitude of the north pole of the rotated grid
                 in degrees North. This parameter is required to project
@@ -2660,6 +2666,12 @@ class RotatedLatLonGrid(Grid):
                 in degrees East. This parameter is required to project
                 the rotated grid into a true latitude-longitude
                 coordinate system.
+
+            north_pole_grid_longitude: `int` or `float`, optional
+                The longitude of the true north pole in the rotated grid
+                in degrees. This parameter is optional to project the
+                rotated grid into a true latitude-longitude coordinate
+                system. If not provided, set to default value 0.
 
             altitude_extent: pair of `float` or `int`, optional
                 The extent of altitude coordinate in metres for the
@@ -2707,7 +2719,6 @@ class RotatedLatLonGrid(Grid):
         ...     grid_longitude_extent=(-2.72, -0.96),
         ...     grid_latitude_resolution=0.44,
         ...     grid_longitude_resolution=0.44,
-        ...     earth_radius=6371007,
         ...     grid_north_pole_latitude=38.0,
         ...     grid_north_pole_longitude=190.0
         ... )
@@ -2721,16 +2732,27 @@ class RotatedLatLonGrid(Grid):
         )
 
         """
-        return cls(
+        inst = cls(
             **cls._get_grid_from_extent_and_resolution(
                 grid_latitude_extent, grid_longitude_extent,
                 grid_latitude_resolution, grid_longitude_resolution,
                 grid_latitude_grid_longitude_location, altitude_extent,
                 altitude_resolution, altitude_location),
-            earth_radius=earth_radius,
             grid_north_pole_latitude=grid_north_pole_latitude,
-            grid_north_pole_longitude=grid_north_pole_longitude
+            grid_north_pole_longitude=grid_north_pole_longitude,
+            north_pole_grid_longitude=north_pole_grid_longitude
         )
+
+        inst._extent = {'Z': altitude_extent,
+                        'Y': grid_latitude_extent,
+                        'X': grid_longitude_extent}
+        inst._resolution = {'Z': altitude_resolution,
+                            'Y': grid_latitude_resolution,
+                            'X': grid_longitude_resolution}
+        inst._location = {'Z': altitude_location,
+                          'YX': grid_latitude_grid_longitude_location}
+
+        return inst
 
     @classmethod
     def from_field(cls, field):
@@ -2790,7 +2812,6 @@ class RotatedLatLonGrid(Grid):
         ... )
         >>> crs = f.set_construct(
         ...     cf.CoordinateReference(
-        ...         datum=cf.Datum(parameters={'earth_radius': 6371007.}),
         ...         coordinate_conversion=cf.CoordinateConversion(
         ...             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
         ...                         'grid_north_pole_latitude': 38.0,
@@ -2811,7 +2832,7 @@ class RotatedLatLonGrid(Grid):
         )
         """
         extraction_xyz = cls._extract_xyz_from_field(field)
-        extraction_param = cls._extract_rotation_parameters_from_field(field)
+        extraction_param = cls._extract_crs_rotation_parameters_from_field(field)
 
         return cls(grid_latitude=extraction_xyz['Y'],
                    grid_longitude=extraction_xyz['X'],
@@ -2845,7 +2866,7 @@ class RotatedLatLonGrid(Grid):
     def to_config(self):
         cfg = super(RotatedLatLonGrid, self).to_config()
         cfg.update(
-            self._extract_rotation_parameters_from_field(self._f)
+            self._extract_crs_rotation_parameters_from_field(self._f)
         )
         return cfg
 
@@ -2857,7 +2878,7 @@ class RotatedLatLonGrid(Grid):
         return self._f.coordinate_reference('rotated_latitude_longitude')
 
     @classmethod
-    def _extract_rotation_parameters_from_field(cls, field):
+    def _extract_crs_rotation_parameters_from_field(cls, field):
         # check conversion parameters
         if field.has_construct('grid_mapping_name:rotated_latitude_longitude'):
             crs = field.construct(
@@ -2866,74 +2887,109 @@ class RotatedLatLonGrid(Grid):
             raise RuntimeError(
                 "{} field missing coordinate conversion 'grid_mapping_name:"
                 "rotated_latitude_longitude".format(cls.__name__))
-        if crs.datum.has_parameter('earth_radius'):
-            earth_radius = crs.datum.get_parameter('earth_radius')
-        else:
-            raise RuntimeError("{} field coordinate reference missing "
-                               "datum 'earth_radius'".format(cls.__name__))
         if crs.coordinate_conversion.has_parameter('grid_north_pole_latitude'):
-            north_pole_lat = crs.coordinate_conversion.get_parameter(
+            grid_north_pole_lat = crs.coordinate_conversion.get_parameter(
                 'grid_north_pole_latitude')
         else:
             raise RuntimeError(
                 "{} field coordinate conversion missing property "
                 "'grid_north_pole_latitude'".format(cls.__name__))
         if crs.coordinate_conversion.has_parameter('grid_north_pole_longitude'):
-            north_pole_lon = crs.coordinate_conversion.get_parameter(
+            grid_north_pole_lon = crs.coordinate_conversion.get_parameter(
                 'grid_north_pole_longitude')
         else:
             raise RuntimeError(
                 "{} field coordinate conversion missing property"
                 "'grid_north_pole_longitude'".format(cls.__name__))
+        if crs.coordinate_conversion.has_parameter('north_pole_grid_longitude'):
+            north_pole_grid_lon = crs.coordinate_conversion.get_parameter(
+                'north_pole_grid_longitude')
+        else:
+            north_pole_grid_lon = 0.
 
         return {
-            'earth_radius': earth_radius,
-            'grid_north_pole_latitude': north_pole_lat,
-            'grid_north_pole_longitude': north_pole_lon
+            'grid_north_pole_latitude': grid_north_pole_lat,
+            'grid_north_pole_longitude': grid_north_pole_lon,
+            'north_pole_grid_longitude': north_pole_grid_lon
         }
 
-    def _set_rotation_parameters(self, earth_radius, grid_north_pole_latitude,
-                                 grid_north_pole_longitude):
+    def _set_crs_parameters(self, grid_north_pole_latitude,
+                            grid_north_pole_longitude,
+                            north_pole_grid_longitude):
+        # WGS84
+        coord_conversion = cf.CoordinateConversion(
+            parameters={'grid_mapping_name': 'latitude_longitude',
+                        'geographic_crs_name': 'WGS 84'})
+        self._f.set_construct(
+            cf.CoordinateReference(
+                datum=cf.Datum(
+                    parameters={'horizontal_datum_name': 'WGS_1984',
+                                'semi_major_axis': 6378137.0,
+                                'inverse_flattening': 298.257223563,
+                                'longitude_of_prime_meridian': 0.0,
+                                'units': 'degree',
+                                'unit_conversion_factor': 0.0174532925199433}
+                ),
+                coordinate_conversion=coord_conversion,
+                coordinates=[self._f.dim(self._Y_name, key=True),
+                             self._f.dim(self._X_name, key=True),
+                             self._f.aux('latitude', key=True),
+                             self._f.aux('longitude', key=True)]
+            )
+        )
+
+        # Rotated Grid
         coord_conversion = cf.CoordinateConversion(
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude':
                             grid_north_pole_latitude,
                         'grid_north_pole_longitude':
-                            grid_north_pole_longitude})
+                            grid_north_pole_longitude,
+                        'north_pole_grid_longitude':
+                            north_pole_grid_longitude}
+        )
         self._f.set_construct(
             cf.CoordinateReference(
                 datum=cf.Datum(
-                    parameters={'earth_radius': earth_radius}),
+                    parameters={'horizontal_datum_name': 'WGS_1984',
+                                'semi_major_axis': 6378137.0,
+                                'inverse_flattening': 298.257223563,
+                                'longitude_of_prime_meridian': 0.0,
+                                'units': 'degree',
+                                'unit_conversion_factor': 0.0174532925199433}
+                ),
                 coordinate_conversion=coord_conversion,
-                coordinates=[self._Y_name, self._X_name]),
+                coordinates=[self._f.dim(self._Y_name, key=True),
+                             self._f.dim(self._X_name, key=True),
+                             self._f.aux('latitude', key=True),
+                             self._f.aux('longitude', key=True)]
+            )
         )
 
-    def _check_rotation_parameters(self, coord_ref):
-        if (hasattr(coord_ref, 'coordinate_conversion')
-                and hasattr(coord_ref, 'datum')):
-            conversion = (
-                self._f.coordinate_reference(
-                    'rotated_latitude_longitude').coordinate_conversion.equals(
-                    coord_ref.coordinate_conversion)
-                and self._f.coordinate_reference(
-                    'rotated_latitude_longitude').datum.equals(coord_ref.datum)
+    def _check_crs_rotation_parameters(self, coord_ref):
+        if hasattr(coord_ref, 'coordinate_conversion'):
+            conversion = self._f.coordinate_reference(
+                'rotated_latitude_longitude').coordinate_conversion.equals(
+                coord_ref.coordinate_conversion
             )
         else:
             conversion = False
 
         return conversion
 
-    def _project_and_set_lat_lon(self, earth_radius, grid_north_pole_latitude,
-                                 grid_north_pole_longitude):
+    def _rotate_and_set_lat_lon(self, grid_north_pole_latitude,
+                                grid_north_pole_longitude,
+                                north_pole_grid_longitude):
         # define transformation from rotated lat/lon to 'true' lat/lon
         trans = pyproj.Transformer.from_crs(
             # Rotated Grid
             '+proj=ob_tran +o_proj=lonlat +ellps=WGS84 +datum=WGS84 '
-            '+o_lat_p=0{} +o_lon_p={} +R={}'.format(grid_north_pole_latitude,
-                                                    grid_north_pole_longitude,
-                                                    earth_radius),
+            '+o_lat_p=0{} +o_lon_p={} +lon_0={}'.format(
+                grid_north_pole_latitude, grid_north_pole_longitude,
+                north_pole_grid_longitude
+            ),
             # WGS84
-            'epsg:4326',  # WGS84
+            'epsg:4326',
             always_xy=True
         )
 
@@ -2991,7 +3047,7 @@ class RotatedLatLonGrid(Grid):
         :Parameters:
 
             field: `cf.Field`
-                The field that needs to be compared against TimeDomain.
+                The field that needs to be compared against RotatedLatLonGrid.
 
             ignore_z: `bool`, optional
                 Option to ignore the dimension coordinate along the Z
@@ -3008,12 +3064,13 @@ class RotatedLatLonGrid(Grid):
         y_x_z = super(RotatedLatLonGrid, self).is_space_equal_to(field,
                                                                  ignore_z)
 
+        conversion = False
         if hasattr(field, 'coordinate_reference'):
-            conversion = self._check_rotation_parameters(
-                field.coordinate_reference('rotated_latitude_longitude')
-            )
-        else:
-            conversion = False
+            if field.coordinate_reference('rotated_latitude_longitude',
+                                          default=False):
+                conversion = self._check_crs_rotation_parameters(
+                    field.coordinate_reference('rotated_latitude_longitude')
+                )
 
         return y_x_z and conversion
 
@@ -3026,24 +3083,29 @@ class RotatedLatLonGrid(Grid):
 
         :Parameters:
 
-            timedomain: `Grid`
-                The other Grid to be compared against Grid.
+            rotated_grid: `RotatedLatLonGrid`
+                The other RotatedLatLonGrid to be compared against
+                RotatedLatLonGrid.
 
             ignore_z: `bool`, optional
                 If True, the dimension coordinates along the Z axes of
-                the Grid instances will not be compared. If not
-                provided, set to default value False (i.e. Z is not
-                ignored).
+                the RotatedLatLonGrid instances will not be compared.
+                If not provided, set to default value False (i.e. Z is
+                not ignored).
 
         """
-        y_x_z = super(RotatedLatLonGrid, self).spans_same_region_as(
-            rotated_grid, ignore_z
-        )
-        if hasattr(rotated_grid, 'coordinate_reference'):
-            conversion = self._check_rotation_parameters(
-                rotated_grid.coordinate_reference
-            )
+        if not isinstance(rotated_grid, RotatedLatLonGrid):
+            return False
         else:
-            conversion = False
+            y_x_z = super(RotatedLatLonGrid, self).spans_same_region_as(
+                rotated_grid, ignore_z
+            )
 
-        return y_x_z and conversion
+            if hasattr(rotated_grid, 'coordinate_reference'):
+                conversion = self._check_crs_rotation_parameters(
+                    rotated_grid.coordinate_reference
+                )
+            else:
+                conversion = False
+
+            return y_x_z and conversion
