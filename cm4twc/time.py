@@ -317,6 +317,7 @@ class TimeDomain(object):
             field: `cf.Field`
                 The field that needs to be compared against TimeDomain.
 
+        :Returns: `bool`
         """
         # check that the field has a time construct
         if field.construct('time', default=None) is None:
@@ -391,6 +392,7 @@ class TimeDomain(object):
             timedomain: `TimeDomain`
                 The other TimeDomain to be compared against TimeDomain.
 
+        :Returns: `bool`
         """
         if isinstance(timedomain, self.__class__):
             start = self.bounds[[0], [0]] == timedomain.bounds[[0], [0]]
@@ -468,6 +470,8 @@ class TimeDomain(object):
                 *Parameter example:* ::
 
                     calendar='365_day'
+
+        :Returns: `TimeDomain`
 
         **Examples**
 
@@ -588,6 +592,7 @@ class TimeDomain(object):
 
                     calendar='all_leap'
 
+        :Returns: `TimeDomain`
 
         **Examples**
 
@@ -665,11 +670,13 @@ class TimeDomain(object):
 
         :Parameters:
 
-            field: `cf.Field` object
+            field: `cf.Field`
                 The field object that will be used to initialise a
                 `TimeDomain` instance. This field must feature a 'time'
                 construct with bounds, and this construct must feature
                 'units' and 'calendar' properties.
+
+        :Returns: `TimeDomain`
 
         **Examples**
 

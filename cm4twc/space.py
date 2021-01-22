@@ -1710,6 +1710,7 @@ class Grid(SpaceDomain):
                 axis. If not provided, set to default False (i.e. Z is
                 not ignored).
 
+        :Returns: `bool`
         """
         rtol_ = rtol()
         atol_ = atol()
@@ -1788,6 +1789,7 @@ class Grid(SpaceDomain):
                 provided, set to default value False (i.e. Z is not
                 ignored).
 
+        :Returns: `bool`
         """
         if isinstance(grid, self.__class__):
             start_x = self.X_bounds[[0], [0]] == grid.X_bounds[[0], [0]]
@@ -2252,6 +2254,8 @@ class LatLonGrid(Grid):
 
                     altitude_location='centre'
 
+        :Returns: `LatLonGrid`
+
         **Examples**
 
         >>> sd = LatLonGrid.from_extent_and_resolution(
@@ -2321,6 +2325,8 @@ class LatLonGrid(Grid):
                 constructs must feature bounds. This field may
                 optionally feature an 'altitude' construct alongside its
                 bounds (both required otherwise ignored).
+
+        :Returns: `LatLonGrid`
 
         **Examples**
 
@@ -2663,7 +2669,10 @@ class RotatedLatLonGrid(Grid):
                 coordinates (Y-axis). The orientation of the coordinate
                 system considered is detailed below.
 
-                .. seealso:: `LatLonGrid.from_extent_and_resolution`
+                .. seealso::
+
+                   *latitude_longitude_location* in
+                   `LatLonGrid.from_extent_and_resolution`
 
             grid_north_pole_latitude: `int` or `float`
                 The true latitude of the north pole of the rotated grid
@@ -2716,11 +2725,15 @@ class RotatedLatLonGrid(Grid):
                 coordinate system considered is such that the positive
                 direction is upwards.
 
-                .. seealso:: `LatLonGrid.from_extent_and_resolution`
+                .. seealso::
+
+                   *altitude_location* in `LatLonGrid.from_extent_and_resolution`
 
                 *Parameter example:* ::
 
                     altitude_location='centre'
+
+        :Returns: `RotatedLatLonGrid`
 
         **Examples**
 
@@ -2771,7 +2784,7 @@ class RotatedLatLonGrid(Grid):
 
         :Parameters:
 
-            field: cf.Field object
+            field: `cf.Field`
                 The field object that will be used to instantiate a
                 `RotatedLatLonGrid` instance. This field must feature a
                 'grid_latitude' and a 'grid_longitude' dimension
@@ -2782,6 +2795,8 @@ class RotatedLatLonGrid(Grid):
                 and optional north_pole_grid_longitude). This field may
                 optionally feature an 'altitude' dimension coordinate
                 alongside its bounds (both required otherwise ignored).
+
+        :Returns: `RotatedLatLonGrid`
 
         **Examples**
 
@@ -3075,6 +3090,7 @@ class RotatedLatLonGrid(Grid):
                 axis. If not provided, set to default False (i.e. Z is
                 not ignored).
 
+        :Returns: `bool`
         """
         # check whether X/Y(/Z if not ignored) constructs are identical
         # and if coordinate_reference match (by checking its
@@ -3114,6 +3130,7 @@ class RotatedLatLonGrid(Grid):
                 If not provided, set to default value False (i.e. Z is
                 not ignored).
 
+        :Returns: `bool`
         """
         if not isinstance(rotated_grid, RotatedLatLonGrid):
             return False
