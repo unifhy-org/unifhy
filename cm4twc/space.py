@@ -3020,9 +3020,10 @@ class RotatedLatLonGrid(Grid):
         trans = pyproj.Transformer.from_crs(
             # Rotated Grid
             '+proj=ob_tran +o_proj=lonlat +ellps=WGS84 +datum=WGS84 '
-            '+o_lat_p=0{} +o_lon_p={} +lon_0={}'.format(
-                grid_north_pole_latitude, grid_north_pole_longitude,
-                north_pole_grid_longitude
+            '+o_lat_p={} +o_lon_p={} +lon_0={}'.format(
+                grid_north_pole_latitude,
+                north_pole_grid_longitude,
+                grid_north_pole_longitude + 180.
             ),
             # WGS84
             'epsg:4326',
