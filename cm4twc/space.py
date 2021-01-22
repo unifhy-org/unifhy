@@ -3147,3 +3147,720 @@ class RotatedLatLonGrid(Grid):
                 conversion = False
 
             return y_x_z and conversion
+
+
+class BritishNationalGrid(Grid):
+    """BritishNationalGrid characterises the spatial dimension for a
+    `Component` as a regular grid on a cartesian domain whose
+    coordinates are northings and eastings covering Great Britain and
+    Northern Ireland.
+    """
+    # characteristics of the dimension coordinates
+    _Z_name = 'altitude'
+    _Y_name = 'projection_y_coordinate'
+    _X_name = 'projection_x_coordinate'
+    _Z_units = ['m', 'metre', 'meter', 'metres', 'meters']
+    _Y_units = ['m', 'metre', 'meter', 'metres', 'meters']
+    _X_units = ['m', 'metre', 'meter', 'metres', 'meters']
+    _Z_limits = None
+    _Y_limits = (0, 1300000)
+    _X_limits = (0, 700000)
+    _Z_is_cyclic = False
+    _Y_is_cyclic = False
+    _X_is_cyclic = False
+
+    def __init__(self, projection_y_coordinate, projection_x_coordinate,
+                 projection_y_coordinate_bounds, projection_x_coordinate_bounds,
+                 altitude=None, altitude_bounds=None):
+        """**Instantiation**
+
+        :Parameters:
+
+            projection_y_coordinate: one-dimensional array-like object
+                The array of northing coordinates in metres defining a
+                spatial dimension of the domain. May be any type that
+                can be cast to a `numpy.ndarray`. Must contain numerical
+                values. Coordinates must be ordered positively.
+
+                *Parameter example:* ::
+
+                    projection_y_coordinate=[12500, 13500, 14500]
+
+                *Parameter example:* ::
+
+                    projection_y_coordinate=numpy.arange(12500, 15500, 1000)
+
+            projection_x_coordinate: one-dimensional array-like object
+                The array of easting coordinates in metres defining a
+                spatial dimension of the domain. May be any type that
+                can be cast to a `numpy.ndarray`. Must contain numerical
+                values. Coordinates must be ordered positively.
+
+                *Parameter example:* ::
+
+                    projection_x_coordinate=(80500, 81500, 82500, 83500)
+
+                *Parameter example:* ::
+
+                    projection_x_coordinate=numpy.arange(80500, 84500, 1000)
+
+            projection_y_coordinate_bounds: two-dimensional array-like object
+                The array of northing coordinate bounds in metres
+                defining the extent of the grid cell around the
+                coordinate. May be any type that can be cast to a
+                `numpy.ndarray`. Must be two dimensional with the first
+                dimension equal to the size of *projection_y_coordinate*
+                and the second dimension equal to 2. Must contain
+                numerical values.
+
+                *Parameter example:* ::
+
+                    projection_y_coordinate_bounds=[
+                        [12e3, 13e3], [13e3, 14e3], [14e3, 15e3]
+                    ]
+
+                *Parameter example:* ::
+
+                    projection_y_coordinate_bounds=numpy.column_stack(
+                        (numpy.arange(12000, 15000, 1000),
+                         numpy.arange(13000, 16000, 1000))
+                    )
+
+            projection_x_coordinate_bounds: two-dimensional array-like object
+                The array of easting coordinate bounds in metres
+                defining the extent of the grid cell around the
+                coordinate. May be any type that can be cast to a
+                `numpy.ndarray`. Must be two dimensional with the first
+                dimension equal to the size of *projection_x_coordinate*
+                and the second dimension equal to 2. Must contain
+                numerical values.
+
+                *Parameter example:* ::
+
+                    projection_x_coordinate_bounds=((80e3, 81e3), (81e3, 82e3),
+                                                    (82e3, 83e3), (83e3, 84e3))
+
+                *Parameter example:* ::
+
+                    projection_x_coordinate_bounds=numpy.column_stack(
+                        (numpy.arange(80000, 84000, 1000),
+                         numpy.arange(81000, 85000, 1000))
+                    )
+
+            altitude: one-dimensional array-like object, optional
+                The array of altitude coordinates in metres defining a
+                spatial dimension of the domain (with upwards as the
+                positive direction). May be any type that can be cast to
+                a `numpy.ndarray`. Must contain numerical values.
+                Ignored if *altitude_bounds* not also provided.
+
+                *Parameter example:* ::
+
+                    altitude=[10]
+
+            altitude_bounds: two-dimensional array-like object, optional
+                The array of altitude coordinate bounds in metres
+                defining the extent of the grid cell around the
+                coordinate (with upwards as the positive direction).
+                May be any type that can be cast to a `numpy.ndarray`.
+                Must be two dimensional with the first dimension equal
+                to the size of *altitude* and the second dimension equal
+                to 2. Must contain numerical values. Ignored if
+                *altitude* not also provided.
+
+                *Parameter example:* ::
+
+                    altitude_bounds=[[0, 20]]
+
+        **Examples**
+
+        >>> import numpy
+        >>> sd = BritishNationalGrid(
+        ...     projection_y_coordinate=[12500, 13500, 14500],
+        ...     projection_x_coordinate=(80500, 81500, 82500, 83500),
+        ...     projection_y_coordinate_bounds=numpy.column_stack(
+        ...         (numpy.arange(12000, 15000, 1000),
+        ...          numpy.arange(13000, 16000, 1000))
+        ...     ),
+        ...     projection_x_coordinate_bounds=numpy.column_stack(
+        ...         (numpy.arange(80000, 84000, 1000),
+        ...          numpy.arange(81000, 85000, 1000))
+        ...     ),
+        ...     altitude=[10],
+        ...     altitude_bounds=[[0, 20]]
+        ... )
+        >>> print(sd)
+        BritishNationalGrid(
+            shape {Z, Y, X}: (1, 3, 4)
+            Z, altitude (1,): [10] m
+            Y, projection_y_coordinate (3,): [12500, 13500, 14500] m
+            X, projection_x_coordinate (4,): [80500, ..., 83500] m
+            Z_bounds (1, 2): [[0, 20]] m
+            Y_bounds (3, 2): [[12000, ..., 15000]] m
+            X_bounds (4, 2): [[80000, ..., 84000]] m
+        )
+        """
+        super(BritishNationalGrid, self).__init__()
+
+        if altitude is not None and altitude_bounds is not None:
+            self._set_space(altitude, altitude_bounds, name=self._Z_name,
+                            units=self._Z_units[0], axis='Z',
+                            limits=self._Z_limits, is_cyclic=self._Z_is_cyclic)
+            self._f.dim('Z').set_property('positive', 'up')
+
+        self._set_space(projection_y_coordinate, projection_y_coordinate_bounds,
+                        name=self._Y_name, units=self._Y_units[0], axis='Y',
+                        limits=self._Y_limits, is_cyclic=self._Y_is_cyclic)
+        self._set_space(projection_x_coordinate, projection_x_coordinate_bounds,
+                        name=self._X_name, units=self._X_units[0], axis='X',
+                        limits=self._X_limits, is_cyclic=self._X_is_cyclic)
+
+        self._project_and_set_lat_lon()
+
+        self._set_crs_parameters()
+
+        # set dummy data needed for using inner field for remapping
+        self._set_dummy_data()
+
+    @classmethod
+    def from_extent_and_resolution(
+            cls, projection_y_coordinate_extent,
+            projection_x_coordinate_extent,
+            projection_y_coordinate_resolution,
+            projection_x_coordinate_resolution,
+            projection_y_coordinate_projection_x_coordinate_location='centre',
+            altitude_extent=None,
+            altitude_resolution=None,
+            altitude_location='centre'
+    ):
+        """Instantiate a `BritishNationalGrid` from the extent and the
+        resolution of northing, easting (and optionally altitude)
+        coordinates.
+
+        :Parameters:
+
+            projection_y_coordinate_extent: pair of `float` or `int`
+                The extent of northing coordinates in metres for the
+                desired grid. The first element of the pair is the
+                location of the start of the extent along the northing
+                coordinate, the second element of the pair is the
+                location of the end of the extent along the northing
+                coordinate. Extent must be oriented positively. May be
+                any type that can be unpacked (e.g. `tuple`, `list`,
+                `numpy.ndarray`).
+
+                *Parameter example:* ::
+
+                    projection_y_coordinate_extent=(12000, 15000)
+
+            projection_x_coordinate_extent: pair of `float` or `int`
+                The extent of easting coordinates in metres for the
+                desired grid. The first element of the pair is the
+                location of the start of the extent along the easting
+                coordinate, the second element of the pair is the
+                location of the end of the extent along the easting
+                coordinate. Extent must be oriented positively. May be
+                any type that can be unpacked (e.g. `tuple`, `list`,
+                `numpy.ndarray`).
+
+                *Parameter example:* ::
+
+                    projection_x_coordinate_extent=(80000, 84000)
+
+            projection_y_coordinate_resolution: `float` or `int`
+                The spacing between two consecutive northing coordinates
+                in metres for the desired grid. Must be positive.
+
+                *Parameter example:* ::
+
+                    projection_y_coordinate_resolution=1000
+
+            projection_x_coordinate_resolution: `float` or `int`
+                The spacing between two consecutive easting coordinates
+                in metres for the desired grid. Must be positive.
+
+                *Parameter example:* ::
+
+                    projection_x_coordinate_resolution=1000
+
+            projection_y_coordinate_projection_x_coordinate_location: `str` or `int`, optional
+                The location of the northing and easting coordinates
+                in relation to their grid cells (i.e. their bounds).
+                This information is required to generate the latitude
+                and longitude bounds for each grid coordinate. If not
+                provided, set to default 'centre'.
+
+                The locations left and right are related to the
+                easting coordinates (X-axis), while the locations lower
+                and upper are related to the northing coordinates
+                (Y-axis). The orientation of the coordinate system
+                considered is detailed below (i.e. positive directions
+                are northwards and eastwards).
+
+                .. seealso::
+
+                   *latitude_longitude_location* in
+                   `LatLonGrid.from_extent_and_resolution`
+
+            altitude_extent: pair of `float` or `int`, optional
+                The extent of altitude coordinate in metres for the
+                desired grid. The first element of the pair is the
+                location of the start of the extent along the altitude
+                coordinate, the second element of the pair is the
+                location of the end of the extent along the altitude
+                coordinate. May be any type that can be unpacked (e.g.
+                `tuple`, `list`, `numpy.ndarray`).
+
+                *Parameter example:* ::
+
+                    altitude_extent=(0, 20)
+
+            altitude_resolution: `float` or `int`, optional
+                The spacing between two consecutive altitude coordinates
+                in metres for the desired grid.
+
+                *Parameter example:* ::
+
+                    altitude_resolution=20
+
+            altitude_location: `str` or `int`, optional
+                The location of the altitude coordinates in relation to
+                their grid cells (i.e. their bounds). This information
+                is required to generate the altitude bounds for each
+                grid coordinate. If not provided, set to default
+                'centre'.
+
+                The locations top and bottom are related to the
+                altitude coordinate (Z-axis). The orientation of the
+                coordinate system considered is such that the positive
+                direction is upwards.
+
+                .. seealso::
+
+                   *altitude_location* in `LatLonGrid.from_extent_and_resolution`
+
+        :Returns: `BritishNationalGrid`
+
+        **Examples**
+
+        >>> sd = BritishNationalGrid.from_extent_and_resolution(
+        ...     projection_y_coordinate_extent=(12000, 15000),
+        ...     projection_x_coordinate_extent=(80000, 84000),
+        ...     projection_y_coordinate_resolution=1000,
+        ...     projection_x_coordinate_resolution=1000,
+        ...     altitude_extent=(0, 20),
+        ...     altitude_resolution=20
+        ... )
+        >>> print(sd)
+        BritishNationalGrid(
+            shape {Z, Y, X}: (1, 3, 4)
+            Z, altitude (1,): [10.0] m
+            Y, projection_y_coordinate (3,): [12500.0, 13500.0, 14500.0] m
+            X, projection_x_coordinate (4,): [80500.0, ..., 83500.0] m
+            Z_bounds (1, 2): [[0.0, 20.0]] m
+            Y_bounds (3, 2): [[12000.0, ..., 15000.0]] m
+            X_bounds (4, 2): [[80000.0, ..., 84000.0]] m
+        )
+        >>> sd = BritishNationalGrid.from_extent_and_resolution(
+        ...     projection_y_coordinate_extent=(12000, 15000),
+        ...     projection_x_coordinate_extent=(80000, 84000),
+        ...     projection_y_coordinate_resolution=1000,
+        ...     projection_x_coordinate_resolution=1000,
+        ...     projection_y_coordinate_projection_x_coordinate_location='upper right'
+        ... )
+        >>> print(sd)
+        BritishNationalGrid(
+            shape {Y, X}: (3, 4)
+            Y, projection_y_coordinate (3,): [13000.0, 14000.0, 15000.0] m
+            X, projection_x_coordinate (4,): [81000.0, ..., 84000.0] m
+            Y_bounds (3, 2): [[12000.0, ..., 15000.0]] m
+            X_bounds (4, 2): [[80000.0, ..., 84000.0]] m
+        )
+        """
+        inst = cls(
+            **cls._get_grid_from_extent_and_resolution(
+                projection_y_coordinate_extent, projection_x_coordinate_extent,
+                projection_y_coordinate_resolution,
+                projection_x_coordinate_resolution,
+                projection_y_coordinate_projection_x_coordinate_location,
+                altitude_extent, altitude_resolution, altitude_location
+            )
+        )
+
+        inst._extent = {'Z': altitude_extent,
+                        'Y': projection_y_coordinate_extent,
+                        'X': projection_x_coordinate_extent}
+        inst._resolution = {'Z': altitude_resolution,
+                            'Y': projection_y_coordinate_resolution,
+                            'X': projection_x_coordinate_resolution}
+        inst._location = {
+            'Z': altitude_location,
+            'YX': projection_y_coordinate_projection_x_coordinate_location
+        }
+
+        return inst
+
+    @classmethod
+    def from_field(cls, field):
+        """Instantiate a `BritishNationalGrid` from spatial dimension
+        coordinates of a `cf.Field`.
+
+        :Parameters:
+
+            field: `cf.Field`
+                The field object that will be used to instantiate a
+                `BritishNationalGrid` instance. This field must feature
+                a 'projection_y_coordinate' and a 'projection_x_coordinate'
+                dimension coordinates, and these must feature bounds. In
+                addition, the coordination conversion 'transverse_mercator'
+                must correspond to the parameters of the British National
+                Grid (`EPSG:27700`_). This field may optionally feature
+                an 'altitude' dimension coordinate alongside its bounds
+                (both required otherwise ignored).
+
+                .. _`EPSG:27700`: https://epsg.io/27700
+
+        :Returns: `BritishNationalGrid`
+
+        **Examples**
+
+        >>> import cf
+        >>> import numpy
+        >>> f = cf.Field()
+        >>> yc = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'projection_y_coordinate',
+        ...                     'units': 'metres',
+        ...                     'axis': 'Y'},
+        ...         data=cf.Data([12500, 13500, 14500]),
+        ...         bounds=cf.Bounds(
+        ...             data=cf.Data(numpy.column_stack(
+        ...                 (numpy.arange(12000, 15000, 1000),
+        ...                  numpy.arange(13000, 16000, 1000))
+        ...             ))
+        ...         )
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=3))
+        ... )
+        >>> xc = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'projection_x_coordinate',
+        ...                     'units': 'metres',
+        ...                     'axis': 'X'},
+        ...         data=cf.Data([80500, 81500, 82500, 83500]),
+        ...         bounds=cf.Bounds(
+        ...             data=cf.Data(numpy.column_stack(
+        ...                 (numpy.arange(80000, 84000, 1000),
+        ...                  numpy.arange(81000, 85000, 1000))
+        ...             ))
+        ...         )
+        ...     ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=4))
+        ... )
+        >>> alt = f.set_construct(
+        ...     cf.DimensionCoordinate(
+        ...         properties={'standard_name': 'altitude',
+        ...                     'units': 'm',
+        ...                     'axis': 'Z'},
+        ...         data=cf.Data([10]),
+        ...         bounds=cf.Bounds(data=cf.Data([[0, 20]]))
+        ...         ),
+        ...     axes=f.set_construct(cf.DomainAxis(size=1))
+        ... )
+        >>> crs = f.set_construct(
+        ...     cf.CoordinateReference(
+        ...         coordinate_conversion=cf.CoordinateConversion(
+        ...             parameters={'grid_mapping_name': 'transverse_mercator',
+        ...                         'projected_crs_name': 'OSGB 1936 / British National Grid',
+        ...                         'geographic_crs_name': 'OSGB 1936',
+        ...                         'latitude_of_projection_origin': 49.0,
+        ...                         'longitude_of_central_meridian': -2.0,
+        ...                         'scale_factor_at_central_meridian': 0.9996012717,
+        ...                         'false_easting': 400000.0,
+        ...                         'false_northing': -100000.0,
+        ...                         'unit': 'metre'}
+        ...         ),
+        ...         datum=cf.Datum(
+        ...             parameters={'horizontal_datum_name': 'OSGB_1936',
+        ...                         'semi_major_axis': 6377563.396,
+        ...                         'inverse_flattening': 299.3249646,
+        ...                         'towgs84': [375., -111., 431., 0., 0., 0., 0.],
+        ...                         'longitude_of_prime_meridian': 0.0,
+        ...                         'units': 'degree',
+        ...                         'unit_conversion_factor': 0.0174532925199433}
+        ...         ),
+        ...         coordinates=(yc, xc)
+        ...     )
+        ... )
+        >>> sd = BritishNationalGrid.from_field(f)
+        >>> print(sd)
+        BritishNationalGrid(
+            shape {Z, Y, X}: (1, 3, 4)
+            Z, altitude (1,): [10] m
+            Y, projection_y_coordinate (3,): [12500, 13500, 14500] m
+            X, projection_x_coordinate (4,): [80500, ..., 83500] m
+            Z_bounds (1, 2): [[0, 20]] m
+            Y_bounds (3, 2): [[12000, ..., 15000]] m
+            X_bounds (4, 2): [[80000, ..., 84000]] m
+        )
+        >>> sd1 = BritishNationalGrid.from_extent_and_resolution(
+        ...     projection_y_coordinate_extent=(12000, 15000),
+        ...     projection_x_coordinate_extent=(80000, 84000),
+        ...     projection_y_coordinate_resolution=1000,
+        ...     projection_x_coordinate_resolution=1000,
+        ...     altitude_extent=(0, 20),
+        ...     altitude_resolution=20
+        ... )
+        >>> sd2 = BritishNationalGrid.from_field(sd1.to_field())
+        >>> sd2 == sd1
+        True
+        """
+        extraction_xyz = cls._extract_xyz_from_field(field)
+
+        inst = cls(projection_y_coordinate=extraction_xyz['Y'],
+                   projection_x_coordinate=extraction_xyz['X'],
+                   projection_y_coordinate_bounds=extraction_xyz['Y_bounds'],
+                   projection_x_coordinate_bounds=extraction_xyz['X_bounds'],
+                   altitude=extraction_xyz['Z'],
+                   altitude_bounds=extraction_xyz['Z_bounds'])
+
+        conversion = False
+        if hasattr(field, 'coordinate_reference'):
+            if field.coordinate_reference('transverse_mercator',
+                                          default=False):
+                conversion = inst._check_crs_projection_parameters(
+                    field.coordinate_reference('transverse_mercator')
+                )
+
+        if conversion:
+            return inst
+        else:
+            return RuntimeError('field coordinate reference not '
+                                'compatible with British National Grid '
+                                '(EPSG:27700).')
+
+    @classmethod
+    def from_config(cls, cfg):
+        cfg = cfg.copy()
+        cfg.pop('class')
+
+        lsm = cfg.pop('land_sea_mask', None)
+        fd = cfg.pop('flow_direction', None)
+
+        inst = cls.from_extent_and_resolution(**cfg)
+
+        if lsm is not None:
+            inst.land_sea_mask = (
+                cf.read(lsm['files']).select_field(lsm['select'])
+            )
+        if fd is not None:
+            inst.flow_direction = (
+                cf.read(fd['files']).select_field(fd['select'])
+            )
+
+        return inst
+
+    @property
+    def coordinate_reference(self):
+        """Return the coordinate reference of the `BritishNationalGrid`
+        instance as a `cf.CoordinateReference` instance.
+        """
+        return self._f.coordinate_reference('transverse_mercator')
+
+    def _set_crs_parameters(self):
+        # WGS84
+        coord_conversion = cf.CoordinateConversion(
+            parameters={'grid_mapping_name': 'latitude_longitude',
+                        'geographic_crs_name': 'WGS 84'})
+        self._f.set_construct(
+            cf.CoordinateReference(
+                datum=cf.Datum(
+                    parameters={'horizontal_datum_name': 'WGS_1984',
+                                'semi_major_axis': 6378137.0,
+                                'inverse_flattening': 298.257223563,
+                                'longitude_of_prime_meridian': 0.0,
+                                'units': 'degree',
+                                'unit_conversion_factor': 0.0174532925199433}
+                ),
+                coordinate_conversion=coord_conversion,
+                coordinates=[self._f.dim(self._Y_name, key=True),
+                             self._f.dim(self._X_name, key=True),
+                             self._f.aux('latitude', key=True),
+                             self._f.aux('longitude', key=True)]
+            )
+        )
+
+        # OSGB_1936/BNG
+        coord_conversion = cf.CoordinateConversion(
+            parameters={'grid_mapping_name': 'transverse_mercator',
+                        'projected_crs_name': 'OSGB 1936 / British National Grid',
+                        'geographic_crs_name': 'OSGB 1936',
+                        'latitude_of_projection_origin': 49.0,
+                        'longitude_of_central_meridian': -2.0,
+                        'scale_factor_at_central_meridian': 0.9996012717,
+                        'false_easting': 400000.0,
+                        'false_northing': -100000.0,
+                        'unit': 'metre'}
+        )
+        self._f.set_construct(
+            cf.CoordinateReference(
+                datum=cf.Datum(
+                    parameters={'horizontal_datum_name': 'OSGB_1936',
+                                'semi_major_axis': 6377563.396,
+                                'inverse_flattening': 299.3249646,
+                                'towgs84': [375., -111., 431., 0., 0., 0., 0.],
+                                'longitude_of_prime_meridian': 0.0,
+                                'units': 'degree',
+                                'unit_conversion_factor': 0.0174532925199433}
+                ),
+                coordinate_conversion=coord_conversion,
+                coordinates=[self._f.dim(self._Y_name, key=True),
+                             self._f.dim(self._X_name, key=True),
+                             self._f.aux('latitude', key=True),
+                             self._f.aux('longitude', key=True)]
+            )
+        )
+
+    def _check_crs_projection_parameters(self, coord_ref):
+        if (hasattr(coord_ref, 'coordinate_conversion')
+                and hasattr(coord_ref, 'datum')):
+            conversion = (
+                self._f.coordinate_reference(
+                    'transverse_mercator').coordinate_conversion.equals(
+                    coord_ref.coordinate_conversion)
+                and self._f.coordinate_reference(
+                    'transverse_mercator').datum.equals(coord_ref.datum)
+            )
+        else:
+            conversion = False
+
+        return conversion
+
+    def _project_and_set_lat_lon(self):
+        # define transformation from BNG to 'true' lat/lon
+        trans = pyproj.Transformer.from_crs(
+            # British National Grid
+            'epsg:27700',
+            # WGS84
+            'epsg:4326',
+            always_xy=True
+        )
+
+        # project coordinates
+        lon, lat = trans.transform(*np.meshgrid(self.X.array, self.Y.array))
+
+        # project coordinate bounds
+        lon_bnds = np.zeros(lon.shape + (4,), lon.dtype)
+        lat_bnds = np.zeros(lat.shape + (4,), lat.dtype)
+        lon_bnds[..., 0], lat_bnds[..., 0] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 0],
+                         self.Y_bounds.array[..., 0])
+        )
+        lon_bnds[..., 1], lat_bnds[..., 1] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 1],
+                         self.Y_bounds.array[..., 0])
+        )
+        lon_bnds[..., 2], lat_bnds[..., 2] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 1],
+                         self.Y_bounds.array[..., 1])
+        )
+        lon_bnds[..., 3], lat_bnds[..., 3] = trans.transform(
+            *np.meshgrid(self.X_bounds.array[..., 0],
+                         self.Y_bounds.array[..., 1])
+        )
+
+        # set constructs
+        self._f.set_construct(
+            cf.AuxiliaryCoordinate(
+                      properties={'standard_name': 'latitude',
+                                  'units': 'degrees_north'},
+                      data=cf.Data(lat),
+                      bounds=cf.Bounds(data=cf.Data(lat_bnds))
+            ),
+            axes=['Y', 'X']
+        )
+        self._f.set_construct(
+            cf.AuxiliaryCoordinate(
+                properties={'standard_name': 'longitude',
+                            'units': 'degrees_east'},
+                data=cf.Data(lon),
+                bounds=cf.Bounds(data=cf.Data(lon_bnds))
+            ),
+            axes=['Y', 'X']
+        )
+
+    def is_space_equal_to(self, field, ignore_z=False):
+        """Compare equality between the BritishNationalGrid and the
+        spatial (X, Y, and Z) dimension coordinate in a `cf.Field`.
+
+        The coordinate values, the bounds, the units, and the coordinate
+        conversion and its datum of the field are compared against those
+        of the BritishNationalGrid.
+
+        :Parameters:
+
+            field: `cf.Field`
+                The field that needs to be compared against
+                BritishNationalGrid.
+
+            ignore_z: `bool`, optional
+                Option to ignore the dimension coordinate along the Z
+                axis. If not provided, set to default False (i.e. Z is
+                not ignored).
+
+        :Returns: `bool`
+        """
+        # check whether X/Y(/Z if not ignored) constructs are identical
+        # and if coordinate_reference match (by checking its
+        # coordinate_conversion and its datum separately, because
+        # coordinate_reference.equals() would also check the size of
+        # the collections of coordinates, which may be rightfully
+        # different if Z is ignored)
+        y_x_z = super(BritishNationalGrid, self).is_space_equal_to(field,
+                                                                   ignore_z)
+
+        conversion = False
+        if hasattr(field, 'coordinate_reference'):
+            if field.coordinate_reference('transverse_mercator',
+                                          default=False):
+                conversion = self._check_crs_projection_parameters(
+                    field.coordinate_reference('transverse_mercator')
+                )
+
+        return y_x_z and conversion
+
+    def spans_same_region_as(self, grid, ignore_z=False):
+        """Compare equality in region spanned between the
+        RotatedLatLonGrid and another instance of RotatedLatLonGrid.
+
+        For each axis, the lower bound of their first cell and the
+        upper bound of their last cell are compared.
+
+        :Parameters:
+
+            grid: `BritishNationalGrid`
+                The other BritishNationalGrid to be compared against
+                BritishNationalGrid.
+
+            ignore_z: `bool`, optional
+                If True, the dimension coordinates along the Z axes of
+                the BritishNationalGrid instances will not be compared.
+                If not provided, set to default value False (i.e. Z is
+                not ignored).
+
+        :Returns: `bool`
+        """
+        if not isinstance(grid, BritishNationalGrid):
+            return False
+        else:
+            y_x_z = super(BritishNationalGrid, self).spans_same_region_as(
+                grid, ignore_z
+            )
+            if hasattr(grid, 'coordinate_reference'):
+                conversion = self._check_crs_projection_parameters(
+                    grid.coordinate_reference
+                )
+            else:
+                conversion = False
+
+            return y_x_z and conversion

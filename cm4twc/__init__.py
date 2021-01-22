@@ -7,7 +7,7 @@ a Community Model for the Terrestrial Water Cycle
 from .version import __version__
 from .model import Model
 from .time import TimeDomain
-from .space import LatLonGrid, RotatedLatLonGrid
+from .space import LatLonGrid, RotatedLatLonGrid, BritishNationalGrid
 from .data import DataSet
 from .components import (surfacelayer, subsurface, openwater,
                          SurfaceLayerComponent, SubSurfaceComponent,
