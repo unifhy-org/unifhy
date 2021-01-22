@@ -2492,12 +2492,6 @@ class RotatedLatLonGrid(Grid):
                     grid_longitude_bounds=[[-2.72, -2.28], [-2.28, -1.84],
                                            [-1.84, -1.4], [-1.4, -0.96]]
 
-            earth_radius: `int` or `float`
-                The radius of the spherical figure used to approximate
-                the shape of the Earth in metres. This parameter is
-                required to project the rotated grid into a true
-                latitude-longitude coordinate system.
-
             grid_north_pole_latitude: `int` or `float`
                 The true latitude of the north pole of the rotated grid
                 in degrees North. This parameter is required to project
