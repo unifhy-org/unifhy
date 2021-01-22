@@ -1862,7 +1862,7 @@ class LatLonGrid(Grid):
     """LatLonGrid characterises the spatial dimension for a `Component`
     as a regular grid on a spherical domain whose coordinates are
     latitudes and longitudes, and whose rotation axis is aligned with
-    the North pole.
+    the North pole (`EPSG:4326 <https://epsg.io/4326>`_).
     """
     # characteristics of the dimension coordinates
     _Z_name = 'altitude'
@@ -2419,7 +2419,8 @@ class RotatedLatLonGrid(Grid):
     """RotatedLatLonGrid characterises the spatial dimension for a
     `Component` as a regular grid on a spherical domain whose coordinates
     are latitudes and longitudes, and whose rotation axis is not aligned
-    with the North pole.
+    with the North pole. Its ellipsoid and datum are those of WGS 84
+    (see `EPSG:4326 <https://epsg.io/4326>`_).
     """
     # characteristics of the dimension coordinates
     _Z_name = 'altitude'
@@ -2493,22 +2494,23 @@ class RotatedLatLonGrid(Grid):
                                            [-1.84, -1.4], [-1.4, -0.96]]
 
             grid_north_pole_latitude: `int` or `float`
-                The true latitude of the north pole of the rotated grid
-                in degrees North. This parameter is required to project
-                the rotated grid into a true latitude-longitude
-                coordinate system.
+                The true latitude (i.e. in `EPSG:4326`_) of the north
+                pole of the rotated grid in degrees North. This parameter
+                is required to project the rotated grid into a true
+                latitude-longitude coordinate system.
 
             grid_north_pole_longitude: `int` or `float`
-                The true longitude of the north pole of the rotated grid
-                in degrees East. This parameter is required to project
-                the rotated grid into a true latitude-longitude
-                coordinate system.
+                The true longitude (i.e. in `EPSG:4326`_) of the north
+                pole of the rotated grid in degrees East. This parameter
+                is required to project the rotated grid into a true
+                latitude-longitude coordinate system.
 
             north_pole_grid_longitude: `int` or `float`, optional
-                The longitude of the true north pole in the rotated grid
-                in degrees. This parameter is optional to project the
-                rotated grid into a true latitude-longitude coordinate
-                system. If not provided, set to default value 0.
+                The longitude of the true north pole (i.e. in `EPSG:4326`_)
+                in the rotated grid in degrees. This parameter is
+                optional to project the rotated grid into a true
+                latitude-longitude coordinate system. If not provided,
+                set to default value 0.
 
             altitude: one-dimensional array-like object, optional
                 The array of altitude coordinates in metres defining a
@@ -2534,6 +2536,8 @@ class RotatedLatLonGrid(Grid):
                 *Parameter example:* ::
 
                     altitude_bounds=[[0, 20]]
+
+            .. _`EPSG:4326`: https://epsg.io/4326
 
         **Examples**
 
@@ -2669,22 +2673,23 @@ class RotatedLatLonGrid(Grid):
                    `LatLonGrid.from_extent_and_resolution`
 
             grid_north_pole_latitude: `int` or `float`
-                The true latitude of the north pole of the rotated grid
-                in degrees North. This parameter is required to project
-                the rotated grid into a true latitude-longitude
-                coordinate system.
+                The true latitude (i.e. in `EPSG:4326`_) of the north
+                pole of the rotated grid in degrees North. This parameter
+                is required to project the rotated grid into a true
+                latitude-longitude coordinate system.
 
             grid_north_pole_longitude: `int` or `float`
-                The true longitude of the north pole of the rotated grid
-                in degrees East. This parameter is required to project
-                the rotated grid into a true latitude-longitude
-                coordinate system.
+                The true longitude (i.e. in `EPSG:4326`_) of the north
+                pole of the rotated grid in degrees East. This parameter
+                is required to project the rotated grid into a true
+                latitude-longitude coordinate system.
 
             north_pole_grid_longitude: `int` or `float`, optional
                 The longitude of the true north pole in the rotated grid
                 in degrees. This parameter is optional to project the
                 rotated grid into a true latitude-longitude coordinate
-                system. If not provided, set to default value 0.
+                system (i.e. `EPSG:4326`_). If not provided, set to
+                default value 0.
 
             altitude_extent: pair of `float` or `int`, optional
                 The extent of altitude coordinate in metres for the
@@ -2726,6 +2731,8 @@ class RotatedLatLonGrid(Grid):
                 *Parameter example:* ::
 
                     altitude_location='centre'
+
+            .. _`EPSG:4326`: https://epsg.io/4326
 
         :Returns: `RotatedLatLonGrid`
 
@@ -3148,7 +3155,7 @@ class BritishNationalGrid(Grid):
     """BritishNationalGrid characterises the spatial dimension for a
     `Component` as a regular grid on a cartesian domain whose
     coordinates are northings and eastings covering Great Britain and
-    Northern Ireland.
+    Northern Ireland (`EPSG:27700 <https://epsg.io/27700>`_).
     """
     # characteristics of the dimension coordinates
     _Z_name = 'altitude'
