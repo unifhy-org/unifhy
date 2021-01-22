@@ -2367,6 +2367,16 @@ class LatLonGrid(Grid):
             Y_bounds (3, 2): [[0, ..., 90]] degrees_north
             X_bounds (3, 2): [[0, ..., 180]] degrees_east
         )
+        >>> sd1 = LatLonGrid.from_extent_and_resolution(
+        ...     latitude_extent=(30, 70),
+        ...     longitude_extent=(0, 90),
+        ...     latitude_resolution=5,
+        ...     longitude_resolution=10,
+        ...     latitude_longitude_location='upper right'
+        ... )
+        >>> sd2 = LatLonGrid.from_field(sd1.to_field())
+        >>> sd2 == sd1
+        True
         """
         extraction = cls._extract_xyz_from_field(field)
 
@@ -2764,14 +2774,14 @@ class RotatedLatLonGrid(Grid):
             field: cf.Field object
                 The field object that will be used to instantiate a
                 `RotatedLatLonGrid` instance. This field must feature a
-                'grid_latitude' and a 'grid_longitude' constructs, and
-                these constructs must feature bounds. In addition, the
-                parameters required for the conversion of the grid to a
-                true latitude-longitude reference system must be set
-                (i.e. earth_radius, grid_north_pole_latitude,
-                grid_north_pole_longitude). This field may optionally
-                feature an 'altitude' construct alongside its bounds
-                (both required otherwise ignored).
+                'grid_latitude' and a 'grid_longitude' dimension
+                coordinates, and these must feature bounds. In addition,
+                the parameters required for the conversion of the grid
+                to a true latitude-longitude reference system must be set
+                (i.e. grid_north_pole_latitude, grid_north_pole_longitude,
+                and optional north_pole_grid_longitude). This field may
+                optionally feature an 'altitude' dimension coordinate
+                alongside its bounds (both required otherwise ignored).
 
         **Examples**
 
@@ -2830,6 +2840,17 @@ class RotatedLatLonGrid(Grid):
             Y_bounds (5, 2): [[-1.1, ..., 1.1]] degrees
             X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
         )
+        >>> sd1 = RotatedLatLonGrid.from_extent_and_resolution(
+        ...     grid_latitude_extent=(-1.1, 1.1),
+        ...     grid_longitude_extent=(-2.72, -0.96),
+        ...     grid_latitude_resolution=0.44,
+        ...     grid_longitude_resolution=0.44,
+        ...     grid_north_pole_latitude=38.0,
+        ...     grid_north_pole_longitude=190.0
+        ... )
+        >>> sd2 = RotatedLatLonGrid.from_field(sd1.to_field())
+        >>> sd2 == sd1
+        True
         """
         extraction_xyz = cls._extract_xyz_from_field(field)
         extraction_param = cls._extract_crs_rotation_parameters_from_field(field)
