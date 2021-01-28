@@ -1195,7 +1195,7 @@ class NullComponent(Component):
     # definition attributes
     _solver_history = 0
 
-    def __init__(self, timedomain, spacedomain, substituting_class, **kwargs):
+    def __init__(self, timedomain, spacedomain, substituting_class):
         """**Instantiation**
 
         :Parameters:
