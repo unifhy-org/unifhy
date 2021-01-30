@@ -886,9 +886,7 @@ class Grid(SpaceDomain):
         if dimension.ndim > 0:
             space_diff = np.diff(dimension)
             if wrap_around:
-                if np.all(space_diff < 0):
-                    raise error
-                elif np.any(space_diff < 0):
+                if np.any(space_diff < 0):
                     # add one full rotation to first negative difference
                     # to assume it is wrapping around (since positive
                     # direction is required, and cross-over can happen
