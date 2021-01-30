@@ -1515,9 +1515,6 @@ class Grid(SpaceDomain):
 
         # check extent
         dim_start, dim_end = extent
-        if dim_start == dim_end:
-            raise ValueError(
-                "{} extent empty".format(name, *limits))
         if limits is not None:
             if (dim_start < limits[0]) or (dim_start > limits[1]):
                 raise ValueError(
@@ -1527,8 +1524,15 @@ class Grid(SpaceDomain):
                     "{} extent end beyond limits [{}, {}]".format(name, *limits))
 
         if wrap_around:
+            if dim_end == dim_start:
+                dim_end += limits[1] - limits[0]
             if dim_end < dim_start:
                 dim_end += limits[1] - limits[0]
+        else:
+            if dim_start == dim_end:
+                raise ValueError("{} extent empty".format(name))
+            if dim_end < dim_start:
+                raise ValueError("{} extent oriented negatively".format(name))
 
         # check compatibility between extent and resolution
         # (i.e. need to produce a whole number of grid cells)
