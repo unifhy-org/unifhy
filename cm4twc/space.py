@@ -1064,15 +1064,15 @@ class Grid(SpaceDomain):
         if bnds.ndim > 0:
             space_diff = np.diff(bnds, axis=0)
             if wrap_around:
-                if np.any(space_diff < 0):
+                if np.any(space_diff <= 0):
                     # add one full rotation to first and second negative
                     # differences to assume it is wrapping around (since
                     # positive direction is required, and cross-over
                     # can happen at most once without domain wrapping on
                     # itself)
-                    neg = space_diff[space_diff < 0]
+                    neg = space_diff[space_diff <= 0]
                     neg[0:2] += limits[1] - limits[0]
-                    space_diff[space_diff < 0] = neg
+                    space_diff[space_diff <= 0] = neg
         else:
             # it is a scalar, set difference to one to pass next check
             space_diff = 1
@@ -1082,14 +1082,14 @@ class Grid(SpaceDomain):
         if bnds.ndim > 1:
             space_diff = np.diff(bnds, axis=1)
             if wrap_around:
-                if np.any(space_diff < 0):
+                if np.any(space_diff <= 0):
                     # add one full rotation to first negative difference
                     # to assume it is wrapping around (since positive
                     # direction is required, and cross-over can happen
                     # at most once without domain wrapping on itself)
-                    neg = space_diff[space_diff < 0]
+                    neg = space_diff[space_diff <= 0]
                     neg[0] += limits[1] - limits[0]
-                    space_diff[space_diff < 0] = neg
+                    space_diff[space_diff <= 0] = neg
         else:
             # it is a scalar, set difference to one to pass next check
             space_diff = 1
