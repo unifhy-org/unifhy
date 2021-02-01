@@ -320,23 +320,28 @@ class TimeDomain(object):
         :Returns: `bool`
         """
         # check that the field has a time construct
-        if field.construct('time', default=None) is None:
+        if field.dim('time', default=None) is None:
             return RuntimeError(
                 "{} cannot be compared to {} because no time construct".format(
                     field.__class__.__name__, self.__class__.__name__))
 
         # check that field calendar is a classic one for CF-convention
-        if (field.construct('time').calendar.lower()
-                not in _supported_calendar_mapping):
-            raise ValueError("{} calendar '{}' is not supported".format(
-                field.__class__.__name__, field.calendar))
+        if hasattr(field.dim('time'), 'calendar'):
+            if (field.dim('time').calendar.lower()
+                    not in _supported_calendar_mapping):
+                raise ValueError(
+                    "{} calendar '{}' is not supported".format(
+                        field.__class__.__name__, field.dim('time').calendar)
+                )
+        else:
+            field.dim('time').calendar = 'gregorian'
 
         # map alternative names for given calendar to same name
         self_calendar = _supported_calendar_mapping[
-            self._f.construct('time').calendar.lower()
+            self._f.dim('time').calendar.lower()
         ]
         field_calendar = _supported_calendar_mapping[
-            field.construct('time').calendar.lower()
+            field.dim('time').calendar.lower()
         ]
 
         # check that the two instances have the same calendar
@@ -352,7 +357,7 @@ class TimeDomain(object):
         trailing_size = (-_trailing_truncation_idx if _trailing_truncation_idx
                          else 0)
         if not (self.time.size - leading_size - trailing_size ==
-                field.construct('time').data.size):
+                field.dim('time').data.size):
             return False
 
         # check that the time data and time bounds data are equal
@@ -361,7 +366,7 @@ class TimeDomain(object):
         # the same calendar)
         time_match = (
             self.time[_leading_truncation_idx:_trailing_truncation_idx] ==
-            field.construct('time').data
+            field.dim('time').data
         )
 
         if ignore_bounds:
@@ -369,7 +374,7 @@ class TimeDomain(object):
         else:
             bounds_match = (
                 self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
-                field.construct('time').bounds.data
+                field.dim('time').bounds.data
             )
 
         # use a trick by checking the minimum value of the boolean arrays
