@@ -1772,7 +1772,7 @@ class Grid(SpaceDomain):
         :Parameters:
 
             field: `cf.Field`
-                The field that needs to be compared against SpaceDomain.
+                The field that needs to be compared against Grid.
 
             ignore_z: `bool`, optional
                 Option to ignore the dimension coordinate along the Z
@@ -1788,11 +1788,19 @@ class Grid(SpaceDomain):
         x_y = []
         for axis_name in [self._X_name, self._Y_name]:
             # try to retrieve construct using name
-            dim_coord = field.dimension_coordinate(
+            dim_coord = field.dim(
                 re.compile(r'name={}$'.format(axis_name)), default=None
             )
 
             if dim_coord is not None:
+                # collect properties of given dimension coordinate
+                properties = list(dim_coord.properties())
+                try:
+                    # these will be ignored except for 'units'
+                    properties.remove('units')
+                except ValueError:
+                    pass
+
                 # if field has no bounds, remove them from spacedomain
                 bounds = None
                 if not dim_coord.has_bounds():
@@ -1806,10 +1814,7 @@ class Grid(SpaceDomain):
                             rtol=rtol_, atol=atol_,
                             ignore_data_type=True,
                             ignore_fill_value=True,
-                            ignore_properties=('standard_name',
-                                               'long_name',
-                                               'computed_standard_name',
-                                               '_FillValue')
+                            ignore_properties=properties
                         )
                     )
                 finally:
@@ -1824,15 +1829,29 @@ class Grid(SpaceDomain):
             z = True
         else:
             if self._f.dim('Z', default=False):
-                z = self._f.dim('Z').equals(
-                    field.dimension_coordinate(
-                        re.compile(r'name={}$'.format(self._Z_name)),
-                        default=None),
-                    rtol=rtol_, atol=atol_,
-                    ignore_data_type=True,
-                    ignore_properties=('standard_name',
-                                       'long_name',
-                                       'computed_standard_name'))
+                # try to retrieve construct using name
+                dim_coord = field.dimension_coordinate(
+                    re.compile(r'name={}$'.format(self._Z_name)), default=None
+                )
+
+                if dim_coord is not None:
+                    # collect properties of given dimension coordinate
+                    properties = list(dim_coord.properties())
+                    try:
+                        # these will be ignored except for 'units'
+                        properties.remove('units')
+                    except ValueError:
+                        pass
+
+                    # compare constructs
+                    z = self._f.dim('Z').equals(
+                        dim_coord,
+                        rtol=rtol_, atol=atol_,
+                        ignore_data_type=True,
+                        ignore_fill_value=True,
+                        ignore_properties=properties)
+                else:
+                    z = False
             elif field.dim('Z', default=False):
                 z = False
             else:
