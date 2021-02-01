@@ -142,8 +142,8 @@ class Exchanger(object):
             ):
                 arr = np.zeros((history,) + shape, dtype_float())
                 self.transfers[t]['array'] = arr
-                # set up slices that are views of the array that is be
-                # rolled out each time a transfer is asked
+                # set up slices that are views of the array that is
+                # to be rolled around each time a transfer is asked
                 self.transfers[t]['slices'] = [
                     arr[i] for i in range(history)
                 ]
@@ -294,9 +294,8 @@ class Exchanger(object):
         else:
             raise ValueError('method for exchanger transfer unknown')
 
-        # remap value from supermesh resolution to destination resolution
-        # # NOT IMPLEMENTED
-        # # REPLACED BY:
+        # TODO: remap value from supermesh resolution to destination resolution
+        # REPLACED BY:
         # remap value from source resolution to destination resolution
         if self.transfers[name][component]['remap'] is not None:
             from_, to_ = self.transfers[name][component]['remap']
@@ -306,11 +305,15 @@ class Exchanger(object):
         # record that another value was retrieved by incrementing count
         self.transfers[name][component]['iter'] += 1
 
+        # convert value to masked array if mask exists
+        mask = self.compass.spacedomains[component].land_sea_mask
+        if mask is not None:
+            value = np.ma.array(value, mask=~mask)
+
         return value
 
     def set_transfer(self, name, array):
-        # remap value from source resolution to supermesh resolution
-        # # NOT IMPLEMENTED
+        # TODO: remap value from source resolution to supermesh resolution
 
         # make room for new value by time incrementing
         lhs = [a for a in self.transfers[name]['slices']]
