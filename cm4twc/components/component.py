@@ -493,7 +493,8 @@ class Component(metaclass=MetaComponent):
             if isinstance(spacedomain, Grid):
                 # avoid floating-point error problems by rounding up
                 for axis in [spacedomain.X_name, spacedomain.Y_name]:
-                    dataset[data_name].dim(axis).round(decr(), inplace=True)
+                    dataset[data_name].dim(axis, error).round(decr(),
+                                                              inplace=True)
 
                 # try to subset in space
                 if dataset[data_name].subspace(
