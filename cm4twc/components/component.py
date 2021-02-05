@@ -253,8 +253,9 @@ class Component(metaclass=MetaComponent):
         self.saving_directory = saving_directory
         self.dump_file = None
 
-        # flag to check whether spin_up/initialise_states_from_dump used
-        self.is_initialised = False
+        # flag to check whether states / streams have been initialised
+        self.initialised_states = False
+        self.revived_streams = False
 
     @property
     def timedomain(self):
@@ -360,6 +361,37 @@ class Component(metaclass=MetaComponent):
                                     'sequence of strings'.format(name, delta))
 
         self._records = records_
+
+        # create record objects, record stream objects
+        self._record_objects = {}
+        self._record_streams = {}
+
+        for name, frequencies in self.records.items():
+            # create instance of appropriate Record subclass
+            if name in self._outputs_info:
+                self._record_objects[name] = OutputRecord(
+                    name, **self._outputs_info[name]
+                )
+            elif name in self._outwards_info:
+                self._record_objects[name] = OutwardRecord(
+                    name, **self._outwards_info[name]
+                )
+            elif name in self._states_info:
+                self._record_objects[name] = StateRecord(
+                    name, **self._states_info[name]
+                )
+            else:
+                raise ValueError("{} not available for {} component".format(
+                    name, self._category))
+
+            for delta, methods in frequencies.items():
+                # instantiate RecordStream if none for given timedelta yet
+                if delta not in self._record_streams:
+                    self._record_streams[delta] = RecordStream(delta)
+                # hold reference to record object in stream
+                self._record_streams[delta].add_record(
+                    self._record_objects[name], methods
+                )
 
     def _check_definition(self):
         # check for units
@@ -677,18 +709,18 @@ class Component(metaclass=MetaComponent):
 
     def initialise_(self, tag, overwrite):
         # if not already initialised, get default state values
-        if not self.is_initialised:
+        if not self.initialised_states:
             self._instantiate_states()
             self.initialise(**self.states)
-            self.is_initialised = True
+            self.initialised_states = True
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
 
         if self.records:
-            # create records, record streams, and record stream files
-            self._instantiate_record_objects_and_streams(tag, overwrite)
-            # create dumps for record streams
-            self._initialise_record_streams_dumps(tag, overwrite)
+            if not self.revived_streams:
+                self._initialise_record_streams()
+            # optionally create files and dump files
+            self._create_stream_files_and_dumps(tag, overwrite)
 
     def run_(self, timeindex, exchanger):
         data = {}
@@ -788,7 +820,7 @@ class Component(metaclass=MetaComponent):
             else:
                 raise KeyError("initial conditions for {} component state "
                                "'{}' not in dump".format(self._category, s))
-        self.is_initialised = True
+        self.initialised_states = True
 
         return at
 
@@ -801,40 +833,14 @@ class Component(metaclass=MetaComponent):
         update_states_dump(sep.join([self.saving_directory, self.dump_file]),
                            self.states, timestamp, self._solver_history)
 
-    def _instantiate_record_objects_and_streams(self, tag, overwrite):
-        self._record_objects = {}
-        self._record_streams = {}
-
-        for name, frequencies in self.records.items():
-            # create instance of appropriate Record subclass
-            if name in self._outputs_info:
-                self._record_objects[name] = OutputRecord(
-                    name, **self._outputs_info[name]
-                )
-            elif name in self._outwards_info:
-                self._record_objects[name] = OutwardRecord(
-                    name, **self._outwards_info[name]
-                )
-            elif name in self._states_info:
-                self._record_objects[name] = StateRecord(
-                    name, **self._states_info[name]
-                )
-            else:
-                raise ValueError("{} not available for {} component".format(
-                    name, self._category))
-
-            for delta, methods in frequencies.items():
-                # instantiate RecordStream if none for given timedelta yet
-                if delta not in self._record_streams:
-                    self._record_streams[delta] = RecordStream(
-                        delta, self.timedomain, self.spacedomain
-                    )
-                # hold reference to record object in stream
-                self._record_streams[delta].add_record(
-                    self._record_objects[name], methods
-                )
-
+    def _initialise_record_streams(self):
         for delta, stream in self._record_streams.items():
+            # (re)initialise record stream time attributes
+            stream.initialise(self.timedomain, self.spacedomain)
+
+    def _create_stream_files_and_dumps(self, tag, overwrite):
+        for delta, stream in self._record_streams.items():
+            # initialise record files
             filename = '_'.join([self.identifier, self._category, tag,
                                  'records', stream.frequency])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
@@ -844,8 +850,7 @@ class Component(metaclass=MetaComponent):
             else:
                 stream.file = file_
 
-    def _initialise_record_streams_dumps(self, tag, overwrite):
-        for delta, stream in self._record_streams.items():
+            # initialise stream dumps
             filename = '_'.join([self.identifier, self._category, tag,
                                  'dump_record_stream', stream.frequency])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
@@ -855,9 +860,9 @@ class Component(metaclass=MetaComponent):
             else:
                 stream.dump_file = file_
 
-    def initialise_record_streams_from_dump(self, dump_file_pattern,
-                                            at=None):
-        """Initialise the states of the Component from a dump file.
+    def revive_record_streams_from_dump(self, dump_file_pattern,
+                                        at=None):
+        """Revive the record streams of the Component from a dump file.
 
         :Parameters:
 
@@ -889,8 +894,8 @@ class Component(metaclass=MetaComponent):
         :Returns:
 
             datetime object
-                The snapshot in time that was used for the initial
-                conditions.
+                The snapshot in time that was used for reviving the
+                record streams.
 
         """
         ats = []
@@ -898,7 +903,10 @@ class Component(metaclass=MetaComponent):
         if self.records:
             for delta, stream in self._record_streams.items():
                 file_ = dump_file_pattern.format(stream.frequency)
-                ats.append(stream.load_record_stream_dump(file_, at))
+                ats.append(stream.load_record_stream_dump(
+                    file_, at, self.timedomain, self.spacedomain
+                ))
+        self.revived_streams = True
 
         return ats
 

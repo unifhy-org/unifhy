@@ -582,14 +582,14 @@ class Model(object):
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
-            # initialise component record streams from dump file
+            # revive component record streams from dump file
             dump_file = sep.join([self.saving_directory,
                                   '_'.join([component.identifier,
                                             component.category,
                                             tag, 'dump_record_stream_{}.nc'])])
 
-            ats.extend(component.initialise_record_streams_from_dump(dump_file,
-                                                                     at))
+            ats.extend(component.revive_record_streams_from_dump(dump_file,
+                                                                 at))
 
         # if all components are Data or Null, exit resume
         if data_or_null == 3:

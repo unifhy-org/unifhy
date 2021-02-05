@@ -406,35 +406,45 @@ class AdvancedTestModel(BasicTestModel):
                               subsurface=ss_kind,
                               openwater=ow_kind):
                 # set up, spinup, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   sl_kind, ss_kind, ow_kind)
-                simulator.spinup_model()
-                simulator.run_model()
+                simulator_1 = Simulator.from_scratch(self.t, self.s,
+                                                     sl_kind, ss_kind, ow_kind)
+                simulator_1.spinup_model()
+                simulator_1.run_model()
 
                 # store the last component states
-                last_states_sl = deepcopy(simulator.model.surfacelayer.states)
-                last_states_ss = deepcopy(simulator.model.subsurface.states)
-                last_states_ow = deepcopy(simulator.model.openwater.states)
+                last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
+                last_states_ss = deepcopy(simulator_1.model.subsurface.states)
+                last_states_ow = deepcopy(simulator_1.model.openwater.states)
+
+                # set up another model using YAML of first model
+                simulator_2 = Simulator(
+                    self.t, self.s,
+                    cm4twc.Model.from_yaml(
+                        os.sep.join([simulator_1.model.saving_directory,
+                                     '{}.yml'.format(simulator_1.model.identifier)])
+                    )
+                )
 
                 # resume model
-                simulator.resume_model()
+                simulator_2.resume_model()
 
                 # check final state values are coherent
                 self.assertTrue(
                     compare_states(last_states_sl,
-                                   simulator.model.surfacelayer.states)
+                                   simulator_2.model.surfacelayer.states)
                 )
                 self.assertTrue(
                     compare_states(last_states_ss,
-                                   simulator.model.subsurface.states)
+                                   simulator_2.model.subsurface.states)
                 )
                 self.assertTrue(
                     compare_states(last_states_ow,
-                                   simulator.model.openwater.states)
+                                   simulator_2.model.openwater.states)
                 )
 
                 # clean up
-                simulator.clean_up_files()
+                simulator_1.clean_up_files()
+                simulator_2.clean_up_files()
 
     def test_setup_simulate(self):
         """

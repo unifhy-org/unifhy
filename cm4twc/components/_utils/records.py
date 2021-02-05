@@ -104,18 +104,22 @@ class OutputRecord(Record):
 
 class RecordStream(object):
 
-    def __init__(self, delta, timedomain, spacedomain):
+    def __init__(self, delta):
         # check delta validity
         if not isinstance(delta, timedelta):
             raise ValueError('invalid recording frequency {}'.format(delta))
-        if (delta % timedomain.timedelta) != timedelta(seconds=0):
-            raise ValueError('recording timedelta incompatible with component '
-                             'timedelta')
-        # determine time series length for storage
-        self.length = int(delta.total_seconds()
-                          // timedomain.timedelta.total_seconds())
-        # store spacedomain
-        self.spacedomain = spacedomain
+
+        # instantiate attributes to hold temporal information
+        self.delta = delta
+        self.frequency = _delta_to_frequency_tag(delta)
+        self.length = 0
+        self.timedomain = None
+        self.time = None
+        self.time_bounds = None
+        self.time_tracker = None
+
+        # instantiate attributes to hold spatial information
+        self.spacedomain = None
 
         # instantiate holders for file paths
         self.file = None
@@ -131,22 +135,47 @@ class RecordStream(object):
         # (keys are record names)
         self.array_trackers = {}
 
-        # instantiate attributes to hold time iterators
+        # integers to track when to write to file
+        self.trigger = None
+        self.trigger_tracker = None
+
+    def initialise(self, timedomain, spacedomain, _skip_trackers=False):
+        # check delta / timedomain resolution compatibility
+        if (self.delta % timedomain.timedelta) != timedelta(seconds=0):
+            raise ValueError('recording timedelta incompatible '
+                             'with component timedelta')
+
+        # determine time series length for storage
+        self.length = int(self.delta.total_seconds()
+                          // timedomain.timedelta.total_seconds())
+        # create timedomain for stream
         self.timedomain = TimeDomain.from_start_end_step(
             start=timedomain.bounds.datetime_array[0, 0],
-            end=timedomain.bounds.datetime_array[-1, -1] + delta,
-            step=delta,
+            end=timedomain.bounds.datetime_array[-1, -1] + self.delta,
+            step=self.delta,
             calendar=timedomain.calendar,
             units=timedomain.units
         )
-        self.frequency = _delta_to_frequency_tag(self.timedomain.timedelta)
         self.time = self.timedomain.time.array[1:]
         self.time_bounds = self.timedomain.bounds.array[:-1, :]
-        self.time_tracker = 0
 
-        # integers to track when to write to file
+        # store spacedomain
+        self.spacedomain = spacedomain
+
+        # initialise record arrays for accumulating values
         self.trigger = 0
-        self.trigger_tracker = 0
+        for name in self.records:
+            self.array_trackers[name] = 0
+            arr = np.zeros((self.length, *spacedomain.shape), dtype_float())
+            arr[:] = np.nan
+            self.arrays[name] = arr
+            # add on length of stream to the record trigger
+            self.trigger += self.length
+
+        if not _skip_trackers:
+            # (re)initialise trackers
+            self.time_tracker = 0
+            self.trigger_tracker = 0
 
     def add_record(self, record, methods):
         name = record.name
@@ -161,13 +190,6 @@ class RecordStream(object):
                 raise ValueError('method {} for record {} aggregation '
                                  'unknown'.format(method, name))
         self.methods[name] = methods_
-        # initialise array for accumulating values
-        self.array_trackers[name] = 0
-        arr = np.zeros((self.length, *self.spacedomain.shape), dtype_float())
-        arr[:] = np.nan
-        self.arrays[name] = arr
-        # add on length of stream to the record trigger
-        self.trigger += self.length
         # map this very stream in the record
         record.streams.append(self)
 
@@ -344,10 +366,25 @@ class RecordStream(object):
             f.variables['time_tracker'][t] = self.time_tracker
             f.variables['trigger_tracker'][t] = self.trigger_tracker
 
-    def load_record_stream_dump(self, filepath, datetime_):
+    def load_record_stream_dump(self, filepath, datetime_,
+                                timedomain, spacedomain):
         self.dump_file = filepath
 
         with Dataset(self.dump_file, 'r') as f:
+            # determine original simulation timedomain from dump start
+            start = cftime.num2date(f.variables['time'][0],
+                                    f.variables['time'].units,
+                                    f.variables['time'].calendar)
+
+            td = TimeDomain.from_start_end_step(
+                start=start,
+                end=timedomain.bounds.datetime_array[-1, -1],
+                step=timedomain.timedelta,
+                calendar=timedomain.calendar,
+                units=timedomain.units
+            )
+            self.initialise(td, spacedomain, _skip_trackers=True)
+
             # determine point in time to use from the dump
             if datetime_ is None:
                 # if not specified, use the last time index
@@ -361,8 +398,9 @@ class RecordStream(object):
                     t = cftime.date2index(datetime_, f.variables['time'])
                 except ValueError:
                     raise ValueError(
-                        '{} not available in dump {}'.format(
-                            datetime_, self.dump_file))
+                        '{} not available in record stream dump {}'.format(
+                            datetime_, self.dump_file)
+                    )
 
             # retrieve each record values
             for name in self.records:
@@ -375,8 +413,10 @@ class RecordStream(object):
                         f.variables['_'.join([name, 'tracker'])][t]
                     )
                 except KeyError:
-                    raise RuntimeError(
-                        '{} missing in record stream dump'.format(name))
+                    raise KeyError(
+                        '{} missing in record stream dump {}'.format(
+                            name, self.dump_file)
+                    )
             # retrieve stream trackers
             self.time_tracker = f.variables['time_tracker'][t]
             self.trigger_tracker = f.variables['trigger_tracker'][t]
