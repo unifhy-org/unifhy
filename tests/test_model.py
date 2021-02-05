@@ -100,23 +100,63 @@ class Simulator(object):
         )
 
     def clean_up_files(self):
-        files = []
+        # clean up configuration files created
+        self.clean_up_config_files()
         # clean up dump files potentially created
+        self.clean_up_dump_files()
+        # clean up record files potentially created
+        self.clean_up_record_files()
+
+    def clean_up_config_files(self):
+        files = glob(os.sep.join([self.model.config_directory,
+                                  self.model.identifier + '*.yml']))
+        # convert config file list to set to avoid potential duplicates
+        for f in set(files):
+            os.remove(f)
+
+    def clean_up_dump_files(self):
+        files = []
         files.extend(
             glob(os.sep.join([self.model.exchanger.saving_directory,
                               self.model.identifier + '*_dump*.nc']))
         )
-        # clean up record files potentially created
-        files.extend(
-            glob(os.sep.join([self.model.exchanger.saving_directory,
-                              self.model.identifier + '*_out*.nc']))
-        )
-        # clean up configuration files created
-        files.extend(
-            glob(os.sep.join([self.model.config_directory,
-                              self.model.identifier + '*.yml']))
-        )
+        if self.model.surfacelayer.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.surfacelayer.saving_directory,
+                                  self.model.identifier + '*_dump*.nc']))
+            )
+        if self.model.subsurface.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.subsurface.saving_directory,
+                                  self.model.identifier + '*_dump*.nc']))
+            )
+        if self.model.openwater.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.openwater.saving_directory,
+                                  self.model.identifier + '*_dump*.nc']))
+            )
         # convert dumps list to set to avoid potential duplicates
+        for f in set(files):
+            os.remove(f)
+
+    def clean_up_record_files(self):
+        files = []
+        if self.model.surfacelayer.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.surfacelayer.saving_directory,
+                                  self.model.identifier + '*_records*.nc']))
+            )
+        if self.model.subsurface.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.subsurface.saving_directory,
+                                  self.model.identifier + '*_records*.nc']))
+            )
+        if self.model.openwater.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.openwater.saving_directory,
+                                  self.model.identifier + '*_records*.nc']))
+            )
+        # convert record file list to set to avoid potential duplicates
         for f in set(files):
             os.remove(f)
 
