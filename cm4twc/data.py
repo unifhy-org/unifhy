@@ -251,17 +251,17 @@ class DataSet(MutableMapping):
         ... )
         >>> config = ds.to_config()
         >>> import json
-        >>> print(json.dumps(config, sort_keys=True, indent=4))
+        >>> print(json.dumps(config, sort_keys=True, indent=4))  # doctest: +ELLIPSIS
         {
             "rainfall": {
                 "files": [
-                    "/Users/thibhlln/PycharmProjects/cm4twc/cm4twc/tests/data/sciencish_driving_data_daily.nc"
+                    ...data/sciencish_driving_data_daily.nc"
                 ],
                 "select": "rainfall_flux"
             },
             "snowfall_flux": {
                 "files": [
-                    "/Users/thibhlln/PycharmProjects/cm4twc/cm4twc/tests/data/sciencish_driving_data_daily.nc"
+                    ...data/sciencish_driving_data_daily.nc"
                 ],
                 "select": "snowfall_flux"
             }
