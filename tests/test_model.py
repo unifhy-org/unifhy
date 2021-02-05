@@ -484,7 +484,6 @@ class AdvancedTestModel(BasicTestModel):
 
                 # clean up
                 simulator_1.clean_up_files()
-                simulator_2.clean_up_files()
 
     def test_setup_simulate(self):
         """
