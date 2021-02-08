@@ -609,7 +609,7 @@ class Model(object):
         at = list(set(ats))[0]
 
         # proceed with call to spin_up or simulate method of self
-        if method == 'spinup':
+        if method == 'spin_up':
             cycle_no = int(tag.split('spinup')[-1])
 
             # resume the spin up run(s)
