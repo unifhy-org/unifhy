@@ -92,12 +92,15 @@ class Simulator(object):
             dumping_frequency=get_dummy_dumping_frequency(self.time_)
         )
 
-    def resume_model(self):
-        self.model.resume(
-            tag='run',
-            at=(get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
-                - get_dummy_dumping_frequency(self.time_))
-        )
+    def resume_model(self, tag='run'):
+        if tag == 'run':
+            at = (get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
+                  - get_dummy_dumping_frequency(self.time_))
+        else:  # spinup
+            at = (get_dummy_spin_up_start_end()[-1]
+                  - get_dummy_dumping_frequency(self.time_))
+
+        self.model.resume(tag=tag, at=at)
 
     def clean_up_files(self):
         # clean up configuration files created
@@ -247,7 +250,8 @@ class BasicTestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values.
+        - checking the correctness of the final exchanger transfer values;
+        - checking the values in the record files.
         """
         # set up a model from yaml configuration file
         simulator = Simulator.from_yaml(self.t, self.s)
@@ -263,6 +267,103 @@ class BasicTestModel(object):
         # clean up
         simulator.clean_up_files()
 
+    def test_setup_simulate_resume_run(self):
+        """
+        The purpose of this test is to check that the following workflow
+        is functional:
+        - configure model;
+        - simulate model main run;
+        - resume model main run at second-to-last snapshot.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values;
+        - checking the values in the record files.
+        """
+        # set up a model from yaml configuration file
+        simulator = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
+
+        # start main run
+        simulator.run_model()
+
+        # start main run
+        simulator.resume_model()
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator.model)
+        # check records
+        self.check_records(simulator.model)
+
+        # clean up
+        simulator.clean_up_files()
+
+    def test_setup_spinup_yaml_resume_spinup(self):
+        """
+        The purpose of this test is to check that the following workflow
+        is functional:
+        - configure first model;
+        - spin-up first model (2 cycles);
+        - configure second model using YAML configuration file of first model;
+        - resume second model first spinup at second-to-last snapshot;
+        - configure third model using YAML configuration file of first model;
+        - resume third model second spinup at second-to-last snapshot.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values.
+
+        Note, since simulate period is of 12 days, and each spinup cycle
+        is of 6 days, and given that the driving data is constant for
+        the 12-day period, the final conditions with spinup+spinup
+        will be the same as with simulate without spinup, which means
+        that correctness of final conditions can be checked, but not
+        records because they are scattered across two files of for
+        simulation periods 6 days each.
+        """
+        # set up a model
+        simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
+
+        # spinup model
+        simulator_1.spinup_model()
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_1.model)
+
+        # set up another model using YAML of first model
+        simulator_2 = Simulator(
+            self.t, self.s,
+            cm4twc.Model.from_yaml(
+                os.sep.join([simulator_1.model.saving_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # start main run
+        simulator_2.resume_model(tag='spinup1')
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_2.model)
+
+        # set up yet another model using YAML of first model
+        simulator_3 = Simulator(
+            self.t, self.s,
+            cm4twc.Model.from_yaml(
+                os.sep.join([simulator_1.model.saving_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # start main run
+        simulator_3.resume_model(tag='spinup2')
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_3.model)
+
+        # clean up
+        simulator_1.clean_up_files()
+
     def test_setup_yaml_setup_simulate(self):
         """
         The purpose of this test is to check that the following workflow
@@ -274,7 +375,8 @@ class BasicTestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values.
+        - checking the correctness of the final exchanger transfer values;
+        - checking the values in the record files.
         """
         # set up a model
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
@@ -409,10 +511,11 @@ class AdvancedTestModel(BasicTestModel):
         """
         The purpose of this test is to check that a complete workflow is
         functional, i.e.:
-        - configure model;
-        - spin-up model;
-        - simulate model main run;
-        - resume model main run at second-to-last snapshot.
+        - configure first model;
+        - spin-up first model;
+        - simulate first model main run;
+        - configure second model using YAML configuration file of first model;
+        - resume second model main run at second-to-last snapshot.
 
         The test generates a 'design of experiment' (doe) to consider
         all possible combinations of actual `Component`, `DataComponent`,
