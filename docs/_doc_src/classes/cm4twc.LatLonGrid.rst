@@ -10,6 +10,7 @@ LatLonGrid
 
 Methods
 -------
+
 .. rubric:: Construction
 
 .. autosummary::
@@ -18,6 +19,7 @@ Methods
    :template: method.rst
 
    ~cm4twc.LatLonGrid.from_extent_and_resolution
+   ~cm4twc.LatLonGrid.from_field
 
 .. rubric:: Comparison
 
@@ -27,6 +29,16 @@ Methods
    :template: method.rst
 
    ~cm4twc.LatLonGrid.is_space_equal_to
+   ~cm4twc.LatLonGrid.spans_same_region_as
+
+.. rubric:: Utility
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../methods/
+   :template: method.rst
+
+   ~cm4twc.LatLonGrid.route
 
 
 Attributes
@@ -45,3 +57,8 @@ Attributes
    ~cm4twc.LatLonGrid.X_bounds
    ~cm4twc.LatLonGrid.Y_bounds
    ~cm4twc.LatLonGrid.Z_bounds
+   ~cm4twc.LatLonGrid.X_name
+   ~cm4twc.LatLonGrid.Y_name
+   ~cm4twc.LatLonGrid.Z_name
+   ~cm4twc.LatLonGrid.land_sea_mask
+   ~cm4twc.LatLonGrid.routing_info

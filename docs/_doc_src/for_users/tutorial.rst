@@ -4,8 +4,8 @@
 Tutorial
 ========
 
-This draft of the modelling framework has a code-name: `cm4twc` for Community
-Model for the Terrestrial Water Cycle.
+This section showcases the basic usage of modelling framework `cm4twc`
+(Community Model for the Terrestrial Water Cycle).
 
 .. code-block:: python
    :caption: Importing the package and checking its version.
@@ -15,9 +15,13 @@ Model for the Terrestrial Water Cycle.
    0.0.1
 
 The central object in the framework is the `Model`, which is composed of
-`Component`\s for the various compartments of the hydrological cycle,
-themselves spatio-temporally configured through `SpaceDomain` and `TimeDomain`
-objects, and driven by data contained in a `DataSet` instance.
+`Component`\s for the three compartments of the terrestrial water cycle
+(see the :doc:`science repository <science_repository>` for the options
+currently available).
+
+Each component needs to be spatio-temporally configured through `SpaceDomain`
+and `TimeDomain` objects, to be given data contained in a `DataSet` instance,
+and to be given parameter and/or constant values.
 
 Configuring a Model
 -------------------
@@ -52,8 +56,7 @@ Space
 
 `SpaceDomain` characterises the space dimensions of a `Component`.
 It is intended as an umbrella class from which to subclass.
-Current supported spatial discretisations are `LatLonGrid` and
-`RotatedLatLonGrid`.
+The current supported spatial configuration is `LatLonGrid`.
 
 .. code-block:: python
    :caption: Instantiating a `LatLonGrid` object from its dimensions' extents and resolutions.
@@ -81,8 +84,14 @@ Current supported spatial discretisations are `LatLonGrid` and
 Data
 ~~~~
 
-`DataSet` gathers all of the data required to run a `Component` of `Model` .
-It is a dictionary-like object that stores references to `cf.Field` instances.
+`DataSet` must be used to gather all of the data required to run a `Component`
+of `Model` . It is a dictionary-like object that stores references to `cf.Field`
+instances.
+
+.. note::
+
+   Only data fully compliant with the
+   `CF conventions <https://cfconventions.org/>`_ can be used.
 
 .. code-block:: python
    :caption: Instantiating `DataSet` objects from a CF-compliant netCDF file.
@@ -105,8 +114,8 @@ It is a dictionary-like object that stores references to `cf.Field` instances.
    ... )
 
 
-Processes
-~~~~~~~~~
+Science
+~~~~~~~
 
 `Component` is an umbrella class which is subclassed into three distinct classes
 for surface, sub-surface, and open water parts of the water cycle:
@@ -197,7 +206,7 @@ instantiated with three `Component` instances, one for each of the three
 
 At this stage, the `Model` as such is fully configured, and the configuration
 can be saved as a YAML file in the *config_directory* and named using the
-*identifier* (e.g. in this tutorial, the file would be at
+*identifier* (e.g. in this example, the file would be at
 *configurations/dummy.yml*).
 
 .. code-block:: python
@@ -206,10 +215,17 @@ can be saved as a YAML file in the *config_directory* and named using the
    >>> model.to_yaml()
 
 
+See the :doc:`files <files>` section for an example of such model
+configuration YAML file.
+
 Simulating with a Model
 -----------------------
 
-This instance of `Model` can now be used to start a spin up run and/or a main simulation run.
+Spin-Up and Simulate
+~~~~~~~~~~~~~~~~~~~~
+
+Once configured, the instance of `Model` can be used to start a spin up run
+and/or a main simulation run.
 
 .. code-block:: python
    :caption: Spinning-up and running the `Model` simulation.
@@ -220,7 +236,11 @@ This instance of `Model` can now be used to start a spin up run and/or a main si
    ...               dumping_frequency=timedelta(days=3))
    >>> model.simulate(dumping_frequency=timedelta(days=2))
 
-If the model has crashed, and *dumping_frequency* were set in the
+
+Resume
+~~~~~~
+
+If the model has crashed, and *dumping_frequency* was set in the
 *spin-up* and/or *simulate* invocations, a series of snapshots in time
 have been stored in dump files in the *output_directory* of each
 `Component`. A *resume* method for `Model` allows for the given run

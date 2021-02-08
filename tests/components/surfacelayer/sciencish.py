@@ -5,7 +5,7 @@ from cm4twc.components import SurfaceLayerComponent
 
 class Sciencish(SurfaceLayerComponent):
 
-    inputs_info = {
+    _inputs_info = {
         'rainfall': {
             'units': 'kg m-2 s-1',
             'kind': 'dynamic'
@@ -23,8 +23,8 @@ class Sciencish(SurfaceLayerComponent):
             'kind': 'static'
         }
     }
-    # parameters_info = {}
-    constants_info = {
+    # _parameters_info = {}
+    _constants_info = {
         'evaporation_rate': {
             'units': 'kg m-2 s-1'
         },
@@ -35,7 +35,7 @@ class Sciencish(SurfaceLayerComponent):
             'units': '1'
         }
     }
-    states_info = {
+    _states_info = {
         'canopy': {
             'units': 'kg m-2',
             'divisions': 1
@@ -45,7 +45,7 @@ class Sciencish(SurfaceLayerComponent):
             'divisions': 1
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states
@@ -73,11 +73,11 @@ class Sciencish(SurfaceLayerComponent):
         direct_rainfall = (1 - vegetation_fraction) * rainfall
         canopy_rainfall = rainfall - direct_rainfall
 
-        canopy_evaporation = canopy[-1] / self.timestepinseconds * 0.1
+        canopy_evaporation = canopy[-1] / self.timedelta_in_seconds * 0.1
         interception = interception_fraction * canopy_rainfall
         throughfall = canopy_rainfall - interception
         canopy[0][:] = canopy[-1] + ((interception - canopy_evaporation)
-                                     * self.timestepinseconds)
+                                     * self.timedelta_in_seconds)
 
         transpiration = (vegetation_fraction * soil_water_stress *
                          average_evaporation_rate)
@@ -86,11 +86,11 @@ class Sciencish(SurfaceLayerComponent):
 
         snowmelt = np.where(
             air_temperature > melting_temperature,
-            snowpack[-1] * 0.10 / self.timestepinseconds,
+            snowpack[-1] * 0.10 / self.timedelta_in_seconds,
             0
         )
         snowpack[0][:] = snowpack[-1] + ((snowfall - snowmelt)
-                                         * self.timestepinseconds)
+                                         * self.timedelta_in_seconds)
 
         openwater_evaporation = soil_evaporation * 0
 

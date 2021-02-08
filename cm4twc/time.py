@@ -47,7 +47,7 @@ class TimeDomain(object):
     _timestep_span = (0, 1)
 
     def __init__(self, timestamps, units, calendar=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 
@@ -303,7 +303,8 @@ class TimeDomain(object):
 
         return not self.__eq__(other)
 
-    def is_time_equal_to(self, field, _leading_truncation_idx=None,
+    def is_time_equal_to(self, field, ignore_bounds=True,
+                         _leading_truncation_idx=None,
                          _trailing_truncation_idx=None):
         """Compare equality between the TimeDomain and the 'time'
         dimension  coordinate in a `cf.Field`.
@@ -316,25 +317,31 @@ class TimeDomain(object):
             field: `cf.Field`
                 The field that needs to be compared against TimeDomain.
 
+        :Returns: `bool`
         """
         # check that the field has a time construct
-        if field.construct('time', default=None) is None:
+        if field.dim('time', default=None) is None:
             return RuntimeError(
                 "{} cannot be compared to {} because no time construct".format(
                     field.__class__.__name__, self.__class__.__name__))
 
         # check that field calendar is a classic one for CF-convention
-        if (field.construct('time').calendar.lower()
-                not in _supported_calendar_mapping):
-            raise ValueError("{} calendar '{}' is not supported".format(
-                field.__class__.__name__, field.calendar))
+        if hasattr(field.dim('time'), 'calendar'):
+            if (field.dim('time').calendar.lower()
+                    not in _supported_calendar_mapping):
+                raise ValueError(
+                    "{} calendar '{}' is not supported".format(
+                        field.__class__.__name__, field.dim('time').calendar)
+                )
+        else:
+            field.dim('time').calendar = 'gregorian'
 
         # map alternative names for given calendar to same name
         self_calendar = _supported_calendar_mapping[
-            self._f.construct('time').calendar.lower()
+            self._f.dim('time').calendar.lower()
         ]
         field_calendar = _supported_calendar_mapping[
-            field.construct('time').calendar.lower()
+            field.dim('time').calendar.lower()
         ]
 
         # check that the two instances have the same calendar
@@ -350,7 +357,7 @@ class TimeDomain(object):
         trailing_size = (-_trailing_truncation_idx if _trailing_truncation_idx
                          else 0)
         if not (self.time.size - leading_size - trailing_size ==
-                field.construct('time').data.size):
+                field.dim('time').data.size):
             return False
 
         # check that the time data and time bounds data are equal
@@ -359,13 +366,16 @@ class TimeDomain(object):
         # the same calendar)
         time_match = (
             self.time[_leading_truncation_idx:_trailing_truncation_idx] ==
-            field.construct('time').data
+            field.dim('time').data
         )
 
-        bounds_match = (
-            self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
-            field.construct('time').bounds.data
-        )
+        if ignore_bounds:
+            bounds_match = cf.Data([True])
+        else:
+            bounds_match = (
+                self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
+                field.dim('time').bounds.data
+            )
 
         # use a trick by checking the minimum value of the boolean arrays
         # (False if any value is False, i.e. at least one value is not equal
@@ -387,6 +397,7 @@ class TimeDomain(object):
             timedomain: `TimeDomain`
                 The other TimeDomain to be compared against TimeDomain.
 
+        :Returns: `bool`
         """
         if isinstance(timedomain, self.__class__):
             start = self.bounds[[0], [0]] == timedomain.bounds[[0], [0]]
@@ -465,6 +476,8 @@ class TimeDomain(object):
 
                     calendar='365_day'
 
+        :Returns: `TimeDomain`
+
         **Examples**
 
         >>> from datetime import datetime
@@ -510,7 +523,7 @@ class TimeDomain(object):
 
     @classmethod
     def from_start_end_step(cls, start, end, step, units=None, calendar=None):
-        """Initialise a `TimeDomain` from a sequence of datetime objects.
+        """Initialise a `TimeDomain` from start, end, and step for period.
 
         :Parameters:
 
@@ -584,6 +597,7 @@ class TimeDomain(object):
 
                     calendar='all_leap'
 
+        :Returns: `TimeDomain`
 
         **Examples**
 
@@ -656,15 +670,18 @@ class TimeDomain(object):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `TimeDomain` from a `cf.Field` instance.
+        """Initialise a `TimeDomain` from temporal dimension coordinate
+        of a `cf.Field`.
 
         :Parameters:
 
-            field: `cf.Field` object
-                The field object who will be used to initialise a
+            field: `cf.Field`
+                The field object that will be used to initialise a
                 `TimeDomain` instance. This field must feature a 'time'
                 construct with bounds, and this construct must feature
                 'units' and 'calendar' properties.
+
+        :Returns: `TimeDomain`
 
         **Examples**
 
@@ -697,8 +714,8 @@ class TimeDomain(object):
         return cls.from_start_end_step(**cls._extract_time_from_field(field))
 
     def to_field(self):
-        """Return a deep copy of the inner cf.Field used to characterise
-        the TimeDomain.
+        """Return a deep copy of the inner `cf.Field` used to
+        characterise the TimeDomain.
 
         **Examples**
         >>> td = TimeDomain.from_start_end_step(

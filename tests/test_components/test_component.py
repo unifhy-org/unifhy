@@ -4,7 +4,9 @@ from datetime import timedelta
 import cm4twc
 
 from tests.test_time import get_dummy_timedomain
-from tests.test_space import get_dummy_spacedomain
+from tests.test_space import (get_dummy_spacedomain,
+                              get_dummy_land_sea_mask_field,
+                              get_dummy_flow_direction_field)
 from tests.test_data import (get_dummy_dataset,
                              get_dummy_component_substitute_dataset)
 
@@ -56,7 +58,7 @@ constants = {
     },
 }
 
-outputs = {
+records = {
     'surfacelayer': {
         'sync': {'output_x': {timedelta(days=1): ['instantaneous'],
                               timedelta(days=6): ['cumulative', 'average',
@@ -128,18 +130,25 @@ def get_dummy_component(category, kind, time_, space_, source):
 
     space_resolution = space_resolutions[category][space_]
     spacedomain = get_dummy_spacedomain(space_resolution)
+    if category == 'surfacelayer':
+        spacedomain.land_sea_mask = get_dummy_land_sea_mask_field(
+            space_resolution
+        )
+        spacedomain.flow_direction = get_dummy_flow_direction_field(
+            space_resolution
+        )
 
     dataset = get_dummy_dataset(category, time_resolution, space_resolution)
 
     if kind == 'c':
         return component_class(
-            output_directory='outputs',
+            saving_directory='outputs',
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
             parameters=parameters[category],
             constants=constants[category],
-            outputs=outputs[category][time_]
+            records=records[category][time_]
         )
     elif kind == 'd':
         return cm4twc.DataComponent(

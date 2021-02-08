@@ -42,19 +42,19 @@ class Dummy(SubSurfaceComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
-    inputs_info = {
+    _inputs_info = {
         'driving_a': {
             'units': '1',
             'kind': 'dynamic'
         }
     }
-    parameters_info = {
+    _parameters_info = {
         'parameter_a': {
             'units': '1'
         }
     }
-    # constants_info = {}
-    states_info = {
+    # _constants_info = {}
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1
@@ -64,12 +64,12 @@ class Dummy(SubSurfaceComponent):
             'divisions': 1
         }
     }
-    outputs_info = {
+    _outputs_info = {
         'output_x': {
             'units': '1'
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states
@@ -116,7 +116,7 @@ class Dummy(SubSurfaceComponent):
 
 class DummyFortran(Dummy):
     # overwrite states to explicitly set array order
-    states_info = {
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1,

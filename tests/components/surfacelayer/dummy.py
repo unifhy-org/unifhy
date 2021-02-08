@@ -47,7 +47,7 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
-    inputs_info = {
+    _inputs_info = {
         'driving_a': {
             'units': '1',
             'kind': 'dynamic'
@@ -65,25 +65,9 @@ class Dummy(SurfaceLayerComponent):
             'kind': 'static'
         }
     }
-    driving_data_info = {
-        'driving_a': {
-            'units': '1'
-        },
-        'driving_b': {
-            'units': '1'
-        },
-        'driving_c': {
-            'units': '1'
-        },
-    }
-    ancillary_data_info = {
-        'ancillary_c': {
-            'units': '1'
-        }
-    }
-    # parameters_info = {}
-    # constants_info = {}
-    states_info = {
+    # _parameters_info = {}
+    # _constants_info = {}
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1
@@ -93,12 +77,14 @@ class Dummy(SurfaceLayerComponent):
             'divisions': 1
         }
     }
-    outputs_info = {
+    _outputs_info = {
         'output_x': {
             'units': '1'
         }
     }
-    solver_history = 1
+    _solver_history = 1
+    _land_sea_mask = True
+    _flow_direction = True
 
     def initialise(self,
                    # component states
@@ -124,6 +110,9 @@ class Dummy(SurfaceLayerComponent):
         state_a[0][:] = state_a[-1] + 1
         state_b[0][:] = state_b[-1] + 2
 
+        output_x, _ = self.spacedomain.route(driving_a + driving_b + driving_c
+                                             + transfer_n - state_a[0])
+
         return (
             # to exchanger
             {
@@ -135,7 +124,7 @@ class Dummy(SurfaceLayerComponent):
             # component outputs
             {
                 'output_x':
-                    driving_a + driving_b + driving_c + transfer_n - state_a[0]
+                    output_x
             }
         )
 
@@ -148,7 +137,7 @@ class Dummy(SurfaceLayerComponent):
 
 class DummyFortran(Dummy):
     # overwrite states to explicitly set array order
-    states_info = {
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1,
@@ -186,6 +175,8 @@ class DummyFortran(Dummy):
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
+
+        output_x, _ = self.spacedomain.route(output_x)
 
         return (
             # to exchanger
@@ -233,6 +224,8 @@ class DummyC(Dummy):
             ancillary_c,
             state_a[-1], state_a[0], state_b[-1], state_b[0]
         )
+
+        output_x, _ = self.spacedomain.route(output_x)
 
         return (
             # to exchanger

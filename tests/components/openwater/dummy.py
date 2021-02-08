@@ -47,7 +47,7 @@ class Dummy(OpenWaterComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
-    inputs_info = {
+    _inputs_info = {
         'ancillary_b': {
             'units': '1',
             'kind': 'climatologic',
@@ -55,23 +55,23 @@ class Dummy(OpenWaterComponent):
             'description': 'January to December'
         }
     }
-    parameters_info = {
+    _parameters_info = {
         'parameter_c': {
             'units': '1'
         },
     }
-    constants_info = {
+    _constants_info = {
         'constant_c': {
             'units': '1'
         }
     }
-    states_info = {
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1
         }
     }
-    outputs_info = {
+    _outputs_info = {
         'output_x': {
             'units': '1'
         },
@@ -79,7 +79,7 @@ class Dummy(OpenWaterComponent):
             'units': '1'
         }
     }
-    solver_history = 1
+    _solver_history = 1
 
     def initialise(self,
                    # component states
@@ -127,7 +127,7 @@ class Dummy(OpenWaterComponent):
 
 class DummyFortran(Dummy):
     # overwrite states to explicitly set array order
-    states_info = {
+    _states_info = {
         'state_a': {
             'units': '1',
             'divisions': 1,

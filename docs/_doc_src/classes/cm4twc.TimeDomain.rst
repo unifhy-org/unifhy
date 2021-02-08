@@ -43,4 +43,5 @@ Attributes
    ~cm4twc.TimeDomain.bounds
    ~cm4twc.TimeDomain.units
    ~cm4twc.TimeDomain.calendar
+   ~cm4twc.TimeDomain.period
    ~cm4twc.TimeDomain.timedelta

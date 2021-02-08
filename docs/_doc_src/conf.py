@@ -16,6 +16,7 @@ import os
 import sys
 from git import Repo
 sys.path.insert(0, os.path.abspath('../..'))
+sys.path.append(os.path.abspath("./_doc_ext"))
 
 
 with open('../../cm4twc/version.py') as fv:
@@ -23,7 +24,7 @@ with open('../../cm4twc/version.py') as fv:
 
 # -- Project information -----------------------------------------------------
 project = 'cm4twc'
-copyright = '{}, NCAS–UKCEH–BGS.'.format(
+copyright = '{}, UK Centre for Ecology & Hydrology.'.format(
     datetime.now().year
 )
 author = 'Thibault Hallouin'
@@ -49,7 +50,9 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.githubpages',
     'nbsphinx',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    # internal extensions
+    'autocomponent'
 ]
 
 # Boolean indicating whether to scan all found documents for
@@ -141,10 +144,12 @@ html_sidebars = {
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
+html_baseurl = 'https://hydro-jules.github.io/cm4twc/'
+
 html_theme_options = {
-    'canonical_url': 'https://hydro-jules.github.io/cm4twc/',
     'prev_next_buttons_location': None,
-    'navigation_depth': 3
+    'navigation_depth': 4,
+    'collapse_navigation': False
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
@@ -175,7 +180,7 @@ repo = Repo(search_parent_directories=True)
 remote_url = repo.remotes.origin.url
 
 versions = [
-    (tag.tag, os.sep.join([html_theme_options['canonical_url'], tag.tag]))
+    (tag.tag, os.sep.join([html_baseurl, tag.tag]))
     for tag in repo.tags
 ]
 html_context = {

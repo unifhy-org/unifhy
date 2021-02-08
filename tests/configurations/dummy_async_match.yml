@@ -1,10 +1,10 @@
 identifier: test-dummy-sync-match
 config_directory: outputs
-output_directory: outputs
+saving_directory: outputs
 surfacelayer:
   module: tests.components.surfacelayer.dummy
   class: Dummy
-  output_directory: outputs
+  saving_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
@@ -21,6 +21,12 @@ surfacelayer:
     altitude_extent: [0, 4]
     altitude_resolution: 4
     altitude_location: centre
+    land_sea_mask:
+      files: [data/dummy_global_land_sea_mask_1deg.nc]
+      select: land_sea_mask
+    flow_direction:
+      files: [data/dummy_global_flow_direction_1deg.nc]
+      select: flow_direction
   dataset:
     driving_a:
       files: [data/dummy_surfacelayer_data_daily_1deg.nc]
@@ -36,7 +42,7 @@ surfacelayer:
       select: ancillary_c
   parameters: null
   constants: null
-  outputs:
+  records:
     output_x:
       timedelta(days=1): [instantaneous]
       timedelta(days=6): [cumulative, average, min, max]
@@ -51,7 +57,7 @@ surfacelayer:
 subsurface:
   module: tests.components.subsurface.dummy
   class: Dummy
-  output_directory: outputs
+  saving_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
@@ -68,6 +74,8 @@ subsurface:
     altitude_extent: [0, 4]
     altitude_resolution: 4
     altitude_location: centre
+    land_sea_mask: null
+    flow_direction: null
   dataset:
     driving_a:
       files: [data/dummy_subsurface_data_3daily_1deg.nc]
@@ -75,7 +83,7 @@ subsurface:
   parameters:
     parameter_a: 1
   constants: null
-  outputs:
+  records:
     output_x:
       timedelta(days=3): [point]
       timedelta(days=6): [sum, mean, minimum, maximum]
@@ -90,7 +98,7 @@ subsurface:
 openwater:
   module: tests.components.openwater.dummy
   class: Dummy
-  output_directory: outputs
+  saving_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-13 09:00:00
@@ -107,6 +115,8 @@ openwater:
     altitude_extent: [0, 4]
     altitude_resolution: 4
     altitude_location: centre
+    land_sea_mask: null
+    flow_direction: null
   dataset:
     ancillary_b:
       files: [data/dummy_openwater_data_2daily_1deg.nc]
@@ -115,7 +125,7 @@ openwater:
     parameter_c: 3
   constants:
     constant_c: 3
-  outputs:
+  records:
     output_x:
       timedelta(days=2): [point]
       timedelta(days=6): [sum, mean, minimum, maximum]

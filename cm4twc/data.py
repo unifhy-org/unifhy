@@ -10,7 +10,7 @@ class DataSet(MutableMapping):
     """
 
     def __init__(self, files=None, name_mapping=None, select=None):
-        """**Initialisation**
+        """**Instantiation**
 
         :Parameters:
 
@@ -54,10 +54,10 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            air_temperature: air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-            rainfall_flux: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
-            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
-            soil_temperature: soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+            air_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+            rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            soil_temperature(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
         }
         >>> ds = DataSet(
         ...     files='data/sciencish_driving_data_daily.nc',
@@ -66,8 +66,8 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            rainfall: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
-            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            rainfall(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         """
         self._variables = {}
@@ -98,8 +98,9 @@ class DataSet(MutableMapping):
     def __str__(self):
         return "\n".join(
             ["DataSet{"] +
-            ["    {}: {!r}".format(v, self._variables[v]).replace(
-                '<CF Field: ', '').replace('>', '')
+            ["    {!r}".format(self._variables[v]).replace(
+                '<CF Field: ', '').replace('>', '').replace(
+                self._variables[v].identity(), v)
              for v in sorted(self._variables)] +
             ["}"]
         ) if self._variables else "DataSet{ }"
@@ -151,7 +152,7 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         >>> ds.load_from_file(
         ...     files='data/sciencish_driving_data_daily.nc',
@@ -159,8 +160,8 @@ class DataSet(MutableMapping):
         ... )
         >>> print(ds)
         DataSet{
-            rainfall_flux: rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
-            snowfall_flux: snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            rainfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         """
         self.update(
@@ -169,15 +170,67 @@ class DataSet(MutableMapping):
 
     @staticmethod
     def _get_dict_variables_from_file(files, name_mapping, select):
-        return {
-            name_mapping[field.standard_name]
-            if name_mapping and (field.standard_name in name_mapping)
-            else field.standard_name: cf.Field(source=field, copy=False)
-            for field in cf.read(files, select=select)
-        }
+        variables = {}
+
+        for field in cf.read(files, select=select):
+            # look for name to use as key in variables dict
+            field_names = []
+            name_in_mapping = None
+
+            # loop by increasing order of priority
+            for attrib in ['long_name', 'standard_name']:
+                if hasattr(field, attrib):
+                    field_names.append(getattr(field, attrib))
+                    if name_mapping:
+                        if ('{}={}'.format(attrib, getattr(field, attrib))
+                                in name_mapping):
+                            name_in_mapping = name_mapping[
+                                '{}={}'.format(attrib, getattr(field, attrib))
+                            ]
+                        elif getattr(field, attrib) in name_mapping:
+                            name_in_mapping = name_mapping[
+                                getattr(field, attrib)
+                            ]
+
+            if name_in_mapping is None:
+                # try to use the latest (highest priority) name found
+                try:
+                    key = field_names[-1]
+                except IndexError:
+                    raise RuntimeError(
+                        'variable {} missing standard_name or long_name '
+                        'attribute'.format(field.nc_get_variable())
+                    )
+            else:
+                # use the renaming requested
+                key = name_in_mapping
+
+            # assign field to variables dict
+            variables[key] = cf.Field(source=field, copy=False)
+
+        return variables
 
     @classmethod
     def from_config(cls, cfg):
+        """**Examples**
+
+        >>> config = {
+        ...     'rainfall': {
+        ...         'files': 'data/sciencish_driving_data_daily.nc',
+        ...         'select': 'rainfall_flux'
+        ...     },
+        ...     'snowfall_flux': {
+        ...         'files': ['data/sciencish_driving_data_daily.nc'],
+        ...         'select': 'snowfall_flux'
+        ...     }
+        ... }
+        >>> ds = DataSet.from_config(config)
+        >>> print(ds)
+        DataSet{
+            rainfall(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+            snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
+        }
+        """
         inst = cls()
         if cfg:
             for var in cfg:
@@ -189,9 +242,37 @@ class DataSet(MutableMapping):
         return inst
 
     def to_config(self):
-        return {
-            var: {
-                'files': self[var].data.get_filenames(),
-                'select': self[var].standard_name
-            } for var in self
+        """**Examples**
+
+        >>> ds = DataSet(
+        ...     files='data/sciencish_driving_data_daily.nc',
+        ...     select=['rainfall_flux', 'standard_name=snowfall_flux'],
+        ...     name_mapping={'standard_name=rainfall_flux': 'rainfall'}
+        ... )
+        >>> config = ds.to_config()
+        >>> import json
+        >>> print(json.dumps(config, sort_keys=True, indent=4))  # doctest: +ELLIPSIS
+        {
+            "rainfall": {
+                "files": [
+                    ...data/sciencish_driving_data_daily.nc"
+                ],
+                "select": "rainfall_flux"
+            },
+            "snowfall_flux": {
+                "files": [
+                    ...data/sciencish_driving_data_daily.nc"
+                ],
+                "select": "snowfall_flux"
+            }
         }
+        """
+        cfg = {}
+
+        for var in self:
+            cfg[var] = {
+                'files': list(self[var].data.get_filenames()),
+                'select': self[var].identity()
+            }
+
+        return cfg

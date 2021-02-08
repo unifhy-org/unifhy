@@ -11,8 +11,9 @@ from tests.test_time import (get_dummy_timedomain,
                              get_dummy_dumping_frequency)
 from tests.test_components.test_component import get_dummy_component
 from tests.test_components.test_utils.test_states import compare_states
-from tests.test_components.test_utils.test_outputs import (get_expected_output, get_produced_output,
-                                                           exp_outputs_raw)
+from tests.test_components.test_utils.test_records import (get_expected_record,
+                                                           get_produced_record,
+                                                           exp_records_raw)
 
 
 class Simulator(object):
@@ -72,7 +73,7 @@ class Simulator(object):
                 '' if id_trail is None else id_trail
             ),
             config_directory='outputs',
-            output_directory='outputs',
+            saving_directory='outputs',
             surfacelayer=surfacelayer,
             subsurface=subsurface,
             openwater=openwater
@@ -91,36 +92,79 @@ class Simulator(object):
             dumping_frequency=get_dummy_dumping_frequency(self.time_)
         )
 
-    def resume_model(self):
-        self.model.resume(
-            tag='run',
-            at=(get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
-                - get_dummy_dumping_frequency(self.time_))
-        )
+    def resume_model(self, tag='run'):
+        if tag == 'run':
+            at = (get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
+                  - get_dummy_dumping_frequency(self.time_))
+        else:  # spinup
+            at = (get_dummy_spin_up_start_end()[-1]
+                  - get_dummy_dumping_frequency(self.time_))
+
+        self.model.resume(tag=tag, at=at)
 
     def clean_up_files(self):
-        files = []
+        # clean up configuration files created
+        self.clean_up_config_files()
         # clean up dump files potentially created
+        self.clean_up_dump_files()
+        # clean up record files potentially created
+        self.clean_up_record_files()
+
+    def clean_up_config_files(self):
+        files = glob(os.sep.join([self.model.config_directory,
+                                  self.model.identifier + '*.yml']))
+        # convert config file list to set to avoid potential duplicates
+        for f in set(files):
+            os.remove(f)
+
+    def clean_up_dump_files(self):
+        files = []
         files.extend(
-            glob(os.sep.join([self.model.exchanger.output_directory,
+            glob(os.sep.join([self.model.exchanger.saving_directory,
                               self.model.identifier + '*_dump*.nc']))
         )
-        # clean up output files potentially created
-        files.extend(
-            glob(os.sep.join([self.model.exchanger.output_directory,
-                              self.model.identifier + '*_out*.nc']))
-        )
-        # clean up configuration files created
-        files.extend(
-            glob(os.sep.join([self.model.config_directory,
-                              self.model.identifier + '*.yml']))
-        )
+        if self.model.surfacelayer.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.surfacelayer.saving_directory,
+                                  self.model.identifier + '*_dump*.nc']))
+            )
+        if self.model.subsurface.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.subsurface.saving_directory,
+                                  self.model.identifier + '*_dump*.nc']))
+            )
+        if self.model.openwater.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.openwater.saving_directory,
+                                  self.model.identifier + '*_dump*.nc']))
+            )
         # convert dumps list to set to avoid potential duplicates
         for f in set(files):
             os.remove(f)
 
+    def clean_up_record_files(self):
+        files = []
+        if self.model.surfacelayer.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.surfacelayer.saving_directory,
+                                  self.model.identifier + '*_records*.nc']))
+            )
+        if self.model.subsurface.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.subsurface.saving_directory,
+                                  self.model.identifier + '*_records*.nc']))
+            )
+        if self.model.openwater.saving_directory is not None:
+            files.extend(
+                glob(os.sep.join([self.model.openwater.saving_directory,
+                                  self.model.identifier + '*_records*.nc']))
+            )
+        # convert record file list to set to avoid potential duplicates
+        for f in set(files):
+            os.remove(f)
 
-class TestModel(object):
+
+class BasicTestModel(object):
     # flag to specify whether components are to run at same temporal resolution
     # or at different temporal resolutions
     t = None
@@ -137,170 +181,6 @@ class TestModel(object):
 
     def shortDescription(self):
         return None
-
-    def test_setup_spinup_simulate_resume(self):
-        """
-        The purpose of this test is to check that a complete workflow is
-        functional, i.e.:
-        - configure model;
-        - spin-up model;
-        - simulate model main run;
-        - resume model main run at second-to-last snapshot.
-
-        The test generates a 'design of experiment' (doe) to consider
-        all possible combinations of actual `Component`, `DataComponent`,
-        and `NullComponent`. Then, each experiment (i.e. each
-        combination) is used as a subtest.
-
-        The functional character of the workflow is tested through:
-        - completing with no error;
-        - checking equality of the final component states at the end of
-          simulate and at the end of resume.
-
-        Note, this test does not check for correctness of final
-        states and transfers conditions, nor correctness of final
-        outputs because when one or more `NullComponent` is used in the
-        combination, the final conditions are not expected to be
-        'correct', and even less so 'consistent' from one combination
-        to the next.
-        """
-        # generator of all possible component combinations
-        # (i.e. full factorial design of experiment) as
-        # tuple(surfacelayer kind, subsurface kind, openwater kind)
-        # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
-        doe = ((sl, ss, ow)
-               for sl in ('c', 'd', 'n')
-               for ss in ('c', 'd', 'n')
-               for ow in ('c', 'd', 'n'))
-
-        # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind in doe:
-            with self.subTest(surfacelayer=sl_kind,
-                              subsurface=ss_kind,
-                              openwater=ow_kind):
-                # set up, spinup, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   sl_kind, ss_kind, ow_kind)
-                simulator.spinup_model()
-                simulator.run_model()
-
-                # store the last component states
-                last_states_sl = deepcopy(simulator.model.surfacelayer.states)
-                last_states_ss = deepcopy(simulator.model.subsurface.states)
-                last_states_ow = deepcopy(simulator.model.openwater.states)
-
-                # resume model
-                simulator.resume_model()
-
-                # check final state values are coherent
-                self.assertTrue(
-                    compare_states(last_states_sl,
-                                   simulator.model.surfacelayer.states)
-                )
-                self.assertTrue(
-                    compare_states(last_states_ss,
-                                   simulator.model.subsurface.states)
-                )
-                self.assertTrue(
-                    compare_states(last_states_ow,
-                                   simulator.model.openwater.states)
-                )
-
-                # clean up
-                simulator.clean_up_files()
-
-    def test_setup_simulate(self):
-        """
-        The purpose of this test is to check that a standard workflow
-        is functional, i.e.:
-        - configure model;
-        - simulate model main run.
-
-        The test generates a 'design of experiment' (doe) to consider
-        all possible combinations of actual `Component` and
-        `DataComponent`. Then, each experiment (i.e. each combination)
-        is used as a subtest.
-
-        The functional character of the workflow is tested through:
-        - completing with no error;
-        - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values;
-        - checking the correctness of the all component outputs (i.e.
-          all component states, all component transfers, and all
-          component outputs).
-        """
-        doe = ((sl, ss, ow)
-               for sl in ('c', 'd')
-               for ss in ('c', 'd')
-               for ow in ('c', 'd'))
-
-        # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind in doe:
-            with self.subTest(surfacelayer=sl_kind,
-                              subsurface=ss_kind,
-                              openwater=ow_kind):
-
-                # set up, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   sl_kind, ss_kind, ow_kind)
-                simulator.run_model()
-
-                # check final state and transfer values
-                self.check_final_conditions(simulator.model)
-                # check outputs
-                self.check_outputs(simulator.model)
-
-                # clean up
-                simulator.clean_up_files()
-
-    def test_setup_simulate_various_sources(self):
-        """
-        The purpose of this test is to check that, no matter the
-        language of the component source code, a standard workflow
-        is functional, i.e.:
-        - configure model;
-        - simulate model main run.
-
-        The test generates a 'design of experiment' (doe) to consider
-        all possible combinations of source code in Python, Fortran, and
-        C. Then, each experiment (i.e. each combination)  is used as a
-        subtest.
-
-        The test only works with one combination of actual components.
-
-        The functional character of the workflow is tested through:
-        - completing with no error;
-        - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values;
-        - checking the correctness of the all component outputs (i.e.
-          all component states, all component transfers, and all
-          component outputs).
-        """
-        doe = ((sl, ss, ow)
-               for sl in ('Python', 'Fortran', 'C')
-               for ss in ('Python', 'Fortran', 'C')
-               for ow in ('Python', 'Fortran', 'C'))
-
-        # loop through all possible combinations of component sources
-        for sl_src, ss_src, ow_src in doe:
-            with self.subTest(surfacelayer=sl_src,
-                              subsurface=ss_src,
-                              openwater=ow_src):
-                # set up, and run model
-                simulator = Simulator.from_scratch(self.t, self.s,
-                                                   'c', 'c', 'c',
-                                                   {'surfacelayer': sl_src,
-                                                    'subsurface': ss_src,
-                                                    'openwater': ow_src})
-                simulator.run_model()
-
-                # check final state and transfer values
-                self.check_final_conditions(simulator.model)
-                # check outputs
-                self.check_outputs(simulator.model)
-
-                # clean up
-                simulator.clean_up_files()
 
     def test_spinup_dump_init_spinup(self):
         """
@@ -324,7 +204,7 @@ class TestModel(object):
         the 12-day period, the final conditions with spinup+spinup
         will be the same as with simulate without spinup, which means
         that correctness of final conditions can be checked, but not
-        outputs because they are scattered across two files of for
+        records because they are scattered across two files of for
         simulation periods 6 days each.
         """
         # set up a model, and spin it up
@@ -337,20 +217,20 @@ class TestModel(object):
 
         # use dump of first model as initial conditions for second model
         simulator_2.model.surfacelayer.initialise_states_from_dump(
-            os.sep.join([simulator_1.model.surfacelayer.output_directory,
+            os.sep.join([simulator_1.model.surfacelayer.saving_directory,
                          simulator_1.model.surfacelayer.dump_file])
         )
         simulator_2.model.subsurface.initialise_states_from_dump(
-            os.sep.join([simulator_1.model.subsurface.output_directory,
+            os.sep.join([simulator_1.model.subsurface.saving_directory,
                          simulator_1.model.subsurface.dump_file])
         )
         simulator_2.model.openwater.initialise_states_from_dump(
-            os.sep.join([simulator_1.model.openwater.output_directory,
+            os.sep.join([simulator_1.model.openwater.saving_directory,
                          simulator_1.model.openwater.dump_file])
         )
 
         simulator_2.model.initialise_transfers_from_dump(
-            os.sep.join([simulator_1.model.exchanger.output_directory,
+            os.sep.join([simulator_1.model.exchanger.saving_directory,
                          simulator_1.model.exchanger.dump_file])
         )
 
@@ -370,7 +250,8 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values.
+        - checking the correctness of the final exchanger transfer values;
+        - checking the values in the record files.
         """
         # set up a model from yaml configuration file
         simulator = Simulator.from_yaml(self.t, self.s)
@@ -380,11 +261,108 @@ class TestModel(object):
 
         # check final state and transfer values
         self.check_final_conditions(simulator.model)
-        # check outputs
-        self.check_outputs(simulator.model)
+        # check records
+        self.check_records(simulator.model)
 
         # clean up
         simulator.clean_up_files()
+
+    def test_setup_simulate_resume_run(self):
+        """
+        The purpose of this test is to check that the following workflow
+        is functional:
+        - configure model;
+        - simulate model main run;
+        - resume model main run at second-to-last snapshot.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values;
+        - checking the values in the record files.
+        """
+        # set up a model from yaml configuration file
+        simulator = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
+
+        # start main run
+        simulator.run_model()
+
+        # start main run
+        simulator.resume_model()
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator.model)
+        # check records
+        self.check_records(simulator.model)
+
+        # clean up
+        simulator.clean_up_files()
+
+    def test_setup_spinup_yaml_resume_spinup(self):
+        """
+        The purpose of this test is to check that the following workflow
+        is functional:
+        - configure first model;
+        - spin-up first model (2 cycles);
+        - configure second model using YAML configuration file of first model;
+        - resume second model first spinup at second-to-last snapshot;
+        - configure third model using YAML configuration file of first model;
+        - resume third model second spinup at second-to-last snapshot.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values.
+
+        Note, since simulate period is of 12 days, and each spinup cycle
+        is of 6 days, and given that the driving data is constant for
+        the 12-day period, the final conditions with spinup+spinup
+        will be the same as with simulate without spinup, which means
+        that correctness of final conditions can be checked, but not
+        records because they are scattered across two files of for
+        simulation periods 6 days each.
+        """
+        # set up a model
+        simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
+
+        # spinup model
+        simulator_1.spinup_model()
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_1.model)
+
+        # set up another model using YAML of first model
+        simulator_2 = Simulator(
+            self.t, self.s,
+            cm4twc.Model.from_yaml(
+                os.sep.join([simulator_1.model.saving_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # start main run
+        simulator_2.resume_model(tag='spinup1')
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_2.model)
+
+        # set up yet another model using YAML of first model
+        simulator_3 = Simulator(
+            self.t, self.s,
+            cm4twc.Model.from_yaml(
+                os.sep.join([simulator_1.model.saving_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # start main run
+        simulator_3.resume_model(tag='spinup2')
+
+        # check final state and transfer values
+        self.check_final_conditions(simulator_3.model)
+
+        # clean up
+        simulator_1.clean_up_files()
 
     def test_setup_yaml_setup_simulate(self):
         """
@@ -397,7 +375,8 @@ class TestModel(object):
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
-        - checking the correctness of the final exchanger transfer values.
+        - checking the correctness of the final exchanger transfer values;
+        - checking the values in the record files.
         """
         # set up a model
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
@@ -406,7 +385,7 @@ class TestModel(object):
         simulator_2 = Simulator(
             self.t, self.s,
             cm4twc.Model.from_yaml(
-                os.sep.join([simulator_1.model.output_directory,
+                os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
         )
@@ -416,8 +395,8 @@ class TestModel(object):
 
         # check final state and transfer values
         self.check_final_conditions(simulator_2.model)
-        # check outputs
-        self.check_outputs(simulator_2.model)
+        # check records
+        self.check_records(simulator_2.model)
 
         # clean up
         simulator_2.clean_up_files()
@@ -445,14 +424,14 @@ class TestModel(object):
         # if component is "real", otherwise no states
         if not isinstance(component, cm4twc.DataComponent):
             for state in ['state_a', 'state_b']:
-                if exp_outputs_raw[self.t][cat].get(state) is None:
+                if exp_records_raw[self.t][cat].get(state) is None:
                     # some components feature only one state
                     continue
                 # retrieve last state values
                 arr = component.states[state][-1]
                 # compare both min/max, as arrays are homogeneous
                 try:
-                    val = exp_outputs_raw[self.t][cat][state][-1]
+                    val = exp_records_raw[self.t][cat][state][-1]
                     self.assertEqual(np.amin(arr), val)
                     self.assertEqual(np.amax(arr), val)
                 except AssertionError as e:
@@ -471,7 +450,7 @@ class TestModel(object):
             arr = exchanger.transfers[transfer]['slices'][-1]
             cat = exchanger.transfers[transfer]['src_cat']
             # compare both min/max, as array should be homogeneous
-            val = exp_outputs_raw[self.t][cat][transfer][-1]
+            val = exp_records_raw[self.t][cat][transfer][-1]
             try:
                 self.assertAlmostEqual(np.amin(arr), val)
                 self.assertAlmostEqual(np.amax(arr), val)
@@ -479,10 +458,10 @@ class TestModel(object):
                 raise AssertionError(
                     "error for {}".format(transfer)) from e
 
-    def check_outputs(self, model):
+    def check_records(self, model):
         """
         This method checks that all values of all component states
-        component transfers, component outputs are correct, from start
+        component transfers, component records are correct, from start
         to end.
         """
         for component in [model.surfacelayer,
@@ -490,16 +469,16 @@ class TestModel(object):
                           model.openwater]:
             rtol, atol = cm4twc.rtol(), cm4twc.atol()
 
-            # if component is "real", otherwise no outputs requested
+            # if component is "real", otherwise no records requested
             cat = component.category
             if not isinstance(component, cm4twc.DataComponent):
-                for name, frequencies in component.outputs.items():
+                for name, frequencies in component.records.items():
                     for delta, methods in frequencies.items():
                         for method in methods:
-                            exp_t, exp_b, exp_o = get_expected_output(
+                            exp_t, exp_b, exp_o = get_expected_record(
                                 self.t, component, name, delta, method
                             )
-                            prd_t, prd_b, prd_o = get_produced_output(
+                            prd_t, prd_b, prd_o = get_produced_record(
                                 component, name, delta, method
                             )
                             try:
@@ -526,28 +505,204 @@ class TestModel(object):
                                 ) from e
 
 
-class TestModelSameTimeSameSpace(TestModel, unittest.TestCase):
+class AdvancedTestModel(BasicTestModel):
+
+    def test_setup_spinup_simulate_resume(self):
+        """
+        The purpose of this test is to check that a complete workflow is
+        functional, i.e.:
+        - configure first model;
+        - spin-up first model;
+        - simulate first model main run;
+        - configure second model using YAML configuration file of first model;
+        - resume second model main run at second-to-last snapshot.
+
+        The test generates a 'design of experiment' (doe) to consider
+        all possible combinations of actual `Component`, `DataComponent`,
+        and `NullComponent`. Then, each experiment (i.e. each
+        combination) is used as a subtest.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking equality of the final component states at the end of
+          simulate and at the end of resume.
+
+        Note, this test does not check for correctness of final
+        states and transfers conditions, nor correctness of final
+        records because when one or more `NullComponent` is used in the
+        combination, the final conditions are not expected to be
+        'correct', and even less so 'consistent' from one combination
+        to the next.
+        """
+        # generator of all possible component combinations
+        # (i.e. full factorial design of experiment) as
+        # tuple(surfacelayer kind, subsurface kind, openwater kind)
+        # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
+        doe = ((sl, ss, ow)
+               for sl in ('c', 'd', 'n')
+               for ss in ('c', 'd', 'n')
+               for ow in ('c', 'd', 'n'))
+
+        # loop through all possible combinations of components
+        for sl_kind, ss_kind, ow_kind in doe:
+            with self.subTest(surfacelayer=sl_kind,
+                              subsurface=ss_kind,
+                              openwater=ow_kind):
+                # set up, spinup, and run model
+                simulator_1 = Simulator.from_scratch(self.t, self.s,
+                                                     sl_kind, ss_kind, ow_kind)
+                simulator_1.spinup_model()
+                simulator_1.run_model()
+
+                # store the last component states
+                last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
+                last_states_ss = deepcopy(simulator_1.model.subsurface.states)
+                last_states_ow = deepcopy(simulator_1.model.openwater.states)
+
+                # set up another model using YAML of first model
+                simulator_2 = Simulator(
+                    self.t, self.s,
+                    cm4twc.Model.from_yaml(
+                        os.sep.join([simulator_1.model.saving_directory,
+                                     '{}.yml'.format(simulator_1.model.identifier)])
+                    )
+                )
+
+                # resume model
+                simulator_2.resume_model()
+
+                # check final state values are coherent
+                self.assertTrue(
+                    compare_states(last_states_sl,
+                                   simulator_2.model.surfacelayer.states)
+                )
+                self.assertTrue(
+                    compare_states(last_states_ss,
+                                   simulator_2.model.subsurface.states)
+                )
+                self.assertTrue(
+                    compare_states(last_states_ow,
+                                   simulator_2.model.openwater.states)
+                )
+
+                # clean up
+                simulator_1.clean_up_files()
+
+    def test_setup_simulate(self):
+        """
+        The purpose of this test is to check that a standard workflow
+        is functional, i.e.:
+        - configure model;
+        - simulate model main run.
+
+        The test generates a 'design of experiment' (doe) to consider
+        all possible combinations of actual `Component` and
+        `DataComponent`. Then, each experiment (i.e. each combination)
+        is used as a subtest.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values;
+        - checking the correctness of the all component records (i.e.
+          all component states, all component transfers, and all
+          component outputs).
+        """
+        doe = ((sl, ss, ow)
+               for sl in ('c', 'd')
+               for ss in ('c', 'd')
+               for ow in ('c', 'd'))
+
+        # loop through all possible combinations of components
+        for sl_kind, ss_kind, ow_kind in doe:
+            with self.subTest(surfacelayer=sl_kind,
+                              subsurface=ss_kind,
+                              openwater=ow_kind):
+
+                # set up, and run model
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   sl_kind, ss_kind, ow_kind)
+                simulator.run_model()
+
+                # check final state and transfer values
+                self.check_final_conditions(simulator.model)
+                # check records
+                self.check_records(simulator.model)
+
+                # clean up
+                simulator.clean_up_files()
+
+    def test_setup_simulate_various_sources(self):
+        """
+        The purpose of this test is to check that, no matter the
+        language of the component source code, a standard workflow
+        is functional, i.e.:
+        - configure model;
+        - simulate model main run.
+
+        The test generates a 'design of experiment' (doe) to consider
+        all possible combinations of source code in Python, Fortran, and
+        C. Then, each experiment (i.e. each combination)  is used as a
+        subtest.
+
+        The test only works with one combination of actual components.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking the correctness of the final component state values;
+        - checking the correctness of the final exchanger transfer values;
+        - checking the correctness of the all component records (i.e.
+          all component states, all component transfers, and all
+          component outputs).
+        """
+        doe = ((sl, ss, ow)
+               for sl in ('Python', 'Fortran', 'C')
+               for ss in ('Python', 'Fortran', 'C')
+               for ow in ('Python', 'Fortran', 'C'))
+
+        # loop through all possible combinations of component sources
+        for sl_src, ss_src, ow_src in doe:
+            with self.subTest(surfacelayer=sl_src,
+                              subsurface=ss_src,
+                              openwater=ow_src):
+                # set up, and run model
+                simulator = Simulator.from_scratch(self.t, self.s,
+                                                   'c', 'c', 'c',
+                                                   {'surfacelayer': sl_src,
+                                                    'subsurface': ss_src,
+                                                    'openwater': ow_src})
+                simulator.run_model()
+
+                # check final state and transfer values
+                self.check_final_conditions(simulator.model)
+                # check records
+                self.check_records(simulator.model)
+
+                # clean up
+                simulator.clean_up_files()
+
+class TestModelSameTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
     t = 'sync'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
 
-class TestModelDiffTimeSameSpace(TestModel, unittest.TestCase):
+class TestModelDiffTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at same spatial resolution
     s = 'match'
 
 
-class TestModelSameTimeDiffSpace(TestModel, unittest.TestCase):
+class TestModelSameTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
     t = 'sync'
     # flag to specify that components are to run at different spatial resolutions
     s = 'remap'
 
 
-class TestModelDiffTimeDiffSpace(TestModel, unittest.TestCase):
+class TestModelDiffTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
     t = 'async'
     # flag to specify that components are to run at different spatial resolutions

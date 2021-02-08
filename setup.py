@@ -2,7 +2,7 @@
 from setuptools import setup
 
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_desc = fh.read()
 
 with open('cm4twc/version.py') as fv:
@@ -15,14 +15,14 @@ setup(
 
     description='Community Model for the Terrestrial Water Cycle',
     long_description=long_desc,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
 
     url='https://github.com/hydro-jules/cm4twc',
 
     author='Thibault Hallouin',
-    author_email='https://hydro-jules.org/',
+    author_email='thibault.hallouin@ncas.ac.uk',
 
-    license='GPLv3',
+    license='BSD-3',
 
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -37,7 +37,7 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX :: Linux',
 
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: BSD License',
 
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -55,5 +55,14 @@ setup(
         'cfunits',
         'netCDF4>=1.5',
         'pyyaml>=5.3'
-    ]
+    ],
+
+    extras_require={
+        'docs': [
+            'sphinx',
+            'nbsphinx',
+            'sphinx_rtd_theme',
+            'gitpython'
+        ]
+    }
 )
