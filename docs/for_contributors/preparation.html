@@ -288,30 +288,26 @@ for inclusion in the science repository of the framework.</p>
 <p>You can then follow the steps below to prepare your component contribution:</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#create-your-component-by-subclassing-a-generic-framework-component" id="id7">Create your component by subclassing a generic framework component</a></p></li>
-<li><p><a class="reference internal" href="#document-your-component-by-filling-in-your-class-docstring" id="id8">Document your component by filling in your class docstring</a></p></li>
-<li><p><a class="reference internal" href="#define-your-component-by-using-component-class-attributes" id="id9">Define your component by using component class attributes</a></p></li>
-<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id10">Implement the initialise-run-finalise component class methods</a></p></li>
+<li><p><a class="reference internal" href="#create-your-component-by-subclassing-a-generic-framework-component" id="id6">Create your component by subclassing a generic framework component</a></p></li>
+<li><p><a class="reference internal" href="#document-your-component-by-filling-in-your-class-docstring" id="id7">Document your component by filling in your class docstring</a></p></li>
+<li><p><a class="reference internal" href="#define-your-component-by-using-component-class-attributes" id="id8">Define your component by using component class attributes</a></p></li>
+<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id9">Implement the initialise-run-finalise component class methods</a></p></li>
 </ul>
 </div>
 <div class="section" id="create-your-component-by-subclassing-a-generic-framework-component">
 <h2>Create your component by subclassing a generic framework component<a class="headerlink" href="#create-your-component-by-subclassing-a-generic-framework-component" title="Permalink to this headline">¶</a></h2>
 <p>In the modelling framework, the terrestrial water cycle is divided into
 three components, i.e. <a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../for_users/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>,
-and <a class="reference internal" href="../for_users/classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> (see <a class="reference internal" href="#fig-diagram"><span class="std std-ref">Fig. 1</span></a>). These are the
+and <a class="reference internal" href="../for_users/classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> (see <a class="reference internal" href="../index.html#fig-diagram"><span class="std std-ref">Fig. 1</span></a>). These are the
 three framework components to create subclasses from.</p>
-<div class="figure align-center" id="id1">
-<span id="fig-diagram"></span><a class="reference internal image-reference" href="../_images/framework_diagram.png"><img alt="modelling framework diagram" src="../_images/framework_diagram.png" style="width: 385.0px; height: 414.0px;" /></a>
-<p class="caption"><span class="caption-text">Fig. 1: Diagram of the Modelling Framework Blueprint for <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</div>
 <p>Each component features a fixed interface (i.e. a pre-defined set of
 transfers of information with the other components of the framework):
 inwards information (variables that are given to the component), and
 outwards information (variables that are computed by the component),
 see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>.</p>
-<div class="figure align-center" id="id2">
-<span id="fig-transfers"></span><a class="reference internal image-reference" href="../_images/framework_transfers.png"><img alt="component transfers" src="../_images/framework_transfers.png" style="width: 484.0px; height: 286.0px;" /></a>
-<p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<div class="figure align-center" id="id1">
+<span id="fig-transfers"></span><a class="reference internal image-reference" href="../_images/framework_detailed_transfers.png"><img alt="component transfers" src="../_images/framework_detailed_transfers.png" style="width: 634.8px; height: 458.4px;" /></a>
+<p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
 <p>Contributions to the science repository of <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> need to comply with
 this fixed interface. If your contribution to <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> is overlapping
@@ -326,8 +322,8 @@ the data and science elements of the component.</p>
 <p>Creating your contribution as a Python class can simply be done by
 subclassing from the relevant framework component, e.g. a surface layer
 component named <code class="xref py py-obj docutils literal notranslate"><span class="pre">MyContribution</span></code> would be created as follows:</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
 
 
@@ -346,8 +342,8 @@ alongside a field list containing e.g. name(s) of contributor(s),
 affiliation(s) of contributor(s), licence, copyright, etc. must be provided.
 To do so, use your class docstring and follow a <a class="reference external" href="https://docutils.sourceforge.io/docs/user/rst/quickref.html">reStructuredText syntax</a> as
 in the example below.</p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
 
 
@@ -404,8 +400,8 @@ the component (accessible through <code class="xref py py-obj docutils literal n
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">_flow_direction</span></code> as True, and access it in your class methods using
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>.</p>
 <p>See a detailed example of component definition below.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
 
 
@@ -487,8 +483,8 @@ arguments in their signatures must necessarily be the ones found in the
 component class attribute (if renaming is required, this must be done
 internally to the method). Moreover, they must all feature a final
 special argument <code class="xref py py-obj docutils literal notranslate"><span class="pre">**kwargs</span></code>.</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
 
 

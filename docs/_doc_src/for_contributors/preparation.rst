@@ -21,14 +21,6 @@ three components, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
 and `OpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
 three framework components to create subclasses from.
 
-.. _fig_diagram:
-.. figure:: ../../_doc_img/framework_diagram.png
-   :scale: 50 %
-   :align: center
-   :alt: modelling framework diagram
-
-   Fig. 1: Diagram of the Modelling Framework Blueprint for `cm4twc`.
-
 Each component features a fixed interface (i.e. a pre-defined set of
 transfers of information with the other components of the framework):
 inwards information (variables that are given to the component), and
@@ -36,8 +28,8 @@ outwards information (variables that are computed by the component),
 see :ref:`Fig. 2<fig_transfers>`.
 
 .. _fig_transfers:
-.. figure:: ../../_doc_img/framework_transfers.png
-   :scale: 50 %
+.. figure:: ../../_doc_img/framework_detailed_transfers.png
+   :scale: 60 %
    :align: center
    :alt: component transfers
 

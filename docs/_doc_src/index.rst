@@ -6,12 +6,13 @@ Overview
 
 .. include:: ../../README.rst
 
+.. _fig_diagram:
 .. figure:: ../_doc_img/framework_diagram.png
    :scale: 50 %
    :align: center
    :alt: modelling framework diagram
 
-   Diagram of the Modelling Framework Blueprint for `cm4twc`.
+   Fig. 1: Diagram of the Modelling Framework Blueprint for `cm4twc`.
 
 .. add index to sidebar
 
