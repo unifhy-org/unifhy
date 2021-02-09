@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>cm4twc python package &mdash; cm4twc 0.0.1 documentation</title>
+  <title>Overview &mdash; cm4twc 0.0.1 documentation</title>
   
 
   
@@ -17,10 +17,12 @@
 
   
   
+
   
   
-    <link rel="canonical" href="https://hydro-jules.github.io/cm4twc/index.html"/>
+
   
+    <link rel="canonical" href="https://hydro-jules.github.io/cm4twc/index.html" />
 
   
   <!--[if lt IE 9]>
@@ -32,7 +34,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -40,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Overview" href="overview.html" /> 
+    <link rel="next" title="Guide for Users" href="for_users.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -54,7 +55,7 @@
           
 
           
-            <a href="#" class="icon icon-home" alt="Documentation Home"> cm4twc
+            <a href="#" class="icon icon-home"> cm4twc
           
 
           
@@ -89,19 +90,105 @@
               
             
             
-              <p class="caption"><span class="caption-text">Blueprint</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Implementation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="files.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="for_users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="for_users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="for_users/tutorial.html#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#framework">Framework</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Appendix</span></p>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/tutorial.html#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/tutorial.html#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/science_repository.html">Science Repository</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="for_users/components/surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/components/surfacelayer/cm4twc.components.surfacelayer.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/components/subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/components/subsurface/cm4twc.components.subsurface.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/components/openwater.html">Open Water Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/components/openwater/cm4twc.components.openwater.RFM.html">RFM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/api_reference.html">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="for_users/api_reference.html#model">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.Model.html">Model</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/api_reference.html#components">Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/api_reference.html#time">Time</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.TimeDomain.html">TimeDomain</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/api_reference.html#space">Space</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.LatLonGrid.html">LatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.BritishNationalGrid.html">BritishNationalGrid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="for_users/api_reference.html#data">Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="for_users/classes/cm4twc.DataSet.html">DataSet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="for_users/files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="for_contributors.html">Guide for Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="for_contributors/preparation.html">Preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/preparation.html#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/preparation.html#document-your-component-by-filling-in-your-class-docstring">Document your component by filling in your class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/preparation.html#define-your-component-by-using-component-class-attributes">Define your component by using component class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/preparation.html#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="for_contributors/submission.html">Submission</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/submission.html#get-your-own-copy-of-the-framework-repository">Get your own copy of the framework repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/submission.html#create-a-branch-on-your-copy">Create a branch on your copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/submission.html#commit-your-component-to-your-branch-in-your-local-copy">Commit your component to your branch in your local copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/submission.html#push-your-changes-to-your-remote-copy">Push your changes to your remote copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="for_contributors/submission.html#open-a-pull-request-to-merge-your-component-in-the-framework">Open a pull request to merge your component in the framework</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="for_developers.html">Guide for Developers</a></li>
+</ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
 </ul>
 
             
@@ -142,18 +229,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li><strong>cm4twc python package</strong></li>
+      <li>Overview</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
         
       </li>
     
@@ -189,29 +278,58 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="cm4twc-python-package">
-<h1><strong>cm4twc python package</strong><a class="headerlink" href="#cm4twc-python-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The Python package <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> is a hydrological framework which combines
-interchangeable modelling components for the surface layer, subsurface,
-and open water parts of the terrestrial water cycle. It is designed to
-foster collaborations between land surface and hydrological modelling
-communities.</p>
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="community-model-for-the-terrestrial-water-cycle">
+<h2>Community Model for the Terrestrial Water Cycle<a class="headerlink" href="#community-model-for-the-terrestrial-water-cycle" title="Permalink to this headline">¶</a></h2>
+<p>The Python package <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> (Community Model for the Terrestrial Water
+Cycle) is a hydrological modelling framework which combines interchangeable
+modelling components for the surface layer, subsurface, and open water
+parts of the terrestrial water cycle. It is designed to foster collaborations
+between land surface and hydrological modelling communities.</p>
 <div class="figure align-center" id="id1">
-<a class="reference internal image-reference" href="_images/framework_diagram.png"><img alt="modelling framework diagram" src="_images/framework_diagram.png" style="width: 385.0px; height: 414.0px;" /></a>
+<a class="reference internal image-reference" href="_images/framework_diagram1.png"><img alt="modelling framework diagram" src="_images/framework_diagram1.png" style="width: 385.0px; height: 414.0px;" /></a>
 <p class="caption"><span class="caption-text">Diagram of the Modelling Framework Blueprint for <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This is a working version of the framework blueprint.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The documentation is structured into three guides:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="for_users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="for_users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/tutorial.html">Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/science_repository.html">Science Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/api_reference.html">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="for_users/files.html">Files</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="for_contributors.html">Guide for Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="for_contributors/preparation.html">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="for_contributors/submission.html">Submission</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="for_developers.html">Guide for Developers</a></li>
+</ul>
 </div>
 <div class="toctree-wrapper compound">
 </div>
-<div class="toctree-wrapper compound">
 </div>
-<div class="toctree-wrapper compound">
-</div>
+<div class="section" id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>The development of this framework is funded by the NERC Hydro-JULES
+programme (NE/S017380/1).</p>
 </div>
 </div>
 
@@ -220,16 +338,14 @@ communities.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, NCAS–UKCEH–BGS.
+        &#169; Copyright 2021, UK Centre for Ecology &amp; Hydrology.
       <span class="lastupdated">
-        Last updated on Nov 17, 2020.
+        Last updated on Feb 09, 2021.
       </span>
 
     </p>
@@ -237,14 +353,13 @@ communities.</p>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

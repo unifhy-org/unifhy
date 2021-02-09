@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Submission &mdash; cm4twc 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="https://hydro-jules.github.io/cm4twc/for_contributors/submission.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Guide for Developers" href="../for_developers.html" />
+    <link rel="prev" title="Preparation" href="preparation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> cm4twc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/tutorial.html#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#framework">Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/tutorial.html#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/science_repository.html">Science Repository</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/components/surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/components/surfacelayer/cm4twc.components.surfacelayer.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/components/subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/components/subsurface/cm4twc.components.subsurface.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/components/openwater.html">Open Water Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/components/openwater/cm4twc.components.openwater.RFM.html">RFM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/api_reference.html">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#model">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.Model.html">Model</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#components">Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#time">Time</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.TimeDomain.html">TimeDomain</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#space">Space</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.LatLonGrid.html">LatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.BritishNationalGrid.html">BritishNationalGrid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#data">Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.DataSet.html">DataSet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../for_contributors.html">Guide for Contributors</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="preparation.html">Preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="preparation.html#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preparation.html#document-your-component-by-filling-in-your-class-docstring">Document your component by filling in your class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preparation.html#define-your-component-by-using-component-class-attributes">Define your component by using component class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preparation.html#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Submission</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-your-own-copy-of-the-framework-repository">Get your own copy of the framework repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-branch-on-your-copy">Create a branch on your copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit-your-component-to-your-branch-in-your-local-copy">Commit your component to your branch in your local copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#push-your-changes-to-your-remote-copy">Push your changes to your remote copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#open-a-pull-request-to-merge-your-component-in-the-framework">Open a pull request to merge your component in the framework</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_developers.html">Guide for Developers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licence.html">Licence</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cm4twc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../for_contributors.html">Guide for Contributors</a> &raquo;</li>
+        
+      <li>Submission</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="submission">
+<h1>Submission<a class="headerlink" href="#submission" title="Permalink to this headline">¶</a></h1>
+<p>This section details the procedure to follow to submit a prepared
+contribution for inclusion in the science repository of the framework.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> package is hosted on <a class="reference external" href="https://github.com/">GitHub</a> and
+the version control system <a class="reference external" href="https://git-scm.com/">git</a> is used. Hence,
+to submit your contribution, you will need a GitHub account (free
+registration available) as well as some basic knowledge of git usage.</p>
+<p>You can then follow the steps below to share your component contribution:</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#get-your-own-copy-of-the-framework-repository" id="id1">Get your own copy of the framework repository</a></p></li>
+<li><p><a class="reference internal" href="#create-a-branch-on-your-copy" id="id2">Create a branch on your copy</a></p></li>
+<li><p><a class="reference internal" href="#commit-your-component-to-your-branch-in-your-local-copy" id="id3">Commit your component to your branch in your local copy</a></p></li>
+<li><p><a class="reference internal" href="#push-your-changes-to-your-remote-copy" id="id4">Push your changes to your remote copy</a></p></li>
+<li><p><a class="reference internal" href="#open-a-pull-request-to-merge-your-component-in-the-framework" id="id5">Open a pull request to merge your component in the framework</a></p></li>
+</ul>
+</div>
+<div class="section" id="get-your-own-copy-of-the-framework-repository">
+<h2>Get your own copy of the framework repository<a class="headerlink" href="#get-your-own-copy-of-the-framework-repository" title="Permalink to this headline">¶</a></h2>
+<p>First, you need to get your own copy of the repository on your GitHub
+account. To do so, simply go to <a class="reference external" href="https://github.com/hydro-jules/cm4twc">https://github.com/hydro-jules/cm4twc</a>
+and click “Fork” in the upper right hand corner of the page. You now
+have your own online copy of the repository, hosted on GitHub under
+your account.</p>
+<p>Then, you need to get a local copy of your online copy in order to
+include your contribution(s) to the framework. To do so, you need to use
+the git clone command. On your local machine, run the following command
+in your terminal to get a copy of the repository in your current working
+directory in a folder name <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/&lt;username&gt;/cm4twc.git
+</pre></div>
+</div>
+<p>where <code class="xref py py-obj docutils literal notranslate"><span class="pre">&lt;username&gt;</span></code> needs to be replaced with your GitHub username.</p>
+</div>
+<div class="section" id="create-a-branch-on-your-copy">
+<h2>Create a branch on your copy<a class="headerlink" href="#create-a-branch-on-your-copy" title="Permalink to this headline">¶</a></h2>
+<p>Like the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> repository, your local copy of it comes with two
+branches ‘master’ and ‘dev’. It is recommended that you create a new
+branch to work on each time you work on a new component. To do so,
+navigate to the root of your local copy using the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> cm4twc
+</pre></div>
+</div>
+<p>The ‘master’ branch contains stable releases of the framework, so we
+recommend you branch from the ‘master’ branch rather than the ‘dev’ branch.
+To do so, run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git checkout -b &lt;new_branch&gt; master
+</pre></div>
+</div>
+<p>where <code class="xref py py-obj docutils literal notranslate"><span class="pre">&lt;new_branch&gt;</span></code> needs to be replaced with the name you want to give
+to your branch.</p>
+</div>
+<div class="section" id="commit-your-component-to-your-branch-in-your-local-copy">
+<h2>Commit your component to your branch in your local copy<a class="headerlink" href="#commit-your-component-to-your-branch-in-your-local-copy" title="Permalink to this headline">¶</a></h2>
+<p>The Python script containing your component implementation needs to be
+added to the repository in ‘cm4twc/components/surfacelayer’,
+‘cm4twc/components/subsurface’, or ‘cm4twc/components/openwater’
+depending on the part of the terrestrial water cycle it covers.</p>
+<p>For example, for a surface layer component named ‘My Contribution’,
+create a Python script named ‘my_contribution.py’ (please use a snake
+case naming style for the file name, for acronyms use all lowercase) in
+‘cm4twc/components/surfacelayer’ and implement your class named
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">MyContribution</span></code> (please use a camel case naming style for the class
+name, for acronyms use all uppercase) in this Python script (see section
+<a class="reference internal" href="preparation.html"><span class="doc">Preparation</span></a> for more details on how to implement it).</p>
+<p>TODO: Add to __init__.py or to components.yml?</p>
+<p>Then, stage and commit your changes to your branch in your local copy, see e.g.
+<a class="reference external" href="https://github.com/git-guides/git-commit">https://github.com/git-guides/git-commit</a> for details on <code class="xref py py-obj docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>
+commands. In its simplest form, you could use the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git add --all
+git commit -m <span class="s2">&quot;add new surface layer component MyContribution&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="push-your-changes-to-your-remote-copy">
+<h2>Push your changes to your remote copy<a class="headerlink" href="#push-your-changes-to-your-remote-copy" title="Permalink to this headline">¶</a></h2>
+<p>Once you have included your component to your local copy, you need to
+propagate your changes to your remote copy (i.e. the one hosted on GitHub).
+To do so, simply use the command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git push origin &lt;new_branch&gt;
+</pre></div>
+</div>
+<p>Note, ‘origin’ is the default alias used by git to refer to the server you
+cloned from.</p>
+</div>
+<div class="section" id="open-a-pull-request-to-merge-your-component-in-the-framework">
+<h2>Open a pull request to merge your component in the framework<a class="headerlink" href="#open-a-pull-request-to-merge-your-component-in-the-framework" title="Permalink to this headline">¶</a></h2>
+<p>This last step happens online on GitHub, you need to go to
+<a class="reference external" href="https://github.com">https://github.com</a>/&lt;username&gt;/cm4twc/tree/&lt;new_branch&gt; (where <code class="xref py py-obj docutils literal notranslate"><span class="pre">&lt;username&gt;</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">&lt;new_branch&gt;</span></code> need to be replaced appropriately) and click “Pull Request”
+to merge your changes into the base repository ‘hydro-jules/cm4twc’
+under the base branch ‘dev’, and not the branch ‘master’ (see GitHub help
+section  <a class="reference external" href="https://docs.github.com/en/free-pro-team&#64;latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request">Creating a pull request</a> for more details).</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UK Centre for Ecology &amp; Hydrology.
+      <span class="lastupdated">
+        Last updated on Feb 09, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+<span class="rst-current-version" data-toggle="rst-current-version">
+  <div style="float:left;">
+    <span class="fa fa-archive"> cm4twc</span>
+  </div>
+  <div style="float:right;">
+    v: 0.0.1
+    <span class="fa fa-caret-down"></span>
+  </div>
+</span>
+<div class="rst-other-versions">
+  
+  <dl>
+    <dt>External Links</dt>
+    
+      <dd><a href="https://github.com/hydro-jules/cm4twc.git"><span class="fa fa-github"> GitHub Repository</a></dd>
+    
+  </dl>
+  
+</div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
