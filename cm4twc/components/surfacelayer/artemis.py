@@ -209,36 +209,37 @@ class Artemis(SurfaceLayerComponent):
         t_snow = t_freeze  # temperature for snowfall [K]
         T_F = t_freeze  # snowmelt threshold [K]
 
-        # Update LAI and derived terms
-        month = datetime.month
-        L = ancil_L[month-1, ...]
-        C_t = 0.002 * L  # Canopy storage capacity [m] (Hough and Jones, MORECS)
-        phi_t = np.ma.where(L == 0, 1, 1 - 0.5 ** L)  # throughfall coefficient [-]
-        r_c = 40.  # Canopy resistance (calc from LAI) [s/m] (Beven 2000 p. 76)
-
-        # Compute derived meteorological variables
-        T_degC = tas - 273.
-        wind_speed = wind_speed * 4.87 / (np.log(67.8 * z - 5.42))  # Scale to 2m wind speed
-
         with np.errstate(over='ignore'):
+            # Update LAI and derived terms
+            month = datetime.month
+            L = ancil_L[month-1, ...]
+            C_t = 0.002 * L  # Canopy storage capacity [m] (Hough and Jones, MORECS)
+            phi_t = np.ma.where(L == 0, 1, 1 - 0.5 ** L)  # throughfall coefficient [-]
+            r_c = 40.  # Canopy resistance (calc from LAI) [s/m] (Beven 2000 p. 76)
+
+            # Compute derived meteorological variables
+            T_degC = tas - 273.
+            wind_speed = wind_speed * 4.87 / (np.log(67.8 * z - 5.42))  # Scale to 2m wind speed
+
             e_sat = 0.6108 * np.exp(T_degC * 17.27 / (237.3 + T_degC))  # Hendrik; kPa
-        e_abs = huss * rho_a * R_v * tas / 1000  # kg/kg to kPa; Parish and Putnam 1977)
-        Delta_e = 4098. * e_sat / (237.3 + T_degC) ** 2  # slope of SVP curve kPa / degC
-        r_a = np.log((z - d) / z0) ** 2 / (kappa ** 2 * wind_speed)  # aerodynamic resistance to evaporation
-        r_a = np.ma.where(r_a <= 0., 1, r_a)  # Prevent negative r_a
+            e_abs = huss * rho_a * R_v * tas / 1000  # kg/kg to kPa; Parish and Putnam 1977)
+            Delta_e = 4098. * e_sat / (237.3 + T_degC) ** 2  # slope of SVP curve kPa / degC
+            with np.errstate(invalid='ignore'):
+                r_a = np.log((z - d) / z0) ** 2 / (kappa ** 2 * wind_speed)  # aerodynamic resistance to evaporation
+            r_a = np.ma.where(r_a <= 0., 1, r_a)  # Prevent negative r_a
 
-        # /!\__ADJUSTMENT_CM4TWC________________________________________
-        # calculate upwelling shortwave "rsus" with albedo
-        rsus = surface_albedo * rsds
+            # /!\__ADJUSTMENT_CM4TWC____________________________________
+            # calculate upwelling shortwave "rsus" with albedo
+            rsus = surface_albedo * rsds
 
-        # calculate upwelling longwave "rlus" with air temperature
-        # (assuming surface temperature is air temperature)
-        # (ignoring emissivity)
-        rlus = air_temperature ** 4 * sigma_sb
+            # calculate upwelling longwave "rlus" with air temperature
+            # (assuming surface temperature is air temperature)
+            # (ignoring emissivity)
+            rlus = air_temperature ** 4 * sigma_sb
 
-        # total net radiation in W m-2
-        R_n = rsds + rlds - rsus - rlus
-        # ______________________________________________________________
+            # total net radiation in W m-2
+            R_n = rsds + rlds - rsus - rlus
+            # __________________________________________________________
 
         # Partition precipitation between canopy, snow, and soil
         pr = pr / rho_lw  # convert to m/s
