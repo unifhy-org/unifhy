@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Preparation &mdash; cm4twc 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="https://hydro-jules.github.io/cm4twc/for_contributors/preparation.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Submission" href="submission.html" />
+    <link rel="prev" title="Guide for Contributors" href="../for_contributors.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> cm4twc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/tutorial.html#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#framework">Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/tutorial.html#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/tutorial.html#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/science_repository.html">Science Repository</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/components/surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/components/surfacelayer/cm4twc.components.surfacelayer.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/components/subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/components/subsurface/cm4twc.components.subsurface.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/components/openwater.html">Open Water Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/components/openwater/cm4twc.components.openwater.RFM.html">RFM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/api_reference.html">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#model">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.Model.html">Model</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#components">Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#time">Time</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.TimeDomain.html">TimeDomain</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#space">Space</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.LatLonGrid.html">LatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.BritishNationalGrid.html">BritishNationalGrid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/api_reference.html#data">Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../for_users/classes/cm4twc.DataSet.html">DataSet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_users/files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_users/files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../for_contributors.html">Guide for Contributors</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#document-your-component-by-filling-in-your-class-docstring">Document your component by filling in your class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-your-component-by-using-component-class-attributes">Define your component by using component class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Submission</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="submission.html#get-your-own-copy-of-the-framework-repository">Get your own copy of the framework repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submission.html#create-a-branch-on-your-copy">Create a branch on your copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submission.html#commit-your-component-to-your-branch-in-your-local-copy">Commit your component to your branch in your local copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submission.html#push-your-changes-to-your-remote-copy">Push your changes to your remote copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="submission.html#open-a-pull-request-to-merge-your-component-in-the-framework">Open a pull request to merge your component in the framework</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_developers.html">Guide for Developers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licence.html">Licence</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cm4twc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../for_contributors.html">Guide for Contributors</a> &raquo;</li>
+        
+      <li>Preparation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="preparation">
+<h1>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h1>
+<p>This section details the steps required to prepare a component contribution
+for inclusion in the science repository of the framework.</p>
+<p>You can then follow the steps below to prepare your component contribution:</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#create-your-component-by-subclassing-a-generic-framework-component" id="id6">Create your component by subclassing a generic framework component</a></p></li>
+<li><p><a class="reference internal" href="#document-your-component-by-filling-in-your-class-docstring" id="id7">Document your component by filling in your class docstring</a></p></li>
+<li><p><a class="reference internal" href="#define-your-component-by-using-component-class-attributes" id="id8">Define your component by using component class attributes</a></p></li>
+<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id9">Implement the initialise-run-finalise component class methods</a></p></li>
+</ul>
+</div>
+<div class="section" id="create-your-component-by-subclassing-a-generic-framework-component">
+<h2>Create your component by subclassing a generic framework component<a class="headerlink" href="#create-your-component-by-subclassing-a-generic-framework-component" title="Permalink to this headline">¶</a></h2>
+<p>In the modelling framework, the terrestrial water cycle is divided into
+three components, i.e. <a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../for_users/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>,
+and <a class="reference internal" href="../for_users/classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> (see <a class="reference internal" href="../index.html#fig-diagram"><span class="std std-ref">Fig. 1</span></a>). These are the
+three framework components to create subclasses from.</p>
+<p>Each component features a fixed interface (i.e. a pre-defined set of
+transfers of information with the other components of the framework):
+inwards information (variables that are given to the component), and
+outwards information (variables that are computed by the component),
+see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>.</p>
+<div class="figure align-center" id="id1">
+<span id="fig-transfers"></span><a class="reference internal image-reference" href="../_images/framework_detailed_transfers.png"><img alt="component transfers" src="../_images/framework_detailed_transfers.png" style="width: 634.8px; height: 458.4px;" /></a>
+<p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>Contributions to the science repository of <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> need to comply with
+this fixed interface. If your contribution to <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> is overlapping
+several components, it requires to be refactored into the relevant number
+of components.</p>
+<p>Contributions must be implemented as a Python class, and more specifically
+as a subclass of one of the three framework components. This way, the
+interface for the component contribution is already set, and the
+component directly inherits all the functionalities intrinsic to the
+framework so that, as a contributor, you can focus solely on specifying
+the data and science elements of the component.</p>
+<p>Creating your contribution as a Python class can simply be done by
+subclassing from the relevant framework component, e.g. a surface layer
+component named <code class="xref py py-obj docutils literal notranslate"><span class="pre">MyContribution</span></code> would be created as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../for_users/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
+
+
+<span class="k">class</span> <span class="nc">MyContribution</span><span class="p">(</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<p>Note, <code class="code highlight python docutils literal notranslate"><span class="k"><span class="pre">pass</span></span></code> is only added here temporarily for this Python example
+script to remain valid, it will be replaced in the subsequent steps.</p>
+</div>
+<div class="section" id="document-your-component-by-filling-in-your-class-docstring">
+<h2>Document your component by filling in your class docstring<a class="headerlink" href="#document-your-component-by-filling-in-your-class-docstring" title="Permalink to this headline">¶</a></h2>
+<p>A brief description of the component (with reference(s) if applicable)
+alongside a field list containing e.g. name(s) of contributor(s),
+affiliation(s) of contributor(s), licence, copyright, etc. must be provided.
+To do so, use your class docstring and follow a <a class="reference external" href="https://docutils.sourceforge.io/docs/user/rst/quickref.html">reStructuredText syntax</a> as
+in the example below.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
+
+
+<span class="k">class</span> <span class="nc">MyContribution</span><span class="p">(</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Brief description of the component.</span>
+
+<span class="sd">    Details published in `Doe et al. (2020) &lt;https://doi.org/##.####/XXX&gt;`_.</span>
+
+<span class="sd">    :Contributors: Jane Doe [1]</span>
+<span class="sd">    :Affiliations: [1] University</span>
+<span class="sd">    :Licence: GPL-3.0</span>
+<span class="sd">    :Copyright: 2021, Jane Doe</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="define-your-component-by-using-component-class-attributes">
+<h2>Define your component by using component class attributes<a class="headerlink" href="#define-your-component-by-using-component-class-attributes" title="Permalink to this headline">¶</a></h2>
+<p>The component definition is used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> to make sure that all the
+information required by the component to run is provided by the user.
+The definition of a component is made of the information about its
+inputs, outputs, states, parameters, and constants.</p>
+<p>The inputs/outputs exclude those variables already included in the fixed
+interface, i.e. inwards and outwards transfers (see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>).</p>
+<p>The inputs must be one of three following kinds:</p>
+<ul class="simple">
+<li><p>dynamic: data required for each spatial element and for each time step,</p></li>
+<li><p>static: data required for each spatial location and constant over time,</p></li>
+<li><p>climatologic: data required for each spatial element and for a given
+frequency within a climatology year.</p></li>
+</ul>
+<p>The parameters are those subject to tuning, while the constants are those
+not subject to tuning. Note, parameter tuning/calibration is not a
+functionality offered by the framework.</p>
+<p>The definition for the component is specified by assigning dictionaries
+to the class attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inputs_info</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outputs_info</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_states_info</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_parameters_info</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_constants_info</span></code>. For example, in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inputs_info</span></code>
+dictionary, each item corresponds to a different input, and for this item
+the key is the name of the input, and the value is a dictionary containing
+the metadata for the input, featuring at least two items, one for its <em>kind</em>
+and one for its <em>units</em> (and one for its <em>frequency</em> if <em>kind</em> is
+<em>climatologic</em>). All other items in the component definition must feature
+at least a <em>units</em> metadata item, and an optional <em>description</em> metadata
+item is strongly encouraged.</p>
+<p>In addition, special attributes in the definition <code class="xref py py-obj docutils literal notranslate"><span class="pre">_land_sea_mask</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_flow_direction</span></code> and must be assigned a boolean value (True if required,
+False if not required). If you need land sea mask information for your
+computation, set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_land_sea_mask</span></code> to True and access it in your class
+methods using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>. If you need flow
+direction information or want to use the flow routing functionality of
+the component (accessible through <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.route()</span></code>), set
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_flow_direction</span></code> as True, and access it in your class methods using
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>.</p>
+<p>See a detailed example of component definition below.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
+
+
+<span class="k">class</span> <span class="nc">MyContribution</span><span class="p">(</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
+
+    <span class="n">_inputs_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name_1st_input&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;name_2nd_input&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;static&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;name_3rd_input&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;climatologic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;monthly&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_outputs_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name_1st_output&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_states_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name_1st_state&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_parameters_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name_1st_parameter&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief parameter description here&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_constants_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name_1st_constant&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief constant description here&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_land_sea_mask</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_flow_direction</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="implement-the-initialise-run-finalise-component-class-methods">
+<h2>Implement the initialise-run-finalise component class methods<a class="headerlink" href="#implement-the-initialise-run-finalise-component-class-methods" title="Permalink to this headline">¶</a></h2>
+<p>The computations of your component contribution must be broken down into
+the three phases initialise, run, and finalise. This means that your
+Python class must feature three methods named <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code>.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> method defines the initial conditions for the component
+states and features any other action required to enable the component to
+start its integration. It is called at the beginning of a model simulation.
+The arguments of this method are the component states. This method is not
+expected to return anything.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code> method contains the computations required to integration from
+one time step to the next. It is called multiple times to move through
+the model simulation period. The arguments of this method are the component
+inwards, inputs, states, parameters, and constants (constants must be
+given a default value directly in the method signature). This method is
+expected to return a tuple of two dictionaries: the first dictionary
+must contain the component outward transfers (keys are the outward names,
+values are the outward arrays), the second dictionary must contain the
+component outputs (keys are the output names, values are the output arrays).
+Note, the second dictionary may be empty if the component does not
+feature any custom outputs.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> method contains any action required to guarantee that the
+simulation can be restarted after the last simulation time step. It is
+called at the end of a model simulation. This method is not expected to
+return anything.</p>
+<p>Since, the arguments of the three methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> are going to be passed as keyword arguments, the names of the
+arguments in their signatures must necessarily be the ones found in the
+component class attribute (if renaming is required, this must be done
+internally to the method). Moreover, they must all feature a final
+special argument <code class="xref py py-obj docutils literal notranslate"><span class="pre">**kwargs</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cm4twc</span> <span class="kn">import</span> <span class="n">SurfaceLayerComponent</span>
+
+
+<span class="k">class</span> <span class="nc">MyContribution</span><span class="p">(</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
+
+    <span class="c1"># component definition here</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_1st_state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># set here initial condition values for component states</span>
+        <span class="n">name_1st_state</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_1st_inwards</span><span class="p">,</span> <span class="n">name_2nd_inwards</span><span class="p">,</span> <span class="n">name_3rd_inwards</span><span class="p">,</span>
+            <span class="n">name_1st_input</span><span class="p">,</span> <span class="n">name_2nd_input</span><span class="p">,</span> <span class="n">name_3rd_input</span><span class="p">,</span>
+            <span class="n">name_1st_state</span><span class="p">,</span> <span class="n">name_1st_parameter</span><span class="p">,</span> <span class="n">name_1st_constant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># compute science using available inwards/inputs/parameters/constants</span>
+        <span class="n">outwards_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">name_1st_inwards</span> <span class="o">+</span> <span class="n">name_1st_input</span>
+                      <span class="o">+</span> <span class="n">name_1st_state</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedelta_in_seconds</span><span class="p">)</span>
+                     <span class="o">*</span> <span class="n">name_1st_constant</span>
+        <span class="n">output_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">name_2nd_input</span> <span class="o">+</span> <span class="n">name_3rd_input</span><span class="p">)</span> <span class="o">*</span> <span class="n">name_1st_parameter</span>
+
+        <span class="n">routed</span><span class="p">,</span> <span class="n">outed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacedomain</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">outwards_1</span><span class="p">)</span>
+
+        <span class="c1"># update component state</span>
+        <span class="n">name_1st_state</span><span class="p">[</span><span class="mi">0</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">name_1st_state</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">routed</span> <span class="o">+</span> <span class="n">output_1</span><span class="p">)</span>
+
+        <span class="c1"># return outwards and outputs</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;name_1st_outwards&#39;</span><span class="p">:</span> <span class="n">outwards_1</span><span class="p">},</span>
+            <span class="p">{</span><span class="s1">&#39;name_1st_output&#39;</span><span class="p">:</span> <span class="n">output_1</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_1st_state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># cleanly wrap up simulation here</span>
+        <span class="c1"># to be able to restart from where simulation stopped</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<p>This concludes the preparation of your component contribution, the next
+step is to share your work by submitting it for inclusion in the framework
+(see section <a class="reference internal" href="submission.html"><span class="doc">Submission</span></a>).</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UK Centre for Ecology &amp; Hydrology.
+      <span class="lastupdated">
+        Last updated on Feb 09, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+<span class="rst-current-version" data-toggle="rst-current-version">
+  <div style="float:left;">
+    <span class="fa fa-archive"> cm4twc</span>
+  </div>
+  <div style="float:right;">
+    v: 0.0.1
+    <span class="fa fa-caret-down"></span>
+  </div>
+</span>
+<div class="rst-other-versions">
+  
+  <dl>
+    <dt>External Links</dt>
+    
+      <dd><a href="https://github.com/hydro-jules/cm4twc.git"><span class="fa fa-github"> GitHub Repository</a></dd>
+    
+  </dl>
+  
+</div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

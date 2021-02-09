@@ -1,6 +1,4 @@
-"""
-a Community Model for the Terrestrial Water Cycle
-"""
+"""A Community Model for the Terrestrial Water Cycle."""
 
 
 # import package's own modules, classes, functions

@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Tutorial &mdash; cm4twc 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="https://hydro-jules.github.io/cm4twc/for_users/tutorial.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Science Repository" href="science_repository.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> cm4twc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../for_users.html">Guide for Users</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#framework">Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science_repository.html">Science Repository</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="components/surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="components/surfacelayer/cm4twc.components.surfacelayer.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="components/subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="components/subsurface/cm4twc.components.subsurface.Artemis.html">Artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="components/openwater.html">Open Water Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="components/openwater/cm4twc.components.openwater.RFM.html">RFM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#model">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.Model.html">Model</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#components">Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#time">Time</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.TimeDomain.html">TimeDomain</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#space">Space</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.LatLonGrid.html">LatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.BritishNationalGrid.html">BritishNationalGrid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#data">Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/cm4twc.DataSet.html">DataSet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_contributors.html">Guide for Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors/preparation.html">Preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/preparation.html#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/preparation.html#document-your-component-by-filling-in-your-class-docstring">Document your component by filling in your class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/preparation.html#define-your-component-by-using-component-class-attributes">Define your component by using component class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/preparation.html#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors/submission.html">Submission</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/submission.html#get-your-own-copy-of-the-framework-repository">Get your own copy of the framework repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/submission.html#create-a-branch-on-your-copy">Create a branch on your copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/submission.html#commit-your-component-to-your-branch-in-your-local-copy">Commit your component to your branch in your local copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/submission.html#push-your-changes-to-your-remote-copy">Push your changes to your remote copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors/submission.html#open-a-pull-request-to-merge-your-component-in-the-framework">Open a pull request to merge your component in the framework</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_developers.html">Guide for Developers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licence.html">Licence</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cm4twc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../for_users.html">Guide for Users</a> &raquo;</li>
+        
+      <li>Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This section showcases the basic usage of modelling framework <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>
+(Community Model for the Terrestrial Water Cycle).</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Importing the package and checking its version.</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cm4twc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="go">0.0.1</span>
+</pre></div>
+</div>
+</div>
+<p>The central object in the framework is the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>, which is composed of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>s for the three compartments of the terrestrial water cycle
+(see the <a class="reference internal" href="science_repository.html"><span class="doc">science repository</span></a> for the options
+currently available).</p>
+<p>Each component needs to be spatio-temporally configured through <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>
+and <a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> objects, to be given data contained in a <a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance,
+and to be given parameter and/or constant values.</p>
+<div class="section" id="configuring-a-model">
+<h2>Configuring a Model<a class="headerlink" href="#configuring-a-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="time">
+<h3>Time<a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> object by specifying its start, end, and step.</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timedomain</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">TimeDomain</span><span class="o">.</span><span class="n">from_start_end_step</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">step</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;gregorian&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">timedomain</span><span class="p">)</span>
+<span class="go">TimeDomain(</span>
+<span class="go">    time (8760,): [2017-01-01 00:00:00, ..., 2017-12-31 23:00:00] gregorian</span>
+<span class="go">    bounds (8760, 2): [[2017-01-01 00:00:00, ..., 2018-01-01 00:00:00]] gregorian</span>
+<span class="go">    calendar: gregorian</span>
+<span class="go">    units: seconds since 1970-01-01 00:00:00Z</span>
+<span class="go">    period: 365 days, 0:00:00</span>
+<span class="go">    timedelta: 1:00:00</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="space">
+<h3>Space<a class="headerlink" href="#space" title="Permalink to this headline">¶</a></h3>
+<p>All spatial configurations supported by the framework are subclasses of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>, they characterise the spatial dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.
+The current supported spatial configurations can be found in the
+<a class="reference internal" href="api_reference.html"><span class="doc">API Reference</span></a>’s Space section. <a class="reference internal" href="classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> is one example.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> object from its dimensions’ extents and resolutions.</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">55</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">latitude_resolution</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">longitude_extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">longitude_resolution</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">spacedomain</span><span class="p">)</span>
+<span class="go">LatLonGrid(</span>
+<span class="go">    shape {Y, X}: (8, 6)</span>
+<span class="go">    Y, latitude (8,): [51.25, ..., 54.75] degrees_north</span>
+<span class="go">    X, longitude (6,): [-1.75, ..., 0.75] degrees_east</span>
+<span class="go">    Y_bounds (8, 2): [[51.0, ..., 55.0]] degrees_north</span>
+<span class="go">    X_bounds (6, 2): [[-2.0, ..., 1.0]] degrees_east</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</div>
+<p>Two additional properties of <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> may require to be set
+depending on the component’s requirements: <em>land_sea_mask</em> and
+<em>flow_direction</em>. <em>land_sea_mask</em> may be used by a component to be
+aware of where there is land and where there is sea, but if set, it is
+also used to mask the component records. <em>flow_direction</em> may be used by
+a component to determine where to move flow downstream, it is namely
+compulsory if the component is using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>’s <em>route</em> method.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/land_sea_mask.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;land_binary_mask&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True False]</span>
+<span class="go"> [ True  True  True  True  True False]</span>
+<span class="go"> [ True  True  True  True False False]</span>
+<span class="go"> [ True  True  True False False False]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">flow_direction</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/flow_direction.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s2">&quot;long_name=flow direction&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> must be used to gather all of the data required to run a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
+of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> . It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
+instances.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only data fully compliant with the
+<a class="reference external" href="https://cfconventions.org/">CF conventions</a> (v1.8 or later) can be used.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Instantiating <a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> objects from a CF-compliant netCDF file.</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_surfacelayer</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
+<span class="gp">... </span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/ancillary/leaf_area_index.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/ancillary/canopy_height.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s1">&#39;in/ancillary/soil_albedo.nc&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;leaf-area index&#39;</span><span class="p">:</span> <span class="s1">&#39;leaf_area_index&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="s1">&#39;canopy height&#39;</span><span class="p">:</span> <span class="s1">&#39;vegetation_height&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="s1">&#39;soil albedo&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_albedo&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="go">DataSet{</span>
+<span class="go">    air_temperature(time(8760), latitude(20), longitude(28)) K</span>
+<span class="go">    leaf_area_index(time(12), latitude(360), longitude(720)) 1</span>
+<span class="go">    precipitation_flux(time(8760), latitude(20), longitude(28)) kg m-2 s-1</span>
+<span class="go">    specific_humidity(time(8760), latitude(20), longitude(28)) kg kg-1</span>
+<span class="go">    surface_albedo(latitude(360), longitude(720)) 1</span>
+<span class="go">    surface_downwelling_longwave_flux_in_air(time(8760), latitude(20), longitude(28)) W m-2</span>
+<span class="go">    surface_downwelling_shortwave_flux_in_air(time(8760), latitude(20), longitude(28)) W m-2</span>
+<span class="go">    vegetation_height(latitude(360), longitude(720)) m</span>
+<span class="go">    wind_speed(time(8760), latitude(20), longitude(28)) m s-1</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_subsurface</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/ancillary/saturated_hydraulic_conductivity.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/topmodel_saturation_capacity.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/topographic_index.nc&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;saturated hydraulic conductivity&#39;</span><span class="p">:</span> <span class="s1">&#39;saturated_hydraulic_conductivity&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s1">&#39;topmodel saturation capacity&#39;</span><span class="p">:</span> <span class="s1">&#39;topmodel_saturation_capacity&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s1">&#39;topographic index&#39;</span><span class="p">:</span> <span class="s1">&#39;topographic_index&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_openwater</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;in/ancillary/rfm_iarea.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;RFM drainage area in cell counts (WFDEI)&#39;</span><span class="p">:</span> <span class="s1">&#39;i_area&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="science">
+<h3>Science<a class="headerlink" href="#science" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> is the core object subclassed into three distinct classes
+for surface, sub-surface, and open water parts of the water cycle:
+<a class="reference internal" href="classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a>
+respectively. Each kind of component has the same API, only their interfaces
+and data needs differ.</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Exploring the signature of ‘Artemis’ <a class="reference internal" href="classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>.</span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">subsurface</span><span class="o">.</span><span class="n">Artemis</span><span class="p">)</span>
+<span class="go">Artemis(</span>
+<span class="go">    category: subsurface</span>
+<span class="go">    inwards info:</span>
+<span class="go">        evaporation_soil_surface [kg m-2 s-1]</span>
+<span class="go">        evaporation_ponded_water [kg m-2 s-1]</span>
+<span class="go">        transpiration [kg m-2 s-1]</span>
+<span class="go">        throughfall [kg m-2 s-1]</span>
+<span class="go">        snowmelt [kg m-2 s-1]</span>
+<span class="go">        water_level [kg m-2]</span>
+<span class="go">    outwards info:</span>
+<span class="go">        surface_runoff [kg m-2 s-1]</span>
+<span class="go">        subsurface_runoff [kg m-2 s-1]</span>
+<span class="go">        soil_water_stress [1]</span>
+<span class="go">    inputs info:</span>
+<span class="go">        topmodel_saturation_capacity [m]</span>
+<span class="go">        saturated_hydraulic_conductivity [m s-1]</span>
+<span class="go">        topographic_index [1]</span>
+<span class="go">    constants info:</span>
+<span class="go">        m [1]</span>
+<span class="go">        rho_lw [kg m-3]</span>
+<span class="go">    states info:</span>
+<span class="go">        subsurface_store [m]</span>
+<span class="go">    solver history: 1</span>
+<span class="go">    land sea mask: False</span>
+<span class="go">    flow direction: False</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This information is also available on the online documentation, e.g.
+see <a class="reference internal" href="components/subsurface/cm4twc.components.subsurface.Artemis.html"><span class="doc">Artemis</span></a>
+subsurface component page.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Getting an instance of <a class="reference internal" href="classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> ‘Artemis’.</span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Artemis</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">saving_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_surfacelayer</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span>
+<span class="gp">... </span>    <span class="n">records</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;surface_runoff&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]}}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+<span class="go">Artemis(</span>
+<span class="go">    category: surfacelayer</span>
+<span class="go">    saving directory: outputs</span>
+<span class="go">    timedomain: period: 365 days, 0:00:00</span>
+<span class="go">    spacedomain: shape: (Y: 8, X: 6)</span>
+<span class="go">    dataset: 9 variable(s)</span>
+<span class="go">    records:</span>
+<span class="go">        surface_runoff: 1 day, 0:00:00 {&#39;mean&#39;}</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The variables that can be recorded using the <em>records</em> optional
+argument are the component’s outwards, outputs, and states. By default,
+none are recorded.</p>
+</div>
+</div>
+<div class="section" id="framework">
+<h3>Framework<a class="headerlink" href="#framework" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> constitutes the core object of the modelling framework. It needs
+to be instantiated with three <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> instances, one for each of the
+three parts of the terrestrial water cycle.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">identifier</span><span class="o">=</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">config_directory</span><span class="o">=</span><span class="s1">&#39;configurations&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">saving_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">surfacelayer</span><span class="o">=</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Artemis</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_surfacelayer</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">subsurface</span><span class="o">=</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">subsurface</span><span class="o">.</span><span class="n">Artemis</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_subsurface</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parameter_a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">openwater</span><span class="o">=</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">openwater</span><span class="o">.</span><span class="n">RFM</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_openwater</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;c_land&#39;</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;cb_land&#39;</span><span class="p">:</span> <span class="mf">0.10</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;c_river&#39;</span><span class="p">:</span> <span class="mf">0.62</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;cb_river&#39;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;ret_l&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;ret_r&#39;</span><span class="p">:</span> <span class="mf">0.005</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;river_length&#39;</span><span class="p">:</span> <span class="mi">50000</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="n">records</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;outgoing_water_volume_transport_along_river_channel&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>                <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>
+<span class="gp">... </span>            <span class="p">}</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="go">Model(</span>
+<span class="go">    surfacelayer: Artemis</span>
+<span class="go">    subsurface: Artemis</span>
+<span class="go">    openwater: RFM</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>While the resolutions of the three components of the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can be
+different, there are limitations.</p>
+<p>In space, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>s of the three components must be in the
+same coordinate system (e.g. all using <a class="reference internal" href="classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>) and their
+respective domains must span the same geographical region (i.e. the
+edges of their domains must overlap).</p>
+<p>In time, the <a class="reference internal" href="classes/cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a>s of the three components must be in the
+same calendar (e.g. ‘gregorian’) and their respective resolutions
+must be a multiple of the fastest <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>’s resolution.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a component is irrelevant to your use case, convenient
+alternatives <a class="reference internal" href="classes/cm4twc.DataComponent.html#cm4twc.DataComponent" title="cm4twc.DataComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataComponent</span></code></a> and <a class="reference internal" href="classes/cm4twc.NullComponent.html#cm4twc.NullComponent" title="cm4twc.NullComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NullComponent</span></code></a> exist. Any of the
+three components can be replaced by these alternatives.</p>
+<p><a class="reference internal" href="classes/cm4twc.DataComponent.html#cm4twc.DataComponent" title="cm4twc.DataComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataComponent</span></code></a> is provided to act the part of a component of the water
+cycle by using a <a class="reference internal" href="classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> for the component’s outwards transfers, e.g.
+containing previous outputs of a simulation.</p>
+<p><a class="reference internal" href="classes/cm4twc.NullComponent.html#cm4twc.NullComponent" title="cm4twc.NullComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NullComponent</span></code></a> is provided to ignore a component of the water cycle
+by not processing the component’s inwards transfers received, and by
+returning null values for the component’ outwards transfers.</p>
+</div>
+<p>At this stage, the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> as such is fully configured, and the configuration
+can be saved as a YAML file in the <em>config_directory</em> and named using the
+<em>identifier</em> (e.g. in this example, the file would be at
+<em>configurations/tutorial.yml</em>).</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Saving <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> set up in YAML file.</span><a class="headerlink" href="#id9" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>See the <a class="reference internal" href="files.html"><span class="doc">files</span></a> section for an example of such model
+configuration YAML file.</p>
+</div>
+</div>
+<div class="section" id="simulating-with-a-model">
+<h2>Simulating with a Model<a class="headerlink" href="#simulating-with-a-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="spin-up-and-simulate">
+<h3>Spin-Up and Simulate<a class="headerlink" href="#spin-up-and-simulate" title="Permalink to this headline">¶</a></h3>
+<p>Once configured, the instance of <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can be used to start a spin up run
+and/or a main simulation run.</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">Spinning-up and running the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> simulation.</span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">spin_up</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>              <span class="n">cycles</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">dumping_frequency</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">dumping_frequency</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="resume">
+<h3>Resume<a class="headerlink" href="#resume" title="Permalink to this headline">¶</a></h3>
+<p>If the model has crashed, and <em>dumping_frequency</em> was set in the
+<em>spin-up</em> and/or <em>simulate</em> invocations, a series of snapshots in time
+have been stored in dump files in the <em>saving_directory</em> of each
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. A <em>resume</em> method for <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> allows for the given run
+to be resumed to reach completion of the simulation period. The <em>tag</em>
+argument must be used to select which run to resume (i.e. any spin-up
+cycle, or the main run), and the <em>at</em> argument can be used to select the
+given snapshot in time to restart from.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Resuming the <a class="reference internal" href="classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> main simulation run.</span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UK Centre for Ecology &amp; Hydrology.
+      <span class="lastupdated">
+        Last updated on Feb 09, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+<span class="rst-current-version" data-toggle="rst-current-version">
+  <div style="float:left;">
+    <span class="fa fa-archive"> cm4twc</span>
+  </div>
+  <div style="float:right;">
+    v: 0.0.1
+    <span class="fa fa-caret-down"></span>
+  </div>
+</span>
+<div class="rst-other-versions">
+  
+  <dl>
+    <dt>External Links</dt>
+    
+      <dd><a href="https://github.com/hydro-jules/cm4twc.git"><span class="fa fa-github"> GitHub Repository</a></dd>
+    
+  </dl>
+  
+</div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

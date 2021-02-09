@@ -1,0 +1,4 @@
+sphinx>=3.4
+nbsphinx
+sphinx_rtd_theme>=0.5
+gitpython

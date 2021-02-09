@@ -24,7 +24,7 @@ clean:
 
 github_clean:
 	@make clean
-	rm -rf _static _sources
+	rm -rf _static _sources _images
 	rm -rf classes methods attributes components
 	rm -rf *.html *.inv *.js .buildinfo
 

@@ -86,6 +86,34 @@ class AutoComponentDirective(SphinxDirective):
 
                 document.append(para)
 
+            # spacedomain special properties
+            para = nodes.paragraph()
+            rubric = nodes.rubric(nodes.Text('SpaceDomain Properties'),
+                                  nodes.Text('SpaceDomain Properties'))
+            para += rubric
+
+        for name in ['land_sea_mask', 'flow_direction']:
+            field_list = nodes.field_list()
+            attribute = getattr(cls_, name)
+            # name
+            field = nodes.field()
+            field += nodes.field_name(text='name')
+            field_body = nodes.field_body()
+            field_body += nodes.paragraph(text=name)
+            field += field_body
+            field_list += field
+            # required
+            field = nodes.field()
+            field += nodes.field_name(text='required')
+            field_body = nodes.field_body()
+            field_body += nodes.paragraph(text=attribute)
+            field += field_body
+            field_list += field
+
+            para += field_list
+
+        document.append(para)
+
         return document
 
 
