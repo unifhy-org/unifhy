@@ -1,12 +1,24 @@
-# Copyright (C) 2020 HydroJULES
+# Copyright (C) 2021 UK Centre for Ecology and Hydrology
 from setuptools import setup
 
 
-with open("README.rst", "r") as fh:
+with open("README.rst", 'r') as fh:
     long_desc = fh.read()
 
-with open('cm4twc/version.py') as fv:
+with open("cm4twc/version.py", 'r') as fv:
     exec(fv.read())
+
+
+def requirements(filename):
+    requires = []
+    with open(filename, 'r') as fr:
+        for line in fr:
+            package = line.strip()
+            if package:
+                requires.append(package)
+
+    return requires
+
 
 setup(
     name='cm4twc',
@@ -30,7 +42,6 @@ setup(
         'Natural Language :: English',
 
         'Intended Audience :: Science/Research',
-        'Intended Audience :: Developers',
         'Topic :: Scientific/Engineering :: Hydrology',
 
         'Operating System :: MacOS',
@@ -48,21 +59,9 @@ setup(
         'cm4twc'
     ],
 
-    install_requires=[
-        'numpy>=1.16',
-        'cf-python>=3.7',
-        'cftime',
-        'cfunits',
-        'netCDF4>=1.5',
-        'pyyaml>=5.3'
-    ],
+    install_requires=requirements('requirements.txt'),
 
     extras_require={
-        'docs': [
-            'sphinx',
-            'nbsphinx',
-            'sphinx_rtd_theme',
-            'gitpython'
-        ]
+        'docs': requirements('requirements-docs.txt')
     }
 )
