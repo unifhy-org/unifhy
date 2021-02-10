@@ -29,7 +29,11 @@ setup(
     long_description=long_desc,
     long_description_content_type="text/x-rst",
 
-    url='https://github.com/hydro-jules/cm4twc',
+    project_urls={
+        'Documentation': 'https://hydro-jules.github.io/cm4twc',
+        'Source': 'https://github.com/hydro-jules/cm4twc',
+        'Tracker': 'https://github.com/hydro-jules/cm4twc/issues',
+    },
 
     author='Thibault Hallouin',
     author_email='thibault.hallouin@ncas.ac.uk',
