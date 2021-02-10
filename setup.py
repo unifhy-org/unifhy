@@ -1,5 +1,5 @@
 # Copyright (C) 2021 UK Centre for Ecology and Hydrology
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 with open("README.rst", 'r') as fh:
@@ -55,9 +55,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython'
     ],
 
-    packages=[
-        'cm4twc'
-    ],
+    packages=find_packages(exclude=["docs*"]),
 
     install_requires=requirements('requirements.txt'),
 
