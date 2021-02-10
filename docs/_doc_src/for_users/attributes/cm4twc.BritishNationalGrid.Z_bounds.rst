@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.Z_bounds
+cm4twc.BritishNationalGrid.Z_bounds
 ===================================
 
 .. currentmodule:: cm4twc

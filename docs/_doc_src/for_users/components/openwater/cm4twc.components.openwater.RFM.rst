@@ -1,4 +1,4 @@
-﻿RFM
+RFM
 ===============================
 
 .. currentmodule:: cm4twc

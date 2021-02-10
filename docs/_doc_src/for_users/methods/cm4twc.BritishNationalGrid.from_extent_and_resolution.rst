@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.from_extent_and_resolution
+cm4twc.BritishNationalGrid.from_extent_and_resolution
 =====================================================
 
 .. currentmodule:: cm4twc

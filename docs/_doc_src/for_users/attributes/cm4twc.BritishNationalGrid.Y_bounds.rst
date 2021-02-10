@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.Y_bounds
+cm4twc.BritishNationalGrid.Y_bounds
 ===================================
 
 .. currentmodule:: cm4twc

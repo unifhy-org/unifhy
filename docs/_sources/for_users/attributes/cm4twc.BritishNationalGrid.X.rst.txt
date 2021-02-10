@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.X
+cm4twc.BritishNationalGrid.X
 ============================
 
 .. currentmodule:: cm4twc

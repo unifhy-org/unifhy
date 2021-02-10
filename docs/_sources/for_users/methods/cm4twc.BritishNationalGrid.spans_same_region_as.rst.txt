@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.spans_same_region_as
+cm4twc.BritishNationalGrid.spans_same_region_as
 ===============================================
 
 .. currentmodule:: cm4twc

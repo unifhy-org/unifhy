@@ -1,4 +1,4 @@
-﻿Artemis
+Artemis
 ======================================
 
 .. currentmodule:: cm4twc

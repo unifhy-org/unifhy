@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.flow_direction
+cm4twc.BritishNationalGrid.flow_direction
 =========================================
 
 .. currentmodule:: cm4twc

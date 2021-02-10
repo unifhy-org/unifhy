@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.from_field
+cm4twc.BritishNationalGrid.from_field
 =====================================
 
 .. currentmodule:: cm4twc

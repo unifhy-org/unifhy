@@ -1,4 +1,4 @@
-﻿cm4twc.BritishNationalGrid.route
+cm4twc.BritishNationalGrid.route
 ================================
 
 .. currentmodule:: cm4twc
