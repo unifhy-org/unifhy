@@ -1,5 +1,6 @@
 # Copyright (C) 2021 UK Centre for Ecology and Hydrology
 from setuptools import setup, find_packages
+import json
 
 
 with open("README.rst", 'r') as fh:
@@ -20,6 +21,17 @@ def requirements(filename):
     return requires
 
 
+def read_authors(filename):
+    authors = []
+    with open(filename, 'r') as fz:
+        meta = json.load(fz)
+        for author in meta['creators']:
+            name = author['name'].strip()
+            authors.append(name)
+
+    return ', '.join(authors)
+
+
 setup(
     name='cm4twc',
 
@@ -35,8 +47,7 @@ setup(
         'Tracker': 'https://github.com/hydro-jules/cm4twc/issues',
     },
 
-    author='Thibault Hallouin',
-    author_email='thibault.hallouin@ncas.ac.uk',
+    author=read_authors('.zenodo.json'),
 
     license='BSD-3',
 
