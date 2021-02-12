@@ -38,6 +38,6 @@
     "description": "A Community Model for the Terrestrial Water Cycle.",
     "notes": "Funded by the Natual Environment Research Council (NERC) Hydro-JULES programme (NE/S017380/1).",
     "license": {
-        "id": "BSD 3-Clause"
+        "id": "BSD-3-Clause"
     }
 }
