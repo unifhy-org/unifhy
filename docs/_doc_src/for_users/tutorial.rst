@@ -12,7 +12,7 @@ This section showcases the basic usage of modelling framework `cm4twc`
 
    >>> import cm4twc
    >>> print(cm4twc.__version__)
-   0.0.1
+   0.1.0-beta
 
 The central object in the framework is the `Model`, which is composed of
 `Component`\s for the three compartments of the terrestrial water cycle
@@ -32,7 +32,7 @@ Time
 `TimeDomain` characterises the time dimension of a `Component`.
 
 .. code-block:: python
-   :caption: Instantiating a `TimeDomain` object by specifying its start, end, and step.
+   :caption: Instantiating a `TimeDomain` by specifying its start, end, and step.
 
    >>> from datetime import datetime, timedelta
    >>> timedomain = cm4twc.TimeDomain.from_start_end_step(
@@ -61,7 +61,7 @@ The current supported spatial configurations can be found in the
 :doc:`API Reference<api_reference>`'s Space section. `LatLonGrid` is one example.
 
 .. code-block:: python
-   :caption: Instantiating a `LatLonGrid` object from its dimensions' extents and resolutions.
+   :caption: Instantiating a `LatLonGrid` from its dimensions' extents and resolutions.
 
    >>> spacedomain = cm4twc.LatLonGrid.from_extent_and_resolution(
    ...    latitude_extent=(51, 55),
@@ -116,7 +116,7 @@ instances.
    `CF conventions <https://cfconventions.org/>`_ (v1.8 or later) can be used.
 
 .. code-block:: python
-   :caption: Instantiating `DataSet` objects from a CF-compliant netCDF file.
+   :caption: Instantiating `DataSet` from a CF-compliant netCDF file.
 
    >>> dataset_surfacelayer = cm4twc.DataSet(
    ... files=['in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc',
@@ -205,23 +205,23 @@ and data needs differ.
 
 
 .. code-block:: python
-   :caption: Getting an instance of `SurfaceLayerComponent` 'Artemis'.
+   :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
 
-   >>> component = cm4twc.surfacelayer.Artemis(
+   >>> component = cm4twc.subsurface.Artemis(
    ...     saving_directory='outputs',
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
-   ...     dataset=dataset_surfacelayer,
+   ...     dataset=dataset_subsurface,
    ...     parameters={},
    ...     records={'surface_runoff': {timedelta(days=1): ['mean']}}
    ... )
    >>> print(component)
    Artemis(
-       category: surfacelayer
+       category: subsurface
        saving directory: outputs
        timedomain: period: 365 days, 0:00:00
        spacedomain: shape: (Y: 8, X: 6)
-       dataset: 9 variable(s)
+       dataset: 3 variable(s)
        records:
            surface_runoff: 1 day, 0:00:00 {'mean'}
    )
@@ -252,7 +252,7 @@ three parts of the terrestrial water cycle.
    ...     ),
    ...     subsurface=cm4twc.subsurface.Artemis(
    ...         'outputs', timedomain, spacedomain, dataset_subsurface,
-   ...         parameters={'parameter_a': 1}
+   ...         parameters={}
    ...     ),
    ...     openwater=cm4twc.openwater.RFM(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
@@ -299,8 +299,8 @@ three parts of the terrestrial water cycle.
    three components can be replaced by these alternatives.
 
    `DataComponent` is provided to act the part of a component of the water
-   cycle by using a `DataSet` for the component's outwards transfers, e.g.
-   containing previous outputs of a simulation.
+   cycle by sourcing the component's outwards transfers from a `DataSet`,
+   e.g. containing outputs of a previous simulation.
 
    `NullComponent` is provided to ignore a component of the water cycle
    by not processing the component's inwards transfers received, and by
@@ -342,14 +342,14 @@ and/or a main simulation run.
 Resume
 ~~~~~~
 
-If the model has crashed, and *dumping_frequency* was set in the
-*spin-up* and/or *simulate* invocations, a series of snapshots in time
-have been stored in dump files in the *saving_directory* of each
-`Component`. A *resume* method for `Model` allows for the given run
-to be resumed to reach completion of the simulation period. The *tag*
-argument must be used to select which run to resume (i.e. any spin-up
-cycle, or the main run), and the *at* argument can be used to select the
-given snapshot in time to restart from.
+If the model has terminated prematurely, and *dumping_frequency* was
+set in the *spin-up* and/or *simulate* invocations, a series of snapshots
+in time have been stored in dump files in the *saving_directory* of each
+`Component` and of the `Model`. A *resume* method for `Model` allows
+for the given run to be resumed to reach completion of the simulation
+period. The *tag* argument must be used to select which run to resume
+(i.e. any spin-up cycle, or the main run), and the *at* argument can be
+used to select the given snapshot in time to restart from.
 
 .. code-block:: python
    :caption: Resuming the `Model` main simulation run.
