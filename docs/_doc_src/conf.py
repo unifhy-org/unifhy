@@ -182,6 +182,7 @@ remote_url = repo.remotes.origin.url
 versions = [
     (tag.name, os.sep.join([html_baseurl, tag.name]))
     for tag in repo.tags
+    if tag.name != 'v{}'.format(version)
 ]
 html_context = {
     'current_version': version,
