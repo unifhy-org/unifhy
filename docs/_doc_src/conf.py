@@ -144,7 +144,7 @@ html_sidebars = {
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
-html_baseurl = 'https://hydro-jules.github.io/cm4twc/'
+html_baseurl = 'https://hydro-jules.github.io/cm4twc'
 
 html_theme_options = {
     'prev_next_buttons_location': None,
@@ -180,7 +180,7 @@ repo = Repo(search_parent_directories=True)
 remote_url = repo.remotes.origin.url
 
 versions = [
-    (tag.tag, os.sep.join([html_baseurl, tag.tag]))
+    (tag.name, os.sep.join([html_baseurl, tag.name]))
     for tag in repo.tags
 ]
 html_context = {
