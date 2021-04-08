@@ -21,17 +21,17 @@ The documentation features three guides for various target audiences:
 .. toctree::
    :maxdepth: 2
 
-   for_users
+   users
 
 .. toctree::
    :maxdepth: 2
 
-   for_contributors
+   contributors
 
 .. toctree::
    :maxdepth: 2
 
-   for_developers
+   developers
 
 
 The documentation lists the modelling components currently available

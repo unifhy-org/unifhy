@@ -10,5 +10,5 @@ components for use in the framework.
 .. toctree::
    :maxdepth: 4
 
-   for_contributors/preparation
-   for_contributors/submission
+   contributors/preparation
+   contributors/submission
