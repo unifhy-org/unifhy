@@ -41,10 +41,12 @@ setup(
     long_description=long_desc,
     long_description_content_type="text/x-rst",
 
+    download_url="https://pypi.python.org/pypi/cm4twc",
     project_urls={
+        'Bug Tracker': 'https://github.com/hydro-jules/cm4twc/issues',
+        'User Support': 'https://github.com/hydro-jules/cm4twc/discussions',
         'Documentation': 'https://hydro-jules.github.io/cm4twc',
-        'Source': 'https://github.com/hydro-jules/cm4twc',
-        'Tracker': 'https://github.com/hydro-jules/cm4twc/issues',
+        'Source Code': 'https://github.com/hydro-jules/cm4twc',
     },
 
     author=read_authors('.zenodo.json'),

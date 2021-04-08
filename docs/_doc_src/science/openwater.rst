@@ -6,7 +6,7 @@ Open Water Components
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../components/openwater/
+   :toctree: openwater/
    :template: component.rst
 
    ~cm4twc.components.openwater.RFM

@@ -64,8 +64,8 @@ component named `MyContribution` would be created as follows:
 Note, :py:`pass` is only added here temporarily for this Python example
 script to remain valid, it will be replaced in the subsequent steps.
 
-Document your component by filling in your class docstring
-----------------------------------------------------------
+Document your component using its class docstring
+-------------------------------------------------
 
 A brief description of the component (with reference(s) if applicable)
 alongside a field list containing e.g. name(s) of contributor(s),
@@ -94,8 +94,8 @@ in the example below.
 
 
 
-Define your component by using component class attributes
----------------------------------------------------------
+Define your component using its class attributes
+------------------------------------------------
 
 The component definition is used by `cm4twc` to make sure that all the
 information required by the component to run is provided by the user.

@@ -6,7 +6,7 @@ Sub-Surface Components
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../components/subsurface/
+   :toctree: subsurface/
    :template: component.rst
 
    ~cm4twc.components.subsurface.Artemis

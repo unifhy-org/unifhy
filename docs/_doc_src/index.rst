@@ -1,33 +1,22 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-Overview
-========
-
 .. include:: ../../README.rst
 
 .. _fig_diagram:
-.. figure:: ../_doc_img/framework_diagram.png
+.. figure:: ../_doc_img/framework_diagram.svg
    :scale: 50 %
    :align: center
    :alt: modelling framework diagram
 
    Fig. 1: Diagram of the Modelling Framework Blueprint for `cm4twc`.
 
-.. add index to sidebar
-
-.. toctree::
-   :hidden:
-   :titlesonly:
-
-   self
-
 .. add guides to sidebar
 
 Documentation
 -------------
 
-The documentation is structured into three guides:
+The documentation features three guides for various target audiences:
 
 .. toctree::
    :maxdepth: 2
@@ -39,13 +28,32 @@ The documentation is structured into three guides:
 
    for_contributors
 
-
 .. toctree::
    :maxdepth: 2
 
    for_developers
 
-.. add appendices to sidebar
+
+The documentation lists the modelling components currently available
+in the framework:
+
+.. toctree::
+   :maxdepth: 2
+
+   science_repository
+
+
+The Application Programming Interface (API) for the framework is also
+documented:
+
+.. toctree::
+   :maxdepth: 2
+
+   api_reference
+   support
+
+
+.. add additional sections to sidebar
 
 .. toctree::
    :hidden:

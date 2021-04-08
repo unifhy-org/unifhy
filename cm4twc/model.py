@@ -26,7 +26,7 @@ class Model(object):
         :Parameters:
 
             identifier: `str`
-                A name to identify the model record files.
+                A name to identify the model files.
 
             config_directory: `str`
                 The path to the directory where to save the model

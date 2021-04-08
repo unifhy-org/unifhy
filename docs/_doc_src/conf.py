@@ -146,10 +146,14 @@ html_sidebars = {
 
 html_baseurl = 'https://hydro-jules.github.io/cm4twc'
 
+html_logo = '../_doc_img/logo_colours.svg'
+
 html_theme_options = {
     'prev_next_buttons_location': None,
     'navigation_depth': 4,
-    'collapse_navigation': False
+    'collapse_navigation': False,
+    'logo_only': True,
+    'display_version': False
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
@@ -189,7 +193,11 @@ html_context = {
     'versions': versions,
     'show_versions': True if versions else False,
     'links': [
-        ('<span class="fa fa-github"> GitHub Repository', remote_url)
+        ('<span class="fa fa-code"> Source Code', remote_url),
+        ('<span class="fa fa-bug"> Issue Tracker',
+         os.sep.join([remote_url.replace('.git', ''), 'issues'])),
+        ('<span class="fa fa-users"> User Support',
+         os.sep.join([remote_url.replace('.git', ''), 'discussions']))
     ]
 }
 

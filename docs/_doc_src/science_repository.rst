@@ -12,18 +12,18 @@ be used for each compartment of the terrestrial water cycle.
 .. toctree::
    :maxdepth: 2
 
-   components/surfacelayer.rst
+   science/surfacelayer.rst
 
 .. toctree::
    :maxdepth: 2
 
-   components/subsurface.rst
+   science/subsurface.rst
 
 
 .. toctree::
    :maxdepth: 2
 
-   components/openwater.rst
+   science/openwater.rst
 
 If you wish to contribute to this repository, please refer to the sections
-:doc:`../for_contributors/preparation` and :doc:`../for_contributors/submission`.
+:doc:`for_contributors/preparation` and :doc:`for_contributors/submission`.

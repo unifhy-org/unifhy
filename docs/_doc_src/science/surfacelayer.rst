@@ -6,7 +6,7 @@ Surface Layer Components
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../components/surfacelayer/
+   :toctree: surfacelayer/
    :template: component.rst
 
    ~cm4twc.components.surfacelayer.Artemis

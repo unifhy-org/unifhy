@@ -16,7 +16,7 @@ This section showcases the basic usage of modelling framework `cm4twc`
 
 The central object in the framework is the `Model`, which is composed of
 `Component`\s for the three compartments of the terrestrial water cycle
-(see the :doc:`science repository <science_repository>` for the options
+(see the :doc:`science repository <../science_repository>` for the options
 currently available).
 
 Each component needs to be spatio-temporally configured through `SpaceDomain`
@@ -58,7 +58,7 @@ Space
 All spatial configurations supported by the framework are subclasses of
 `SpaceDomain`, they characterise the spatial dimensions of a `Component`.
 The current supported spatial configurations can be found in the
-:doc:`API Reference<api_reference>`'s Space section. `LatLonGrid` is one example.
+:doc:`API Reference<../api_reference>`'s Space section. `LatLonGrid` is one example.
 
 .. code-block:: python
    :caption: Instantiating a `LatLonGrid` from its dimensions' extents and resolutions.
@@ -200,7 +200,7 @@ and data needs differ.
 .. note::
 
    This information is also available on the online documentation, e.g.
-   see :doc:`Artemis <components/subsurface/cm4twc.components.subsurface.Artemis>`
+   see :doc:`Artemis <../science/subsurface/cm4twc.components.subsurface.Artemis>`
    subsurface component page.
 
 
@@ -289,7 +289,7 @@ three parts of the terrestrial water cycle.
 
    In time, the `TimeDomain`\s of the three components must be in the
    same calendar (e.g. 'gregorian') and their respective resolutions
-   must be a multiple of the fastest `Component`'s resolution.
+   must be a multiple integer of the fastest `Component`'s resolution.
 
 
 .. note::

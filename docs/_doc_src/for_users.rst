@@ -11,6 +11,4 @@ This guide is for people interested in running simulations with the framework.
 
    for_users/installation
    for_users/tutorial
-   for_users/science_repository
-   for_users/api_reference
    for_users/files

@@ -115,7 +115,7 @@ This last step happens online on GitHub, you need to go to
 https://github.com/<username>/cm4twc/tree/<new_branch> (where `<username>`
 and `<new_branch>` need to be replaced appropriately) and click "Pull Request"
 to merge your changes into the base repository 'hydro-jules/cm4twc'
-under the base branch 'dev', and not the branch 'master' (see GitHub help
+under the base branch 'dev', and not the branch 'main' (see GitHub help
 section  `Creating a pull request <https://docs.github.com/en/
 free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/
 creating-a-pull-request>`_ for more details).
