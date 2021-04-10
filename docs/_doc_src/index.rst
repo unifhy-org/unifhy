@@ -50,8 +50,13 @@ documented:
    :maxdepth: 2
 
    api_reference
-   support
 
+.. toctree::
+   :maxdepth: 1
+
+   support
+   changelog
+   licence
 
 .. add additional sections to sidebar
 
@@ -60,7 +65,6 @@ documented:
    :maxdepth: 1
 
    genindex
-   licence
 
 Acknowledgements
 ----------------
