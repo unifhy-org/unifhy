@@ -26,4 +26,4 @@ be used for each compartment of the terrestrial water cycle.
    science/openwater.rst
 
 If you wish to contribute to this repository, please refer to the sections
-:doc:`for_contributors/preparation` and :doc:`for_contributors/submission`.
+:doc:`contributors/preparation` and :doc:`contributors/submission`.
