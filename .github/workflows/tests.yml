@@ -46,8 +46,8 @@ jobs:
       # build dummy components required for tests    
       - name: build dummy C and Fortran components 
         run: |
-          mamba install -c conda-forge libgfortran
-          mamba install -c conda-forge cython
+          mamba install libgfortran
+          mamba install cython
           (cd ./tests/components && make)
           
       # install cm4twc package
@@ -57,6 +57,5 @@ jobs:
           
       # run tests
       - name: run basic test suite
-        shell: bash -l {0}
         run: |
           (cd ./tests && python run_basic_tests.py)
