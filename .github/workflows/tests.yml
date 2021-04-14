@@ -1,4 +1,4 @@
-name: run basic test suite
+name: Basic tests
 
 on:
   pull_request:
