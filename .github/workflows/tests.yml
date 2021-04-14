@@ -1,0 +1,62 @@
+name: run basic test suite
+
+on:
+  pull_request:
+    types: [ready_for_review, closed]
+    branches: [dev]
+
+jobs:
+
+  run-basic-tests:
+  
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        
+    runs-on: ${{ matrix.os }}
+    
+    defaults:
+      run:
+        shell: bash -l {0}
+    
+    steps:
+    
+      # check out cm4twc dev branch
+      - name: check out cm4twc
+        uses: actions/checkout@v2
+          
+      # set up a conda environment
+      - name: set up miniconda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: cm4twc-env
+          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
+          mamba-version: "*"
+          channels: conda-forge
+          channel-priority: true
+          
+      # install dependencies on conda environment
+      - name: install cm4twc dependencies
+        run: |
+          mamba install udunits2=2.2.25
+          mamba install --file requirements.txt
+           
+      # build dummy components required for tests    
+      - name: build dummy C and Fortran components 
+        run: |
+          mamba install -c conda-forge libgfortran
+          mamba install -c conda-forge cython
+          (cd ./tests/components && make)
+          
+      # install cm4twc package
+      - name: install cm4twc
+        run: |
+          pip install -e .
+          
+      # run tests
+      - name: run basic test suite
+        shell: bash -l {0}
+        run: |
+          (cd ./tests && python run_basic_tests.py)
