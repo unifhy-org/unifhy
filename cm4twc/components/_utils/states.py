@@ -119,8 +119,16 @@ def create_states_dump(filepath, states_info, solver_history,
 
         # state variables
         for var in states_info:
-            s = f.createVariable(var, dtype_float(),
-                                 ('time', 'history', *axes))
+            d = states_info[var].get('divisions', 1)
+            if d > 1:
+                f.createDimension('{}_divisions'.format(var), d)
+                s = f.createVariable(var, dtype_float(),
+                                     ('time', 'history', *axes,
+                                      '{}_divisions'.format(var)))
+            else:
+                s = f.createVariable(var, dtype_float(),
+                                     ('time', 'history', *axes))
+
             s.standard_name = var
             s.units = states_info[var]['units']
 
