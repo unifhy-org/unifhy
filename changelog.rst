@@ -1,3 +1,16 @@
+v0.1.0
+------
+
+Released on 2021, ???.
+
+.. rubric:: Documentation
+
+* move API reference page to doc tree root
+* move science repository page to doc tree root
+* add support page
+* add change log page
+* add logo for package
+
 v0.1.0-beta
 -----------
 
