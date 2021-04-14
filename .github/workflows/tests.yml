@@ -41,7 +41,7 @@ jobs:
       - name: install cm4twc dependencies
         run: |
           mamba install udunits2=2.2.25
-          mamba install --file requirements.txt
+          mamba install --file=requirements.txt
            
       # build dummy components required for tests    
       - name: build dummy C and Fortran components 
