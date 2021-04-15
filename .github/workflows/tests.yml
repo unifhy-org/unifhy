@@ -1,6 +1,8 @@
 name: Basic tests
 
 on:
+  push:
+    branches: [dev]
   pull_request:
     types: [opened, reopened, ready_for_review]
     branches: [dev]
