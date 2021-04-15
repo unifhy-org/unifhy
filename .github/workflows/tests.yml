@@ -15,6 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
+      fail-fast: false
         
     runs-on: ${{ matrix.os }}
     
@@ -24,8 +25,8 @@ jobs:
     
     steps:
     
-      # check out cm4twc dev branch
-      - name: check out cm4twc
+      # check out PR HEAD commit
+      - name: check out PR HEAD commit
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
@@ -34,7 +35,7 @@ jobs:
       - name: set up miniconda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
-          activate-environment: cm4twc-env
+          activate-environment: testing-env
           python-version: ${{ matrix.python-version }}
           auto-update-conda: true
           mamba-version: "*"
@@ -42,20 +43,29 @@ jobs:
           channel-priority: true
           
       # install dependencies on conda environment
-      - name: install cm4twc dependencies
+      - name: install package dependencies
         run: |
           mamba install udunits2=2.2.25
           mamba install --file=requirements.txt
            
-      # build dummy components required for tests    
+      # build dummy components required for tests
+      - name: install Fortran compiler (linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mamba install gfortran_impl_linux-64
+      
+      - name: install Fortran compiler (macos)
+        if: matrix.os == 'macos-latest'
+        run: |
+          mamba install gfortran_impl_osx-64
+      
       - name: build dummy C and Fortran components 
         run: |
-          mamba install libgfortran
           mamba install cython
           (cd ./tests/components && make)
           
-      # install cm4twc package
-      - name: install cm4twc
+      # install package
+      - name: install package
         run: |
           pip install -e .
           
