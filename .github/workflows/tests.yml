@@ -24,6 +24,8 @@ jobs:
       # check out cm4twc dev branch
       - name: check out cm4twc
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
           
       # set up a conda environment
       - name: set up miniconda environment
