@@ -10,6 +10,9 @@ Community Model for the Terrestrial Water Cycle
 .. image:: https://img.shields.io/github/license/hydro-jules/cm4twc?style=flat-square&color=00b0f0
    :target: https://opensource.org/licenses/BSD-3-Clause
    :alt: Licence
+.. image:: https://img.shields.io/github/workflow/status/hydro-jules/cm4twc/Basic%20tests?style=flat-square&label=tests
+   :target: https://github.com/hydro-jules/cm4twc/actions/workflows/tests.yml
+   :alt: GitHub Actions Test Workflow Status
 
 The Python package `cm4twc` (Community Model for the Terrestrial Water
 Cycle) is a hydrological modelling framework which combines interchangeable
