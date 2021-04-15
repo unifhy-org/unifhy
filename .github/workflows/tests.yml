@@ -3,6 +3,7 @@ name: Basic tests
 on:
   pull_request:
     types: [opened, reopened, ready_for_review]
+    branches: [dev]
 
 jobs:
 
