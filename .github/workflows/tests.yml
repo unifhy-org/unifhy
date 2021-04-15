@@ -2,7 +2,7 @@ name: Basic tests
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, add-gh-action-to-run-tests]
   pull_request:
     types: [opened, reopened, ready_for_review]
     branches: [dev]
