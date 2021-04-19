@@ -10,6 +10,8 @@ Released on 2021, ???.
 
 .. rubric:: Documentation
 
+* document 'divisions' for component states in preparation page
+  (`#35 <https://github.com/hydro-jules/cm4twc/issues/35>`_)
 * move API reference page to doc tree root
 * move science repository page to doc tree root
 * add support page
