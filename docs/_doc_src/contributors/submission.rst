@@ -45,7 +45,7 @@ Create a branch on your copy
 ----------------------------
 
 Like the `cm4twc` repository, your local copy of it comes with two
-branches 'master' and 'dev'. It is recommended that you create a new
+branches 'main' and 'dev'. It is recommended that you create a new
 branch to work on each time you work on a new component. To do so,
 navigate to the root of your local copy using the following command:
 
@@ -53,13 +53,13 @@ navigate to the root of your local copy using the following command:
 
    cd cm4twc
 
-The 'master' branch contains stable releases of the framework, so we
-recommend you branch from the 'master' branch rather than the 'dev' branch.
+The 'main' branch contains stable releases of the framework, so we
+recommend you branch from the 'main' branch rather than the 'dev' branch.
 To do so, run the following commands:
 
 .. code-block:: bash
 
-   git checkout -b <new_branch> master
+   git checkout -b <new_branch> main
 
 where `<new_branch>` needs to be replaced with the name you want to give
 to your branch.
