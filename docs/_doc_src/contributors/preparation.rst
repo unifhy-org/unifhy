@@ -130,7 +130,7 @@ item is strongly encouraged. An optional *divisions* item exists for the
 default its value is 1, indicating the state is a scalar, if its value
 is greater than 1, it indicates the state is a vector, and its value is
 the length of the vector. The *divisions* item may be useful when
-considering e.g. different soil layers.
+considering e.g. different vertical layers in a component.
 
 In addition, special attributes in the definition `_land_sea_mask` and
 `_flow_direction` and must be assigned a boolean value (True if required,
