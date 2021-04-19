@@ -125,7 +125,12 @@ the metadata for the input, featuring at least two items, one for its *kind*
 and one for its *units* (and one for its *frequency* if *kind* is
 *climatologic*). All other items in the component definition must feature
 at least a *units* metadata item, and an optional *description* metadata
-item is strongly encouraged.
+item is strongly encouraged. An optional *divisions* item exist in the
+`_states_info` dictionary, where its expected value is an integer: by
+default its value is 1, indicating the state is a scalar, if its value
+is greater than 1, it indicates the state is a vector, and its value is
+the length of the vector. The *divisions* item may be useful when
+considering e.g. different soil layers.
 
 In addition, special attributes in the definition `_land_sea_mask` and
 `_flow_direction` and must be assigned a boolean value (True if required,
@@ -259,11 +264,12 @@ special argument `**kwargs`.
 
            # return outwards and outputs
            return (
-               {'name_1st_outwards': outwards_1},
-               {'name_1st_output': output_1}
+               {'name_outwards_1': outwards_1},
+               {'name_output_1': output_1,
+                'name_output_2': output_2}
            )
 
-       def finalise(self, name_1st_state, **kwargs)
+       def finalise(self, name_state_1, name_state_2, **kwargs)
            # cleanly wrap up simulation here
            # to be able to restart from where simulation stopped
            pass
