@@ -132,17 +132,18 @@ is greater than 1, it indicates the state is a vector, and its value is
 the length of the vector. The *divisions* item may be useful when
 considering e.g. different vertical layers in a component.
 
-In addition, special attributes in the definition `_land_sea_mask` and
-`_flow_direction` and must be assigned a boolean value (True if required,
-False if not required). If you need land sea mask information for your
-computation, set `_land_sea_mask` to True and access it in your class
+In addition, the component definition features two special optional
+attributes `_land_sea_mask` and `_flow_direction`. They must be assigned
+a boolean value (True if required by your component, False if not) -- their
+default value is False. If you need land sea mask information for your
+computations, set `_land_sea_mask` to True and access it in your class
 methods using `self.spacedomain.land_sea_mask`. If you need flow
 direction information or want to use the flow routing functionality of
 the component (accessible through `self.spacedomain.route()`), set
-`_flow_direction` as True, and access it in your class methods using
+`_flow_direction` to True, and access it in your class methods using
 `self.spacedomain.flow_direction`.
 
-See a detailed example of component definition below.
+See a detailed example of a mock component definition below.
 
 .. code-block:: python
    :caption: Completing the component class definition in the class attributes.
