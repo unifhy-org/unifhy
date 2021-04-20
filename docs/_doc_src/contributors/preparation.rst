@@ -272,7 +272,7 @@ special argument `**kwargs`.
            for i in range(4):
                output_2 += (0.05 * state_2[-1][..., i]
                             / self.timedelta_in_seconds)
-           output_2 /= input_1
+           output_2 /= input_3
 
            # update component state
            state_1[0][:] = state_1[-1] * (1 - self.timedelta_in_seconds * parameter_1)
