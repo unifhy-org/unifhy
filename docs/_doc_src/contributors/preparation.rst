@@ -125,19 +125,25 @@ the metadata for the input, featuring at least two items, one for its *kind*
 and one for its *units* (and one for its *frequency* if *kind* is
 *climatologic*). All other items in the component definition must feature
 at least a *units* metadata item, and an optional *description* metadata
-item is strongly encouraged.
+item is strongly encouraged. An optional *divisions* item exists for the
+`_states_info` dictionary, where its expected value is an integer: by
+default its value is 1, indicating the state is a scalar, if its value
+is greater than 1, it indicates the state is a vector, and its value is
+the length of the vector. The *divisions* item may be useful when
+considering e.g. different vertical layers in a component.
 
-In addition, special attributes in the definition `_land_sea_mask` and
-`_flow_direction` and must be assigned a boolean value (True if required,
-False if not required). If you need land sea mask information for your
-computation, set `_land_sea_mask` to True and access it in your class
+In addition, the component definition features two special optional
+attributes `_land_sea_mask` and `_flow_direction`. They must be assigned
+a boolean value (True if required by your component, False if not) -- their
+default value is False. If you need land sea mask information for your
+computations, set `_land_sea_mask` to True and access it in your class
 methods using `self.spacedomain.land_sea_mask`. If you need flow
 direction information or want to use the flow routing functionality of
 the component (accessible through `self.spacedomain.route()`), set
-`_flow_direction` as True, and access it in your class methods using
+`_flow_direction` to True, and access it in your class methods using
 `self.spacedomain.flow_direction`.
 
-See a detailed example of component definition below.
+See a detailed example of a mock component definition below.
 
 .. code-block:: python
    :caption: Completing the component class definition in the class attributes.
@@ -149,40 +155,47 @@ See a detailed example of component definition below.
        """component description here"""
 
        _inputs_info = {
-           'name_1st_input': {
+           'input_1': {
                'kind': 'dynamic',
                'units': 'kg m-2 s-1'
            },
-           'name_2nd_input': {
-               'kind': 'static',
-               'units': 'm'
-           },
-           'name_3rd_input': {
+           'input_2': {
                'kind': 'climatologic',
                'frequency': 'monthly',
-               'units': '1'
+               'units': 'kg m-2 s-1''
+           },
+           'input_3': {
+               'kind': 'static',
+               'units': 'm'
            }
        }
        _outputs_info = {
-           'name_1st_output': {
+           'output_1': {
                'units': 'kg m-2 s-1'
+           },
+           'output_2': {
+               'units': 'kg m-3 s-1'
            }
        }
        _states_info = {
-           'name_1st_state': {
+           'state_1': {
+               'units': 'kg m-2'
+           },
+           'state_2': {
+               'divisions': 4,
                'units': 'kg m-2'
            }
        }
        _parameters_info = {
-           'name_1st_parameter': {
+           'parameter_1': {
                'description': 'brief parameter description here',
-               'units': 'kg m-2'
+               'units': '1'
            }
        }
        _constants_info = {
-           'name_1st_constant': {
+           'constant_1': {
                'description': 'brief constant description here',
-               'units': 'kg m-2'
+               'units': '1'
            }
        }
        _land_sea_mask = False
@@ -238,32 +251,42 @@ special argument `**kwargs`.
 
        # component definition here
 
-       def initialise(self, name_1st_state, **kwargs):
+       def initialise(self, state_1, state_2, **kwargs):
            # set here initial condition values for component states
-           name_1st_state[-1][:] = 0
+           state_1[-1][...] = 0
+           state_2[-1][...] = 0
 
-       def run(self, name_1st_inwards, name_2nd_inwards, name_3rd_inwards,
-               name_1st_input, name_2nd_input, name_3rd_input,
-               name_1st_state, name_1st_parameter, name_1st_constant=1, **kwargs)
+       def run(self, inwards_1, inwards_2, inwards_3, input_1, input_2, input_3,
+               state_1, state_2, parameter_1, constant_1=0.5, **kwargs)
 
            # compute science using available inwards/inputs/parameters/constants
-           outwards_1 = (name_1st_inwards + name_1st_input
-                         + name_1st_state[-1] * self.timedelta_in_seconds)
-                        * name_1st_constant
-           output_1 = (name_2nd_input + name_3rd_input) * name_1st_parameter
+           routed, outed = self.spacedomain.route(inwards_1 + inwards_2 + inwards_3)
 
-           routed, outed = self.spacedomain.route(outwards_1)
+           outwards_1 = (routed + input_1 + state_1[-1]
+                         / self.timedelta_in_seconds) * parameter_1
+
+           m = self.current_datetime.month
+
+           output_1 = input_2[m - 1, ...] * constant_1
+
+           output_2 = input_2[m - 1, ...] * (1 - constant_1)
+           for i in range(4):
+               output_2 += (0.05 * state_2[-1][..., i]
+                            / self.timedelta_in_seconds)
+           output_2 /= input_3
 
            # update component state
-           name_1st_state[0][:] = name_1st_state[-1] - (routed + output_1)
+           state_1[0][:] = state_1[-1] * (1 - self.timedelta_in_seconds * parameter_1)
+           state_2[0][...] =  0.95 * state_2[-1][...]
 
            # return outwards and outputs
            return (
-               {'name_1st_outwards': outwards_1},
-               {'name_1st_output': output_1}
+               {'outwards_1': outwards_1},
+               {'output_1': output_1,
+                'output_2': output_2}
            )
 
-       def finalise(self, name_1st_state, **kwargs)
+       def finalise(self, state_1, state_2, **kwargs)
            # cleanly wrap up simulation here
            # to be able to restart from where simulation stopped
            pass
