@@ -62,7 +62,8 @@ class Dummy(OpenWaterComponent):
     }
     _constants_info = {
         'constant_c': {
-            'units': '1'
+            'units': '1',
+            'default_value': 3
         }
     }
     _states_info = {
@@ -99,7 +100,7 @@ class Dummy(OpenWaterComponent):
             # component states
             state_a,
             # component constants
-            constant_c=3,
+            constant_c,
             **kwargs):
 
         state_a[0][:] = state_a[-1] + 1

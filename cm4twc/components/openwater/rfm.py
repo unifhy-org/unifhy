@@ -94,11 +94,13 @@ class RFM(OpenWaterComponent):
                            'cells) draining to a grid box, above which the '
                            'grid cell is considered to be a river point - '
                            'remaining points are treated as land (drainage '
-                           'area = 0) or sea (drainage area < 0)'
+                           'area = 0) or sea (drainage area < 0)',
+            'default_value': 13
         },
         'rho_lw': {
             'description': 'specific mass of liquid water',
-            'units': 'kg m-3'
+            'units': 'kg m-3',
+            'default_value': 1e3
         }
     }
     _outputs_info = {
@@ -130,7 +132,7 @@ class RFM(OpenWaterComponent):
             # component states
             flow_in, b_flow_in, surf_store, sub_store,
             # component constants
-            a_thresh=13, rho_lw=1e3,
+            a_thresh, rho_lw,
             **kwargs):
 
         # /!\__RENAMING_CM4TWC__________________________________________

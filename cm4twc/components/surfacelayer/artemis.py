@@ -100,59 +100,72 @@ class Artemis(SurfaceLayerComponent):
     _constants_info = {
         'sigma_sb': {
             'description': 'Stefan-Boltzman constant',
-            'units': 'W m-2 K-4'
+            'units': 'W m-2 K-4',
+            'default_value': 5.67e-8
         },
         'kappa': {
             'description': 'von Karman constant',
-            'units': '1'
+            'units': '1',
+            'default_value': 0.41
         },
         'lambda_lh': {
             'description': 'latent heat of vaporisation '
                            '(water vapour @ 288K) - M&U90 p.268',
-            'units': 'J kg-1'
+            'units': 'J kg-1',
+            'default_value': 2.48e6
         },
         'rho_a': {
             'description': 'specific mass of (dry) air @ 288K - M&U90 p.268',
-            'units': 'kg m-3'
+            'units': 'kg m-3',
+            'default_value': 1.22
         },
         'rho_lw': {
             'description': 'specific mass of liquid water',
-            'units': 'kg m-3'
+            'units': 'kg m-3',
+            'default_value': 1e3
         },
         'c_p': {
             'description': 'specific heat of air - M&U90 p.267',
-            'units': 'J kg-1 K-1'
+            'units': 'J kg-1 K-1',
+            'default_value': 1.01e3
         },
         'R_v': {
             'description': 'gas constant for water vapour - P&P77 p.23',
-            'units': 'J kg-1 K-1'
+            'units': 'J kg-1 K-1',
+            'default_value': 461.5
         },
         't_freeze': {
             'description': 'freezing point of water',
-            'units': 'K'
+            'units': 'K',
+            'default_value': 273.
         },
         'gamma': {
             'description': 'psychrometric constant [kPa/K] M&U90 p.181',
-            'units': 'kPa K-1'
+            'units': 'kPa K-1',
+            'default_value': 0.066
         },
         'D_s': {
             'description': 'drainage rate when canopy is full - '
                            'Shuttleworth, 2007. p. 218; orig Rutter',
-            'units': 'm s-1'
+            'units': 'm s-1',
+            'default_value': 6e-9
         },
         'b': {
             'description': 'canopy drainage decay term - '
                            'Shuttleworth, 2007. p. 218',
-            'units': 's-1'
+            'units': 's-1',
+            'default_value': 0.062
         },
         'F': {
             'description': 'degree-day melting factor - '
                            'Beven 2000; 0.004 m/K/day',
-            'units': 'm K-1 s-1'
+            'units': 'm K-1 s-1',
+            'default_value': 4.6e-8
         },
         'z': {
             'description': 'height measurement for wind speed',
-            'units': 'm'
+            'units': 'm',
+            'default_value': 10
         }
     }
     _outputs_info = {
@@ -181,9 +194,8 @@ class Artemis(SurfaceLayerComponent):
             # component states
             canopy_store, snowpack_store,
             # component constants
-            sigma_sb=5.67e-8, kappa=0.41, lambda_lh=2.48e6, rho_a=1.22,
-            rho_lw=1e3, c_p=1.01e3, t_freeze=273., R_v=461.5,
-            gamma=0.066, D_s=6e-9, b=0.062, F=4.6e-8, z=10,
+            sigma_sb, kappa, lambda_lh, rho_a, rho_lw, c_p, t_freeze,
+            R_v, gamma, D_s, b, F, z,
             **kwargs):
 
         # /!\__RENAMING_CM4TWC__________________________________________

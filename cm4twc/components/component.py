@@ -335,9 +335,9 @@ class Component(metaclass=MetaComponent):
 
     @constants.setter
     def constants(self, constants):
-        constants = {} if constants is None else constants
-        # # no check because they are optional
-        self._constants = constants
+        constants_ = {} if constants is None else constants
+        self._check_constants(constants_)
+        self._constants = constants_
 
     @property
     def records(self):
@@ -405,7 +405,8 @@ class Component(metaclass=MetaComponent):
                             "units missing for {} in {} component "
                             "definition".format(name, self._category)
                         )
-        # check for kind
+
+        # check for input kind
         if self._inputs_info:
             for name, info in self._inputs_info.items():
                 if 'kind' not in info:
@@ -435,6 +436,15 @@ class Component(metaclass=MetaComponent):
                                     "invalid frequency for {} in {} component "
                                     "definition".format(name, self._category)
                                 )
+
+        # check for constant default_value
+        if self._constants_info:
+            for name, info in self._constants_info.items():
+                if 'default_value' not in info:
+                    raise RuntimeError(
+                        "default_value missing for constant {} in {} "
+                        "component definition".format(name, self._category)
+                    )
 
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
@@ -625,6 +635,17 @@ class Component(metaclass=MetaComponent):
                 "{} all required".format(
                     self._category, self.__class__.__name__,
                     self._parameters_info))
+
+    def _check_constants(self, constants):
+        """The purpose of this method is to check whether constant values
+        are given for the corresponding component, and to use the default
+        value if they are not given.
+        """
+        # check if constant value provided, otherwise use default_value
+        if self._constants_info:
+            for name, info in self._constants_info.items():
+                if name not in constants:
+                    constants[name] = info['default_value']
 
     @property
     def category(self):
