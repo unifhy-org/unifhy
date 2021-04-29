@@ -711,7 +711,7 @@ class Component(metaclass=MetaComponent):
         # if not already initialised, get default state values
         if not self.initialised_states:
             self._instantiate_states()
-            self.initialise(**self.states)
+            self.initialise(**self.parameters, **self.constants, **self.states)
             self.initialised_states = True
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
@@ -756,7 +756,7 @@ class Component(metaclass=MetaComponent):
         timestamp = self.timedomain.bounds.array[-1, -1]
         update_states_dump(sep.join([self.saving_directory, self.dump_file]),
                            self.states, timestamp, self._solver_history)
-        self.finalise(**self.states)
+        self.finalise(**self.parameters, **self.constants, **self.states)
 
     def _instantiate_states(self):
         # get a State object for each state and initialise to zero
