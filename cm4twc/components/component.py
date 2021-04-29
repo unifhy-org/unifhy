@@ -166,12 +166,15 @@ class Component(metaclass=MetaComponent):
                 ======================  ================================
 
             parameters: `dict`, optional
-                The parameter values for the `Component`. Must be
-                provided in the units expected by the `Component`.
+                The parameter values for the `Component`. Each key must
+                correspond to a parameter name, and each value must be
+                a `cf.Data` with units.
 
             constants: `dict`, optional
-                The parameter values for the `Component`. Must be
-                provided in the required units.
+                The constant values for the `Component` for which
+                adjustment is desired. Each key must correspond to a
+                constant name, and each value must be a `cf.Data` with
+                units.
 
             records: `dict`, optional
                 The desired records from the `Component`. Each key
@@ -323,8 +326,7 @@ class Component(metaclass=MetaComponent):
     @parameters.setter
     def parameters(self, parameters):
         parameters = {} if parameters is None else parameters
-        self._check_parameters(parameters)
-        self._parameters = parameters
+        self._parameters = self._check_parameters(parameters)
 
     @property
     def constants(self):
@@ -335,9 +337,8 @@ class Component(metaclass=MetaComponent):
 
     @constants.setter
     def constants(self, constants):
-        constants_ = {} if constants is None else constants
-        self._check_constants(constants_)
-        self._constants = constants_
+        constants = {} if constants is None else constants
+        self._constants = self._check_constants(constants)
 
     @property
     def records(self):
@@ -625,27 +626,90 @@ class Component(metaclass=MetaComponent):
                     self.datasubset[data_name] = self.dataset[data_name]
 
     def _check_parameters(self, parameters):
-        """The purpose of this method is to check that parameter values
-        are given for the corresponding component.
+        """Check that parameter values are `cf.Data` with right units.
+        Return dictionary with values in place of `cf.Data`.
         """
-        # check that all parameters are provided
-        if not all([i in parameters for i in self._parameters_info]):
-            raise RuntimeError(
-                "one or more parameters are missing in {} component '{}': "
-                "{} all required".format(
-                    self._category, self.__class__.__name__,
-                    self._parameters_info))
+        parameters_ = {}
+
+        if self._parameters_info:
+            for name, info in self._parameters_info.items():
+                # check presence of value for parameter
+                if name not in parameters:
+                    raise RuntimeError(
+                        "value missing for parameter {}".format(name)
+                    )
+                parameter = parameters[name]
+
+                # check parameter type
+                if not isinstance(parameter, cf.Data):
+                    raise TypeError(
+                        "parameter {} not instance of cf.Data".format(name)
+                    )
+
+                # check parameter units
+                if not parameter.get_units(False):
+                    raise ValueError(
+                        "missing units for parameter {}".format(name)
+                    )
+                if not parameter.Units.equals(
+                        Units(self._parameters_info[name]['units'])
+                ):
+                    raise ValueError(
+                        "invalid units for parameter {}".format(name)
+                    )
+
+                # assign parameter value in place of cf.Data
+                try:
+                    parameters_[name] = parameter.array.item()
+                except ValueError:
+                    raise ValueError(
+                        "parameter {} not a scalar".format(name)
+                    )
+
+        return parameters_
 
     def _check_constants(self, constants):
-        """The purpose of this method is to check whether constant values
-        are given for the corresponding component, and to use the default
-        value if they are not given.
+        """If given, check that constant values are `cf.Data` with right
+        units. If not given, use constant default value from component
+        definition. Return dictionary with values in place of `cf.Data`.
         """
+        constants_ = {}
+
         # check if constant value provided, otherwise use default_value
         if self._constants_info:
             for name, info in self._constants_info.items():
                 if name not in constants:
-                    constants[name] = info['default_value']
+                    constants_[name] = info['default_value']
+                else:
+                    constant = constants[name]
+
+                    # check parameter type
+                    if not isinstance(constant, cf.Data):
+                        raise TypeError(
+                            "constant {} not instance of cf.Data".format(name)
+                        )
+
+                    # check parameter units
+                    if not constant.get_units(False):
+                        raise ValueError(
+                            "missing units for constant {}".format(name)
+                        )
+                    if not constant.Units.equals(
+                            Units(self._constants_info[name]['units'])
+                    ):
+                        raise ValueError(
+                            "invalid units for constant {}".format(name)
+                        )
+
+                    # assign parameter value in place of cf.Data
+                    try:
+                        constants_[name] = constant.array.item()
+                    except ValueError:
+                        raise ValueError(
+                            "constant {} not a scalar".format(name)
+                        )
+
+        return constants_
 
     @property
     def category(self):
@@ -664,18 +728,40 @@ class Component(metaclass=MetaComponent):
 
     @classmethod
     def from_config(cls, cfg):
+        # get relevant spacedomain subclass
         spacedomain = getattr(space, cfg['spacedomain']['class'])
+
+        # convert parameters and constants to cf.Data
+        parameters = {}
+        if cfg.get('parameters'):
+            for name, (value, units) in cfg.get('parameters').items():
+                parameters[name] = cf.Data(value, units)
+        constants = {}
+        if cfg.get('constants'):
+            for name, (value, units) in cfg.get('constants').items():
+                constants[name] = cf.Data(value, units)
+
         return cls(
             saving_directory=cfg['saving_directory'],
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
-            parameters=cfg.get('parameters'),
-            constants=cfg.get('constants'),
+            parameters=parameters,
+            constants=constants,
             records=cfg.get('records')
         )
 
     def to_config(self):
+        # get parameters and constants as tuple (value, unit)
+        parameters = {}
+        if self.parameters:
+            for name, value in self.parameters.items():
+                parameters[name] = (value, self._parameters_info[name]['units'])
+        constants = {}
+        if self.constants:
+            for name, value in self.constants.items():
+                constants[name] = (value, self._constants_info[name]['units'])
+
         cfg = {
             'module': self.__module__,
             'class': self.__class__.__name__,
@@ -683,8 +769,8 @@ class Component(metaclass=MetaComponent):
             'timedomain': self.timedomain.to_config(),
             'spacedomain': self.spacedomain.to_config(),
             'dataset': self.dataset.to_config(),
-            'parameters': self.parameters if self.parameters else None,
-            'constants': self.constants if self.constants else None,
+            'parameters': parameters if parameters else None,
+            'constants': constants if constants else None,
             'records': self.records if self.records else None
         }
         return cfg

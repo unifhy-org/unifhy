@@ -1,5 +1,6 @@
 from importlib import import_module
 from datetime import timedelta
+import cf
 
 import cm4twc
 
@@ -43,10 +44,10 @@ space_resolutions = {
 parameters = {
     'surfacelayer': {},
     'subsurface': {
-        'parameter_a': 1
+        'parameter_a': cf.Data(1, '1')
     },
     'openwater': {
-        'parameter_c': 3
+        'parameter_c': cf.Data(3, '1')
     },
 }
 
@@ -54,7 +55,7 @@ constants = {
     'surfacelayer': {},
     'subsurface': {},
     'openwater': {
-        'constant_c': 3
+        'constant_c': cf.Data(3, '1')
     },
 }
 
