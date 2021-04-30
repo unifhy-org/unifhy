@@ -167,16 +167,23 @@ class Component(metaclass=MetaComponent):
 
             parameters: `dict`, optional
                 The parameter values for the `Component`. Each key must
-                correspond to a parameter name, and each value must either
-                be a `cf.Data` (with units) or a sequence of 2 items
-                value and units (in this order).
+                correspond to a parameter name, and each value can be
+                a `cf.Field` (with units), a `cf.Data` (with units),
+                or a sequence of 2 items data and units (in this order).
+
+                If it is a `cf.Field`, it must contains data for all
+                spatial elements in the region covered by the component's
+                spacedomain. If it is a `cf.Data` or sequence of 2 items,
+                underlying data can be a scalar or an array (of the same
+                shape as the component's spacedomain).
 
             constants: `dict`, optional
                 The constant values for the `Component` for which
                 adjustment is desired. Each key must correspond to a
                 constant name, and each value must either be a `cf.Data`
-                (with units) or a sequence of 2 items value and units
-                (in this order).
+                (with units, where data must be a scalar) or a sequence
+                of 2 items data and units (in this order, where data
+                must be a scalar).
 
             records: `dict`, optional
                 The desired records from the `Component`. Each key
