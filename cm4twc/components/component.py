@@ -865,24 +865,17 @@ class Component(metaclass=MetaComponent):
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
-        parameters = ["        {}: {} {}".format(
-            p, self.parameters[p], self._parameters_info[p]['units'])
-            for p in self.parameters] if self.parameters else []
-        constants = ["        {}: {} {}".format(
-            c, self.constants[c], self._constants_info[c]['units'])
-            for c in self.constants] if self.constants else []
-        records = ["        {}: {} {}".format(
-            o, d, m) for o, f in self.records.items()
-            for d, m in f.items()] if self.records else []
+
+        records = ["        {}: {} {}".format(o, d, m)
+                   for o, f in self.records.items()
+                   for d, m in f.items()] if self.records else []
+
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    category: {}".format(self._category)]
             + ["    saving directory: {}".format(self.saving_directory)]
             + ["    timedomain: period: {}".format(self.timedomain.period)]
             + ["    spacedomain: shape: ({})".format(shape)]
-            + ["    dataset: {} variable(s)".format(len(self.dataset))]
-            + (["    parameters:"] if parameters else []) + parameters
-            + (["    constants:"] if constants else []) + constants
             + (["    records:"] if records else []) + records
             + [")"]
         )
