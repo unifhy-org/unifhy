@@ -4,17 +4,6 @@ import doctest
 import cm4twc
 
 
-def get_sciencish_dataset():
-    return cm4twc.DataSet(
-        ['data/dummy_driving_data.nc',
-         'data/dummy_ancillary_data.nc'],
-        name_mapping={'rainfall_flux': 'rainfall',
-                      'snowfall_flux': 'snowfall',
-                      'air_temperature': 'air_temperature',
-                      'soil_temperature': 'soil_temperature'}
-    )
-
-
 def get_dummy_dataset(component_category, time_res, space_res):
     return cm4twc.DataSet(
         'data/dummy_{}_data_{}_{}.nc'.format(component_category, time_res,
