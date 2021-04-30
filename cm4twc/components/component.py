@@ -13,7 +13,7 @@ from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
 from ..data import DataSet
-from ..settings import dtype_float, array_order, decr
+from ..settings import dtype_float, array_order
 
 
 class MetaComponent(abc.ABCMeta):
@@ -238,6 +238,7 @@ class Component(metaclass=MetaComponent):
         self.timedomain = timedomain
 
         # parameters attribute
+        self._pristine_parameters = None
         self.parameters = parameters
 
         # constants attribute
@@ -328,7 +329,8 @@ class Component(metaclass=MetaComponent):
     @parameters.setter
     def parameters(self, parameters):
         parameters = {} if parameters is None else parameters
-        self._parameters = self._check_parameters(parameters)
+        self._pristine_parameters = parameters
+        self._parameters = self._check_parameters(parameters, self.spacedomain)
 
     @property
     def constants(self):
@@ -592,9 +594,10 @@ class Component(metaclass=MetaComponent):
 
         return field_subset
 
-    def _check_parameters(self, parameters):
-        """Check that parameter values are `cf.Data` with right units.
-        Return dictionary with values in place of `cf.Data`.
+    def _check_parameters(self, parameters, spacedomain):
+        """Check that parameter values are (convertible to) `cf.Data`
+        with right units. Return dictionary with values in place of
+        `cf.Data`.
         """
         parameters_ = {}
 
@@ -610,6 +613,14 @@ class Component(metaclass=MetaComponent):
                 # check parameter type
                 if isinstance(parameter, cf.Data):
                     pass
+                elif isinstance(parameter, cf.Field):
+                    try:
+                        parameter = spacedomain.subset_and_compare(parameter)
+                    except RuntimeError:
+                        raise RuntimeError(
+                            "parameter {} spatially incompatible".format(name)
+                        )
+                    parameter = parameter.data
                 elif isinstance(parameter, (tuple, list)) and len(parameter) == 2:
                     try:
                         parameter = cf.Data(*parameter)
@@ -634,20 +645,31 @@ class Component(metaclass=MetaComponent):
                         "invalid units for parameter {}".format(name)
                     )
 
+                # check parameter shape (and reshape if scalar-like)
+                if parameter.shape == spacedomain.shape:
+                    parameter = parameter.array
+                else:
+                    # check if parameter evaluate as a scalar
+                    try:
+                        p = parameter.array.item()
+                    except ValueError:
+                        raise ValueError(
+                            "incompatible shape for parameter {}".format(name)
+                        )
+                    # assign scalar to newly created array of spacedomain shape
+                    parameter = np.zeros(spacedomain.shape, dtype_float())
+                    parameter[:] = p
+
                 # assign parameter value in place of cf.Data
-                try:
-                    parameters_[name] = parameter.array.item()
-                except ValueError:
-                    raise ValueError(
-                        "parameter {} not a scalar".format(name)
-                    )
+                parameters_[name] = parameter
 
         return parameters_
 
     def _check_constants(self, constants):
-        """If given, check that constant values are `cf.Data` with right
-        units. If not given, use constant default value from component
-        definition. Return dictionary with values in place of `cf.Data`.
+        """If given, check that constant values are (convertible to)
+        `cf.Data` with right units. If not given, use constant default
+        value from component definition. Return dictionary with values
+        in place of `cf.Data`.
         """
         constants_ = {}
 
@@ -716,12 +738,31 @@ class Component(metaclass=MetaComponent):
         # get relevant spacedomain subclass
         spacedomain = getattr(space, cfg['spacedomain']['class'])
 
+        # convert parameters to cf.Field or cf.Data
+        parameters = {}
+        if cfg.get('parameters'):
+            for name, info in cfg['parameters'].items():
+                error = ValueError(
+                    'invalid information in YAML for parameter {}'.format(name)
+                )
+                if isinstance(info, (tuple, list)):
+                    parameters[name] = cf.Data(*info)
+                elif isinstance(info, dict):
+                    if info.get('files') and info.get('select'):
+                        parameters[name] = (
+                            cf.read(info['files']).select_field(info['select'])
+                        )
+                    else:
+                        raise error
+                else:
+                    raise error
+
         return cls(
             saving_directory=cfg['saving_directory'],
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
-            parameters=cfg.get('parameters'),
+            parameters=parameters,
             constants=cfg.get('constants'),
             records=cfg.get('records')
         )
@@ -731,7 +772,50 @@ class Component(metaclass=MetaComponent):
         parameters = {}
         if self.parameters:
             for name, value in self.parameters.items():
-                parameters[name] = (value, self._parameters_info[name]['units'])
+                original = self._pristine_parameters[name]
+                if isinstance(original, cf.Field):
+                    if original.data.get_filenames():
+                        # comes from a file, point to it
+                        parameters[name] = {
+                            'files': original.data.get_filenames(),
+                            'select': original.identity()
+                        }
+                    else:
+                        # create a new file for it
+                        filename = sep.join(
+                            [self.saving_directory,
+                             '_'.join([self.identifier, self.category, name])
+                             + ".nc"]
+                        )
+                        cf.write(original, filename)
+                        # point to it
+                        parameters[name] = {
+                            'files': [filename],
+                            'select': original.identity()
+                        }
+                else:
+                    if np.amin(value) == np.amax(value):
+                        # can be stored as a scalar
+                        parameters[name] = (np.mean(value).item(),
+                                            self._parameters_info[name]['units'])
+                    else:
+                        # must be stored as a cf.Field in new file
+                        field = self.spacedomain.to_field()
+                        field.data[:] = original
+                        field.long_name = name
+                        # create a new file for it
+                        filename = sep.join(
+                            [self.saving_directory,
+                             '_'.join([self.identifier, self.category, name])
+                             + ".nc"]
+                        )
+                        cf.write(original, filename)
+                        # point to it
+                        parameters[name] = {
+                            'files': [filename],
+                            'select': field.identity()
+                        }
+
         constants = {}
         if self.constants:
             for name, value in self.constants.items():

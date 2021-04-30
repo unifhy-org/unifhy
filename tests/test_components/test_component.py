@@ -42,20 +42,52 @@ space_resolutions = {
 }
 
 parameters = {
-    'surfacelayer': {},
+    'surfacelayer': {
+        'match': {},
+        'remap': {}
+    },
     'subsurface': {
-        'parameter_a': cf.Data(1, '1')
+        'match': {
+            'parameter_a':
+                cf.read(
+                    'data/dummy_subsurface_parameter_a_{}'
+                    '.nc'.format(space_resolutions['subsurface']['match'])
+                ).select_field('long_name=parameter_a')
+        },
+        'remap': {
+            'parameter_a':
+                cf.read(
+                    'data/dummy_subsurface_parameter_a_{}'
+                    '.nc'.format(space_resolutions['subsurface']['remap'])
+                ).select_field('long_name=parameter_a')
+        }
     },
     'openwater': {
-        'parameter_c': [3, '1']
+        'match': {
+            'parameter_c': [3, '1']
+        },
+        'remap': {
+            'parameter_c': [3, '1']
+        }
     },
 }
 
 constants = {
-    'surfacelayer': {},
-    'subsurface': {},
+    'surfacelayer': {
+        'match': {},
+        'remap': {}
+    },
+    'subsurface': {
+        'match': {},
+        'remap': {}
+    },
     'openwater': {
-        'constant_c': (3, '1')
+        'match': {
+            'constant_c': cf.Data(3, '1')
+        },
+        'remap': {
+            'constant_c': cf.Data(3, '1')
+        }
     },
 }
 
@@ -147,7 +179,7 @@ def get_dummy_component(category, kind, time_, space_, source):
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=dataset,
-            parameters=parameters[category],
+            parameters=parameters[category][space_],
             constants=constants[category],
             records=records[category][time_]
         )
