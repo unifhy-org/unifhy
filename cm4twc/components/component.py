@@ -528,42 +528,16 @@ class Component(metaclass=MetaComponent):
     def _check_dataset_space(self, dataset, spacedomain):
         # check space compatibility for input data
         for data_name, data_unit in self._inputs_info.items():
-            error = ValueError(
-                "spacedomain of data '{}' not compatible with "
-                "spacedomain of {} component '{}'".format(
-                    data_name, self._category, self.__class__.__name__)
-            )
-
-            # if regular grid, try to subset
-            if isinstance(spacedomain, Grid):
-                # avoid floating-point error problems by rounding up
-                for axis in [spacedomain.X_name, spacedomain.Y_name]:
-                    dataset[data_name].dim(axis, error).round(decr(),
-                                                              inplace=True)
-
-                # try to subset in space
-                if dataset[data_name].subspace(
-                        'test',
-                        **{spacedomain.X_name:
-                               cf.wi(*spacedomain.X.array[[0, -1]]),
-                           spacedomain.Y_name:
-                               cf.wi(*spacedomain.Y.array[[0, -1]])}
-                ):
-                    # subset in space
-                    dataset[data_name] = (
-                        dataset[data_name].subspace(
-                            **{spacedomain.X_name:
-                                   cf.wi(*spacedomain.X.array[[0, -1]]),
-                               spacedomain.Y_name:
-                                   cf.wi(*spacedomain.Y.array[[0, -1]])}
-                        )
-                    )
-                else:
-                    raise error
-
-            # check that data and component spacedomains are compatible
-            if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise error
+            try:
+                dataset[data_name] = (
+                    spacedomain.subset_and_compare(dataset[data_name])
+                )
+            except RuntimeError:
+                raise ValueError(
+                    "spacedomain of data '{}' not compatible with "
+                    "spacedomain of {} component '{}'".format(
+                        data_name, self._category, self.__class__.__name__)
+                )
 
     def _check_dataset_time(self, timedomain):
         # check time compatibility for 'dynamic' input data
@@ -574,58 +548,49 @@ class Component(metaclass=MetaComponent):
                     data_name, self._category, self.__class__.__name__)
             )
 
-            kind = self._inputs_info[data_name]['kind']
-            if kind == 'dynamic':
-                # try to subset in time
-                if self.dataset[data_name].subspace(
-                        'test',
-                        time=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
-                    # subset in time and assign to data subset
-                    self.datasubset[data_name] = (
-                        self.dataset[data_name].subspace(
-                            time=cf.wi(
-                                *timedomain.time.datetime_array[[0, -1]]
-                            )
-                        )
-                    )
+            self.datasubset[data_name] = self._check_time(
+                self.dataset[data_name], timedomain,
+                self._inputs_info[data_name]['kind'], error,
+                frequency=self._inputs_info[data_name].get('frequency')
+            )
+
+    @staticmethod
+    def _check_time(field, timedomain, kind, error, frequency=None):
+        if kind == 'dynamic':
+            try:
+                field_subset = timedomain.subset_and_compare(field)
+            except RuntimeError:
+                raise error
+
+        elif kind == 'climatologic':
+            lengths = {
+                'seasonal': 4,  # DJF-MAM-JJA-SON
+                'monthly': 12,  # January to December
+                'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
+            }
+            if isinstance(frequency, str):
+                length = lengths[frequency]
+            else:  # isinstance(freq, int):
+                length = int(frequency)
+
+            # check that time dimension is of expected length
+            if field.construct('time').size != length:
+                raise error
+
+            # copy reference for climatologic input data
+            field_subset = field
+
+        else:  # type_ == 'static':
+            # copy reference for static input data
+            if field.has_construct('time'):
+                if field.construct('time').size == 1:
+                    field_subset = field.squeeze('time')
                 else:
                     raise error
+            else:
+                field_subset = field
 
-                # check that data and component timedomains are compatible
-                if not timedomain.is_time_equal_to(
-                        self.datasubset[data_name]):
-                    raise error
-
-            elif kind == 'climatologic':
-                lengths = {
-                    'seasonal': 4,  # DJF-MAM-JJA-SON
-                    'monthly': 12,  # January to December
-                    'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
-                }
-                freq = self._inputs_info[data_name]['frequency']
-                if isinstance(freq, str):
-                    length = lengths[freq]
-                else:  # isinstance(freq, int):
-                    length = int(freq)
-
-                # check that time dimension is of expected length
-                if self.dataset[data_name].construct('time').size != length:
-                    raise error
-
-                # copy reference for climatologic input data
-                self.datasubset[data_name] = self.dataset[data_name]
-
-            else:  # type_ == 'static':
-                # copy reference for static input data
-                if self.dataset[data_name].has_construct('time'):
-                    if self.dataset[data_name].construct('time').size == 1:
-                        self.datasubset[data_name] = (
-                            self.dataset[data_name].squeeze('time')
-                        )
-                    else:
-                        raise error
-                else:
-                    self.datasubset[data_name] = self.dataset[data_name]
+        return field_subset
 
     def _check_parameters(self, parameters):
         """Check that parameter values are `cf.Data` with right units.
