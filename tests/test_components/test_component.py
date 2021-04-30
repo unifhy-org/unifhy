@@ -47,7 +47,7 @@ parameters = {
         'parameter_a': cf.Data(1, '1')
     },
     'openwater': {
-        'parameter_c': cf.Data(3, '1')
+        'parameter_c': [3, '1']
     },
 }
 
@@ -55,7 +55,7 @@ constants = {
     'surfacelayer': {},
     'subsurface': {},
     'openwater': {
-        'constant_c': cf.Data(3, '1')
+        'constant_c': (3, '1')
     },
 }
 

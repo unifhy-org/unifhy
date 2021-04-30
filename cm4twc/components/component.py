@@ -167,14 +167,16 @@ class Component(metaclass=MetaComponent):
 
             parameters: `dict`, optional
                 The parameter values for the `Component`. Each key must
-                correspond to a parameter name, and each value must be
-                a `cf.Data` with units.
+                correspond to a parameter name, and each value must either
+                be a `cf.Data` (with units) or a sequence of 2 items
+                value and units (in this order).
 
             constants: `dict`, optional
                 The constant values for the `Component` for which
                 adjustment is desired. Each key must correspond to a
-                constant name, and each value must be a `cf.Data` with
-                units.
+                constant name, and each value must either be a `cf.Data`
+                (with units) or a sequence of 2 items value and units
+                (in this order).
 
             records: `dict`, optional
                 The desired records from the `Component`. Each key
@@ -641,9 +643,18 @@ class Component(metaclass=MetaComponent):
                 parameter = parameters[name]
 
                 # check parameter type
-                if not isinstance(parameter, cf.Data):
+                if isinstance(parameter, cf.Data):
+                    pass
+                elif isinstance(parameter, (tuple, list)) and len(parameter) == 2:
+                    try:
+                        parameter = cf.Data(*parameter)
+                    except ValueError:
+                        raise ValueError(
+                            "parameter {} not convertible to cf.Data".format(name)
+                        )
+                else:
                     raise TypeError(
-                        "parameter {} not instance of cf.Data".format(name)
+                        "invalid type for parameter {}".format(name)
                     )
 
                 # check parameter units
@@ -684,9 +695,18 @@ class Component(metaclass=MetaComponent):
                     constant = constants[name]
 
                     # check parameter type
-                    if not isinstance(constant, cf.Data):
+                    if isinstance(constant, cf.Data):
+                        pass
+                    elif isinstance(constant, (tuple, list)) and len(constant) == 2:
+                        try:
+                            constant = cf.Data(*constant)
+                        except ValueError:
+                            raise ValueError(
+                                "constant {} not convertible to cf.Data".format(name)
+                            )
+                    else:
                         raise TypeError(
-                            "constant {} not instance of cf.Data".format(name)
+                            "invalid type for constant {}".format(name)
                         )
 
                     # check parameter units
@@ -731,23 +751,13 @@ class Component(metaclass=MetaComponent):
         # get relevant spacedomain subclass
         spacedomain = getattr(space, cfg['spacedomain']['class'])
 
-        # convert parameters and constants to cf.Data
-        parameters = {}
-        if cfg.get('parameters'):
-            for name, (value, units) in cfg.get('parameters').items():
-                parameters[name] = cf.Data(value, units)
-        constants = {}
-        if cfg.get('constants'):
-            for name, (value, units) in cfg.get('constants').items():
-                constants[name] = cf.Data(value, units)
-
         return cls(
             saving_directory=cfg['saving_directory'],
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
-            parameters=parameters,
-            constants=constants,
+            parameters=cfg.get('parameters'),
+            constants=cfg.get('constants'),
             records=cfg.get('records')
         )
 
