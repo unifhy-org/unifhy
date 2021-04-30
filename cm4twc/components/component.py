@@ -386,8 +386,10 @@ class Component(metaclass=MetaComponent):
                     name, **self._states_info[name]
                 )
             else:
-                raise ValueError("{} not available for {} component".format(
-                    name, self._category))
+                raise ValueError(
+                    "{} not available for {} component".format(name,
+                                                               self._category)
+                )
 
             for delta, methods in frequencies.items():
                 # instantiate RecordStream if none for given timedelta yet
@@ -456,8 +458,10 @@ class Component(metaclass=MetaComponent):
         of the right type.
         """
         if not isinstance(timedomain, TimeDomain):
-            raise TypeError("not an instance of {} for {}".format(
-                TimeDomain.__name__, self._category))
+            raise TypeError(
+                "not an instance of {} for {}".format(TimeDomain.__name__,
+                                                      self._category)
+            )
 
     def _check_spacedomain(self, spacedomain):
         """The purpose of this method is to check that the spacedomain
@@ -465,13 +469,16 @@ class Component(metaclass=MetaComponent):
         and flow_direction are set if required by component.
         """
         if not isinstance(spacedomain, SpaceDomain):
-            raise TypeError("not an instance of {} for {}".format(
-                SpaceDomain.__name__, self._category))
+            raise TypeError(
+                "not an instance of {} for {}".format(SpaceDomain.__name__,
+                                                      self._category)
+            )
 
         if not isinstance(spacedomain, Grid):
             raise NotImplementedError(
                 "only {} currently supported by framework "
-                "for spacedomain".format(Grid.__name__))
+                "for spacedomain".format(Grid.__name__)
+            )
 
         if self._land_sea_mask:
             if spacedomain.land_sea_mask is None:
@@ -500,8 +507,9 @@ class Component(metaclass=MetaComponent):
             raise TypeError(
                 "object given for dataset argument of {} component '{}' "
                 "not of type {}".format(
-                    self._category, self.__class__.__name__,
-                    DataSet.__name__))
+                    self._category, self.__class__.__name__, DataSet.__name__
+                )
+            )
 
         # check data units compatibility with component
         for data_name, data_info in self._inputs_info.items():
@@ -510,7 +518,8 @@ class Component(metaclass=MetaComponent):
                 raise KeyError(
                     "no data '{}' available in {} for {} component '{}'".format(
                         data_name, DataSet.__name__, self._category,
-                        self.__class__.__name__))
+                        self.__class__.__name__)
+                )
             # check that input data units are compliant with component units
             if hasattr(dataset[data_name], 'units'):
                 if not Units(data_info['units']).equals(
@@ -520,12 +529,15 @@ class Component(metaclass=MetaComponent):
                         "required by {} component '{}': {} required".format(
                             data_name, self._category, DataSet.__name__,
                             self._category, self.__class__.__name__,
-                            data_info['units']))
+                            data_info['units']
+                        )
+                    )
             else:
-                raise AttributeError("variable '{}' in {} for {} component "
-                                     "missing 'units' attribute".format(
-                                         data_name, DataSet.__name__,
-                                         self._category))
+                raise AttributeError(
+                    "variable '{}' in {} for {} component missing 'units' "
+                    "attribute".format(data_name, DataSet.__name__,
+                                       self._category)
+                )
 
     def _check_dataset_space(self, dataset, spacedomain):
         # check space compatibility for input data
@@ -538,7 +550,8 @@ class Component(metaclass=MetaComponent):
                 raise ValueError(
                     "spacedomain of data '{}' not compatible with "
                     "spacedomain of {} component '{}'".format(
-                        data_name, self._category, self.__class__.__name__)
+                        data_name, self._category, self.__class__.__name__
+                    )
                 )
 
     def _check_dataset_time(self, timedomain):
@@ -547,7 +560,8 @@ class Component(metaclass=MetaComponent):
             error = ValueError(
                 "timedomain of data '{}' not compatible with "
                 "timedomain of {} component '{}'".format(
-                    data_name, self._category, self.__class__.__name__)
+                    data_name, self._category, self.__class__.__name__
+                )
             )
 
             self.datasubset[data_name] = self._check_time(
