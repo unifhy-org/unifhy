@@ -29,11 +29,6 @@ class AutoComponentDirective(SphinxDirective):
         document.extend(sect.children)
 
         # parse class attributes
-        defaults = {
-            k: v.default
-            for k, v in inspect.signature(cls_.run).parameters.items()
-            if v.default is not inspect.Parameter.empty
-        }
         for definition in ['inputs', 'inwards', 'outputs', 'outwards',
                            'parameters', 'constants', 'states']:
             if getattr(cls_, definition + '_info'):
@@ -66,19 +61,14 @@ class AutoComponentDirective(SphinxDirective):
                                 field
                             )
                             self.state.nested_parse(sl, 0, field_body)
+                        elif key == 'default_value':
+                            field_body += nodes.paragraph(
+                                text=np.format_float_scientific(
+                                    value, trim='0'
+                                )
+                            )
                         else:
                             field_body += nodes.paragraph(text=value)
-                        field += field_body
-                        field_list += field
-                    # add default values for constants
-                    if definition == 'constants':
-                        field = nodes.field()
-                        field += nodes.field_name(text='default value')
-                        field_body = nodes.field_body()
-                        field_body += nodes.paragraph(
-                            text=np.format_float_scientific(defaults[name],
-                                                            trim='0')
-                        )
                         field += field_body
                         field_list += field
 
