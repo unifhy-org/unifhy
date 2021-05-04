@@ -350,6 +350,7 @@ class Component(metaclass=MetaComponent):
     def constants(self, constants):
         constants = {} if constants is None else constants
         self._constants = self._check_constants(constants)
+        self._use_constants_to_replace_state_divisions()
 
     @property
     def records(self):
@@ -738,6 +739,22 @@ class Component(metaclass=MetaComponent):
                         )
 
         return constants_
+
+    def _use_constants_to_replace_state_divisions(self):
+        """Replace component state divisions if specified as a string
+        by an integer using component constants. If not found in constants,
+        this will raise a ValueError.
+        """
+        for s in self._states_info:
+            d = self._states_info[s].get('divisions', None)
+            if d and isinstance(d, str):
+                # try to find name in component constants
+                try:
+                    d = int(self.constants[d])
+                except KeyError:
+                    raise ValueError('invalid divisions for state {}'.format(s))
+                # replace string with integer
+                self._states_info[s]['divisions'] = d
 
     @property
     def category(self):
