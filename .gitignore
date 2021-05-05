@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+*.pyf
 *.so
 
 # ignore documentation built because copied in docs/ root already
