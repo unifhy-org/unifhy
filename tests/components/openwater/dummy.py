@@ -153,7 +153,7 @@ class DummyFortran(Dummy):
             # component states
             state_a,
             # component constants
-            constant_c=3,
+            constant_c,
             **kwargs):
 
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
@@ -203,7 +203,7 @@ class DummyC(Dummy):
             # component states
             state_a,
             # component constants
-            constant_c=3,
+            constant_c,
             **kwargs):
 
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
