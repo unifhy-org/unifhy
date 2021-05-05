@@ -221,7 +221,6 @@ and data needs differ.
        saving directory: outputs
        timedomain: period: 365 days, 0:00:00
        spacedomain: shape: (Y: 8, X: 6)
-       dataset: 3 variable(s)
        records:
            surface_runoff: 1 day, 0:00:00 {'mean'}
    )
@@ -256,13 +255,13 @@ three parts of the terrestrial water cycle.
    ...     ),
    ...     openwater=cm4twc.openwater.RFM(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
-   ...         parameters={'c_land': 0.20,
-   ...                     'cb_land': 0.10,
-   ...                     'c_river': 0.62,
-   ...                     'cb_river': 0.15,
-   ...                     'ret_l': 0.0,
-   ...                     'ret_r': 0.005,
-   ...                     'river_length': 50000},
+   ...         parameters={'c_land': (0.20, 'm s-1'),
+   ...                     'cb_land': (0.10, 'm s-1'),
+   ...                     'c_river': (0.62, 'm s-1'),
+   ...                     'cb_river': (0.15, 'm s-1'),
+   ...                     'ret_l': (0.0, 'm s-1'),
+   ...                     'ret_r': (0.005, 'm s-1'),
+   ...                     'river_length': (50000, 'm')},
    ...         records={
    ...             'outgoing_water_volume_transport_along_river_channel': {
    ...                 timedelta(days=1): ['mean']
