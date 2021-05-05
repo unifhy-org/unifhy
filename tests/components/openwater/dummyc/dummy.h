@@ -1,4 +1,4 @@
-void initialise_(int nz, int ny, int nx, double *state_a_m1);
+void initialise_(int nz, int ny, int nx, double constant_c, double *state_a_m1);
 
 void run_(int nz, int ny, int nx, double *transfer_j, double *transfer_m,
           double *ancillary_b, double parameter_c, double *state_a_m1,

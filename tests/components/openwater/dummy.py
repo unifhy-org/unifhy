@@ -69,7 +69,7 @@ class Dummy(OpenWaterComponent):
     _states_info = {
         'state_a': {
             'units': '1',
-            'divisions': 1
+            'divisions': (4, 'constant_c')
         }
     }
     _outputs_info = {
@@ -85,6 +85,8 @@ class Dummy(OpenWaterComponent):
     def initialise(self,
                    # component states
                    state_a,
+                   # component constants
+                   constant_c,
                    **kwargs):
 
         state_a[-1][:] = 0
@@ -108,14 +110,16 @@ class Dummy(OpenWaterComponent):
         return (
             # to exchanger
             {
-                'transfer_l': ancillary_b[11] * transfer_m + state_a[0],
+                'transfer_l':
+                    ancillary_b[11] * transfer_m + state_a[0][..., 0, 0],
                 'transfer_n': parameter_c * transfer_j,
                 'transfer_o': constant_c + transfer_j
             },
             # component outputs
             {
                 'output_x': parameter_c * transfer_j + constant_c,
-                'output_y': ancillary_b[11] * transfer_m - state_a[0],
+                'output_y':
+                    ancillary_b[11] * transfer_m - state_a[0][..., 0, 0]
             }
         )
 
@@ -131,7 +135,7 @@ class DummyFortran(Dummy):
     _states_info = {
         'state_a': {
             'units': '1',
-            'divisions': 1,
+            'divisions': (4, 'constant_c'),
             'order': 'F'
         }
     }
@@ -139,8 +143,10 @@ class DummyFortran(Dummy):
     def initialise(self,
                    # component states
                    state_a,
+                   # component constants
+                   constant_c,
                    **kwargs):
-        dummyfortran.initialise(state_a[-1])
+        dummyfortran.initialise(constant_c, state_a[-1])
 
     def run(self,
             # from exchanger
@@ -189,8 +195,10 @@ class DummyC(Dummy):
     def initialise(self,
                    # component states
                    state_a,
+                   # component constants
+                   constant_c,
                    **kwargs):
-        dummyc.initialise(state_a[-1])
+        dummyc.initialise(constant_c, state_a[-1])
 
     def run(self,
             # from exchanger
