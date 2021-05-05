@@ -7,7 +7,7 @@ cdef extern from "dummy.h":
                      double *state_b_m1)
 
     void run_(int nz, int ny, int nx, double *transfer_i, double *transfer_n,
-              double *driving_a, double parameter_a, double *state_a_m1,
+              double *driving_a, double *parameter_a, double *state_a_m1,
               double *state_a_0, double *state_b_m1, double *state_b_0,
               double *transfer_k, double *transfer_m, double *output_x)
 
@@ -25,7 +25,7 @@ def initialise(cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1,
 def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_i,
         cnp.ndarray[cnp.npy_float64, ndim=3] transfer_n,
         cnp.ndarray[cnp.npy_float64, ndim=3] driving_a,
-        double parameter_a,
+        cnp.ndarray[cnp.npy_float64, ndim=3] parameter_a,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_a_m1,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_a_0,
         cnp.ndarray[cnp.npy_float64, ndim=3] state_b_m1,
@@ -43,7 +43,7 @@ def run(cnp.ndarray[cnp.npy_float64, ndim=3] transfer_i,
         (nz, ny, nx), dtype=np.float64)
 
     run_(nz, ny, nx, &transfer_i[0, 0, 0], &transfer_n[0, 0, 0],
-         &driving_a[0, 0, 0], parameter_a, &state_a_m1[0, 0, 0],
+         &driving_a[0, 0, 0], &parameter_a[0, 0, 0], &state_a_m1[0, 0, 0],
          &state_a_0[0, 0, 0], &state_b_m1[0, 0, 0], &state_b_0[0, 0, 0],
          &transfer_k[0, 0, 0], &transfer_m[0, 0, 0], &output_x[0, 0, 0])
 

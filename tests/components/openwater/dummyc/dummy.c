@@ -31,7 +31,7 @@ void run_(int nz, int ny, int nx,
           // component ancillary data
           double *ancillary_b,
           // component parameters
-          double parameter_c,
+          double *parameter_c,
           // component states
           double *state_a_m1, double *state_a_0,
           // component constants,
@@ -68,11 +68,11 @@ void run_(int nz, int ny, int nx,
         state_a_0[ijk] = state_a_m1[ijk] + 1;
         // compute transfers to exchanger
         transfer_l[ijk] = (ancillary_b[ijk] * transfer_m[ijk])
-        transfer_n[ijk] = parameter_c * transfer_j[ijk];
-        transfer_o[ijk] = parameter_c + transfer_j[ijk];
           + state_a_0[ijklm];
+        transfer_n[ijk] = parameter_c[ijk] * transfer_j[ijk];
+        transfer_o[ijk] = parameter_c[ijk] + transfer_j[ijk];
         // compute outputs
-        output_x[ijk] = (parameter_c * transfer_j[ijk]) + constant_c;
+        output_x[ijk] = (parameter_c[ijk] * transfer_j[ijk]) + constant_c;
         output_y[ijk] = (ancillary_b[ijk] * transfer_m[ijk])
           - state_a_0[ijklm];
       }

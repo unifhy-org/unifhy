@@ -30,7 +30,7 @@ subroutine run(z, y, x, &
     ! component ancillary data
     real(kind=8), intent(in), dimension(12, z, y, x) :: ancillary_b
     ! component parameters
-    real(kind=8), intent(in) :: parameter_c
+    real(kind=8), intent(in), dimension(z, y, x) :: parameter_c
     ! component constants
     real(kind=8), intent(in) :: constant_c
     ! component states

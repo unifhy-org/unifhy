@@ -28,7 +28,7 @@ subroutine run(z, y, x, &
     ! component driving data
     real(kind=8), intent(in), dimension(z, y, x) :: driving_a
     ! component parameters
-    real(kind=8), intent(in) :: parameter_a
+    real(kind=8), intent(in), dimension(z, y, x) :: parameter_a
     ! component states
     real(kind=8), intent(in), dimension(z, y, x) :: state_a_m1, state_b_m1
     real(kind=8), intent(inout), dimension(z, y, x) :: state_a_0, state_b_0

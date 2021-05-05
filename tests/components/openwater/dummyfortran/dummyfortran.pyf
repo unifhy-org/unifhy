@@ -1,0 +1,35 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module dummyfortran ! in 
+    interface  ! in :dummyfortran
+        subroutine initialise(z,y,x,state_a_m1) ! in :dummyfortran:dummy.f90
+            integer, optional,intent(in),check(shape(state_a_m1,0)==z),depend(state_a_m1) :: z=shape(state_a_m1,0)
+            integer, optional,intent(in),check(shape(state_a_m1,1)==y),depend(state_a_m1) :: y=shape(state_a_m1,1)
+            integer, optional,intent(in),check(shape(state_a_m1,2)==x),depend(state_a_m1) :: x=shape(state_a_m1,2)
+            real(kind=8) dimension(z,y,x,4,constant_c),intent(inout) :: state_a_m1
+        end subroutine initialise
+        subroutine run(z,y,x,transfer_j,transfer_m,ancillary_b,parameter_c,state_a_m1,state_a_0,constant_c,transfer_l,transfer_n,transfer_o,output_x,output_y) ! in :dummyfortran:dummy.f90
+            integer, optional,intent(in),check(shape(transfer_j,0)==z),depend(transfer_j) :: z=shape(transfer_j,0)
+            integer, optional,intent(in),check(shape(transfer_j,1)==y),depend(transfer_j) :: y=shape(transfer_j,1)
+            integer, optional,intent(in),check(shape(transfer_j,2)==x),depend(transfer_j) :: x=shape(transfer_j,2)
+            real(kind=8) dimension(z,y,x),intent(in) :: transfer_j
+            real(kind=8) dimension(z,y,x),intent(in),depend(z,y,x) :: transfer_m
+            real(kind=8) dimension(12,z,y,x),intent(in),depend(z,y,x) :: ancillary_b
+            real(kind=8) dimension(z,y,x),intent(in),depend(z,y,x) :: parameter_c
+            real(kind=8) dimension(z,y,x,4,constant_c),intent(in),depend(z,y,x) :: state_a_m1
+            real(kind=8) dimension(z,y,x,4,constant_c),intent(inout),depend(z,y,x,constant_c) :: state_a_0
+            real(kind=8), optional,intent(in),check(shape(state_a_m1,4)==constant_c),depend(state_a_m1) :: constant_c=shape(state_a_m1,4)
+            real(kind=8) dimension(z,y,x),intent(out),depend(z,y,x) :: transfer_l
+            real(kind=8) dimension(z,y,x),intent(out),depend(z,y,x) :: transfer_n
+            real(kind=8) dimension(z,y,x),intent(out),depend(z,y,x) :: transfer_o
+            real(kind=8) dimension(z,y,x),intent(out),depend(z,y,x) :: output_x
+            real(kind=8) dimension(z,y,x),intent(out),depend(z,y,x) :: output_y
+        end subroutine run
+        subroutine finalise ! in :dummyfortran:dummy.f90
+        end subroutine finalise
+    end interface 
+end python module dummyfortran
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

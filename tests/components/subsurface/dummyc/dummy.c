@@ -23,7 +23,7 @@ void run_(int nz, int ny, int nx,
           // component driving data
           double *driving_a,
           // component parameters
-          double parameter_a,
+          double *parameter_a,
           // component states
           double *state_a_m1, double *state_a_0,
           double *state_b_m1, double *state_b_0,
@@ -45,12 +45,12 @@ void run_(int nz, int ny, int nx,
         state_a_0[ijk] = state_a_m1[ijk] + 1;
         state_b_0[ijk] = state_b_m1[ijk] + 2;
         // compute transfers to exchanger
-        transfer_k[ijk] = (driving_a[ijk] * parameter_a) + transfer_n[ijk]
+        transfer_k[ijk] = (driving_a[ijk] * parameter_a[ijk]) + transfer_n[ijk]
           + state_a_0[ijk];
-        transfer_m[ijk] = (driving_a[ijk] * parameter_a) + transfer_i[ijk]
+        transfer_m[ijk] = (driving_a[ijk] * parameter_a[ijk]) + transfer_i[ijk]
           + state_b_0[ijk];
         // compute outputs
-        output_x[ijk] = (driving_a[ijk] * parameter_a) + transfer_n[ijk]
+        output_x[ijk] = (driving_a[ijk] * parameter_a[ijk]) + transfer_n[ijk]
           - state_a_0[ijk];
       }
 }
