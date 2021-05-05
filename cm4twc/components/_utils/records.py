@@ -132,6 +132,8 @@ class RecordStream(object):
         self.methods = {}
         # mapping to store record arrays (keys are record names)
         self.arrays = {}
+        # mapping to store record masks (keys are record names)
+        self.masks = {}
         # mapping for integer tracker to know where in array to write next
         # (keys are record names)
         self.array_trackers = {}
@@ -183,12 +185,28 @@ class RecordStream(object):
         self.trigger = 0
         for name, record in self.records.items():
             self.array_trackers[name] = 0
+
             d = record.divisions
+
+            # initialise array
             arr = np.zeros(
                 (self.length, *spacedomain.shape, *d), dtype_float()
             )
             arr[:] = np.nan
             self.arrays[name] = arr
+
+            # process array mask
+            if spacedomain.land_sea_mask is None:
+                msk = None
+            else:
+                msk = ~spacedomain.land_sea_mask
+                if d:
+                    axes = [-(a + 1) for a in range(len(d))]
+                    msk = np.broadcast_to(
+                        np.expand_dims(msk, axis=axes),
+                        (*spacedomain.shape, *d)
+                    )
+            self.masks[name] = msk
 
             # add on length of stream to the record trigger
             self.trigger += self.length
@@ -296,9 +314,7 @@ class RecordStream(object):
 
                     # store result in file
                     f.variables[name_method][t] = np.ma.array(
-                        value, mask=(~self.spacedomain.land_sea_mask
-                                     if self.spacedomain.land_sea_mask
-                                     is not None else None)
+                        value, mask=self.masks[name]
                     )
 
                 # reset array tracker to point to start of array again
