@@ -50,22 +50,29 @@ void run_(int nz, int ny, int nx,
 
   // dimensions for state division
   nw = 4;
-  l = 0;
   nv = constant_c;
-  m = 0;
 
   for (i=0; i < nz; i++)
     for (j=0; j < ny; j++)
       for (k=0; k < nx; k++)
       {
-        // vectorisation of 5d-array
-        ijklm = m + nv * (l + nw * (k + nx * (j + ny * i)));
         // vectorisation of 4d-array
         hijk = k + nx * (j + ny * (i + nz * h));
         // vectorisation of 3d-array
         ijk = k + nx * (j + ny * i);
         // update states
-        state_a_0[ijk] = state_a_m1[ijk] + 1;
+        for (l=0; l < nw; l++)
+          for (m=0; m < nv; m++)
+          {
+            // vectorisation of 5d-array
+            ijklm = m + nv * (l + nw * (k + nx * (j + ny * i)));
+            // initialise states
+            state_a_0[ijklm] = state_a_m1[ijklm] + 1;
+          }
+        // vectorisation of 5d-array
+        l = 0;
+        m = 0;
+        ijklm = m + nv * (l + nw * (k + nx * (j + ny * i)));
         // compute transfers to exchanger
         transfer_l[ijk] = (ancillary_b[ijk] * transfer_m[ijk])
           + state_a_0[ijklm];
