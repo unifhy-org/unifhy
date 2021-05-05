@@ -4,6 +4,7 @@ import numpy as np
 from os import path, sep
 import cf
 from cfunits import Units
+from numbers import Number
 
 from ._utils.states import (State, create_states_dump, update_states_dump,
                             load_states_dump)
@@ -421,7 +422,7 @@ class Component(metaclass=MetaComponent):
                             "definition".format(name, self._category)
                         )
 
-        # check for input kind
+        # check for presence of input kind, if not assume 'dynamic'
         if self._inputs_info:
             for name, info in self._inputs_info.items():
                 if 'kind' not in info:
@@ -452,7 +453,7 @@ class Component(metaclass=MetaComponent):
                                     "definition".format(name, self._category)
                                 )
 
-        # check for constant default_value
+        # check for presence of constant default_value
         if self._constants_info:
             for name, info in self._constants_info.items():
                 if 'default_value' not in info:
@@ -460,6 +461,46 @@ class Component(metaclass=MetaComponent):
                         "default_value missing for constant {} in {} "
                         "component definition".format(name, self._category)
                     )
+
+        # check for presence of state divisions, if not assume scalar
+        if self._states_info:
+            for name, info in self._states_info.items():
+                d = info.get('divisions', None)
+
+                if d is None:
+                    # assign default value (i.e. state is a scalar)
+                    d = [1]
+                else:
+                    if isinstance(d, (Number, str)):
+                        # convert to list of one item
+                        d = [d]
+                    elif isinstance(d, (list, tuple)):
+                        # make sure it is a mutable sequence
+                        d = [*d]
+                    else:
+                        raise TypeError(
+                            "invalid divisions for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+
+                for v in d:
+                    # check it has a valid type
+                    if not isinstance(v, (Number, str)):
+                        raise TypeError(
+                            "invalid divisions for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+                    # check that, if string used, constant exists
+                    if isinstance(v, str):
+                        if v not in self._constants_info:
+                            raise ValueError(
+                                "no constant {} to use for divisions of state "
+                                "{} in {} component definition".format(
+                                    v, name, self._category
+                                )
+                            )
+
+                info['divisions'] = d
 
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
@@ -742,19 +783,31 @@ class Component(metaclass=MetaComponent):
 
     def _use_constants_to_replace_state_divisions(self):
         """Replace component state divisions if specified as a string
-        by an integer using component constants. If not found in constants,
-        this will raise a ValueError.
+        by an integer using component constants.
         """
         for s in self._states_info:
-            d = self._states_info[s].get('divisions', None)
-            if d and isinstance(d, str):
-                # try to find name in component constants
-                try:
-                    d = int(self.constants[d])
-                except KeyError:
-                    raise ValueError('invalid divisions for state {}'.format(s))
-                # replace string with integer
-                self._states_info[s]['divisions'] = d
+            d = self._states_info[s]['divisions']
+
+            new_d = []
+            for v in d:
+                if v and isinstance(v, str):
+                    # replace string with constant value, cast to integer
+                    new_v = int(self.constants[v])
+                else:
+                    # keep existing value, cast to integer
+                    new_v = int(v)
+
+                if new_v <= 0:
+                    # cannot have negative dimension for array, also rule out 0
+                    raise ValueError(
+                        '{} divisions dimension must be greater '
+                        'than zero'.format(s)
+                    )
+                elif new_v > 1:
+                    # do not add dimension if it is 1
+                    new_d.append(new_v)
+
+            self._states_info[s]['divisions'] = tuple(new_d)
 
     @property
     def category(self):
@@ -958,12 +1011,11 @@ class Component(metaclass=MetaComponent):
     def _instantiate_states(self):
         # get a State object for each state and initialise to zero
         for s in self._states_info:
-            d = self._states_info[s].get('divisions', 1)
+            d = self._states_info[s].get('divisions')
             o = self._states_info[s].get('order', array_order())
             self.states[s] = State(
                 np.zeros(
-                    (self._solver_history + 1, *self.spaceshape, d) if d > 1
-                    else (self._solver_history + 1, *self.spaceshape),
+                    (self._solver_history + 1, *self.spaceshape, *d),
                     dtype_float(), order=o
                 ),
                 order=o

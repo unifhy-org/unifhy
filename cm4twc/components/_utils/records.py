@@ -75,7 +75,7 @@ def _delta_to_frequency_str(delta):
 
 class Record(object):
 
-    def __init__(self, name, units, divisions=0, **kwargs):
+    def __init__(self, name, units, divisions=(), **kwargs):
         self.name = name
         self.units = units
         self.divisions = divisions
@@ -184,14 +184,9 @@ class RecordStream(object):
         for name, record in self.records.items():
             self.array_trackers[name] = 0
             d = record.divisions
-            if d > 1:
-                arr = np.zeros(
-                    (self.length, *spacedomain.shape, d), dtype_float()
-                )
-            else:
-                arr = np.zeros(
-                    (self.length, *spacedomain.shape), dtype_float()
-                )
+            arr = np.zeros(
+                (self.length, *spacedomain.shape, *d), dtype_float()
+            )
             arr[:] = np.nan
             self.arrays[name] = arr
 
@@ -248,9 +243,13 @@ class RecordStream(object):
 
             for name, record in self.records.items():
                 d = record.divisions
-                if d > 1:
-                    f.createDimension('_'.join([name, 'divisions']), d)
-                    dims = ('time', *axes, '_'.join([name, 'divisions']))
+                if d:
+                    dims = []
+                    for n, v in enumerate(d):
+                        dim_name = '_'.join([name, 'divisions', str(n + 1)])
+                        f.createDimension(dim_name, v)
+                        dims.append(dim_name)
+                    dims = ('time', *axes, *dims)
                 else:
                     dims = ('time', *axes)
 
@@ -352,10 +351,13 @@ class RecordStream(object):
             # records
             for name, record in self.records.items():
                 d = record.divisions
-                if d > 1:
-                    f.createDimension('_'.join([name, 'divisions']), d)
-                    dims = ('time', 'length', *axes,
-                            '_'.join([name, 'divisions']))
+                if d:
+                    dims = []
+                    for n, v in enumerate(d):
+                        dim_name = '_'.join([name, 'divisions', str(n + 1)])
+                        f.createDimension(dim_name, v)
+                        dims.append(dim_name)
+                    dims = ('time', 'length', *axes, *dims)
                 else:
                     dims = ('time', 'length', *axes)
 

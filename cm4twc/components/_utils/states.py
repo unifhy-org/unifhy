@@ -119,15 +119,18 @@ def create_states_dump(filepath, states_info, solver_history,
 
         # state variables
         for var in states_info:
-            d = states_info[var].get('divisions', 1)
-            if d > 1:
-                f.createDimension('{}_divisions'.format(var), d)
-                s = f.createVariable(var, dtype_float(),
-                                     ('time', 'history', *axes,
-                                      '{}_divisions'.format(var)))
+            d = states_info[var]['divisions']
+            if d:
+                dims = []
+                for n, v in enumerate(d):
+                    dim_name = '_'.join([var, 'divisions', str(n + 1)])
+                    f.createDimension(dim_name, v)
+                    dims.append(dim_name)
+                dims = ('time', 'history', *axes, *dims)
             else:
-                s = f.createVariable(var, dtype_float(),
-                                     ('time', 'history', *axes))
+                dims = ('time', 'history', *axes)
+
+            s = f.createVariable(var, dtype_float(), dims)
 
             s.standard_name = var
             s.units = states_info[var]['units']
