@@ -146,7 +146,7 @@ class DummyFortran(Dummy):
                    # component constants
                    constant_c,
                    **kwargs):
-        dummyfortran.initialise(constant_c, state_a[-1])
+        dummyfortran.initialise(state_a[-1], constant_c=constant_c)
 
     def run(self,
             # from exchanger
@@ -165,7 +165,7 @@ class DummyFortran(Dummy):
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
             dummyfortran.run(
                 transfer_j, transfer_m, ancillary_b, parameter_c,
-                state_a[-1], state_a[0], constant_c
+                state_a[-1], state_a[0], constant_c=constant_c
             )
         )
 
