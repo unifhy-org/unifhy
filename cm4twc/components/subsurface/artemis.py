@@ -71,15 +71,18 @@ class Artemis(SubSurfaceComponent):
     _constants_info = {
         'm': {
             'description': 'K_sat decay constant - Marthews et al',
-            'units': '1'
+            'units': '1',
+            'default_value': 0.02
         },
         'rho_lw': {
             'description': 'specific mass of liquid water',
-            'units': 'kg m-3'
+            'units': 'kg m-3',
+            'default_value': 1e3
         },
         'S_top': {
             'description': 'soil depth over which to apply topmodel',
-            'units': 'm'
+            'units': 'm',
+            'default_value': 3.
         }
     }
 
@@ -102,7 +105,7 @@ class Artemis(SubSurfaceComponent):
             # component states
             subsurface_store,
             # component constants
-            m=0.02, rho_lw=1e3, S_top=3.,
+            m, rho_lw, S_top,
             **kwargs):
 
         # /!\__RENAMING_CM4TWC__________________________________________

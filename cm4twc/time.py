@@ -409,6 +409,29 @@ class TimeDomain(object):
                             "instance".format(self.__class__.__name__,
                                               timedomain.__class__.__name__))
 
+    def subset_and_compare(self, field):
+        error = RuntimeError(
+            'field not compatible with {}'.format(self.__class__.__name__)
+        )
+
+        # try to subset in time
+        if field.subspace(
+                'test',
+                time=cf.wi(*self.time.datetime_array[[0, -1]])
+        ):
+            # subset in time
+            field_subset = field.subspace(
+                time=cf.wi(*self.time.datetime_array[[0, -1]])
+            )
+        else:
+            raise error
+
+        # check that data and component timedomains are compatible
+        if not self.is_time_equal_to(field_subset):
+            raise error
+
+        return field_subset
+
     @classmethod
     def from_datetime_sequence(cls, datetimes, units=None, calendar=None):
         """Initialise a `TimeDomain` from a sequence of datetime objects.

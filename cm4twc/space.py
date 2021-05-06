@@ -74,6 +74,11 @@ class SpaceDomain(object):
         """
         return deepcopy(self._f)
 
+    def subset_and_compare(self, field):
+        raise TypeError("An instance of {} cannot be used to "
+                        "compare a field and a spatial configuration directly, "
+                        "please use a subclass of it instead.")
+
 
 class Grid(SpaceDomain):
     """Grid is a `SpaceDomain` subclass which represents space as
@@ -293,24 +298,10 @@ class Grid(SpaceDomain):
         # store given field for config file
         self._land_sea_mask_field = mask
 
-        # avoid floating-point error problems by rounding up
-        for axis in [self.X_name, self.Y_name]:
-            mask.dim(axis).round(decr(), inplace=True)
-
-        # try to subset in space
-        if mask.subspace('test',
-                         **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
-                            self.Y_name: cf.wi(*self.Y.array[[0, -1]])}):
-            # subset in space
-            mask = mask.subspace(
-                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
-                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
-            )
-        else:
-            raise error
-
-        # check that data and component spacedomains are compatible
-        if not self.is_space_equal_to(mask):
+        # check that mask and spacedomain are compatible
+        try:
+            mask = self.subset_and_compare(mask)
+        except RuntimeError:
             raise error
 
         # get field's data array
@@ -481,20 +472,10 @@ class Grid(SpaceDomain):
         # store given field for config file
         self._flow_direction_field = directions
 
-        # avoid floating-point error problems by rounding up
-        for axis in [self.X_name, self.Y_name]:
-            directions.dim(axis).round(decr(), inplace=True)
-
-        # try to subset in space
-        if directions.subspace('test',
-                               **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
-                                  self.Y_name: cf.wi(*self.Y.array[[0, -1]])}):
-            # subset in space
-            directions = directions.subspace(
-                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
-                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
-            )
-        else:
+        # check that directions and spacedomain are compatible
+        try:
+            directions = self.subset_and_compare(directions)
+        except RuntimeError:
             raise error_dim
 
         # get field's data array
@@ -1909,6 +1890,36 @@ class Grid(SpaceDomain):
             raise TypeError("{} instance cannot be compared to {} "
                             "instance".format(self.__class__.__name__,
                                               grid.__class__.__name__))
+
+    def subset_and_compare(self, field):
+        error = RuntimeError(
+            'field not compatible with {}'.format(self.__class__.__name__)
+        )
+
+        # avoid floating-point error problems by rounding up
+        for axis in [self.X_name, self.Y_name]:
+            field.dim(axis, error).round(decr(), inplace=True)
+
+        # try to subset in space
+        if field.subspace(
+                'test',
+                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
+                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
+        ):
+            # subset in space
+            field_subset = field.subspace(
+                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
+                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
+            )
+        else:
+            raise error
+
+        # check that data and component spacedomains are compatible
+
+        if not self.is_space_equal_to(field_subset):
+            raise error
+
+        return field_subset
 
     def to_config(self):
         return {

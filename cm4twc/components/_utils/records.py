@@ -75,9 +75,10 @@ def _delta_to_frequency_str(delta):
 
 class Record(object):
 
-    def __init__(self, name, units, **kwargs):
+    def __init__(self, name, units, divisions=(), **kwargs):
         self.name = name
         self.units = units
+        self.divisions = divisions
         self.streams = []
 
 
@@ -131,6 +132,8 @@ class RecordStream(object):
         self.methods = {}
         # mapping to store record arrays (keys are record names)
         self.arrays = {}
+        # mapping to store record masks (keys are record names)
+        self.masks = {}
         # mapping for integer tracker to know where in array to write next
         # (keys are record names)
         self.array_trackers = {}
@@ -138,6 +141,22 @@ class RecordStream(object):
         # integers to track when to write to file
         self.trigger = None
         self.trigger_tracker = None
+
+    def add_record(self, record, methods):
+        name = record.name
+        # store link to record object
+        self.records[name] = record
+        # store sequence of aggregation methods
+        methods_ = set()
+        for method in methods:
+            if method in _methods_map:
+                methods_.add(_methods_map[method])
+            else:
+                raise ValueError('method {} for record {} aggregation '
+                                 'unknown'.format(method, name))
+        self.methods[name] = methods_
+        # map this very stream in the record
+        record.streams.append(self)
 
     def initialise(self, timedomain, spacedomain, _skip_trackers=False):
         # check delta / timedomain resolution compatibility
@@ -164,11 +183,31 @@ class RecordStream(object):
 
         # initialise record arrays for accumulating values
         self.trigger = 0
-        for name in self.records:
+        for name, record in self.records.items():
             self.array_trackers[name] = 0
-            arr = np.zeros((self.length, *spacedomain.shape), dtype_float())
+
+            d = record.divisions
+
+            # initialise array
+            arr = np.zeros(
+                (self.length, *spacedomain.shape, *d), dtype_float()
+            )
             arr[:] = np.nan
             self.arrays[name] = arr
+
+            # process array mask
+            if spacedomain.land_sea_mask is None:
+                msk = None
+            else:
+                msk = ~spacedomain.land_sea_mask
+                if d:
+                    axes = [-(a + 1) for a in range(len(d))]
+                    msk = np.broadcast_to(
+                        np.expand_dims(msk, axis=axes),
+                        (*spacedomain.shape, *d)
+                    )
+            self.masks[name] = msk
+
             # add on length of stream to the record trigger
             self.trigger += self.length
 
@@ -176,22 +215,6 @@ class RecordStream(object):
             # (re)initialise trackers
             self.time_tracker = 0
             self.trigger_tracker = 0
-
-    def add_record(self, record, methods):
-        name = record.name
-        # store link to record object
-        self.records[name] = record
-        # store sequence of aggregation methods
-        methods_ = set()
-        for method in methods:
-            if method in _methods_map:
-                methods_.add(_methods_map[method])
-            else:
-                raise ValueError('method {} for record {} aggregation '
-                                 'unknown'.format(method, name))
-        self.methods[name] = methods_
-        # map this very stream in the record
-        record.streams.append(self)
 
     def update_record(self, name, value):
         self.arrays[name][self.array_trackers[name], ...] = value
@@ -237,11 +260,21 @@ class RecordStream(object):
             b.calendar = self.timedomain.calendar
 
             for name, record in self.records.items():
+                d = record.divisions
+                if d:
+                    dims = []
+                    for n, v in enumerate(d):
+                        dim_name = '_'.join([name, 'divisions', str(n + 1)])
+                        f.createDimension(dim_name, v)
+                        dims.append(dim_name)
+                    dims = ('time', *axes, *dims)
+                else:
+                    dims = ('time', *axes)
+
                 # record variable
                 for method in self.methods[name]:
                     name_method = '_'.join([name, method])
-                    v = f.createVariable(name_method, dtype_float(),
-                                         ('time', *axes))
+                    v = f.createVariable(name_method, dtype_float(), dims)
                     v.standard_name = name
                     v.units = record.units
                     v.cell_methods = "time: {} over {}".format(
@@ -281,9 +314,7 @@ class RecordStream(object):
 
                     # store result in file
                     f.variables[name_method][t] = np.ma.array(
-                        value, mask=(~self.spacedomain.land_sea_mask
-                                     if self.spacedomain.land_sea_mask
-                                     is not None else None)
+                        value, mask=self.masks[name]
                     )
 
                 # reset array tracker to point to start of array again
@@ -335,8 +366,18 @@ class RecordStream(object):
 
             # records
             for name, record in self.records.items():
-                s = f.createVariable(name, dtype_float(),
-                                     ('time', 'length', *axes),
+                d = record.divisions
+                if d:
+                    dims = []
+                    for n, v in enumerate(d):
+                        dim_name = '_'.join([name, 'divisions', str(n + 1)])
+                        f.createDimension(dim_name, v)
+                        dims.append(dim_name)
+                    dims = ('time', 'length', *axes, *dims)
+                else:
+                    dims = ('time', 'length', *axes)
+
+                s = f.createVariable(name, dtype_float(), dims,
                                      fill_value=9.9692099683868690E36)
                 s.standard_name = name
                 s.units = record.units

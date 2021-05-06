@@ -81,7 +81,7 @@ subsurface:
       files: [data/dummy_subsurface_data_3daily_1deg.nc]
       select: driving_a
   parameters:
-    parameter_a: 1
+    parameter_a: [1, '1']
   constants: null
   records:
     output_x:
@@ -122,9 +122,9 @@ openwater:
       files: [data/dummy_openwater_data_2daily_1deg.nc]
       select: ancillary_b
   parameters:
-    parameter_c: 3
+    parameter_c: [3, '1']
   constants:
-    constant_c: 3
+    constant_c: [3, '1']
   records:
     output_x:
       timedelta(days=2): [point]

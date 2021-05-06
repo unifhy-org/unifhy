@@ -125,12 +125,29 @@ the metadata for the input, featuring at least two items, one for its *kind*
 and one for its *units* (and one for its *frequency* if *kind* is
 *climatologic*). All other items in the component definition must feature
 at least a *units* metadata item, and an optional *description* metadata
-item is strongly encouraged. An optional *divisions* item exists for the
-`_states_info` dictionary, where its expected value is an integer: by
-default its value is 1, indicating the state is a scalar, if its value
-is greater than 1, it indicates the state is a vector, and its value is
-the length of the vector. The *divisions* item may be useful when
-considering e.g. different vertical layers in a component.
+item is strongly encouraged. An additional item *default_value* is
+mandatory for each constant in `_constants_info`.
+
+An optional *divisions* item exists for the `_states_info` dictionary,
+where its expected value is an integer, a string, or a sequence of integers
+and/or strings:
+
+- by default its value is 1, indicating the state is a scalar;
+- if its value is an integer greater than 1, it indicates that the state
+  is a vector, and its value is the length of the vector;
+- if its value is a string, the string must correspond to the name of a
+  component constant, whose value will be used in place of the string
+  as divisions;
+- if its value is a sequence, it indicates that the state is an array,
+  and its values are the length of the dimensions of the array (in the
+  order in the sequence).
+
+The *divisions* item may be useful when considering e.g. different
+vertical layers in a component. Note that scalar/vector/array refer to
+the dimension of the scalar for a given element in the SpaceDomain, so
+a scalar state does not mean that there is only one state value for the
+whole spatial domain, it only means that there is only one state value for
+the given spatial element.
 
 In addition, the component definition features two special optional
 attributes `_land_sea_mask` and `_flow_direction`. They must be assigned
@@ -195,7 +212,8 @@ See a detailed example of a mock component definition below.
        _constants_info = {
            'constant_1': {
                'description': 'brief constant description here',
-               'units': '1'
+               'units': '1',
+               'default_value': 0.5
            }
        }
        _land_sea_mask = False
@@ -257,7 +275,7 @@ special argument `**kwargs`.
            state_2[-1][...] = 0
 
        def run(self, inwards_1, inwards_2, inwards_3, input_1, input_2, input_3,
-               state_1, state_2, parameter_1, constant_1=0.5, **kwargs)
+               state_1, state_2, parameter_1, constant_1, **kwargs)
 
            # compute science using available inwards/inputs/parameters/constants
            routed, outed = self.spacedomain.route(inwards_1 + inwards_2 + inwards_3)

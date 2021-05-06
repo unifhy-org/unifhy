@@ -4,6 +4,7 @@ import numpy as np
 from os import path, sep
 import cf
 from cfunits import Units
+from numbers import Number
 
 from ._utils.states import (State, create_states_dump, update_states_dump,
                             load_states_dump)
@@ -13,7 +14,7 @@ from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
 from ..data import DataSet
-from ..settings import dtype_float, array_order, decr
+from ..settings import dtype_float, array_order
 
 
 class MetaComponent(abc.ABCMeta):
@@ -166,12 +167,24 @@ class Component(metaclass=MetaComponent):
                 ======================  ================================
 
             parameters: `dict`, optional
-                The parameter values for the `Component`. Must be
-                provided in the units expected by the `Component`.
+                The parameter values for the `Component`. Each key must
+                correspond to a parameter name, and each value can be
+                a `cf.Field` (with units), a `cf.Data` (with units),
+                or a sequence of 2 items data and units (in this order).
+
+                If it is a `cf.Field`, it must contains data for all
+                spatial elements in the region covered by the component's
+                spacedomain. If it is a `cf.Data` or sequence of 2 items,
+                underlying data can be a scalar or an array (of the same
+                shape as the component's spacedomain).
 
             constants: `dict`, optional
-                The parameter values for the `Component`. Must be
-                provided in the required units.
+                The constant values for the `Component` for which
+                adjustment is desired. Each key must correspond to a
+                constant name, and each value must either be a `cf.Data`
+                (with units, where data must be a scalar) or a sequence
+                of 2 items data and units (in this order, where data
+                must be a scalar).
 
             records: `dict`, optional
                 The desired records from the `Component`. Each key
@@ -233,6 +246,7 @@ class Component(metaclass=MetaComponent):
         self.timedomain = timedomain
 
         # parameters attribute
+        self._pristine_parameters = None
         self.parameters = parameters
 
         # constants attribute
@@ -323,8 +337,8 @@ class Component(metaclass=MetaComponent):
     @parameters.setter
     def parameters(self, parameters):
         parameters = {} if parameters is None else parameters
-        self._check_parameters(parameters)
-        self._parameters = parameters
+        self._pristine_parameters = parameters
+        self._parameters = self._check_parameters(parameters, self.spacedomain)
 
     @property
     def constants(self):
@@ -336,8 +350,8 @@ class Component(metaclass=MetaComponent):
     @constants.setter
     def constants(self, constants):
         constants = {} if constants is None else constants
-        # # no check because they are optional
-        self._constants = constants
+        self._constants = self._check_constants(constants)
+        self._use_constants_to_replace_state_divisions()
 
     @property
     def records(self):
@@ -381,8 +395,10 @@ class Component(metaclass=MetaComponent):
                     name, **self._states_info[name]
                 )
             else:
-                raise ValueError("{} not available for {} component".format(
-                    name, self._category))
+                raise ValueError(
+                    "{} not available for {} component".format(name,
+                                                               self._category)
+                )
 
             for delta, methods in frequencies.items():
                 # instantiate RecordStream if none for given timedelta yet
@@ -405,7 +421,8 @@ class Component(metaclass=MetaComponent):
                             "units missing for {} in {} component "
                             "definition".format(name, self._category)
                         )
-        # check for kind
+
+        # check for presence of input kind, if not assume 'dynamic'
         if self._inputs_info:
             for name, info in self._inputs_info.items():
                 if 'kind' not in info:
@@ -436,13 +453,64 @@ class Component(metaclass=MetaComponent):
                                     "definition".format(name, self._category)
                                 )
 
+        # check for presence of constant default_value
+        if self._constants_info:
+            for name, info in self._constants_info.items():
+                if 'default_value' not in info:
+                    raise RuntimeError(
+                        "default_value missing for constant {} in {} "
+                        "component definition".format(name, self._category)
+                    )
+
+        # check for presence of state divisions, if not assume scalar
+        if self._states_info:
+            for name, info in self._states_info.items():
+                d = info.get('divisions', None)
+
+                if d is None:
+                    # assign default value (i.e. state is a scalar)
+                    d = [1]
+                else:
+                    if isinstance(d, (Number, str)):
+                        # convert to list of one item
+                        d = [d]
+                    elif isinstance(d, (list, tuple)):
+                        # make sure it is a mutable sequence
+                        d = [*d]
+                    else:
+                        raise TypeError(
+                            "invalid divisions for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+
+                for v in d:
+                    # check it has a valid type
+                    if not isinstance(v, (Number, str)):
+                        raise TypeError(
+                            "invalid divisions for {} in {} component "
+                            "definition".format(name, self._category)
+                        )
+                    # check that, if string used, constant exists
+                    if isinstance(v, str):
+                        if v not in self._constants_info:
+                            raise ValueError(
+                                "no constant {} to use for divisions of state "
+                                "{} in {} component definition".format(
+                                    v, name, self._category
+                                )
+                            )
+
+                info['divisions'] = d
+
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
         of the right type.
         """
         if not isinstance(timedomain, TimeDomain):
-            raise TypeError("not an instance of {} for {}".format(
-                TimeDomain.__name__, self._category))
+            raise TypeError(
+                "not an instance of {} for {}".format(TimeDomain.__name__,
+                                                      self._category)
+            )
 
     def _check_spacedomain(self, spacedomain):
         """The purpose of this method is to check that the spacedomain
@@ -450,13 +518,16 @@ class Component(metaclass=MetaComponent):
         and flow_direction are set if required by component.
         """
         if not isinstance(spacedomain, SpaceDomain):
-            raise TypeError("not an instance of {} for {}".format(
-                SpaceDomain.__name__, self._category))
+            raise TypeError(
+                "not an instance of {} for {}".format(SpaceDomain.__name__,
+                                                      self._category)
+            )
 
         if not isinstance(spacedomain, Grid):
             raise NotImplementedError(
                 "only {} currently supported by framework "
-                "for spacedomain".format(Grid.__name__))
+                "for spacedomain".format(Grid.__name__)
+            )
 
         if self._land_sea_mask:
             if spacedomain.land_sea_mask is None:
@@ -485,8 +556,9 @@ class Component(metaclass=MetaComponent):
             raise TypeError(
                 "object given for dataset argument of {} component '{}' "
                 "not of type {}".format(
-                    self._category, self.__class__.__name__,
-                    DataSet.__name__))
+                    self._category, self.__class__.__name__, DataSet.__name__
+                )
+            )
 
         # check data units compatibility with component
         for data_name, data_info in self._inputs_info.items():
@@ -495,7 +567,8 @@ class Component(metaclass=MetaComponent):
                 raise KeyError(
                     "no data '{}' available in {} for {} component '{}'".format(
                         data_name, DataSet.__name__, self._category,
-                        self.__class__.__name__))
+                        self.__class__.__name__)
+                )
             # check that input data units are compliant with component units
             if hasattr(dataset[data_name], 'units'):
                 if not Units(data_info['units']).equals(
@@ -505,52 +578,30 @@ class Component(metaclass=MetaComponent):
                         "required by {} component '{}': {} required".format(
                             data_name, self._category, DataSet.__name__,
                             self._category, self.__class__.__name__,
-                            data_info['units']))
+                            data_info['units']
+                        )
+                    )
             else:
-                raise AttributeError("variable '{}' in {} for {} component "
-                                     "missing 'units' attribute".format(
-                                         data_name, DataSet.__name__,
-                                         self._category))
+                raise AttributeError(
+                    "variable '{}' in {} for {} component missing 'units' "
+                    "attribute".format(data_name, DataSet.__name__,
+                                       self._category)
+                )
 
     def _check_dataset_space(self, dataset, spacedomain):
         # check space compatibility for input data
         for data_name, data_unit in self._inputs_info.items():
-            error = ValueError(
-                "spacedomain of data '{}' not compatible with "
-                "spacedomain of {} component '{}'".format(
-                    data_name, self._category, self.__class__.__name__)
-            )
-
-            # if regular grid, try to subset
-            if isinstance(spacedomain, Grid):
-                # avoid floating-point error problems by rounding up
-                for axis in [spacedomain.X_name, spacedomain.Y_name]:
-                    dataset[data_name].dim(axis, error).round(decr(),
-                                                              inplace=True)
-
-                # try to subset in space
-                if dataset[data_name].subspace(
-                        'test',
-                        **{spacedomain.X_name:
-                               cf.wi(*spacedomain.X.array[[0, -1]]),
-                           spacedomain.Y_name:
-                               cf.wi(*spacedomain.Y.array[[0, -1]])}
-                ):
-                    # subset in space
-                    dataset[data_name] = (
-                        dataset[data_name].subspace(
-                            **{spacedomain.X_name:
-                                   cf.wi(*spacedomain.X.array[[0, -1]]),
-                               spacedomain.Y_name:
-                                   cf.wi(*spacedomain.Y.array[[0, -1]])}
-                        )
+            try:
+                dataset[data_name] = (
+                    spacedomain.subset_and_compare(dataset[data_name])
+                )
+            except RuntimeError:
+                raise ValueError(
+                    "spacedomain of data '{}' not compatible with "
+                    "spacedomain of {} component '{}'".format(
+                        data_name, self._category, self.__class__.__name__
                     )
-                else:
-                    raise error
-
-            # check that data and component spacedomains are compatible
-            if not spacedomain.is_space_equal_to(dataset[data_name]):
-                raise error
+                )
 
     def _check_dataset_time(self, timedomain):
         # check time compatibility for 'dynamic' input data
@@ -558,73 +609,205 @@ class Component(metaclass=MetaComponent):
             error = ValueError(
                 "timedomain of data '{}' not compatible with "
                 "timedomain of {} component '{}'".format(
-                    data_name, self._category, self.__class__.__name__)
+                    data_name, self._category, self.__class__.__name__
+                )
             )
 
-            kind = self._inputs_info[data_name]['kind']
-            if kind == 'dynamic':
-                # try to subset in time
-                if self.dataset[data_name].subspace(
-                        'test',
-                        time=cf.wi(*timedomain.time.datetime_array[[0, -1]])):
-                    # subset in time and assign to data subset
-                    self.datasubset[data_name] = (
-                        self.dataset[data_name].subspace(
-                            time=cf.wi(
-                                *timedomain.time.datetime_array[[0, -1]]
-                            )
-                        )
-                    )
+            self.datasubset[data_name] = self._check_time(
+                self.dataset[data_name], timedomain,
+                self._inputs_info[data_name]['kind'], error,
+                frequency=self._inputs_info[data_name].get('frequency')
+            )
+
+    @staticmethod
+    def _check_time(field, timedomain, kind, error, frequency=None):
+        if kind == 'dynamic':
+            try:
+                field_subset = timedomain.subset_and_compare(field)
+            except RuntimeError:
+                raise error
+
+        elif kind == 'climatologic':
+            lengths = {
+                'seasonal': 4,  # DJF-MAM-JJA-SON
+                'monthly': 12,  # January to December
+                'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
+            }
+            if isinstance(frequency, str):
+                length = lengths[frequency]
+            else:  # isinstance(freq, int):
+                length = int(frequency)
+
+            # check that time dimension is of expected length
+            if field.construct('time').size != length:
+                raise error
+
+            # copy reference for climatologic input data
+            field_subset = field
+
+        else:  # type_ == 'static':
+            # copy reference for static input data
+            if field.has_construct('time'):
+                if field.construct('time').size == 1:
+                    field_subset = field.squeeze('time')
                 else:
                     raise error
+            else:
+                field_subset = field
 
-                # check that data and component timedomains are compatible
-                if not timedomain.is_time_equal_to(
-                        self.datasubset[data_name]):
-                    raise error
+        return field_subset
 
-            elif kind == 'climatologic':
-                lengths = {
-                    'seasonal': 4,  # DJF-MAM-JJA-SON
-                    'monthly': 12,  # January to December
-                    'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
-                }
-                freq = self._inputs_info[data_name]['frequency']
-                if isinstance(freq, str):
-                    length = lengths[freq]
-                else:  # isinstance(freq, int):
-                    length = int(freq)
-
-                # check that time dimension is of expected length
-                if self.dataset[data_name].construct('time').size != length:
-                    raise error
-
-                # copy reference for climatologic input data
-                self.datasubset[data_name] = self.dataset[data_name]
-
-            else:  # type_ == 'static':
-                # copy reference for static input data
-                if self.dataset[data_name].has_construct('time'):
-                    if self.dataset[data_name].construct('time').size == 1:
-                        self.datasubset[data_name] = (
-                            self.dataset[data_name].squeeze('time')
-                        )
-                    else:
-                        raise error
-                else:
-                    self.datasubset[data_name] = self.dataset[data_name]
-
-    def _check_parameters(self, parameters):
-        """The purpose of this method is to check that parameter values
-        are given for the corresponding component.
+    def _check_parameters(self, parameters, spacedomain):
+        """Check that parameter values are (convertible to) `cf.Data`
+        with right units. Return dictionary with values in place of
+        `cf.Data`.
         """
-        # check that all parameters are provided
-        if not all([i in parameters for i in self._parameters_info]):
-            raise RuntimeError(
-                "one or more parameters are missing in {} component '{}': "
-                "{} all required".format(
-                    self._category, self.__class__.__name__,
-                    self._parameters_info))
+        parameters_ = {}
+
+        if self._parameters_info:
+            for name, info in self._parameters_info.items():
+                # check presence of value for parameter
+                if name not in parameters:
+                    raise RuntimeError(
+                        "value missing for parameter {}".format(name)
+                    )
+                parameter = parameters[name]
+
+                # check parameter type
+                if isinstance(parameter, cf.Data):
+                    pass
+                elif isinstance(parameter, cf.Field):
+                    try:
+                        parameter = spacedomain.subset_and_compare(parameter)
+                    except RuntimeError:
+                        raise RuntimeError(
+                            "parameter {} spatially incompatible".format(name)
+                        )
+                    parameter = parameter.data
+                elif isinstance(parameter, (tuple, list)) and len(parameter) == 2:
+                    try:
+                        parameter = cf.Data(*parameter)
+                    except ValueError:
+                        raise ValueError(
+                            "parameter {} not convertible to cf.Data".format(name)
+                        )
+                else:
+                    raise TypeError(
+                        "invalid type for parameter {}".format(name)
+                    )
+
+                # check parameter units
+                if not parameter.get_units(False):
+                    raise ValueError(
+                        "missing units for parameter {}".format(name)
+                    )
+                if not parameter.Units.equals(
+                        Units(self._parameters_info[name]['units'])
+                ):
+                    raise ValueError(
+                        "invalid units for parameter {}".format(name)
+                    )
+
+                # check parameter shape (and reshape if scalar-like)
+                if parameter.shape == spacedomain.shape:
+                    parameter = parameter.array
+                else:
+                    # check if parameter evaluate as a scalar
+                    try:
+                        p = parameter.array.item()
+                    except ValueError:
+                        raise ValueError(
+                            "incompatible shape for parameter {}".format(name)
+                        )
+                    # assign scalar to newly created array of spacedomain shape
+                    parameter = np.zeros(spacedomain.shape, dtype_float())
+                    parameter[:] = p
+
+                # assign parameter value in place of cf.Data
+                parameters_[name] = parameter
+
+        return parameters_
+
+    def _check_constants(self, constants):
+        """If given, check that constant values are (convertible to)
+        `cf.Data` with right units. If not given, use constant default
+        value from component definition. Return dictionary with values
+        in place of `cf.Data`.
+        """
+        constants_ = {}
+
+        # check if constant value provided, otherwise use default_value
+        if self._constants_info:
+            for name, info in self._constants_info.items():
+                if name not in constants:
+                    constants_[name] = info['default_value']
+                else:
+                    constant = constants[name]
+
+                    # check parameter type
+                    if isinstance(constant, cf.Data):
+                        pass
+                    elif isinstance(constant, (tuple, list)) and len(constant) == 2:
+                        try:
+                            constant = cf.Data(*constant)
+                        except ValueError:
+                            raise ValueError(
+                                "constant {} not convertible to cf.Data".format(name)
+                            )
+                    else:
+                        raise TypeError(
+                            "invalid type for constant {}".format(name)
+                        )
+
+                    # check parameter units
+                    if not constant.get_units(False):
+                        raise ValueError(
+                            "missing units for constant {}".format(name)
+                        )
+                    if not constant.Units.equals(
+                            Units(self._constants_info[name]['units'])
+                    ):
+                        raise ValueError(
+                            "invalid units for constant {}".format(name)
+                        )
+
+                    # assign parameter value in place of cf.Data
+                    try:
+                        constants_[name] = constant.array.item()
+                    except ValueError:
+                        raise ValueError(
+                            "constant {} not a scalar".format(name)
+                        )
+
+        return constants_
+
+    def _use_constants_to_replace_state_divisions(self):
+        """Replace component state divisions if specified as a string
+        by an integer using component constants.
+        """
+        for s in self._states_info:
+            d = self._states_info[s]['divisions']
+
+            new_d = []
+            for v in d:
+                if v and isinstance(v, str):
+                    # replace string with constant value, cast to integer
+                    new_v = int(self.constants[v])
+                else:
+                    # keep existing value, cast to integer
+                    new_v = int(v)
+
+                if new_v <= 0:
+                    # cannot have negative dimension for array, also rule out 0
+                    raise ValueError(
+                        '{} divisions dimension must be greater '
+                        'than zero'.format(s)
+                    )
+                elif new_v > 1:
+                    # do not add dimension if it is 1
+                    new_d.append(new_v)
+
+            self._states_info[s]['divisions'] = tuple(new_d)
 
     @property
     def category(self):
@@ -643,18 +826,92 @@ class Component(metaclass=MetaComponent):
 
     @classmethod
     def from_config(cls, cfg):
+        # get relevant spacedomain subclass
         spacedomain = getattr(space, cfg['spacedomain']['class'])
+
+        # convert parameters to cf.Field or cf.Data
+        parameters = {}
+        if cfg.get('parameters'):
+            for name, info in cfg['parameters'].items():
+                error = ValueError(
+                    'invalid information in YAML for parameter {}'.format(name)
+                )
+                if isinstance(info, (tuple, list)):
+                    parameters[name] = cf.Data(*info)
+                elif isinstance(info, dict):
+                    if info.get('files') and info.get('select'):
+                        parameters[name] = (
+                            cf.read(info['files']).select_field(info['select'])
+                        )
+                    else:
+                        raise error
+                else:
+                    raise error
+
         return cls(
             saving_directory=cfg['saving_directory'],
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
-            parameters=cfg.get('parameters'),
+            parameters=parameters,
             constants=cfg.get('constants'),
             records=cfg.get('records')
         )
 
     def to_config(self):
+        # get parameters and constants as tuple (value, unit)
+        parameters = {}
+        if self.parameters:
+            for name, value in self.parameters.items():
+                original = self._pristine_parameters[name]
+                if isinstance(original, cf.Field):
+                    if original.data.get_filenames():
+                        # comes from a file, point to it
+                        parameters[name] = {
+                            'files': original.data.get_filenames(),
+                            'select': original.identity()
+                        }
+                    else:
+                        # create a new file for it
+                        filename = sep.join(
+                            [self.saving_directory,
+                             '_'.join([self.identifier, self.category, name])
+                             + ".nc"]
+                        )
+                        cf.write(original, filename)
+                        # point to it
+                        parameters[name] = {
+                            'files': [filename],
+                            'select': original.identity()
+                        }
+                else:
+                    if np.amin(value) == np.amax(value):
+                        # can be stored as a scalar
+                        parameters[name] = (np.mean(value).item(),
+                                            self._parameters_info[name]['units'])
+                    else:
+                        # must be stored as a cf.Field in new file
+                        field = self.spacedomain.to_field()
+                        field.data[:] = original
+                        field.long_name = name
+                        # create a new file for it
+                        filename = sep.join(
+                            [self.saving_directory,
+                             '_'.join([self.identifier, self.category, name])
+                             + ".nc"]
+                        )
+                        cf.write(original, filename)
+                        # point to it
+                        parameters[name] = {
+                            'files': [filename],
+                            'select': field.identity()
+                        }
+
+        constants = {}
+        if self.constants:
+            for name, value in self.constants.items():
+                constants[name] = (value, self._constants_info[name]['units'])
+
         cfg = {
             'module': self.__module__,
             'class': self.__class__.__name__,
@@ -662,8 +919,8 @@ class Component(metaclass=MetaComponent):
             'timedomain': self.timedomain.to_config(),
             'spacedomain': self.spacedomain.to_config(),
             'dataset': self.dataset.to_config(),
-            'parameters': self.parameters if self.parameters else None,
-            'constants': self.constants if self.constants else None,
+            'parameters': parameters if parameters else None,
+            'constants': constants if constants else None,
             'records': self.records if self.records else None
         }
         return cfg
@@ -685,24 +942,17 @@ class Component(metaclass=MetaComponent):
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
-        parameters = ["        {}: {} {}".format(
-            p, self.parameters[p], self._parameters_info[p]['units'])
-            for p in self.parameters] if self.parameters else []
-        constants = ["        {}: {} {}".format(
-            c, self.constants[c], self._constants_info[c]['units'])
-            for c in self.constants] if self.constants else []
-        records = ["        {}: {} {}".format(
-            o, d, m) for o, f in self.records.items()
-            for d, m in f.items()] if self.records else []
+
+        records = ["        {}: {} {}".format(o, d, m)
+                   for o, f in self.records.items()
+                   for d, m in f.items()] if self.records else []
+
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    category: {}".format(self._category)]
             + ["    saving directory: {}".format(self.saving_directory)]
             + ["    timedomain: period: {}".format(self.timedomain.period)]
             + ["    spacedomain: shape: ({})".format(shape)]
-            + ["    dataset: {} variable(s)".format(len(self.dataset))]
-            + (["    parameters:"] if parameters else []) + parameters
-            + (["    constants:"] if constants else []) + constants
             + (["    records:"] if records else []) + records
             + [")"]
         )
@@ -711,7 +961,7 @@ class Component(metaclass=MetaComponent):
         # if not already initialised, get default state values
         if not self.initialised_states:
             self._instantiate_states()
-            self.initialise(**self.states)
+            self.initialise(**self.parameters, **self.constants, **self.states)
             self.initialised_states = True
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
@@ -756,17 +1006,16 @@ class Component(metaclass=MetaComponent):
         timestamp = self.timedomain.bounds.array[-1, -1]
         update_states_dump(sep.join([self.saving_directory, self.dump_file]),
                            self.states, timestamp, self._solver_history)
-        self.finalise(**self.states)
+        self.finalise(**self.parameters, **self.constants, **self.states)
 
     def _instantiate_states(self):
         # get a State object for each state and initialise to zero
         for s in self._states_info:
-            d = self._states_info[s].get('divisions', 1)
+            d = self._states_info[s].get('divisions')
             o = self._states_info[s].get('order', array_order())
             self.states[s] = State(
                 np.zeros(
-                    (self._solver_history + 1, *self.spaceshape, d) if d > 1
-                    else (self._solver_history + 1, *self.spaceshape),
+                    (self._solver_history + 1, *self.spaceshape, *d),
                     dtype_float(), order=o
                 ),
                 order=o
