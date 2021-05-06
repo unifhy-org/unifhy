@@ -11,7 +11,7 @@ Community Model for the Terrestrial Water Cycle
    :target: https://opensource.org/licenses/BSD-3-Clause
    :alt: Licence
 .. image:: https://img.shields.io/github/workflow/status/hydro-jules/cm4twc/Basic%20tests?style=flat-square&label=tests
-   :target: https://github.com/hydro-jules/cm4twc/actions/workflows/tests.yml
+   :target: https://github.com/hydro-jules/cm4twc/actions/workflows/basic_tests.yml
    :alt: GitHub Actions Test Workflow Status
 
 The Python package `cm4twc` (Community Model for the Terrestrial Water
