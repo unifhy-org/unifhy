@@ -1,3 +1,4 @@
+import abc
 import numpy as np
 from copy import deepcopy
 import re
@@ -7,12 +8,11 @@ import pyproj
 from .settings import atol, rtol, decr, dtype_float
 
 
-class SpaceDomain(object):
+class SpaceDomain(metaclass=abc.ABCMeta):
     """SpaceDomain characterises a spatial dimension that is needed by a
     `Component`. Any supported spatial configuration for a `Component`
     is a subclass of SpaceDomain.
 
-    TODO: create a XYGrid subclass for Cartesian coordinates
     TODO: deal with sub-grid heterogeneity schemes (e.g. tiling, HRUs)
     """
 
@@ -31,6 +31,7 @@ class SpaceDomain(object):
         self._land_sea_mask_field = None
 
     @property
+    @abc.abstractmethod
     def shape(self):
         """Return the size of the SpaceDomain dimension axes as a
         `tuple`. The corresponding names and order of the axes is
@@ -39,6 +40,7 @@ class SpaceDomain(object):
         return None
 
     @property
+    @abc.abstractmethod
     def axes(self):
         """Return the name of the SpaceDomain dimension axes as a
         `tuple`. These names are properties of SpaceDomain, which give
@@ -47,12 +49,24 @@ class SpaceDomain(object):
         return None
 
     @property
+    @abc.abstractmethod
     def flow_direction(self):
         return self._flow_direction
 
+    @flow_direction.setter
+    @abc.abstractmethod
+    def flow_direction(self, **kwargs):
+        pass
+
     @property
+    @abc.abstractmethod
     def land_sea_mask(self):
         return self._land_sea_mask
+
+    @land_sea_mask.setter
+    @abc.abstractmethod
+    def land_sea_mask(self, **kwargs):
+        pass
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -63,10 +77,18 @@ class SpaceDomain(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    @abc.abstractmethod
     def is_space_equal_to(self, *args):
-        raise TypeError("An instance of {} cannot be used to "
-                        "characterise a spatial configuration directly, "
-                        "please use a subclass of it instead.")
+        pass
+
+    @abc.abstractmethod
+    def subset_and_compare(self, field):
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def from_field(cls, field):
+        pass
 
     def to_field(self):
         """Return a deep copy of the inner cf.Field used to characterise
@@ -74,10 +96,14 @@ class SpaceDomain(object):
         """
         return deepcopy(self._f)
 
-    def subset_and_compare(self, field):
-        raise TypeError("An instance of {} cannot be used to "
-                        "compare a field and a spatial configuration directly, "
-                        "please use a subclass of it instead.")
+    @classmethod
+    @abc.abstractmethod
+    def from_config(cls, cfg):
+        pass
+
+    @abc.abstractmethod
+    def to_config(self):
+        pass
 
 
 class Grid(SpaceDomain):
@@ -141,6 +167,9 @@ class Grid(SpaceDomain):
         'bottom': ('bottom', '1', 1),
         'top': ('top', '2', 2)
     }
+
+    def __init__(self, **kwargs):
+        super(Grid, self).__init__()
 
     @property
     def shape(self):
@@ -284,7 +313,7 @@ class Grid(SpaceDomain):
          [False  True False]
          [False False False]]
         """
-        return self._land_sea_mask
+        return super(Grid, self).land_sea_mask
 
     @land_sea_mask.setter
     def land_sea_mask(self, mask):
@@ -456,7 +485,7 @@ class Grid(SpaceDomain):
           [0 1]
           [-1 -1]]]
         """
-        return self._flow_direction
+        return super(Grid, self).flow_direction
 
     @flow_direction.setter
     def flow_direction(self, directions):
@@ -1921,6 +1950,54 @@ class Grid(SpaceDomain):
 
         return field_subset
 
+    @classmethod
+    def from_extent_and_resolution(cls, **kwargs):
+        inst = cls(
+            **cls._get_grid_from_extent_and_resolution(
+                kwargs['{}_extent'.format(cls._Y_name)],
+                kwargs['{}_extent'.format(cls._X_name)],
+                kwargs['{}_resolution'.format(cls._Y_name)],
+                kwargs['{}_resolution'.format(cls._X_name)],
+                kwargs['{}_{}_location'.format(cls._Y_name, cls._X_name)],
+                kwargs['{}_extent'.format(cls._Z_name)],
+                kwargs['{}_resolution'.format(cls._Z_name)],
+                kwargs['{}_location'.format(cls._Z_name)]
+            )
+        )
+
+        inst._extent = {'Z': kwargs['{}_extent'.format(cls._Z_name)],
+                        'Y': kwargs['{}_extent'.format(cls._Y_name)],
+                        'X': kwargs['{}_extent'.format(cls._X_name)]}
+        inst._resolution = {'Z': kwargs['{}_resolution'.format(cls._Z_name)],
+                            'Y': kwargs['{}_resolution'.format(cls._Y_name)],
+                            'X': kwargs['{}_resolution'.format(cls._X_name)]}
+        inst._location = {'Z': kwargs['{}_location'.format(cls._Z_name)],
+                          'YX': kwargs['{}_{}_location'.format(cls._Y_name,
+                                                               cls._X_name)]}
+
+        return inst
+
+    @classmethod
+    def from_config(cls, cfg):
+        cfg = cfg.copy()
+        cfg.pop('class')
+
+        lsm = cfg.pop('land_sea_mask', None)
+        fd = cfg.pop('flow_direction', None)
+
+        inst = cls.from_extent_and_resolution(**cfg)
+
+        if lsm is not None:
+            inst.land_sea_mask = (
+                cf.read(lsm['files']).select_field(lsm['select'])
+            )
+        if fd is not None:
+            inst.flow_direction = (
+                cf.read(fd['files']).select_field(fd['select'])
+            )
+
+        return inst
+
     def to_config(self):
         return {
             'class': self.__class__.__name__,
@@ -1955,6 +2032,19 @@ class Grid(SpaceDomain):
                 else None
             )
         }
+
+    @classmethod
+    def from_field(cls, field):
+        extraction = cls._extract_xyz_from_field(field)
+
+        return cls(
+            **{
+                getattr(cls, '_{}_name'.format(axis)) + prop:
+                    extraction[axis + prop]
+                for axis in ['X', 'Y', 'Z']
+                for prop in ['', '_bounds']
+            }
+        )
 
 
 class LatLonGrid(Grid):
@@ -2396,24 +2486,16 @@ class LatLonGrid(Grid):
             X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
         )
         """
-        inst = cls(
-            **cls._get_grid_from_extent_and_resolution(
-                latitude_extent, longitude_extent, latitude_resolution,
-                longitude_resolution, latitude_longitude_location,
-                altitude_extent, altitude_resolution, altitude_location
-            )
+        return super(LatLonGrid, cls).from_extent_and_resolution(
+            latitude_extent=latitude_extent,
+            longitude_extent=longitude_extent,
+            latitude_resolution=latitude_resolution,
+            longitude_resolution=longitude_resolution,
+            latitude_longitude_location=latitude_longitude_location,
+            altitude_extent=altitude_extent,
+            altitude_resolution=altitude_resolution,
+            altitude_location=altitude_location
         )
-
-        inst._extent = {'Z': altitude_extent,
-                        'Y': latitude_extent,
-                        'X': longitude_extent}
-        inst._resolution = {'Z': altitude_resolution,
-                            'Y': latitude_resolution,
-                            'X': longitude_resolution}
-        inst._location = {'Z': altitude_location,
-                          'YX': latitude_longitude_location}
-
-        return inst
 
     @classmethod
     def from_field(cls, field):
@@ -2488,35 +2570,7 @@ class LatLonGrid(Grid):
         >>> sd2 == sd1
         True
         """
-        extraction = cls._extract_xyz_from_field(field)
-
-        return cls(latitude=extraction['Y'],
-                   longitude=extraction['X'],
-                   altitude=extraction['Z'],
-                   latitude_bounds=extraction['Y_bounds'],
-                   longitude_bounds=extraction['X_bounds'],
-                   altitude_bounds=extraction['Z_bounds'])
-
-    @classmethod
-    def from_config(cls, cfg):
-        cfg = cfg.copy()
-        cfg.pop('class')
-
-        lsm = cfg.pop('land_sea_mask', None)
-        fd = cfg.pop('flow_direction', None)
-
-        inst = cls.from_extent_and_resolution(**cfg)
-
-        if lsm is not None:
-            inst.land_sea_mask = (
-                cf.read(lsm['files']).select_field(lsm['select'])
-            )
-        if fd is not None:
-            inst.flow_direction = (
-                cf.read(fd['files']).select_field(fd['select'])
-            )
-
-        return inst
+        return super(LatLonGrid, cls).from_field(field)
 
 
 class RotatedLatLonGrid(Grid):
@@ -2987,27 +3041,6 @@ class RotatedLatLonGrid(Grid):
                    altitude=extraction_xyz['Z'],
                    altitude_bounds=extraction_xyz['Z_bounds'],
                    **extraction_param)
-
-    @classmethod
-    def from_config(cls, cfg):
-        cfg = cfg.copy()
-        cfg.pop('class')
-
-        lsm = cfg.pop('land_sea_mask', None)
-        fd = cfg.pop('flow_direction', None)
-
-        inst = cls.from_extent_and_resolution(**cfg)
-
-        if lsm is not None:
-            inst.land_sea_mask = (
-                cf.read(lsm['files']).select_field(lsm['select'])
-            )
-        if fd is not None:
-            inst.flow_direction = (
-                cf.read(fd['files']).select_field(fd['select'])
-            )
-
-        return inst
 
     def to_config(self):
         cfg = super(RotatedLatLonGrid, self).to_config()
@@ -3593,28 +3626,18 @@ class BritishNationalGrid(Grid):
             X_bounds (4, 2): [[80000.0, ..., 84000.0]] m
         )
         """
-        inst = cls(
-            **cls._get_grid_from_extent_and_resolution(
-                projection_y_coordinate_extent, projection_x_coordinate_extent,
-                projection_y_coordinate_resolution,
-                projection_x_coordinate_resolution,
-                projection_y_coordinate_projection_x_coordinate_location,
-                altitude_extent, altitude_resolution, altitude_location
-            )
+        return super(BritishNationalGrid, cls).from_extent_and_resolution(
+            projection_y_coordinate_extent=projection_y_coordinate_extent,
+            projection_x_coordinate_extent=projection_x_coordinate_extent,
+            projection_y_coordinate_resolution=projection_y_coordinate_resolution,
+            projection_x_coordinate_resolution=projection_x_coordinate_resolution,
+            projection_y_coordinate_projection_x_coordinate_location=(
+                projection_y_coordinate_projection_x_coordinate_location
+            ),
+            altitude_extent=altitude_extent,
+            altitude_resolution=altitude_resolution,
+            altitude_location=altitude_location
         )
-
-        inst._extent = {'Z': altitude_extent,
-                        'Y': projection_y_coordinate_extent,
-                        'X': projection_x_coordinate_extent}
-        inst._resolution = {'Z': altitude_resolution,
-                            'Y': projection_y_coordinate_resolution,
-                            'X': projection_x_coordinate_resolution}
-        inst._location = {
-            'Z': altitude_location,
-            'YX': projection_y_coordinate_projection_x_coordinate_location
-        }
-
-        return inst
 
     @classmethod
     def from_field(cls, field):
@@ -3754,27 +3777,6 @@ class BritishNationalGrid(Grid):
             return RuntimeError('field coordinate reference not '
                                 'compatible with British National Grid '
                                 '(EPSG:27700).')
-
-    @classmethod
-    def from_config(cls, cfg):
-        cfg = cfg.copy()
-        cfg.pop('class')
-
-        lsm = cfg.pop('land_sea_mask', None)
-        fd = cfg.pop('flow_direction', None)
-
-        inst = cls.from_extent_and_resolution(**cfg)
-
-        if lsm is not None:
-            inst.land_sea_mask = (
-                cf.read(lsm['files']).select_field(lsm['select'])
-            )
-        if fd is not None:
-            inst.flow_direction = (
-                cf.read(fd['files']).select_field(fd['select'])
-            )
-
-        return inst
 
     @property
     def coordinate_reference(self):
@@ -3932,8 +3934,9 @@ class BritishNationalGrid(Grid):
         # coordinate_reference.equals() would also check the size of
         # the collections of coordinates, which may be rightfully
         # different if Z is ignored)
-        y_x_z = super(BritishNationalGrid, self).is_space_equal_to(field,
-                                                                   ignore_z)
+        y_x_z = super(BritishNationalGrid, self).is_space_equal_to(
+            field, ignore_z
+        )
 
         conversion = False
         if hasattr(field, 'coordinate_reference'):

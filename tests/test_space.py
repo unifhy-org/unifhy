@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 import unittest
 import doctest
 import cf
@@ -81,62 +82,108 @@ class TestLatLonGridAPI(unittest.TestCase):
         self.assertTrue(sd1.is_space_equal_to(sd3.to_field(), ignore_z=True))
 
 
-class TestLatLonGridComparison(unittest.TestCase):
+class TestGridComparison(unittest.TestCase):
 
-    def test_latlongrid_resolutions(self):
-        sd1 = cm4twc.LatLonGrid.from_extent_and_resolution(
-            latitude_extent=(51, 55),
-            latitude_resolution=1,
-            longitude_extent=(-2, 1),
-            longitude_resolution=1,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
-        )
+    grids = [
+        cm4twc.LatLonGrid,
+        cm4twc.RotatedLatLonGrid,
+        cm4twc.BritishNationalGrid
+    ]
 
-        sd2 = cm4twc.LatLonGrid.from_extent_and_resolution(
-            latitude_extent=(51, 55),
-            latitude_resolution=0.5,
-            longitude_extent=(-2, 1),
-            longitude_resolution=0.5,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
-        )
+    axis_name = {
+        'LatLonGrid': {
+            'X': 'longitude',
+            'Y': 'latitude',
+            'Z': 'altitude'
+        },
+        'RotatedLatLonGrid': {
+            'X': 'grid_longitude',
+            'Y': 'grid_latitude',
+            'Z': 'altitude'
+        },
+        'BritishNationalGrid': {
+            'X': 'projection_x_coordinate',
+            'Y': 'projection_y_coordinate',
+            'Z': 'altitude'
+        }
+    }
 
-        self.assertNotEqual(sd1, sd2)
-        self.assertTrue(sd1.spans_same_region_as(sd2))
+    extent_resolution = {
+        'LatLonGrid': {
+            'extent': {'X': [51, 55], 'Y': [-2, 1], 'Z': [0, 4]},
+            'resolution': {'X': 1, 'Y': 1, 'Z': 4}
+        },
+        'RotatedLatLonGrid': {
+            'extent': {'X': [-20, 50], 'Y': [-10, 30], 'Z': [0, 4]},
+            'resolution': {'X': 5, 'Y': 5, 'Z': 4}
+        },
+        'BritishNationalGrid': {
+            'extent': {'X': [1000, 2000], 'Y': [3000, 4000], 'Z': [0, 4]},
+            'resolution': {'X': 100, 'Y': 100, 'Z': 4}
+        }
+    }
 
-    def test_latlongrid_regions(self):
-        sd1 = cm4twc.LatLonGrid.from_extent_and_resolution(
-            latitude_extent=(51, 55),
-            latitude_resolution=1,
-            longitude_extent=(-2, 1),
-            longitude_resolution=1,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
-        )
+    extras = {
+        'RotatedLatLonGrid': {
+            'grid_north_pole_latitude': 0.,
+            'grid_north_pole_longitude': 0.
+        }
+    }
 
-        sd2 = cm4twc.LatLonGrid.from_extent_and_resolution(
-            latitude_extent=(50, 55),
-            latitude_resolution=1,
-            longitude_extent=(-2, 1),
-            longitude_resolution=1,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
-        )
+    def test_different_resolutions(self):
+        for spacedomain in self.grids:
+            cls_name = spacedomain.__name__
+            with self.subTest(spacedomain=cls_name):
+                params = {
+                    "_".join([self.axis_name[cls_name][axis], prop]): val
+                    for prop in ['extent', 'resolution']
+                    for axis, val in self.extent_resolution[cls_name][prop].items()
+                }
 
-        self.assertNotEqual(sd1, sd2)
+                extras = self.extras.get(cls_name, {})
 
-        sd3 = cm4twc.LatLonGrid.from_extent_and_resolution(
-            latitude_extent=(51, 55),
-            latitude_resolution=1,
-            longitude_extent=(-2, 1),
-            longitude_resolution=1,
-            altitude_extent=(0, 2),
-            altitude_resolution=2
-        )
+                sd1 = spacedomain.from_extent_and_resolution(**params, **extras)
 
-        self.assertNotEqual(sd1, sd3)
-        self.assertTrue(sd1.is_space_equal_to(sd3.to_field(), ignore_z=True))
+                params["{}_resolution".format(self.axis_name[cls_name]['X'])] /= 2
+                params["{}_resolution".format(self.axis_name[cls_name]['Y'])] /= 2
+                sd2 = spacedomain.from_extent_and_resolution(**params, **extras)
+
+                self.assertNotEqual(sd1, sd2)
+                self.assertTrue(sd1.spans_same_region_as(sd2))
+
+    def test_different_regions(self):
+        for spacedomain in self.grids:
+            cls_name = spacedomain.__name__
+            with self.subTest(spacedomain=cls_name):
+                params = {
+                    "_".join([self.axis_name[cls_name][axis], prop]): val
+                    for prop in ['extent', 'resolution']
+                    for axis, val in self.extent_resolution[cls_name][prop].items()
+                }
+
+                extras = self.extras.get(cls_name, {})
+
+                sd1 = spacedomain.from_extent_and_resolution(**params, **extras)
+
+                params2 = deepcopy(params)
+                params2["{}_extent".format(self.axis_name[cls_name]['X'])][0] -= (
+                    params2["{}_resolution".format(self.axis_name[cls_name]['X'])]
+                )
+                sd2 = spacedomain.from_extent_and_resolution(**params2, **extras)
+
+                self.assertNotEqual(sd1, sd2)
+
+                params3 = deepcopy(params)
+                params3["{}_resolution".format(self.axis_name[cls_name]['Z'])] = (
+                    params3["{}_resolution".format(self.axis_name[cls_name]['Z'])] / 2
+                )
+                params3["{}_extent".format(self.axis_name[cls_name]['Z'])][1] -= (
+                    params3["{}_resolution".format(self.axis_name[cls_name]['Z'])]
+                )
+                sd3 = spacedomain.from_extent_and_resolution(**params3, **extras)
+
+                self.assertNotEqual(sd1, sd3)
+                self.assertTrue(sd1.is_space_equal_to(sd3.to_field(), ignore_z=True))
 
 
 if __name__ == '__main__':
@@ -147,7 +194,7 @@ if __name__ == '__main__':
         test_loader.loadTestsFromTestCase(TestLatLonGridAPI)
     )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestLatLonGridComparison)
+        test_loader.loadTestsFromTestCase(TestGridComparison)
     )
 
     test_suite.addTests(doctest.DocTestSuite(cm4twc.space))
