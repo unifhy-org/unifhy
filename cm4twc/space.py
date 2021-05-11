@@ -1814,12 +1814,12 @@ class Grid(SpaceDomain):
                 # if field has no bounds, remove them from spacedomain
                 bounds = None
                 if not dim_coord.has_bounds():
-                    bounds = self._f.construct(axis_name).del_bounds()
+                    bounds = self._f.dim(axis_name).del_bounds()
 
                 # compare constructs
                 try:
                     x_y.append(
-                        self._f.construct(axis_name).equals(
+                        self._f.dim(axis_name).equals(
                             dim_coord,
                             rtol=rtol_, atol=atol_,
                             ignore_data_type=True,
@@ -1830,7 +1830,7 @@ class Grid(SpaceDomain):
                 finally:
                     # if bounds were removed, append them back to spacedomain
                     if bounds is not None:
-                        self._f.construct(axis_name).set_bounds(bounds)
+                        self._f.dim(axis_name).set_bounds(bounds)
             else:
                 x_y.append(False)
 
@@ -1840,7 +1840,7 @@ class Grid(SpaceDomain):
         else:
             if self._f.dim('Z', default=False):
                 # try to retrieve construct using name
-                dim_coord = field.dimension_coordinate(
+                dim_coord = field.dim(
                     re.compile(r'name={}$'.format(self._Z_name)), default=None
                 )
 
@@ -1854,7 +1854,7 @@ class Grid(SpaceDomain):
                         pass
 
                     # compare constructs
-                    z = self._f.dim('Z').equals(
+                    z = self._f.dim(self._Z_name).equals(
                         dim_coord,
                         rtol=rtol_, atol=atol_,
                         ignore_data_type=True,
@@ -1944,7 +1944,6 @@ class Grid(SpaceDomain):
             raise error
 
         # check that data and component spacedomains are compatible
-
         if not self.is_space_equal_to(field_subset):
             raise error
 
