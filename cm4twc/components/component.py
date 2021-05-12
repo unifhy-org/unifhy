@@ -245,6 +245,7 @@ class Component(metaclass=MetaComponent):
         # time attributes
         self._timedelta_in_seconds = None
         self._current_datetime = None
+        self._datetime_array = None
         self.timedomain = timedomain
 
         # parameters attribute
@@ -286,6 +287,7 @@ class Component(metaclass=MetaComponent):
         self._timedomain = timedomain
         self._timedelta_in_seconds = timedomain.timedelta.total_seconds()
         self._current_datetime = timedomain.time.datetime_array[0]
+        self._datetime_array = timedomain.time.datetime_array[:]
 
     @property
     def timedelta_in_seconds(self):
@@ -309,13 +311,14 @@ class Component(metaclass=MetaComponent):
     @spacedomain.setter
     def spacedomain(self, spacedomain):
         self._check_spacedomain(spacedomain)
+        self._spaceshape = spacedomain.shape
         self._spacedomain = spacedomain
 
     @property
     def spaceshape(self):
         """Return the length of each dimension in the spatial
         configuration of the Component as a `tuple` of `int`."""
-        return self.spacedomain.shape
+        return self._spaceshape
 
     @property
     def dataset(self):
@@ -991,7 +994,7 @@ class Component(metaclass=MetaComponent):
             data[d] = self.datasubset[d][timeindex]
 
         # determine current datetime in simulation
-        self._current_datetime = self.timedomain.time.datetime_array[timeindex]
+        self._current_datetime = self._datetime_array[timeindex]
 
         # collect required transfers from exchanger
         for d in self._inwards_info:
