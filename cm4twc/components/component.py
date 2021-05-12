@@ -13,7 +13,9 @@ from ._utils.records import (StateRecord, OutwardRecord, OutputRecord,
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
-from ..data import DataSet
+from ..data import (
+    DataSet, Variable, StaticVariable, ClimatologicVariable, DynamicVariable
+)
 from ..settings import dtype_float, array_order
 
 
@@ -570,9 +572,9 @@ class Component(metaclass=MetaComponent):
                         self.__class__.__name__)
                 )
             # check that input data units are compliant with component units
-            if hasattr(dataset[data_name], 'units'):
+            if hasattr(dataset[data_name].field, 'units'):
                 if not Units(data_info['units']).equals(
-                        Units(dataset[data_name].units)):
+                        Units(dataset[data_name].field.units)):
                     raise ValueError(
                         "units of variable '{}' in {} {} not equal to units "
                         "required by {} component '{}': {} required".format(
@@ -592,8 +594,10 @@ class Component(metaclass=MetaComponent):
         # check space compatibility for input data
         for data_name, data_unit in self._inputs_info.items():
             try:
-                dataset[data_name] = (
-                    spacedomain.subset_and_compare(dataset[data_name])
+                filenames = dataset[data_name].field.get_filenames()
+                dataset[data_name] = Variable(
+                    spacedomain.subset_and_compare(dataset[data_name].field),
+                    filenames
                 )
             except RuntimeError:
                 raise ValueError(
@@ -614,16 +618,19 @@ class Component(metaclass=MetaComponent):
             )
 
             self.datasubset[data_name] = self._check_time(
-                self.dataset[data_name], timedomain,
+                self.dataset[data_name].field, timedomain,
                 self._inputs_info[data_name]['kind'], error,
                 frequency=self._inputs_info[data_name].get('frequency')
             )
 
     @staticmethod
     def _check_time(field, timedomain, kind, error, frequency=None):
+        filenames = field.get_filenames()
         if kind == 'dynamic':
             try:
-                field_subset = timedomain.subset_and_compare(field)
+                variable_subset = DynamicVariable(
+                    timedomain.subset_and_compare(field), filenames
+                )
             except RuntimeError:
                 raise error
 
@@ -643,19 +650,20 @@ class Component(metaclass=MetaComponent):
                 raise error
 
             # copy reference for climatologic input data
-            field_subset = field
+            variable_subset = ClimatologicVariable(field, filenames)
 
-        else:  # type_ == 'static':
+        else:  # kind == 'static':
             # copy reference for static input data
             if field.has_construct('time'):
                 if field.construct('time').size == 1:
-                    field_subset = field.squeeze('time')
+                    variable_subset = StaticVariable(field.squeeze('time'),
+                                                     filenames)
                 else:
                     raise error
             else:
-                field_subset = field
+                variable_subset = StaticVariable(field, filenames)
 
-        return field_subset
+        return variable_subset
 
     def _check_parameters(self, parameters, spacedomain):
         """Check that parameter values are (convertible to) `cf.Data`
@@ -966,6 +974,10 @@ class Component(metaclass=MetaComponent):
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
 
+        # reset time for data slices
+        for d in self._inputs_info:
+            self.datasubset[d].reset_time()
+
         if self.records:
             if not self.revived_streams:
                 self._initialise_record_streams()
@@ -974,13 +986,9 @@ class Component(metaclass=MetaComponent):
 
     def run_(self, timeindex, exchanger):
         data = {}
-        # collect required ancillary data from dataset
+        # collect required input data from dataset
         for d in self._inputs_info:
-            kind = self._inputs_info[d]['kind']
-            if kind == 'dynamic':
-                data[d] = self.datasubset[d].array[timeindex, ...]
-            else:
-                data[d] = self.datasubset[d].array[...]
+            data[d] = self.datasubset[d][timeindex]
 
         # determine current datetime in simulation
         self._current_datetime = self.timedomain.time.datetime_array[timeindex]
