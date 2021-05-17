@@ -113,39 +113,40 @@ class RecordStream(object):
         # instantiate attributes to hold temporal information
         self.delta = delta
         self.frequency = _delta_to_frequency_tag(delta)
-        self.length = 0
-        self.timedomain = None
-        self.time = None
-        self.time_bounds = None
-        self.time_tracker = None
+        self._time_slice_len = time_slice_length
+        self._length = 0
+        self._timedomain = None
+        self._time = None
+        self._time_bounds = None
+        self._time_tracker = None
 
         # instantiate attributes to hold spatial information
-        self.spacedomain = None
+        self._spacedomain = None
 
         # instantiate holders for file paths
         self.file = None
         self.dump_file = None
 
         # mapping to store record objects (keys are record names)
-        self.records = {}
+        self._records = {}
         # mapping to store record methods (keys are record names)
-        self.methods = {}
+        self._methods = {}
         # mapping to store record arrays (keys are record names)
-        self.arrays = {}
+        self._arrays = {}
         # mapping to store record masks (keys are record names)
-        self.masks = {}
+        self._masks = {}
         # mapping for integer tracker to know where in array to write next
         # (keys are record names)
-        self.array_trackers = {}
+        self._array_trackers = {}
 
         # integers to track when to write to file
-        self.trigger = None
-        self.trigger_tracker = None
+        self._trigger = None
+        self._trigger_tracker = None
 
     def add_record(self, record, methods):
         name = record.name
         # store link to record object
-        self.records[name] = record
+        self._records[name] = record
         # store sequence of aggregation methods
         methods_ = set()
         for method in methods:
@@ -154,7 +155,7 @@ class RecordStream(object):
             else:
                 raise ValueError('method {} for record {} aggregation '
                                  'unknown'.format(method, name))
-        self.methods[name] = methods_
+        self._methods[name] = methods_
         # map this very stream in the record
         record.streams.append(self)
 
@@ -165,35 +166,35 @@ class RecordStream(object):
                              'with component timedelta')
 
         # determine time series length for storage
-        self.length = int(self.delta.total_seconds()
-                          // timedomain.timedelta.total_seconds())
+        self._length = int(self.delta.total_seconds()
+                           // timedomain.timedelta.total_seconds())
         # create timedomain for stream
-        self.timedomain = TimeDomain.from_start_end_step(
+        self._timedomain = TimeDomain.from_start_end_step(
             start=timedomain.bounds.datetime_array[0, 0],
             end=timedomain.bounds.datetime_array[-1, -1] + self.delta,
             step=self.delta,
             calendar=timedomain.calendar,
             units=timedomain.units
         )
-        self.time = self.timedomain.time.array[1:]
-        self.time_bounds = self.timedomain.bounds.array[:-1, :]
+        self._time = self._timedomain._time.array[1:]
+        self._time_bounds = self._timedomain.bounds.array[:-1, :]
 
         # store spacedomain
-        self.spacedomain = spacedomain
+        self._spacedomain = spacedomain
 
         # initialise record arrays for accumulating values
-        self.trigger = 0
-        for name, record in self.records.items():
-            self.array_trackers[name] = 0
+        self._trigger = 0
+        for name, record in self._records.items():
+            self._array_trackers[name] = 0
 
             d = record.divisions
 
             # initialise array
             arr = np.zeros(
-                (self.length, *spacedomain.shape, *d), dtype_float()
+                (self._length, *spacedomain.shape, *d), dtype_float()
             )
             arr[:] = np.nan
-            self.arrays[name] = arr
+            self._arrays[name] = arr
 
             # process array mask
             if spacedomain.land_sea_mask is None:
@@ -206,37 +207,37 @@ class RecordStream(object):
                         np.expand_dims(msk, axis=axes),
                         (*spacedomain.shape, *d)
                     )
-            self.masks[name] = msk
+            self._masks[name] = msk
 
             # add on length of stream to the record trigger
-            self.trigger += self.length
+            self._trigger += self._length
 
         if not _skip_trackers:
             # (re)initialise trackers
-            self.time_tracker = 0
-            self.trigger_tracker = 0
+            self._time_tracker = 0
+            self._trigger_tracker = 0
 
     def update_record(self, name, value):
-        self.arrays[name][self.array_trackers[name], ...] = value
-        self.array_trackers[name] += 1
-        self.trigger_tracker += 1
-        if self.trigger_tracker == self.trigger:
+        self._arrays[name][self._array_trackers[name], ...] = value
+        self._array_trackers[name] += 1
+        self._trigger_tracker += 1
+        if self._trigger_tracker == self._trigger:
             self.update_record_to_stream_file()
 
     def create_record_stream_file(self, filepath):
         self.file = filepath
 
         with Dataset(self.file, 'w') as f:
-            axes = self.spacedomain.axes
+            axes = self._spacedomain.axes
             # dimension for space and time lower+upper bounds
             f.createDimension('nv', 2)
             # space coordinate dimensions and coordinate variables
             for axis in axes:
                 # dimension (domain axis)
-                f.createDimension(axis, len(getattr(self.spacedomain, axis)))
+                f.createDimension(axis, len(getattr(self._spacedomain, axis)))
                 # variables
                 # (domain coordinate)
-                coord = self.spacedomain.to_field().construct(axis)
+                coord = self._spacedomain.to_field().construct(axis)
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
@@ -252,14 +253,14 @@ class RecordStream(object):
             f.createDimension('time', None)
             t = f.createVariable('time', np.float64, ('time',))
             t.standard_name = 'time'
-            t.units = self.timedomain.units
-            t.calendar = self.timedomain.calendar
+            t.units = self._timedomain.units
+            t.calendar = self._timedomain.calendar
             t.bounds = 'time_bounds'
             b = f.createVariable('time_bounds', np.float64, ('time', 'nv'))
-            b.units = self.timedomain.units
-            b.calendar = self.timedomain.calendar
+            b.units = self._timedomain.units
+            b.calendar = self._timedomain.calendar
 
-            for name, record in self.records.items():
+            for name, record in self._records.items():
                 d = record.divisions
                 if d:
                     dims = []
@@ -272,19 +273,19 @@ class RecordStream(object):
                     dims = ('time', *axes)
 
                 # record variable
-                for method in self.methods[name]:
+                for method in self._methods[name]:
                     name_method = '_'.join([name, method])
                     v = f.createVariable(name_method, dtype_float(), dims)
                     v.standard_name = name
                     v.units = record.units
                     v.cell_methods = "time: {} over {}".format(
-                        method, _delta_to_frequency_str(self.timedomain.timedelta)
+                        method, _delta_to_frequency_str(self._timedomain.timedelta)
                     )
 
     def update_record_to_stream_file(self):
         with Dataset(self.file, 'a') as f:
-            time_ = self.time[self.time_tracker]
-            time_bounds = self.time_bounds[self.time_tracker]
+            time_ = self._time[self._time_tracker]
+            time_bounds = self._time_bounds[self._time_tracker]
             try:
                 # check whether given snapshot already in file
                 t = cftime.time2index(time_, f.variables['time'])
@@ -296,8 +297,8 @@ class RecordStream(object):
                 f.variables['time'][t] = time_
                 f.variables['time_bounds'][t] = time_bounds
 
-            for name, array in self.arrays.items():
-                for method in self.methods[name]:
+            for name, array in self._arrays.items():
+                for method in self._methods[name]:
                     name_method = '_'.join([name, method])
 
                     # proceed with required aggregation
@@ -306,7 +307,7 @@ class RecordStream(object):
                     elif method == 'sum':
                         value = np.nansum(array, axis=0)
                     elif method == 'point':
-                        value = array[self.array_trackers[name] - 1]
+                        value = array[self._array_trackers[name] - 1]
                     elif method == 'minimum':
                         value = np.nanmin(array, axis=0)
                     elif method == 'maximum':
@@ -314,23 +315,23 @@ class RecordStream(object):
 
                     # store result in file
                     f.variables[name_method][t] = np.ma.array(
-                        value, mask=self.masks[name]
+                        value, mask=self._masks[name]
                     )
 
                 # reset array tracker to point to start of array again
-                self.array_trackers[name] = 0
+                self._array_trackers[name] = 0
                 # reset values in array
                 array[:] = np.nan
             # increment time tracker to next writing time
-            self.time_tracker += 1
+            self._time_tracker += 1
             # reset trigger tracker
-            self.trigger_tracker = 0
+            self._trigger_tracker = 0
 
     def create_record_stream_dump(self, filepath):
         self.dump_file = filepath
 
         with Dataset(self.dump_file, 'w') as f:
-            axes = self.spacedomain.axes
+            axes = self._spacedomain.axes
 
             # description
             f.description = "Dump file created on {}".format(
@@ -338,20 +339,20 @@ class RecordStream(object):
 
             # dimensions
             f.createDimension('time', None)
-            f.createDimension('length', self.length)
+            f.createDimension('length', self._length)
             for axis in axes:
-                f.createDimension(axis, len(getattr(self.spacedomain, axis)))
+                f.createDimension(axis, len(getattr(self._spacedomain, axis)))
             f.createDimension('nv', 2)
 
             # coordinate variables
             t = f.createVariable('time', np.float64, ('time',))
             t.standard_name = 'time'
-            t.units = self.timedomain.units
-            t.calendar = self.timedomain.calendar
+            t.units = self._timedomain.units
+            t.calendar = self._timedomain.calendar
             h = f.createVariable('length', np.uint32, ('length',))
-            h[:] = np.arange(self.length)
+            h[:] = np.arange(self._length)
             for axis in axes:
-                coord = self.spacedomain.to_field().construct(axis)
+                coord = self._spacedomain.to_field().construct(axis)
                 # (domain coordinate)
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
@@ -365,7 +366,7 @@ class RecordStream(object):
                 b[:] = coord.bounds.data.array
 
             # records
-            for name, record in self.records.items():
+            for name, record in self._records.items():
                 d = record.divisions
                 if d:
                     dims = []
@@ -399,13 +400,13 @@ class RecordStream(object):
                 t = len(f.variables['time'])
                 f.variables['time'][t] = timestamp
 
-            for name in self.records:
-                f.variables[name][t, ...] = self.arrays[name]
+            for name in self._records:
+                f.variables[name][t, ...] = self._arrays[name]
                 f.variables['_'.join([name, 'tracker'])][t] = (
-                    self.array_trackers[name]
+                    self._array_trackers[name]
                 )
-            f.variables['time_tracker'][t] = self.time_tracker
-            f.variables['trigger_tracker'][t] = self.trigger_tracker
+            f.variables['time_tracker'][t] = self._time_tracker
+            f.variables['trigger_tracker'][t] = self._trigger_tracker
 
     def load_record_stream_dump(self, filepath, datetime_,
                                 timedomain, spacedomain):
@@ -444,13 +445,13 @@ class RecordStream(object):
                     )
 
             # retrieve each record values
-            for name in self.records:
+            for name in self._records:
                 try:
                     mask = f.variables[name][t, ...].mask
-                    self.arrays[name][~mask] = (
+                    self._arrays[name][~mask] = (
                         f.variables[name][t, ...].data[~mask]
                     )
-                    self.array_trackers[name] = (
+                    self._array_trackers[name] = (
                         f.variables['_'.join([name, 'tracker'])][t]
                     )
                 except KeyError:
@@ -459,7 +460,7 @@ class RecordStream(object):
                             name, self.dump_file)
                     )
             # retrieve stream trackers
-            self.time_tracker = f.variables['time_tracker'][t]
-            self.trigger_tracker = f.variables['trigger_tracker'][t]
+            self._time_tracker = f.variables['time_tracker'][t]
+            self._trigger_tracker = f.variables['trigger_tracker'][t]
 
         return datetime_
