@@ -984,6 +984,11 @@ class Component(metaclass=MetaComponent):
         if self.records:
             if not self.revived_streams:
                 self._initialise_record_streams()
+            # need to reset flag to False because Component may be
+            # re-used for another spin cycle / simulation run and
+            # it needs for its streams to be properly re-initialised
+            # (its trackers in particular)
+            self.revived_streams = False
             # optionally create files and dump files
             self._create_stream_files_and_dumps(tag, overwrite)
 
@@ -1102,7 +1107,7 @@ class Component(metaclass=MetaComponent):
         for delta, stream in self._record_streams.items():
             # initialise record files
             filename = '_'.join([self.identifier, self._category, tag,
-                                 'records', stream.frequency])
+                                 'records', stream.frequency_tag])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
@@ -1112,7 +1117,7 @@ class Component(metaclass=MetaComponent):
 
             # initialise stream dumps
             filename = '_'.join([self.identifier, self._category, tag,
-                                 'dump_record_stream', stream.frequency])
+                                 'dump_record_stream', stream.frequency_tag])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
@@ -1121,7 +1126,7 @@ class Component(metaclass=MetaComponent):
                 stream.dump_file = file_
 
     def revive_record_streams_from_dump(self, dump_file_pattern,
-                                        at=None):
+                                        timedomain=None, at=None):
         """Revive the record streams of the Component from a dump file.
 
         :Parameters:
@@ -1136,6 +1141,12 @@ class Component(metaclass=MetaComponent):
                 *Parameter example:* ::
 
                     dump_file_pattern='out/dummy_surfacelayer_run_dump_record_stream_{}.nc'
+
+            timedomain: `TimeDomain`, optional
+                This is required if the run to be revived is a spin-up
+                one. Indeed, until the `spin_up` method is called, the
+                `TimeDomain` of the `Component` is the one of its main
+                run.
 
             at: datetime object, optional
                 The snapshot in time to be used for the initial
@@ -1162,9 +1173,9 @@ class Component(metaclass=MetaComponent):
 
         if self.records:
             for delta, stream in self._record_streams.items():
-                file_ = dump_file_pattern.format(stream.frequency)
+                file_ = dump_file_pattern.format(stream.frequency_tag)
                 ats.append(stream.load_record_stream_dump(
-                    file_, at, self.timedomain, self.spacedomain
+                    file_, at, timedomain or self.timedomain, self.spacedomain
                 ))
         self.revived_streams = True
 

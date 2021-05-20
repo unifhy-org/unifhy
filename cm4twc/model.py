@@ -588,8 +588,22 @@ class Model(object):
                                             component.category,
                                             tag, 'dump_record_stream_{}.nc'])])
 
-            ats.extend(component.revive_record_streams_from_dump(dump_file,
-                                                                 at))
+            timedomain = None
+            if method == 'spin_up':
+                # need to generate and use spin-up timedomain, because
+                # until 'spin_up' is invoked, the component has the
+                # timedomain corresponding to the main run (which, if
+                # used, would result in improper initialisation of
+                # record steams)
+                start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
+                end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
+                timedomain = component.get_spin_up_timedomain(start, end)
+
+            ats.extend(
+                component.revive_record_streams_from_dump(
+                    dump_file, timedomain, at
+                )
+            )
 
         # if all components are Data or Null, exit resume
         if data_or_null == 3:
