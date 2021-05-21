@@ -120,7 +120,8 @@ class Component(metaclass=MetaComponent):
     _flow_direction = False
 
     def __init__(self, saving_directory, timedomain, spacedomain,
-                 dataset=None, parameters=None, constants=None, records=None):
+                 dataset=None, parameters=None, constants=None, records=None,
+                 io_slice=100):
         """**Instantiation**
 
         :Parameters:
@@ -229,6 +230,12 @@ class Component(metaclass=MetaComponent):
                                  the elapsed timedelta.
                 ===============  =======================================
 
+            io_slice: `int`, optional
+                The length of the time slice to use for input/output
+                operations. This corresponds to the number of component
+                timesteps to read/write at once. If not set, its default
+                value is 100 (arbitrary).
+
         """
         # check class definition attributes
         self._check_definition()
@@ -242,7 +249,8 @@ class Component(metaclass=MetaComponent):
         # # dataset to subset whole data for given period
         self.datasubset = DataSet()
 
-        # time attributes
+        # time attribute
+        self._io_slice = int(io_slice)
         self._timedelta_in_seconds = None
         self._current_datetime = None
         self._datetime_array = None
@@ -408,7 +416,9 @@ class Component(metaclass=MetaComponent):
             for delta, methods in frequencies.items():
                 # instantiate RecordStream if none for given timedelta yet
                 if delta not in self._record_streams:
-                    self._record_streams[delta] = RecordStream(delta)
+                    self._record_streams[delta] = RecordStream(
+                        delta, writing_slice=self._io_slice
+                    )
                 # hold reference to record object in stream
                 self._record_streams[delta].add_record(
                     self._record_objects[name], methods
@@ -622,17 +632,19 @@ class Component(metaclass=MetaComponent):
 
             self.datasubset[data_name] = self._check_time(
                 self.dataset[data_name].field, timedomain,
-                self._inputs_info[data_name]['kind'], error,
+                self._inputs_info[data_name]['kind'], error, self._io_slice,
                 frequency=self._inputs_info[data_name].get('frequency')
             )
 
     @staticmethod
-    def _check_time(field, timedomain, kind, error, frequency=None):
+    def _check_time(field, timedomain, kind, error, reading_slice,
+                    frequency=None):
         filenames = field.get_filenames()
         if kind == 'dynamic':
             try:
                 variable_subset = DynamicVariable(
-                    timedomain.subset_and_compare(field), filenames
+                    timedomain.subset_and_compare(field), filenames,
+                    reading_slice
                 )
             except RuntimeError:
                 raise error

@@ -105,7 +105,7 @@ class OutputRecord(Record):
 
 class RecordStream(object):
 
-    def __init__(self, frequency, writing_slice=100):
+    def __init__(self, frequency, writing_slice):
         # check frequency validity
         if not isinstance(frequency, timedelta):
             raise ValueError('invalid recording frequency {}'.format(frequency))
