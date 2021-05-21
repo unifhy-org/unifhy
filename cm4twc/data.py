@@ -325,19 +325,19 @@ class ClimatologicVariable(StaticVariable):
 
 class DynamicVariable(Variable):
 
-    def __init__(self, field, filenames, time_slice_length=100):
+    def __init__(self, field, filenames, reading_slice=100):
         super(DynamicVariable, self).__init__(field, filenames)
-        self._time_slice_len = time_slice_length
+        self._steps_per_slice = reading_slice
         # time dimension, so load in data one time slice at a time
         self._current_slice = 0
         self._current_array = None
 
     def __getitem__(self, index):
-        slice_index = index % self._time_slice_len
+        slice_index = index % self._steps_per_slice
 
         if slice_index == 0:
             i = self._current_slice
-            length = self._time_slice_len
+            length = self._steps_per_slice
             self._current_array = self._f[i*length:(i+1)*length].array
             self._current_slice += 1
 
