@@ -1443,7 +1443,9 @@ class DataComponent(Component):
         return cfg
 
     def initialise_(self, *args, **kwargs):
-        pass
+        # reset time for data slices
+        for d in self._inputs_info:
+            self.datasubset[d].reset_time()
 
     def dump_states(self, *args, **kwargs):
         pass
