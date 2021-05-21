@@ -21,6 +21,8 @@ Released on 2021, ???.
   (`#39 <https://github.com/hydro-jules/cm4twc/pull/39>`_)
 * add support for customisable divisions for component states
   (`#31 <https://github.com/hydro-jules/cm4twc/issues/31>`_)
+* add time slice for I/O operations (user customisable)
+  (`#42 <https://github.com/hydro-jules/cm4twc/pull/42>`_)
 
 .. rubric:: Documentation
 
