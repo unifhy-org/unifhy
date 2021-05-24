@@ -96,7 +96,7 @@ class Simulator(object):
         if tag == 'run':
             at = (get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
                   - get_dummy_dumping_frequency(self.time_))
-        else:  # spinup
+        else:  # tag == 'spinup'
             at = (get_dummy_spin_up_start_end()[-1]
                   - get_dummy_dumping_frequency(self.time_))
 
