@@ -121,7 +121,7 @@ class Component(metaclass=MetaComponent):
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None,
-                 io_slice=100):
+                 io_slice=None):
         """**Instantiation**
 
         :Parameters:
@@ -250,7 +250,7 @@ class Component(metaclass=MetaComponent):
         self.datasubset = DataSet()
 
         # time attribute
-        self._io_slice = int(io_slice)
+        self._io_slice = 100 if io_slice is None else int(io_slice)
         self._timedelta_in_seconds = None
         self._current_datetime = None
         self._datetime_array = None
@@ -878,7 +878,8 @@ class Component(metaclass=MetaComponent):
             dataset=DataSet.from_config(cfg.get('dataset')),
             parameters=parameters,
             constants=cfg.get('constants'),
-            records=cfg.get('records')
+            records=cfg.get('records'),
+            io_slice=cfg.get('io_slice', None)
         )
 
     def to_config(self):
@@ -944,7 +945,8 @@ class Component(metaclass=MetaComponent):
             'dataset': self.dataset.to_config(),
             'parameters': parameters if parameters else None,
             'constants': constants if constants else None,
-            'records': self.records if self.records else None
+            'records': self.records if self.records else None,
+            'io_slice': self._io_slice
         }
         return cfg
 
@@ -1372,7 +1374,7 @@ class DataComponent(Component):
     _solver_history = 0
 
     def __init__(self, timedomain, spacedomain, dataset, substituting_class,
-                 io_slice=100):
+                 io_slice=None):
         """**Instantiation**
 
         :Parameters:
@@ -1444,7 +1446,8 @@ class DataComponent(Component):
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
-            substituting_class=substituting_class
+            substituting_class=substituting_class,
+            io_slice=cfg.get('io_slice', None)
         )
 
     def to_config(self):
@@ -1457,7 +1460,8 @@ class DataComponent(Component):
             'substituting': {
                 'module': self._substituting_class.__module__,
                 'class': self._substituting_class.__name__
-            }
+            },
+            'io_slice': self._io_slice
         }
         return cfg
 
