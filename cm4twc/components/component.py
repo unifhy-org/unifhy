@@ -1371,7 +1371,8 @@ class DataComponent(Component):
     # definition attributes
     _solver_history = 0
 
-    def __init__(self, timedomain, spacedomain, dataset, substituting_class):
+    def __init__(self, timedomain, spacedomain, dataset, substituting_class,
+                 io_slice=100):
         """**Instantiation**
 
         :Parameters:
@@ -1393,6 +1394,12 @@ class DataComponent(Component):
                 substituting its simulated time series with the ones in
                 *dataset*.
 
+            io_slice: `int`, optional
+                The length of the time slice to use for input/output
+                operations. This corresponds to the number of component
+                timesteps to read/write at once. If not set, its default
+                value is 100 (arbitrary).
+
         """
         # store class being substituted for config
         self._substituting_class = substituting_class
@@ -1410,7 +1417,7 @@ class DataComponent(Component):
 
         # initialise as a Component
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
-                                            dataset)
+                                            dataset, io_slice=io_slice)
 
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
