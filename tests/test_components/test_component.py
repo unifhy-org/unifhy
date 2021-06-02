@@ -181,7 +181,8 @@ def get_dummy_component(category, kind, time_, space_, source):
             dataset=dataset,
             parameters=parameters[category][space_],
             constants=constants[category],
-            records=records[category][time_]
+            records=records[category][time_],
+            io_slice=10
         )
     elif kind == 'd':
         return cm4twc.DataComponent(
@@ -191,9 +192,10 @@ def get_dummy_component(category, kind, time_, space_, source):
                 '{}_{}'.format(category, time_),
                 time_resolution, space_resolution
             ),
-            substituting_class=component_class
+            substituting_class=component_class,
+            io_slice=10
         )
-    else:  # i.e. 'n'
+    else:  # kind == 'n'
         return cm4twc.NullComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,

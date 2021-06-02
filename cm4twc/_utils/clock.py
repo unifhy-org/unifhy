@@ -34,7 +34,9 @@ class Clock(object):
                 raise ValueError(
                     "timestep of {} component ({}s) not a multiple "
                     "integer of timestep of fastest component ({}s).".format(
-                        category, steps[category], supermesh_step))
+                        category, steps[category], supermesh_step
+                    )
+                )
 
         # get boolean arrays (switches) to determine when to run a given
         # component on temporal supermesh
@@ -92,7 +94,8 @@ class Clock(object):
             if not timedomains[category].spans_same_period_as(
                     timedomains[self.categories[0]]):
                 raise ValueError(
-                    "components' timedomains do not span same period")
+                    "components' timedomains do not span same period"
+                )
 
     @staticmethod
     def _lcm_timedelta(timedelta_a, timedelta_b):
@@ -109,7 +112,9 @@ class Clock(object):
                 "dumping frequency ({}s) is not a multiple integer "
                 "of smallest common multiple across components' "
                 "timedomains ({}s).".format(
-                    dumping_step, self.min_dumping_delta.total_seconds()))
+                    dumping_step, self.min_dumping_delta.total_seconds()
+                )
+            )
 
         # get boolean arrays (switches) to determine when to dump the
         # component states on temporal supermesh
@@ -124,8 +129,7 @@ class Clock(object):
                         self.timedomain.calendar)
 
     def get_current_timeindex(self, category):
-        return (self._current_timeindex //
-                self.increments[category])
+        return self._current_timeindex // self.increments[category]
 
     def __iter__(self):
         return self

@@ -13,7 +13,9 @@ from ._utils.records import (StateRecord, OutwardRecord, OutputRecord,
 from ..time import TimeDomain
 from .. import space
 from ..space import SpaceDomain, Grid
-from ..data import DataSet
+from ..data import (
+    DataSet, Variable, StaticVariable, ClimatologicVariable, DynamicVariable
+)
 from ..settings import dtype_float, array_order
 
 
@@ -118,7 +120,8 @@ class Component(metaclass=MetaComponent):
     _flow_direction = False
 
     def __init__(self, saving_directory, timedomain, spacedomain,
-                 dataset=None, parameters=None, constants=None, records=None):
+                 dataset=None, parameters=None, constants=None, records=None,
+                 io_slice=None):
         """**Instantiation**
 
         :Parameters:
@@ -227,6 +230,12 @@ class Component(metaclass=MetaComponent):
                                  the elapsed timedelta.
                 ===============  =======================================
 
+            io_slice: `int`, optional
+                The length of the time slice to use for input/output
+                operations. This corresponds to the number of component
+                timesteps to read/write at once. If not set, its default
+                value is 100 (arbitrary).
+
         """
         # check class definition attributes
         self._check_definition()
@@ -240,9 +249,11 @@ class Component(metaclass=MetaComponent):
         # # dataset to subset whole data for given period
         self.datasubset = DataSet()
 
-        # time attributes
+        # time attribute
+        self._io_slice = 100 if io_slice is None else int(io_slice)
         self._timedelta_in_seconds = None
         self._current_datetime = None
+        self._datetime_array = None
         self.timedomain = timedomain
 
         # parameters attribute
@@ -284,6 +295,7 @@ class Component(metaclass=MetaComponent):
         self._timedomain = timedomain
         self._timedelta_in_seconds = timedomain.timedelta.total_seconds()
         self._current_datetime = timedomain.time.datetime_array[0]
+        self._datetime_array = timedomain.time.datetime_array[:]
 
     @property
     def timedelta_in_seconds(self):
@@ -307,13 +319,14 @@ class Component(metaclass=MetaComponent):
     @spacedomain.setter
     def spacedomain(self, spacedomain):
         self._check_spacedomain(spacedomain)
+        self._spaceshape = spacedomain.shape
         self._spacedomain = spacedomain
 
     @property
     def spaceshape(self):
         """Return the length of each dimension in the spatial
         configuration of the Component as a `tuple` of `int`."""
-        return self.spacedomain.shape
+        return self._spaceshape
 
     @property
     def dataset(self):
@@ -403,7 +416,9 @@ class Component(metaclass=MetaComponent):
             for delta, methods in frequencies.items():
                 # instantiate RecordStream if none for given timedelta yet
                 if delta not in self._record_streams:
-                    self._record_streams[delta] = RecordStream(delta)
+                    self._record_streams[delta] = RecordStream(
+                        delta, writing_slice=self._io_slice
+                    )
                 # hold reference to record object in stream
                 self._record_streams[delta].add_record(
                     self._record_objects[name], methods
@@ -570,9 +585,9 @@ class Component(metaclass=MetaComponent):
                         self.__class__.__name__)
                 )
             # check that input data units are compliant with component units
-            if hasattr(dataset[data_name], 'units'):
+            if hasattr(dataset[data_name].field, 'units'):
                 if not Units(data_info['units']).equals(
-                        Units(dataset[data_name].units)):
+                        Units(dataset[data_name].field.units)):
                     raise ValueError(
                         "units of variable '{}' in {} {} not equal to units "
                         "required by {} component '{}': {} required".format(
@@ -592,8 +607,10 @@ class Component(metaclass=MetaComponent):
         # check space compatibility for input data
         for data_name, data_unit in self._inputs_info.items():
             try:
-                dataset[data_name] = (
-                    spacedomain.subset_and_compare(dataset[data_name])
+                filenames = dataset[data_name].field.get_filenames()
+                dataset[data_name] = Variable(
+                    spacedomain.subset_and_compare(dataset[data_name].field),
+                    filenames
                 )
             except RuntimeError:
                 raise ValueError(
@@ -614,16 +631,21 @@ class Component(metaclass=MetaComponent):
             )
 
             self.datasubset[data_name] = self._check_time(
-                self.dataset[data_name], timedomain,
-                self._inputs_info[data_name]['kind'], error,
+                self.dataset[data_name].field, timedomain,
+                self._inputs_info[data_name]['kind'], error, self._io_slice,
                 frequency=self._inputs_info[data_name].get('frequency')
             )
 
     @staticmethod
-    def _check_time(field, timedomain, kind, error, frequency=None):
+    def _check_time(field, timedomain, kind, error, reading_slice,
+                    frequency=None):
+        filenames = field.get_filenames()
         if kind == 'dynamic':
             try:
-                field_subset = timedomain.subset_and_compare(field)
+                variable_subset = DynamicVariable(
+                    timedomain.subset_and_compare(field), filenames,
+                    reading_slice
+                )
             except RuntimeError:
                 raise error
 
@@ -643,19 +665,20 @@ class Component(metaclass=MetaComponent):
                 raise error
 
             # copy reference for climatologic input data
-            field_subset = field
+            variable_subset = ClimatologicVariable(field, filenames)
 
-        else:  # type_ == 'static':
+        else:  # kind == 'static':
             # copy reference for static input data
             if field.has_construct('time'):
                 if field.construct('time').size == 1:
-                    field_subset = field.squeeze('time')
+                    variable_subset = StaticVariable(field.squeeze('time'),
+                                                     filenames)
                 else:
                     raise error
             else:
-                field_subset = field
+                variable_subset = StaticVariable(field, filenames)
 
-        return field_subset
+        return variable_subset
 
     def _check_parameters(self, parameters, spacedomain):
         """Check that parameter values are (convertible to) `cf.Data`
@@ -855,7 +878,8 @@ class Component(metaclass=MetaComponent):
             dataset=DataSet.from_config(cfg.get('dataset')),
             parameters=parameters,
             constants=cfg.get('constants'),
-            records=cfg.get('records')
+            records=cfg.get('records'),
+            io_slice=cfg.get('io_slice', None)
         )
 
     def to_config(self):
@@ -921,7 +945,8 @@ class Component(metaclass=MetaComponent):
             'dataset': self.dataset.to_config(),
             'parameters': parameters if parameters else None,
             'constants': constants if constants else None,
-            'records': self.records if self.records else None
+            'records': self.records if self.records else None,
+            'io_slice': self._io_slice
         }
         return cfg
 
@@ -966,24 +991,29 @@ class Component(metaclass=MetaComponent):
         # create dump file for given run
         self._initialise_states_dump(tag, overwrite)
 
+        # reset time for data slices
+        for d in self._inputs_info:
+            self.datasubset[d].reset_time()
+
         if self.records:
             if not self.revived_streams:
                 self._initialise_record_streams()
+            # need to reset flag to False because Component may be
+            # re-used for another spin cycle / simulation run and
+            # it needs for its streams to be properly re-initialised
+            # (its trackers in particular)
+            self.revived_streams = False
             # optionally create files and dump files
             self._create_stream_files_and_dumps(tag, overwrite)
 
     def run_(self, timeindex, exchanger):
         data = {}
-        # collect required ancillary data from dataset
+        # collect required input data from dataset
         for d in self._inputs_info:
-            kind = self._inputs_info[d]['kind']
-            if kind == 'dynamic':
-                data[d] = self.datasubset[d].array[timeindex, ...]
-            else:
-                data[d] = self.datasubset[d].array[...]
+            data[d] = self.datasubset[d][timeindex]
 
         # determine current datetime in simulation
-        self._current_datetime = self.timedomain.time.datetime_array[timeindex]
+        self._current_datetime = self._datetime_array[timeindex]
 
         # collect required transfers from exchanger
         for d in self._inwards_info:
@@ -1091,7 +1121,7 @@ class Component(metaclass=MetaComponent):
         for delta, stream in self._record_streams.items():
             # initialise record files
             filename = '_'.join([self.identifier, self._category, tag,
-                                 'records', stream.frequency])
+                                 'records', stream.frequency_tag])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
@@ -1101,7 +1131,7 @@ class Component(metaclass=MetaComponent):
 
             # initialise stream dumps
             filename = '_'.join([self.identifier, self._category, tag,
-                                 'dump_record_stream', stream.frequency])
+                                 'dump_record_stream', stream.frequency_tag])
             file_ = sep.join([self.saving_directory, filename + '.nc'])
 
             if overwrite or not path.exists(file_):
@@ -1110,7 +1140,7 @@ class Component(metaclass=MetaComponent):
                 stream.dump_file = file_
 
     def revive_record_streams_from_dump(self, dump_file_pattern,
-                                        at=None):
+                                        timedomain=None, at=None):
         """Revive the record streams of the Component from a dump file.
 
         :Parameters:
@@ -1125,6 +1155,12 @@ class Component(metaclass=MetaComponent):
                 *Parameter example:* ::
 
                     dump_file_pattern='out/dummy_surfacelayer_run_dump_record_stream_{}.nc'
+
+            timedomain: `TimeDomain`, optional
+                This is required if the run to be revived is a spin-up
+                one. Indeed, until the `spin_up` method is called, the
+                `TimeDomain` of the `Component` is the one of its main
+                run.
 
             at: datetime object, optional
                 The snapshot in time to be used for the initial
@@ -1151,9 +1187,9 @@ class Component(metaclass=MetaComponent):
 
         if self.records:
             for delta, stream in self._record_streams.items():
-                file_ = dump_file_pattern.format(stream.frequency)
+                file_ = dump_file_pattern.format(stream.frequency_tag)
                 ats.append(stream.load_record_stream_dump(
-                    file_, at, self.timedomain, self.spacedomain
+                    file_, at, timedomain or self.timedomain, self.spacedomain
                 ))
         self.revived_streams = True
 
@@ -1337,7 +1373,8 @@ class DataComponent(Component):
     # definition attributes
     _solver_history = 0
 
-    def __init__(self, timedomain, spacedomain, dataset, substituting_class):
+    def __init__(self, timedomain, spacedomain, dataset, substituting_class,
+                 io_slice=None):
         """**Instantiation**
 
         :Parameters:
@@ -1359,6 +1396,12 @@ class DataComponent(Component):
                 substituting its simulated time series with the ones in
                 *dataset*.
 
+            io_slice: `int`, optional
+                The length of the time slice to use for input/output
+                operations. This corresponds to the number of component
+                timesteps to read/write at once. If not set, its default
+                value is 100 (arbitrary).
+
         """
         # store class being substituted for config
         self._substituting_class = substituting_class
@@ -1376,7 +1419,7 @@ class DataComponent(Component):
 
         # initialise as a Component
         super(DataComponent, self).__init__(None, timedomain, spacedomain,
-                                            dataset)
+                                            dataset, io_slice=io_slice)
 
     def __str__(self):
         shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
@@ -1403,7 +1446,8 @@ class DataComponent(Component):
             timedomain=TimeDomain.from_config(cfg['timedomain']),
             spacedomain=spacedomain.from_config(cfg['spacedomain']),
             dataset=DataSet.from_config(cfg.get('dataset')),
-            substituting_class=substituting_class
+            substituting_class=substituting_class,
+            io_slice=cfg.get('io_slice', None)
         )
 
     def to_config(self):
@@ -1416,12 +1460,15 @@ class DataComponent(Component):
             'substituting': {
                 'module': self._substituting_class.__module__,
                 'class': self._substituting_class.__name__
-            }
+            },
+            'io_slice': self._io_slice
         }
         return cfg
 
     def initialise_(self, *args, **kwargs):
-        pass
+        # reset time for data slices
+        for d in self._inputs_info:
+            self.datasubset[d].reset_time()
 
     def dump_states(self, *args, **kwargs):
         pass

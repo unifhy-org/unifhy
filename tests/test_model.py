@@ -96,7 +96,7 @@ class Simulator(object):
         if tag == 'run':
             at = (get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
                   - get_dummy_dumping_frequency(self.time_))
-        else:  # spinup
+        else:  # tag == 'spinup'
             at = (get_dummy_spin_up_start_end()[-1]
                   - get_dummy_dumping_frequency(self.time_))
 
@@ -400,6 +400,71 @@ class BasicTestModel(object):
 
         # clean up
         simulator_2.clean_up_files()
+
+    def test_setup_spinup_simulate_resume(self):
+        """
+        The purpose of this test is to check that a complete workflow is
+        functional, i.e.:
+        - configure first model;
+        - spin-up first model;
+        - simulate first model main run;
+        - configure second model using YAML configuration file of first model;
+        - resume second model main run at second-to-last snapshot.
+
+        Unlike its "advanced" counterpart, this test considers only one
+        combinations of actual `Component`, `DataComponent`, and
+        `NullComponent`.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking equality of the final component states at the end of
+          simulate and at the end of resume.
+
+        Note, this test does not check for correctness of final
+        states and transfers conditions, nor correctness of final
+        records because when one or more `NullComponent` is used in the
+        combination, the final conditions are not expected to be
+        'correct', and even less so 'consistent' from one combination
+        to the next.
+        """
+        # set up, spinup, and run model
+        simulator_1 = Simulator.from_scratch(self.t, self.s, 'd', 'c', 'n')
+        simulator_1.spinup_model()
+        simulator_1.run_model()
+
+        # store the last component states
+        last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
+        last_states_ss = deepcopy(simulator_1.model.subsurface.states)
+        last_states_ow = deepcopy(simulator_1.model.openwater.states)
+
+        # set up another model using YAML of first model
+        simulator_2 = Simulator(
+            self.t, self.s,
+            cm4twc.Model.from_yaml(
+                os.sep.join([simulator_1.model.saving_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # resume model
+        simulator_2.resume_model()
+
+        # check final state values are coherent
+        self.assertTrue(
+            compare_states(last_states_sl,
+                           simulator_2.model.surfacelayer.states)
+        )
+        self.assertTrue(
+            compare_states(last_states_ss,
+                           simulator_2.model.subsurface.states)
+        )
+        self.assertTrue(
+            compare_states(last_states_ow,
+                           simulator_2.model.openwater.states)
+        )
+
+        # clean up
+        simulator_1.clean_up_files()
 
     def check_final_conditions(self, model):
         """

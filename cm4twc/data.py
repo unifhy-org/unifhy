@@ -4,9 +4,7 @@ import cf
 
 class DataSet(MutableMapping):
     """DataSet is a dictionary-like data structure which maps variable
-    names to `cf.Field` objects. Namely, it allows to use custom
-    variable names instead of the standard_name attribute of `cf.Field`
-    to identify them.
+    names to `Variable` objects.
     """
 
     def __init__(self, files=None, name_mapping=None, select=None):
@@ -80,11 +78,11 @@ class DataSet(MutableMapping):
         return self._variables[key]
 
     def __setitem__(self, key, value):
-        if isinstance(value, cf.Field):
+        if isinstance(value, Variable):
             self._variables[key] = value
         else:
             raise TypeError("{} can only contain instances of {}".format(
-                self.__class__.__name__, cf.Field.__name__))
+                self.__class__.__name__, Variable.__name__))
 
     def __delitem__(self, key):
         del self._variables[key]
@@ -173,6 +171,8 @@ class DataSet(MutableMapping):
         variables = {}
 
         for field in cf.read(files, select=select):
+            filenames = field.get_filenames()
+
             # look for name to use as key in variables dict
             field_names = []
             name_in_mapping = None
@@ -206,7 +206,7 @@ class DataSet(MutableMapping):
                 key = name_in_mapping
 
             # assign field to variables dict
-            variables[key] = cf.Field(source=field, copy=False)
+            variables[key] = Variable(field, filenames)
 
         return variables
 
@@ -269,10 +269,80 @@ class DataSet(MutableMapping):
         """
         cfg = {}
 
-        for var in self:
-            cfg[var] = {
-                'files': list(self[var].data.get_filenames()),
-                'select': self[var].identity()
+        for var_name in self:
+            cfg[var_name] = {
+                'files': list(self[var_name].filenames),
+                'select': self[var_name].identity
             }
 
         return cfg
+
+
+class Variable(object):
+
+    def __init__(self, field, filenames):
+        self._f = field
+        # filenames may be dropped by cf-python after data access so
+        # store them it as early as possible for use in config file
+        self._filenames = filenames
+
+    @property
+    def identity(self):
+        return self._f.identity()
+
+    @property
+    def filenames(self):
+        return self._filenames
+
+    @property
+    def field(self):
+        return self._f
+
+    def __repr__(self):
+        return self._f.__repr__()
+
+
+class StaticVariable(Variable):
+
+    def __init__(self, field, filenames):
+        super(StaticVariable, self).__init__(field, filenames)
+        # no time dimension, so load in full array at once
+        self._array = field.array
+
+    def __getitem__(self, index):
+        return self._array
+
+    def reset_time(self):
+        pass
+
+
+class ClimatologicVariable(StaticVariable):
+    # behaves as a StaticVariable until a reason arises not to
+    # (e.g. may want to return a specific season/month/day of year,
+    #  for now it returns the whole array)
+    pass
+
+
+class DynamicVariable(Variable):
+
+    def __init__(self, field, filenames, reading_slice):
+        super(DynamicVariable, self).__init__(field, filenames)
+        self._steps_per_slice = reading_slice
+        # time dimension, so load in data one time slice at a time
+        self._current_slice = 0
+        self._current_array = None
+
+    def __getitem__(self, index):
+        slice_index = index % self._steps_per_slice
+
+        if slice_index == 0:
+            i = self._current_slice
+            length = self._steps_per_slice
+            self._current_array = self._f[i*length:(i+1)*length].array
+            self._current_slice += 1
+
+        return self._current_array[slice_index]
+
+    def reset_time(self):
+        self._current_slice = 0
+        self._current_array = None
