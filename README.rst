@@ -4,7 +4,7 @@ Community Model for the Terrestrial Water Cycle
 .. image:: https://img.shields.io/pypi/v/cm4twc?style=flat-square&color=00b0f0
    :target: https://pypi.python.org/pypi/cm4twc
    :alt: PyPI Version
-.. image:: https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&label=DOI&query=doi&style=flat-square&color=00b0f0
+.. image:: https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&label=doi&query=doi&style=flat-square&color=00b0f0
    :target: https://zenodo.org/badge/latestdoi/234523723
    :alt: DOI
 .. image:: https://img.shields.io/github/license/hydro-jules/cm4twc?style=flat-square&color=00b0f0
