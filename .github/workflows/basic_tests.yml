@@ -1,8 +1,6 @@
 name: Basic tests
 
 on:
-  push:
-    branches: [dev]
   pull_request:
     types: [ready_for_review]
     branches: [dev]
