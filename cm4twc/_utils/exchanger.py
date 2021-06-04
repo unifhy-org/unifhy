@@ -73,7 +73,7 @@ class Exchanger(object):
             if self.transfers[t].get('from') is None:
                 # in this case only set_transfer will be called,
                 # no component is going to call get_transfer, so no need
-                # for weights, but because transfers still need to be
+                # for time weights, but because transfers still need to be
                 # stored for dump, need to define 'history' for creation
                 # of 'array' and 'slices'
                 histories.append(1)
@@ -101,30 +101,32 @@ class Exchanger(object):
                             compass.spacedomains[c].to_field()
                         )
 
-                    # determine the weights that will be used by the exchanger
-                    # on the stored timesteps when a transfer is asked (i.e.
-                    # when __getitem__ is called)
-                    weights = self._calculate_weights(from_, to_, clock.length)
+                    # determine the time weights that will be used by the
+                    # exchanger on the stored timesteps when a transfer
+                    # is asked (i.e. when __getitem__ is called)
+                    t_weights = self._calculate_temporal_weights(
+                        from_, to_, clock.length
+                    )
 
                     # history is the number of timesteps that are stored
-                    history = weights.shape[-1]
+                    history = t_weights.shape[-1]
                     self.transfers[t][c]['history'] = history
                     histories.append(history)
 
                     # special case if method is sum
                     if self.transfers[t]['method'] == 'sum':
-                        # weights need to sum to one
-                        weights = weights / to_
+                        # time weights need to sum to one
+                        t_weights = t_weights / to_
                         # need to add dimensions of size 1 for numpy
                         # broadcasting in weighted sum
-                        weights = np.expand_dims(
-                            weights, axis=[-(i+1) for i in range(len(shape))]
+                        t_weights = np.expand_dims(
+                            t_weights, axis=[-(i+1) for i in range(len(shape))]
                         )
 
-                    self.transfers[t][c]['weights'] = weights
+                    self.transfers[t][c]['t_weights'] = t_weights
 
                     # initialise iterator that allows the exchanger to know
-                    # which weights to use
+                    # which time weights to use
                     self.transfers[t][c]['iter'] = 0
 
             # determine maximum history to be stored for this transfer
@@ -149,17 +151,17 @@ class Exchanger(object):
                 ]
 
     @staticmethod
-    def _calculate_weights(from_, to_, length):
+    def _calculate_temporal_weights(from_, to_, length):
         """**Examples:**
 
-        >>> Exchanger._calculate_weights(3, 7, 42)
+        >>> Exchanger._calculate_temporal_weights(3, 7, 42)
         array([[3, 3, 1],
                [2, 3, 2],
                [1, 3, 3],
                [3, 3, 1],
                [2, 3, 2],
                [1, 3, 3]])
-        >>> Exchanger._calculate_weights(7, 3, 21)
+        >>> Exchanger._calculate_temporal_weights(7, 3, 21)
         array([[0, 3],
                [0, 3],
                [1, 2],
@@ -241,7 +243,7 @@ class Exchanger(object):
 
         weights = np.array(weights)
 
-        assert keep == weights.shape[-1], 'error in exchanger weights'
+        assert keep == weights.shape[-1], 'error in exchanger temporal weights'
 
         return weights
 
@@ -278,12 +280,12 @@ class Exchanger(object):
         if self.transfers[name]['method'] == 'mean':
             value = np.average(
                 self.transfers[name]['slices'][-history:],
-                weights=self.transfers[name][component]['weights'][i], axis=0
+                weights=self.transfers[name][component]['t_weights'][i], axis=0
             )
         elif self.transfers[name]['method'] == 'sum':
             value = np.sum(
                 self.transfers[name]['slices'][-history:]
-                * self.transfers[name][component]['weights'][i], axis=0
+                * self.transfers[name][component]['t_weights'][i], axis=0
             )
         elif self.transfers[name]['method'] == 'point':
             value = self.transfers[name]['slices'][-1]
