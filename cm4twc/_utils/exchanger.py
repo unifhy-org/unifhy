@@ -303,7 +303,7 @@ class Exchanger(object):
         if self.transfers[name][component]['remap'] is not None:
             src, remap = self.transfers[name][component]['remap']
             src[:] = value
-            value = src.regrids(remap, 'conservative').array
+            value = src.regrids(remap).array
 
         # record that another value was retrieved by incrementing count
         self.transfers[name][component]['iter'] += 1
