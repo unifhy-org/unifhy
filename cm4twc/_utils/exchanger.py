@@ -73,58 +73,61 @@ class Exchanger(object):
             if self.transfers[t].get('from') is None:
                 # in this case only set_transfer will be called,
                 # no component is going to call get_transfer, so no need
-                # for weights, but because transfers still need to be
+                # for time weights, but because transfers still need to be
                 # stored for dump, need to define 'history' for creation
                 # of 'array' and 'slices'
                 histories.append(1)
             else:
-                from_ = steps[self.transfers[t]['from']]
+                src_ts = steps[self.transfers[t]['from']]
                 for c in self.transfers[t]['to']:
-                    to_ = steps[c]
+                    dst_ts = steps[c]
                     # add a key to store info specific to receiving component
                     self.transfers[t][c] = {}
 
                     # check if spacedomains are different, if identical set
                     # to None to avoid unnecessary remapping
-                    if self.transfers[t]['src_sd'].is_space_equal_to(
-                        compass.spacedomains[c].to_field(),
-                        ignore_z=True
-                    ):
+                    src_sd = self.transfers[t]['src_sd']
+                    src_fld = src_sd.to_field()
+                    dst_fld = compass.spacedomains[c].to_field()
+
+                    if src_sd.is_space_equal_to(dst_fld, ignore_z=True):
                         self.transfers[t][c]['remap'] = None
                     else:
-                        # now assign a tuple to 'remap' where first and
-                        # second items are the source's and destination's
-                        # resolutions, respectively (as Fields, not as
-                        # SpaceDomains)
-                        self.transfers[t][c]['remap'] = (
-                            self.transfers[t]['src_sd'].to_field(),
-                            compass.spacedomains[c].to_field()
+                        # now assign a tuple to 'remap' where first item
+                        # is the source field and the second item is the
+                        # preprocessed remapping operator (expensive
+                        # step but done only once at initialisation)
+                        remap = src_fld.regrids(
+                            dst_fld, 'conservative', return_operator=True
                         )
+                        self.transfers[t][c]['remap'] = (src_fld, remap)
 
-                    # determine the weights that will be used by the exchanger
-                    # on the stored timesteps when a transfer is asked (i.e.
-                    # when __getitem__ is called)
-                    weights = self._calculate_weights(from_, to_, clock.length)
+                    # determine the time weights that will be used by the
+                    # exchanger on the stored timesteps when a transfer
+                    # is asked (i.e. when __getitem__ is called)
+                    t_weights = self._calculate_temporal_weights(
+                        src_ts, dst_ts, clock.length
+                    )
 
                     # history is the number of timesteps that are stored
-                    history = weights.shape[-1]
+                    history = t_weights.shape[-1]
                     self.transfers[t][c]['history'] = history
                     histories.append(history)
 
                     # special case if method is sum
                     if self.transfers[t]['method'] == 'sum':
-                        # weights need to sum to one
-                        weights = weights / to_
+                        # time weights need to sum to one
+                        t_weights = t_weights / dst_ts
                         # need to add dimensions of size 1 for numpy
                         # broadcasting in weighted sum
-                        weights = np.expand_dims(
-                            weights, axis=[-(i+1) for i in range(len(shape))]
+                        t_weights = np.expand_dims(
+                            t_weights, axis=[-(i+1) for i in range(len(shape))]
                         )
 
-                    self.transfers[t][c]['weights'] = weights
+                    self.transfers[t][c]['t_weights'] = t_weights
 
                     # initialise iterator that allows the exchanger to know
-                    # which weights to use
+                    # which time weights to use
                     self.transfers[t][c]['iter'] = 0
 
             # determine maximum history to be stored for this transfer
@@ -149,17 +152,17 @@ class Exchanger(object):
                 ]
 
     @staticmethod
-    def _calculate_weights(from_, to_, length):
+    def _calculate_temporal_weights(src, dst, length):
         """**Examples:**
 
-        >>> Exchanger._calculate_weights(3, 7, 42)
+        >>> Exchanger._calculate_temporal_weights(3, 7, 42)
         array([[3, 3, 1],
                [2, 3, 2],
                [1, 3, 3],
                [3, 3, 1],
                [2, 3, 2],
                [1, 3, 3]])
-        >>> Exchanger._calculate_weights(7, 3, 21)
+        >>> Exchanger._calculate_temporal_weights(7, 3, 21)
         array([[0, 3],
                [0, 3],
                [1, 2],
@@ -170,78 +173,78 @@ class Exchanger(object):
         """
         weights = []
 
-        if to_ == from_:
+        if dst == src:
             # need to keep only one step with full weight
             keep = 1
-            for i in range(length // to_):
-                weights.append((to_,))
-        elif to_ > from_:
-            if to_ % from_ == 0:
+            for i in range(length // dst):
+                weights.append((dst,))
+        elif dst > src:
+            if dst % src == 0:
                 # need to keep several steps with equal weights
-                keep = to_ // from_
-                for i in range(length // to_):
+                keep = dst // src
+                for i in range(length // dst):
                     weights.append(
-                        (from_,) * (to_ // from_)
+                        (src,) * (dst // src)
                     )
             else:
                 # need to keep several steps with varying weights
-                keep = (to_ // from_) + 1
+                keep = (dst // src) + 1
                 previous = 0
-                for i in range(length // to_):
-                    start = from_ - previous
-                    middle = ((to_ - start) // from_)
-                    end = to_ - start - (middle * from_)
+                for i in range(length // dst):
+                    start = src - previous
+                    middle = ((dst - start) // src)
+                    end = dst - start - (middle * src)
                     weights.append(
                         (start,
-                         *((from_,) * middle),
+                         *((src,) * middle),
                          *((end,) if end > 0 else ()))
                     )
                     previous = end
         else:
-            if from_ % to_ == 0:
+            if src % dst == 0:
                 # need to keep only one step with full weight
                 keep = 1
-                for i in range(length // to_):
+                for i in range(length // dst):
                     weights.append(
-                        (to_,)
+                        (dst,)
                     )
             else:
                 # need to keep two steps with varying weights
                 keep = 2
-                from_hits = 1
-                for i in range(length // to_):
-                    from_tracker = from_ * from_hits
-                    if (((i * to_) < from_tracker)
-                            and (from_tracker < ((i + 1) * to_))):
-                        # from_ falls in-between two consecutive steps of to_
-                        # spread weight across from_ kept values
-                        # and update from_ hits
-                        discard = (from_tracker // to_) * to_
-                        oldest = from_tracker - discard
-                        latest_ = to_ - oldest
+                src_hits = 1
+                for i in range(length // dst):
+                    src_tracker = src * src_hits
+                    if (((i * dst) < src_tracker)
+                            and (src_tracker < ((i + 1) * dst))):
+                        # src falls in-between two consecutive steps of dst
+                        # spread weight across src kept values
+                        # and update src hits
+                        discard = (src_tracker // dst) * dst
+                        oldest = src_tracker - discard
+                        latest_ = dst - oldest
                         weights.append(
                             (oldest, latest_)
                         )
-                        from_hits += 1
-                    elif (i * to_) == from_tracker:
-                        # from_ coincides with to_
-                        # put whole weight on from_ latest value
-                        # and update from_ hits
+                        src_hits += 1
+                    elif (i * dst) == src_tracker:
+                        # src coincides with dst
+                        # put whole weight on src latest value
+                        # and update dst hits
                         weights.append(
-                            (0, to_)
+                            (0, dst)
                         )
-                        from_hits += 1
+                        src_hits += 1
                     else:
-                        # from_ is beyond to_ and to_'s next step
-                        # put whole weight on from_ latest value
-                        # but do not update from_ hits
+                        # src is beyond dst and dst's next step
+                        # put whole weight on src latest value
+                        # but do not update src hits
                         weights.append(
-                            (0, to_)
+                            (0, dst)
                         )
 
         weights = np.array(weights)
 
-        assert keep == weights.shape[-1], 'error in exchanger weights'
+        assert keep == weights.shape[-1], 'error in exchanger temporal weights'
 
         return weights
 
@@ -278,12 +281,12 @@ class Exchanger(object):
         if self.transfers[name]['method'] == 'mean':
             value = np.average(
                 self.transfers[name]['slices'][-history:],
-                weights=self.transfers[name][component]['weights'][i], axis=0
+                weights=self.transfers[name][component]['t_weights'][i], axis=0
             )
         elif self.transfers[name]['method'] == 'sum':
             value = np.sum(
                 self.transfers[name]['slices'][-history:]
-                * self.transfers[name][component]['weights'][i], axis=0
+                * self.transfers[name][component]['t_weights'][i], axis=0
             )
         elif self.transfers[name]['method'] == 'point':
             value = self.transfers[name]['slices'][-1]
@@ -298,9 +301,9 @@ class Exchanger(object):
         # REPLACED BY:
         # remap value from source resolution to destination resolution
         if self.transfers[name][component]['remap'] is not None:
-            from_, to_ = self.transfers[name][component]['remap']
-            from_[:] = value
-            value = from_.regrids(to_, 'conservative').array
+            src, remap = self.transfers[name][component]['remap']
+            src[:] = value
+            value = src.regrids(remap).array
 
         # record that another value was retrieved by incrementing count
         self.transfers[name][component]['iter'] += 1

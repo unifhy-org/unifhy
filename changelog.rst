@@ -23,6 +23,8 @@ Released on 2021, ???.
   (`#31 <https://github.com/hydro-jules/cm4twc/issues/31>`_)
 * add time slice for I/O operations (user customisable)
   (`#42 <https://github.com/hydro-jules/cm4twc/pull/42>`_)
+* cache remapping weights at initialisation
+  (`#44 <https://github.com/cm4twc-org/cm4twc/pull/44>`_)
 
 .. rubric:: Documentation
 
