@@ -1,7 +1,6 @@
 Open Water Components
 =====================
 
-.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autosummary::
@@ -9,4 +8,4 @@ Open Water Components
    :toctree: openwater/
    :template: component.rst
 
-   ~cm4twc.components.openwater.RFM
+   cm4twccontrib.rfm.OpenWaterComponent

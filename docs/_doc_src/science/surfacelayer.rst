@@ -1,7 +1,6 @@
 Surface Layer Components
 ========================
 
-.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autosummary::
@@ -9,4 +8,4 @@ Surface Layer Components
    :toctree: surfacelayer/
    :template: component.rst
 
-   ~cm4twc.components.surfacelayer.Artemis
+   cm4twccontrib.artemis.SurfaceLayerComponent

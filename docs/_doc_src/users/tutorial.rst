@@ -200,7 +200,7 @@ and data needs differ.
 .. note::
 
    This information is also available on the online documentation, e.g.
-   see :doc:`Artemis <../science/subsurface/cm4twc.components.subsurface.Artemis>`
+   see :doc:`Artemis <../science/subsurface/cm4twccontrib.artemis.SubSurfaceComponent>`
    subsurface component page.
 
 
