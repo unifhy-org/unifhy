@@ -1,4 +1,4 @@
-from cm4twc.components import SubSurfaceComponent
+from cm4twc.component import SubSurfaceComponent
 try:
     from .dummyfortran import dummyfortran
 except ImportError:
