@@ -6,17 +6,19 @@ import cf
 from cfunits import Units
 from numbers import Number
 
-from ._utils.states import (State, create_states_dump, update_states_dump,
-                            load_states_dump)
-from ._utils.records import (StateRecord, OutwardRecord, OutputRecord,
-                             RecordStream)
-from ..time import TimeDomain
-from .. import space
-from ..space import SpaceDomain, Grid
-from ..data import (
+from ._utils.state import (
+    State, create_states_dump, update_states_dump, load_states_dump
+)
+from ._utils.record import (
+    StateRecord, OutwardRecord, OutputRecord, RecordStream
+)
+from .time import TimeDomain
+from . import space
+from .space import SpaceDomain, Grid
+from .data import (
     DataSet, Variable, StaticVariable, ClimatologicVariable, DynamicVariable
 )
-from ..settings import dtype_float, array_order
+from .settings import dtype_float, array_order
 
 
 class MetaComponent(abc.ABCMeta):

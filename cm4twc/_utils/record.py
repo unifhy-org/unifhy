@@ -3,8 +3,8 @@ from netCDF4 import Dataset
 from datetime import datetime, timedelta
 import cftime
 
-from ...time import TimeDomain
-from ...settings import dtype_float
+from ..time import TimeDomain
+from ..settings import dtype_float
 
 
 # dictionary of supported aggregation methods

@@ -7,7 +7,8 @@ from .model import Model
 from .time import TimeDomain
 from .space import LatLonGrid, RotatedLatLonGrid, BritishNationalGrid
 from .data import DataSet
-from .components import (surfacelayer, subsurface, openwater,
-                         SurfaceLayerComponent, SubSurfaceComponent,
-                         OpenWaterComponent, DataComponent, NullComponent)
+from .component import (
+    SurfaceLayerComponent, SubSurfaceComponent, OpenWaterComponent,
+    DataComponent, NullComponent
+)
 from .settings import atol, rtol, decr, dtype_float

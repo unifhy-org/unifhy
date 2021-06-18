@@ -6,8 +6,8 @@ import yaml
 
 from ._utils import Exchanger, Clock, Compass
 from ._utils.exchanger import load_transfers_dump
-from .components import (SurfaceLayerComponent, SubSurfaceComponent,
-                         OpenWaterComponent, DataComponent, NullComponent)
+from .component import (SurfaceLayerComponent, SubSurfaceComponent,
+                        OpenWaterComponent, DataComponent, NullComponent)
 from .time import TimeDomain
 
 
