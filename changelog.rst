@@ -1,3 +1,5 @@
+.. default-role:: obj
+
 v0.1.0
 ------
 
@@ -7,6 +9,10 @@ Released on 2021, ???.
 
 * add units requirement for component parameters and constants
   (`#21 <https://github.com/cm4twc-org/cm4twc/issues/21>`_)
+* move `Component` and its subclasses from subpackage `components` to package root
+  (`#46 <https://github.com/cm4twc-org/cm4twc/pull/46>`_)
+* remove science components (Artemis and RFM) from framework
+  (`#45 <https://github.com/cm4twc-org/cm4twc/issues/45>`_)
 
 .. rubric:: Bug fixes
 
