@@ -14,10 +14,10 @@ This section showcases the basic usage of modelling framework `cm4twc`
    >>> print(cm4twc.__version__)
    0.1.0-beta
 
-The central object in the framework is the `Model`, which is composed of
-`Component`\s for the three compartments of the terrestrial water cycle
-(see the :doc:`science repository <../science_repository>` for the options
-currently available).
+The central object in the framework is the `Model`, which requires three
+`Component`\s for the three compartments of the terrestrial water cycle.
+The components currently available to choose from are listed in the
+:doc:`science repository <../science_repository>` section.
 
 Each component needs to be spatio-temporally configured through `SpaceDomain`
 and `TimeDomain` objects, to be given data contained in a `DataSet` instance,
@@ -169,7 +169,8 @@ and data needs differ.
 .. code-block:: python
    :caption: Exploring the signature of 'Artemis' `SubSurfaceComponent`.
 
-   >>> print(cm4twc.subsurface.Artemis)
+   >>> import cm4twccontrib.artemis
+   >>> print(cm4twccontrib.artemis.SubSurfaceComponent)
    Artemis(
        category: subsurface
        inwards info:
@@ -207,7 +208,7 @@ and data needs differ.
 .. code-block:: python
    :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
 
-   >>> component = cm4twc.subsurface.Artemis(
+   >>> component = cm4twccontrib.artemis.SubSurfaceComponent(
    ...     saving_directory='outputs',
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
@@ -241,6 +242,7 @@ three parts of the terrestrial water cycle.
 .. code-block:: python
    :caption: Instantiating a `Model`.
 
+   >>> import cm4twccontrib.rfm
    >>> model = cm4twc.Model(
    ...     identifier='tutorial',
    ...     config_directory='configurations',
@@ -249,11 +251,11 @@ three parts of the terrestrial water cycle.
    ...         'outputs', timedomain, spacedomain, dataset_surfacelayer,
    ...         parameters={}
    ...     ),
-   ...     subsurface=cm4twc.subsurface.Artemis(
+   ...     subsurface=cm4twccontrib.artemis.SubSurfaceComponent(
    ...         'outputs', timedomain, spacedomain, dataset_subsurface,
    ...         parameters={}
    ...     ),
-   ...     openwater=cm4twc.openwater.RFM(
+   ...     openwater=cm4twccontrib.rfm.OpenWaterComponent(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
    ...         parameters={'c_land': (0.20, 'm s-1'),
    ...                     'cb_land': (0.10, 'm s-1'),
