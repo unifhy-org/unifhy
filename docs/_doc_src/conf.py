@@ -24,7 +24,7 @@ with open('../../cm4twc/version.py') as fv:
 
 # -- Project information -----------------------------------------------------
 project = 'cm4twc'
-copyright = '{}, UK Centre for Ecology & Hydrology'.format(
+copyright = '2020-{}, UK Centre for Ecology & Hydrology'.format(
     datetime.now().year
 )
 author = 'Thibault Hallouin'
