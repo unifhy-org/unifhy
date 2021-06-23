@@ -272,7 +272,7 @@ class DataSet(MutableMapping):
         for var_name in self:
             cfg[var_name] = {
                 'files': list(self[var_name].filenames),
-                'select': self[var_name].identity
+                'select': self[var_name].identity()
             }
 
         return cfg
@@ -286,7 +286,6 @@ class Variable(object):
         # store them it as early as possible for use in config file
         self._filenames = filenames
 
-    @property
     def identity(self):
         return self._f.identity()
 
