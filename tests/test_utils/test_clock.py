@@ -1,6 +1,4 @@
 import unittest
-import numpy as np
-from datetime import timedelta
 
 import cm4twc._utils
 from tests.test_time import (get_dummy_timedomain, get_dummy_dumping_frequency,
