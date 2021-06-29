@@ -5,6 +5,8 @@ from os import path, sep
 import cf
 from cfunits import Units
 from numbers import Number
+from copy import deepcopy
+import yaml
 
 from ._utils.state import (
     State, create_states_dump, update_states_dump, load_states_dump
@@ -44,31 +46,39 @@ class MetaComponent(abc.ABCMeta):
 
     @property
     def inwards_info(cls):
-        return cls._inwards_info
+        return deepcopy(cls._inwards_info)
 
     @property
     def outwards_info(cls):
-        return cls._outwards_info
+        return deepcopy(cls._outwards_info)
 
     @property
-    def inputs_info(cls):
-        return cls._inputs_info
+    def inwards_metadata(cls):
+        return yaml.dump(cls._inwards_info)
 
     @property
-    def parameters_info(cls):
-        return cls._parameters_info
+    def outwards_metadata(cls):
+        return yaml.dump(cls._outwards_info)
 
     @property
-    def constants_info(cls):
-        return cls._constants_info
+    def inputs_metadata(cls):
+        return yaml.dump(cls._inputs_info)
 
     @property
-    def states_info(cls):
-        return cls._states_info
+    def parameters_metadata(cls):
+        return yaml.dump(cls._parameters_info)
 
     @property
-    def outputs_info(cls):
-        return cls._outputs_info
+    def constants_metadata(cls):
+        return yaml.dump(cls._constants_info)
+
+    @property
+    def states_metadata(cls):
+        return yaml.dump(cls._states_info)
+
+    @property
+    def outputs_metadata(cls):
+        return yaml.dump(cls._outputs_info)
 
     @property
     def solver_history(cls):
@@ -842,12 +852,12 @@ class Component(metaclass=MetaComponent):
     @property
     def inwards_info(self):
         """Return the incoming information expected by the `Component`."""
-        return self._inwards_info
+        return deepcopy(self._inwards_info)
 
     @property
     def outwards_info(self):
         """Return the outgoing information provided by the `Component`."""
-        return self._outwards_info
+        return deepcopy(self._outwards_info)
 
     @classmethod
     def from_config(cls, cfg):
@@ -901,7 +911,7 @@ class Component(metaclass=MetaComponent):
                         # create a new file for it
                         filename = sep.join(
                             [self.saving_directory,
-                             '_'.join([self.identifier, self.category, name])
+                             '_'.join([self.identifier, self._category, name])
                              + ".nc"]
                         )
                         cf.write(original, filename)
@@ -923,7 +933,7 @@ class Component(metaclass=MetaComponent):
                         # create a new file for it
                         filename = sep.join(
                             [self.saving_directory,
-                             '_'.join([self.identifier, self.category, name])
+                             '_'.join([self.identifier, self._category, name])
                              + ".nc"]
                         )
                         cf.write(original, filename)
