@@ -1859,7 +1859,8 @@ class Grid(SpaceDomain):
                         rtol=rtol_, atol=atol_,
                         ignore_data_type=True,
                         ignore_fill_value=True,
-                        ignore_properties=properties)
+                        ignore_properties=properties
+                    )
                 else:
                     z = False
             elif field.dim('Z', default=False):
@@ -2544,7 +2545,7 @@ class LatLonGrid(Grid):
         ...                     'axis': 'Z'},
         ...         data=cf.Data([10]),
         ...         bounds=cf.Bounds(data=cf.Data([[0, 20]]))
-        ...         ),
+        ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=1))
         ... )
         >>> sd = LatLonGrid.from_field(f)
