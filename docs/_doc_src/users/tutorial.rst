@@ -171,7 +171,7 @@ and data needs differ.
 
    >>> import cm4twccontrib.artemis
    >>> print(cm4twccontrib.artemis.SubSurfaceComponent)
-   Artemis(
+   SubSurfaceComponent(
        category: subsurface
        inwards info:
            evaporation_soil_surface [kg m-2 s-1]
@@ -180,22 +180,22 @@ and data needs differ.
            throughfall [kg m-2 s-1]
            snowmelt [kg m-2 s-1]
            water_level [kg m-2]
+       inputs info:
+           topmodel_saturation_capacity [mm m-1]
+           saturated_hydraulic_conductivity [m s-1]
+           topographic_index [1]
+       requires land sea mask: False
+       requires flow direction: False
+       constants info:
+           m [1]
+           rho_lw [kg m-3]
+           S_top [m]
+       states info:
+           subsurface_store [m]
        outwards info:
            surface_runoff [kg m-2 s-1]
            subsurface_runoff [kg m-2 s-1]
            soil_water_stress [1]
-       inputs info:
-           topmodel_saturation_capacity [m]
-           saturated_hydraulic_conductivity [m s-1]
-           topographic_index [1]
-       constants info:
-           m [1]
-           rho_lw [kg m-3]
-       states info:
-           subsurface_store [m]
-       solver history: 1
-       land sea mask: False
-       flow direction: False
    )
 
 .. note::
