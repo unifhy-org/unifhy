@@ -217,7 +217,7 @@ and data needs differ.
    ...     records={'surface_runoff': {timedelta(days=1): ['mean']}}
    ... )
    >>> print(component)
-   Artemis(
+   SubSurfaceComponent(
        category: subsurface
        saving directory: outputs
        timedomain: period: 365 days, 0:00:00
