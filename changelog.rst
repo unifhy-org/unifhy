@@ -11,6 +11,10 @@ Released on 2021, ???.
   (`#21 <https://github.com/cm4twc-org/cm4twc/issues/21>`_)
 * move `Component` and its subclasses from subpackage `components` to package root
   (`#46 <https://github.com/cm4twc-org/cm4twc/pull/46>`_)
+* rename component class attributes `_flow_direction` and `_land_sea_mask` in
+  component definition to `_requires_flow_direction` and `_requires_land_sea_mask`,
+  respectively
+  (`#46 <https://github.com/cm4twc-org/cm4twc/pull/46>`_)
 * remove science components (Artemis and RFM) from framework
   (`#45 <https://github.com/cm4twc-org/cm4twc/issues/45>`_)
 
