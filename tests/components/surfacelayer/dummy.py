@@ -83,8 +83,8 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     _solver_history = 1
-    _land_sea_mask = True
-    _flow_direction = True
+    _requires_land_sea_mask = True
+    _requires_flow_direction = True
 
     def initialise(self,
                    # component states

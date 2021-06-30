@@ -37,8 +37,8 @@ class MetaComponent(abc.ABCMeta):
     _states_info = None
     _outputs_info = None
     _solver_history = None
-    _land_sea_mask = None
-    _flow_direction = None
+    _requires_land_sea_mask = None
+    _requires_flow_direction = None
 
     @property
     def category(cls):
@@ -84,13 +84,11 @@ class MetaComponent(abc.ABCMeta):
     def solver_history(cls):
         return cls._solver_history
 
-    @property
-    def flow_direction(cls):
-        return cls._flow_direction
+    def requires_flow_direction(cls):
+        return cls._requires_flow_direction
 
-    @property
-    def land_sea_mask(cls):
-        return cls._land_sea_mask
+    def requires_land_sea_mask(cls):
+        return cls._requires_land_sea_mask
 
     def __str__(cls):
         info = [
@@ -109,8 +107,16 @@ class MetaComponent(abc.ABCMeta):
             + ["    category: {}".format(getattr(cls, '_category'))]
             + info
             + ["    solver history: {}".format(getattr(cls, '_solver_history'))]
-            + ["    land sea mask: {}".format(getattr(cls, '_land_sea_mask'))]
-            + ["    flow direction: {}".format(getattr(cls, '_flow_direction'))]
+            + [
+                "    requires land sea mask: {}".format(
+                    getattr(cls, '_requires_land_sea_mask')()
+                )
+            ]
+            + [
+                "    requires flow direction: {}".format(
+                    getattr(cls, '_requires_flow_direction')()
+                )
+            ]
             + [")"]
         )
 
@@ -128,8 +134,8 @@ class Component(metaclass=MetaComponent):
     _states_info = {}
     _outputs_info = {}
     _solver_history = 1
-    _land_sea_mask = False
-    _flow_direction = False
+    _requires_land_sea_mask = False
+    _requires_flow_direction = False
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None,
@@ -556,7 +562,7 @@ class Component(metaclass=MetaComponent):
                 "for spacedomain".format(Grid.__name__)
             )
 
-        if self._land_sea_mask:
+        if self._requires_land_sea_mask:
             if spacedomain.land_sea_mask is None:
                 raise RuntimeError(
                     "'land_sea_mask' must be set in {} of {} "
@@ -565,7 +571,7 @@ class Component(metaclass=MetaComponent):
                                             self.__class__.__name__)
                 )
 
-        if self._flow_direction:
+        if self._requires_flow_direction:
             if spacedomain.flow_direction is None:
                 raise RuntimeError(
                     "'flow_direction' must be set in {} of {} "
