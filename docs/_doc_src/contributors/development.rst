@@ -157,15 +157,15 @@ whole spatial domain, it only means that there is only one state value for
 each spatial element in the space domain.
 
 In addition, the component definition features two special optional
-attributes `_land_sea_mask` and `_flow_direction`. They must be assigned
-a boolean value (True if required by your component, False if not) -- their
-default value is False. If you need land sea mask information for your
-computations, set `_land_sea_mask` to True and access it in your class
-methods using `self.spacedomain.land_sea_mask`. If you need flow
-direction information or want to use the flow routing functionality of
-the component (accessible through `self.spacedomain.route(...)`), set
-`_flow_direction` to True, and access it in your class methods using
-`self.spacedomain.flow_direction`.
+attributes `_requires_land_sea_mask` and `_requires_flow_direction`.
+They must be assigned a boolean value (True if required by your
+component, False if not) -- their default value is False. If you need
+land sea mask information for your computations, set `_requires_land_sea_mask`
+to True and access it in your class methods using
+`self.spacedomain.land_sea_mask`. If you need flow direction information
+or want to use the flow routing functionality of the component (accessible
+through `self.spacedomain.route(...)`), set `_requires_flow_direction` to True,
+and access it in your class methods using `self.spacedomain.flow_direction`.
 
 See a detailed example of a mock component definition below.
 
@@ -223,8 +223,8 @@ See a detailed example of a mock component definition below.
                'default_value': 0.5
            }
        }
-       _land_sea_mask = False
-       _flow_direction = True
+       _requires_land_sea_mask = False
+       _requires_flow_direction = True
 
 
 Implement the initialise-run-finalise component class methods
