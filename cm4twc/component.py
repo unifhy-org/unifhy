@@ -91,22 +91,31 @@ class MetaComponent(abc.ABCMeta):
         return cls._requires_land_sea_mask
 
     def __str__(cls):
-        info = [
+        info_a = [
             "\n".join(
                 (["    {}:".format(t.replace('_', ' '))]
                  + ["        {} [{}]".format(n, info['units'])
                     for n, info in getattr(cls, '_' + t).items()])
             )
-            for t in ['inwards_info', 'outwards_info', 'inputs_info',
-                      'parameters_info', 'constants_info', 'outputs_info',
-                      'states_info']
+            for t in ['inwards_info', 'inputs_info']
             if getattr(cls, '_' + t)
         ]
+
+        info_b = [
+            "\n".join(
+                (["    {}:".format(t.replace('_', ' '))]
+                 + ["        {} [{}]".format(n, info['units'])
+                    for n, info in getattr(cls, '_' + t).items()])
+            )
+            for t in ['parameters_info', 'constants_info', 'states_info',
+                      'outwards_info', 'outputs_info']
+            if getattr(cls, '_' + t)
+        ]
+
         return "\n".join(
             ["{}(".format(cls.__name__)]
             + ["    category: {}".format(getattr(cls, '_category'))]
-            + info
-            + ["    solver history: {}".format(getattr(cls, '_solver_history'))]
+            + info_a
             + [
                 "    requires land sea mask: {}".format(
                     getattr(cls, '_requires_land_sea_mask')
@@ -117,6 +126,7 @@ class MetaComponent(abc.ABCMeta):
                     getattr(cls, '_requires_flow_direction')
                 )
             ]
+            + info_b
             + [")"]
         )
 
