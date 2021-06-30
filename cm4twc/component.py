@@ -109,12 +109,12 @@ class MetaComponent(abc.ABCMeta):
             + ["    solver history: {}".format(getattr(cls, '_solver_history'))]
             + [
                 "    requires land sea mask: {}".format(
-                    getattr(cls, '_requires_land_sea_mask')()
+                    getattr(cls, '_requires_land_sea_mask')
                 )
             ]
             + [
                 "    requires flow direction: {}".format(
-                    getattr(cls, '_requires_flow_direction')()
+                    getattr(cls, '_requires_flow_direction')
                 )
             ]
             + [")"]
