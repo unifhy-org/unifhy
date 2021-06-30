@@ -100,7 +100,7 @@ class MetaComponent(abc.ABCMeta):
             for t in ['inwards_info', 'outwards_info', 'inputs_info',
                       'parameters_info', 'constants_info', 'outputs_info',
                       'states_info']
-            if getattr(cls, t)
+            if getattr(cls, '_' + t)
         ]
         return "\n".join(
             ["{}(".format(cls.__name__)]
