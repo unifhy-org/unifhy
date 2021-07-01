@@ -100,7 +100,7 @@ class MetaComponent(abc.ABCMeta):
     def __str__(cls):
         info_a = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ' '))]
+                (["    {}:".format(t.replace('_info', ' metadata'))]
                  + ["        {} [{}]".format(n, info['units'])
                     for n, info in getattr(cls, '_' + t).items()])
             )
@@ -110,7 +110,7 @@ class MetaComponent(abc.ABCMeta):
 
         info_b = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ' '))]
+                (["    {}:".format(t.replace('_info', ' metadata'))]
                  + ["        {} [{}]".format(n, info['units'])
                     for n, info in getattr(cls, '_' + t).items()])
             )
