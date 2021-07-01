@@ -54,31 +54,38 @@ class MetaComponent(abc.ABCMeta):
 
     @property
     def inwards_metadata(cls):
-        return yaml.dump(cls._inwards_info)
+        if cls._inwards_info:
+            return yaml.dump(cls._inwards_info)
 
     @property
     def outwards_metadata(cls):
-        return yaml.dump(cls._outwards_info)
+        if cls._outwards_info:
+            return yaml.dump(cls._outwards_info)
 
     @property
     def inputs_metadata(cls):
-        return yaml.dump(cls._inputs_info)
+        if cls._inputs_info:
+            return yaml.dump(cls._inputs_info)
 
     @property
     def parameters_metadata(cls):
-        return yaml.dump(cls._parameters_info)
+        if cls._parameters_info:
+            return yaml.dump(cls._parameters_info)
 
     @property
     def constants_metadata(cls):
-        return yaml.dump(cls._constants_info)
+        if cls._constants_info:
+            return yaml.dump(cls._constants_info)
 
     @property
     def states_metadata(cls):
-        return yaml.dump(cls._states_info)
+        if cls._states_info:
+            return yaml.dump(cls._states_info)
 
     @property
     def outputs_metadata(cls):
-        return yaml.dump(cls._outputs_info)
+        if cls._outputs_info:
+            return yaml.dump(cls._outputs_info)
 
     @property
     def solver_history(cls):
