@@ -4,18 +4,20 @@
 Installation
 ============
 
-`cm4twc` is available on PyPI, so you can simply use pip and the name of the package:
+If you wish to install the most recent stable version of `cm4twc`, it is
+available on the Python Package Index (PyPI), simply run:
 
 .. code-block:: bash
 
    python -m pip install cm4twc
 
-You can also use pip and a link to the GitHub repository directly:
+If you need the latest, potentially unstable, features listed in the
+:doc:`change log <../changelog>`, please use the *dev* branch on the
+GitHub repository:
 
 .. code-block:: bash
 
-   python -m pip install git+https://github.com/hydro-jules/cm4twc.git
-
+   python -m pip install git+https://github.com/hydro-jules/cm4twc.git@dev
 
 .. rubric:: Requirements
 
