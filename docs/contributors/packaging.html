@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Packaging &mdash; cm4twc latest documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/contributors/packaging.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sharing" href="sharing.html" />
+    <link rel="prev" title="Development" href="development.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo_colours.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../users/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../users/tutorial.html#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#framework">Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../users/tutorial.html#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../users/files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../users/files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../contributors.html">Guide for Contributors</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="development.html">Development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development.html#document-your-component-using-its-class-docstring">Document your component using its class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development.html#define-your-component-using-its-class-attributes">Define your component using its class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development.html#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Packaging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-local-git-repository">Create a local git repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retrieve-the-component-package-template">Retrieve the component package template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bring-in-your-component-contribution-s">Bring in your component contribution(s)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#populate-the-package-metadata">Populate the package metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sharing.html">Sharing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sharing.html#push-your-contribution-to-the-cm4twc-github-organisation">Push your contribution to the cm4twc GitHub organisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sharing.html#upload-your-contribution-to-the-python-package-index">Upload your contribution to the Python Package Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers.html">Guide for Developers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../science_repository.html">Science Repository</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/surfacelayer/cm4twccontrib.artemis.SurfaceLayerComponent.html">cm4twccontrib.artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/subsurface/cm4twccontrib.artemis.SubSurfaceComponent.html">cm4twccontrib.artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/openwater.html">Open Water Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/openwater/cm4twccontrib.rfm.OpenWaterComponent.html">cm4twccontrib.rfm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.Model.html">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.Model.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#components">Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#time">Time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.TimeDomain.html">TimeDomain</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.TimeDomain.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.TimeDomain.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#space">Space</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html">LatLonGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html">BritishNationalGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#data">Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.DataSet.html">DataSet</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.DataSet.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#latest">latest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#v0-1-0-beta">v0.1.0-beta</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../licence.html">Licence</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cm4twc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../contributors.html">Guide for Contributors</a> &raquo;</li>
+        
+      <li>Packaging</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="packaging">
+<h1>Packaging<a class="headerlink" href="#packaging" title="Permalink to this headline">¶</a></h1>
+<p>This section details the steps required to turn your component
+contribution(s) into a Python package.</p>
+<p>You can follow the steps below to package your component contribution(s):</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#create-a-local-git-repository" id="id1">Create a local git repository</a></p></li>
+<li><p><a class="reference internal" href="#retrieve-the-component-package-template" id="id2">Retrieve the component package template</a></p></li>
+<li><p><a class="reference internal" href="#bring-in-your-component-contribution-s" id="id3">Bring in your component contribution(s)</a></p></li>
+<li><p><a class="reference internal" href="#populate-the-package-metadata" id="id4">Populate the package metadata</a></p></li>
+</ul>
+</div>
+<div class="section" id="create-a-local-git-repository">
+<h2>Create a local git repository<a class="headerlink" href="#create-a-local-git-repository" title="Permalink to this headline">¶</a></h2>
+<p>First, choose a name for the model your component(s) originate(s) from,
+following <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#package-and-module-names">PEP 8 naming convention</a>,
+i.e. all-lowercase names with underscores if this improves readability only.</p>
+<p>Then, create a new directory using your model name and appending the
+prefix <em>cm4twccontrib-</em> to it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir cm4twccontrib-&lt;model_name&gt;
+</pre></div>
+</div>
+<p>where <em>&lt;model_name&gt;</em> should be replaced with your chosen model name.</p>
+</div>
+<div class="section" id="retrieve-the-component-package-template">
+<h2>Retrieve the component package template<a class="headerlink" href="#retrieve-the-component-package-template" title="Permalink to this headline">¶</a></h2>
+<p>Download the <a class="reference external" href="https://github.com/cm4twc-org/cm4twccontrib-template">template source</a>
+and copy the unzipped source in the newly created directory.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/cm4twc-org/cm4twccontrib-template/archive/main.zip
+unzip cm4twccontrib-template-main.zip
+mv cm4twccontrib-template-main/* cm4twccontrib-&lt;model_name&gt;
+<span class="nb">cd</span> cm4twccontrib-&lt;model_name&gt;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can also download the template source manually: go to
+<a class="reference external" href="https://github.com/cm4twc-org/cm4twccontrib-template">https://github.com/cm4twc-org/cm4twccontrib-template</a>, click ‘Code’,
+then ‘Download ZIP’.</p>
+</div>
+<p>The template source directory is structured as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cm4twccontrib-template
+├── cm4twccontrib
+│   └── template
+│       ├── __init__.py
+│       ├── surfacelayer.py
+│       ├── subsurface.py
+│       ├── openwater.py
+│       └── version.py
+├── README.rst
+├── requirements.txt
+└── setup.py
+</pre></div>
+</div>
+<p>Rename the existing Python package using your model name:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mv cm4twccontrib/template cm4twccontrib/&lt;model_name&gt;
+</pre></div>
+</div>
+<p>Add and commit those files to the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git commit -am <span class="s2">&quot;start with template&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bring-in-your-component-contribution-s">
+<h2>Bring in your component contribution(s)<a class="headerlink" href="#bring-in-your-component-contribution-s" title="Permalink to this headline">¶</a></h2>
+<p>The template features three trivial components <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>,
+<a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="../api/classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a>.</p>
+<p>Depending on the number of components your contribution overlaps with,
+keep only the relevant ones and delete the other ones.</p>
+<p>For example, if your contribution simulates the surface layer and the
+subsurface parts of the terrestrial water cycle:</p>
+<ul class="simple">
+<li><p>delete the module <em>openwater.py</em>, and</p></li>
+<li><p>remove <code class="xref py py-obj docutils literal notranslate"><span class="pre">from</span> <span class="pre">.openwater</span> <span class="pre">import</span> <span class="pre">OpenWaterComponent</span></code> in <em>__init__.py</em>.</p></li>
+</ul>
+<p>Then, bring in your own components:</p>
+<ul class="simple">
+<li><p>replace the trivial template components <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> and
+<a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, in the modules <em>surfacelayer.py</em> and
+<em>subsurface.py</em>, respectively, with your own classes developed as
+per the <a class="reference internal" href="development.html"><span class="doc">Development</span></a> section.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your component(s) require(s) Python packages that are not available
+in the <a class="reference external" href="https://docs.python.org/3/library/index.html">Python Standard Library</a>,
+you need to list these in <em>requirements.txt</em> (one package per line only),
+e.g.:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cm4twc
+numpy
+pandas
+</pre></div>
+</div>
+</div>
+<p>Specify the version number for your component contribution(s) in the
+module <em>version.py</em> following the <a class="reference external" href="https://semver.org/">Semantic Versioning</a>
+guidelines.</p>
+<p>Finally, overwrite the content of <em>README.rst</em> to provide a description
+for your model components.</p>
+<p>Once this is done, commit your component contribution(s) to the git repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git commit -am <span class="s2">&quot;bring in my own components&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="populate-the-package-metadata">
+<h2>Populate the package metadata<a class="headerlink" href="#populate-the-package-metadata" title="Permalink to this headline">¶</a></h2>
+<p>Modify the first section in the <a class="reference external" href="https://github.com/cm4twc-org/cm4twccontrib-template/blob/main/setup.py#L4-L20">setup.py</a>
+module with the relevant metadata for your package. This will be used when
+your package is uploaded to the <a class="reference external" href="https://pypi.org/">Python Package Index (PyPI)</a>.</p>
+<p>Now that your component(s) has (have) been turned into a Python package,
+please consider <a class="reference internal" href="sharing.html"><span class="doc">sharing</span></a> it (them) with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> community.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+      <span class="lastupdated">
+        Last updated on Jul 02, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+<span class="rst-current-version" data-toggle="rst-current-version">
+  <div style="float:left;">
+    <span class="fa fa-bars"> </span>
+  </div>
+  <div style="float:right;">
+    v: latest
+    <span class="fa fa-caret-down"></span>
+  </div>
+</span>
+<div class="rst-other-versions">
+  
+  <dl>
+    <dt>Versions</dt>
+    
+      <dd><a href="https://cm4twc-org.github.io/cm4twc">latest</a></dd>
+    
+      <dd><a href="https://cm4twc-org.github.io/cm4twc/0.1.0-beta">v0.1.0-beta</a></dd>
+    
+  </dl>
+  
+  <dl>
+    <dt>External Resources</dt>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc.git">Source Code</a></dd>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc/issues">Issue Tracker</a></dd>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc/discussions">User Support</a></dd>
+    
+  </dl>
+  
+</div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

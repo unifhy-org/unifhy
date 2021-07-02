@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>TimeDomain &mdash; cm4twc latest documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/api/classes/cm4twc.TimeDomain.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cm4twc.TimeDomain.from_datetime_sequence" href="../methods/cm4twc.TimeDomain.from_datetime_sequence.html" />
+    <link rel="prev" title="NullComponent" href="cm4twc.NullComponent.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/logo_colours.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../users/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../users/tutorial.html#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#framework">Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../users/tutorial.html#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../users/tutorial.html#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../users/files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../users/files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Guide for Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributors/development.html">Development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/development.html#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/development.html#document-your-component-using-its-class-docstring">Document your component using its class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/development.html#define-your-component-using-its-class-attributes">Define your component using its class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/development.html#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributors/packaging.html">Packaging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/packaging.html#create-a-local-git-repository">Create a local git repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/packaging.html#retrieve-the-component-package-template">Retrieve the component package template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/packaging.html#bring-in-your-component-contribution-s">Bring in your component contribution(s)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/packaging.html#populate-the-package-metadata">Populate the package metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributors/sharing.html">Sharing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/sharing.html#push-your-contribution-to-the-cm4twc-github-organisation">Push your contribution to the cm4twc GitHub organisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributors/sharing.html#upload-your-contribution-to-the-python-package-index">Upload your contribution to the Python Package Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developers.html">Guide for Developers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../science_repository.html">Science Repository</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../science/surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../science/surfacelayer/cm4twccontrib.artemis.SurfaceLayerComponent.html">cm4twccontrib.artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../science/subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../science/subsurface/cm4twccontrib.artemis.SubSurfaceComponent.html">cm4twccontrib.artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../science/openwater.html">Open Water Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../science/openwater/cm4twccontrib.rfm.OpenWaterComponent.html">cm4twccontrib.rfm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../api_reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../api_reference.html#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.Model.html">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.Model.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api_reference.html#components">Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../api_reference.html#time">Time</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">TimeDomain</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api_reference.html#space">Space</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.LatLonGrid.html">LatLonGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.LatLonGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.LatLonGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.RotatedLatLonGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.RotatedLatLonGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.BritishNationalGrid.html">BritishNationalGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.BritishNationalGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.BritishNationalGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api_reference.html#data">Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cm4twc.DataSet.html">DataSet</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cm4twc.DataSet.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#latest">latest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v0-1-0-beta">v0.1.0-beta</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../licence.html">Licence</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cm4twc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../api_reference.html">API Reference</a> &raquo;</li>
+        
+      <li>TimeDomain</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="timedomain">
+<h1>TimeDomain<a class="headerlink" href="#timedomain" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="cm4twc.TimeDomain">
+<em class="property">class </em><code class="sig-prename descclassname">cm4twc.</code><code class="sig-name descname">TimeDomain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timestamps</span></em>, <em class="sig-param"><span class="n">units</span></em>, <em class="sig-param"><span class="n">calendar</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.TimeDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>TimeDomain characterises a temporal dimension that is needed by a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+<p><strong>Instantiation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>timestamps: one-dimensional array-like object</dt><dd><p>The array of timestamps defining the temporal dimension.
+May be any type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.
+Must contain numerical values.</p>
+<p>Note: the first timestamp of the array is the beginning
+of the first timestep, and the last timestamp is the end
+of the last timestep (not its start).</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">timestamps</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">timestamps</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">timestamps</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Reference in time for the <em>timestamps</em> following the
+format ‘unit_of_time since reference_datetime’.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;seconds since 1970-01-01&#39;</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2000-01-01 09:00:00&#39;</span>
+</pre></div>
+</div>
+</dd>
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Calendar to be used for the reference in time of
+<em>units</em>. If not provided, set to default value
+‘gregorian’.</p>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;all_leap&#39;</span>
+</pre></div>
+</div>
+<p><em>Parameter example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;365_day&#39;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">td</span> <span class="o">=</span> <span class="n">TimeDomain</span><span class="p">(</span><span class="n">timestamps</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;seconds since 1970-01-01 00:00:00&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;standard&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
+<span class="go">TimeDomain(</span>
+<span class="go">    time (3,): [1970-01-01 00:00:00, 1970-01-01 00:00:01, 1970-01-01 00:00:02] standard</span>
+<span class="go">    bounds (3, 2): [[1970-01-01 00:00:00, ..., 1970-01-01 00:00:03]] standard</span>
+<span class="go">    calendar: standard</span>
+<span class="go">    units: seconds since 1970-01-01 00:00:00</span>
+<span class="go">    period: 0:00:03</span>
+<span class="go">    timedelta: 0:00:01</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Construction</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.TimeDomain.from_datetime_sequence.html#cm4twc.TimeDomain.from_datetime_sequence" title="cm4twc.TimeDomain.from_datetime_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_datetime_sequence</span></code></a></p></td>
+<td><p>Initialise a <a class="reference internal" href="#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> from a sequence of datetime objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../methods/cm4twc.TimeDomain.from_start_end_step.html#cm4twc.TimeDomain.from_start_end_step" title="cm4twc.TimeDomain.from_start_end_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_start_end_step</span></code></a></p></td>
+<td><p>Initialise a <a class="reference internal" href="#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> from start, end, and step for period.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.TimeDomain.from_field.html#cm4twc.TimeDomain.from_field" title="cm4twc.TimeDomain.from_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_field</span></code></a></p></td>
+<td><p>Initialise a <a class="reference internal" href="#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> from temporal dimension coordinate of a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.TimeDomain.is_time_equal_to.html#cm4twc.TimeDomain.is_time_equal_to" title="cm4twc.TimeDomain.is_time_equal_to"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_time_equal_to</span></code></a></p></td>
+<td><p>Compare equality between the TimeDomain and the ‘time’ dimension  coordinate in a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../methods/cm4twc.TimeDomain.spans_same_period_as.html#cm4twc.TimeDomain.spans_same_period_as" title="cm4twc.TimeDomain.spans_same_period_as"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spans_same_period_as</span></code></a></p></td>
+<td><p>Compare equality in period spanned between the TimeDomain and another instance of TimeDomain.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.TimeDomain.time.html#cm4twc.TimeDomain.time" title="cm4twc.TimeDomain.time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></a></p></td>
+<td><p>Return the time series of the TimeDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.TimeDomain.bounds.html#cm4twc.TimeDomain.bounds" title="cm4twc.TimeDomain.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></p></td>
+<td><p>Return the bounds of the time series of the TimeDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.TimeDomain.units.html#cm4twc.TimeDomain.units" title="cm4twc.TimeDomain.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p>Return the units of the time series of the TimeDomain instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.TimeDomain.calendar.html#cm4twc.TimeDomain.calendar" title="cm4twc.TimeDomain.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></p></td>
+<td><p>Return the calendar of the time series of the TimeDomain instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.TimeDomain.period.html#cm4twc.TimeDomain.period" title="cm4twc.TimeDomain.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<td><p>Return the period that the TimeDomain is covering as a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.timedelta</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.TimeDomain.timedelta.html#cm4twc.TimeDomain.timedelta" title="cm4twc.TimeDomain.timedelta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timedelta</span></code></a></p></td>
+<td><p>Return the time duration separating time steps in the time series of the TimeDomain instance as a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.timedelta</span></code></a> instance.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+      <span class="lastupdated">
+        Last updated on Jul 02, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+<span class="rst-current-version" data-toggle="rst-current-version">
+  <div style="float:left;">
+    <span class="fa fa-bars"> </span>
+  </div>
+  <div style="float:right;">
+    v: latest
+    <span class="fa fa-caret-down"></span>
+  </div>
+</span>
+<div class="rst-other-versions">
+  
+  <dl>
+    <dt>Versions</dt>
+    
+      <dd><a href="https://cm4twc-org.github.io/cm4twc">latest</a></dd>
+    
+      <dd><a href="https://cm4twc-org.github.io/cm4twc/0.1.0-beta">v0.1.0-beta</a></dd>
+    
+  </dl>
+  
+  <dl>
+    <dt>External Resources</dt>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc.git">Source Code</a></dd>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc/issues">Issue Tracker</a></dd>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc/discussions">User Support</a></dd>
+    
+  </dl>
+  
+</div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

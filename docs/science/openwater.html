@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Open Water Components &mdash; cm4twc latest documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/science/openwater.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cm4twccontrib.rfm" href="openwater/cm4twccontrib.rfm.OpenWaterComponent.html" />
+    <link rel="prev" title="cm4twccontrib.artemis" href="subsurface/cm4twccontrib.artemis.SubSurfaceComponent.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo_colours.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../users.html">Guide for Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../users/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../users/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../users/tutorial.html#configuring-a-model">Configuring a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#time">Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#space">Space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#data">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#science">Science</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#framework">Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../users/tutorial.html#simulating-with-a-model">Simulating with a Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#spin-up-and-simulate">Spin-Up and Simulate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../users/tutorial.html#resume">Resume</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../users/files.html">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../users/files.html#model-configuration-file">Model Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Guide for Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributors/development.html">Development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/development.html#create-your-component-by-subclassing-a-generic-framework-component">Create your component by subclassing a generic framework component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/development.html#document-your-component-using-its-class-docstring">Document your component using its class docstring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/development.html#define-your-component-using-its-class-attributes">Define your component using its class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/development.html#implement-the-initialise-run-finalise-component-class-methods">Implement the initialise-run-finalise component class methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributors/packaging.html">Packaging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/packaging.html#create-a-local-git-repository">Create a local git repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/packaging.html#retrieve-the-component-package-template">Retrieve the component package template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/packaging.html#bring-in-your-component-contribution-s">Bring in your component contribution(s)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/packaging.html#populate-the-package-metadata">Populate the package metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributors/sharing.html">Sharing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/sharing.html#push-your-contribution-to-the-cm4twc-github-organisation">Push your contribution to the cm4twc GitHub organisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributors/sharing.html#upload-your-contribution-to-the-python-package-index">Upload your contribution to the Python Package Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developers.html">Guide for Developers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../science_repository.html">Science Repository</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="surfacelayer.html">Surface Layer Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="surfacelayer/cm4twccontrib.artemis.SurfaceLayerComponent.html">cm4twccontrib.artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="subsurface.html">Sub-Surface Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="subsurface/cm4twccontrib.artemis.SubSurfaceComponent.html">cm4twccontrib.artemis</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Open Water Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="openwater/cm4twccontrib.rfm.OpenWaterComponent.html">cm4twccontrib.rfm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.Model.html">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.Model.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#components">Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html">SurfaceLayerComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html">SubSurfaceComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.OpenWaterComponent.html">OpenWaterComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.DataComponent.html">DataComponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.NullComponent.html">NullComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#time">Time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.TimeDomain.html">TimeDomain</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.TimeDomain.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.TimeDomain.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#space">Space</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html">LatLonGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html">RotatedLatLonGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html">BritishNationalGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#data">Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/classes/cm4twc.DataSet.html">DataSet</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classes/cm4twc.DataSet.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#latest">latest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#v0-1-0-beta">v0.1.0-beta</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../licence.html">Licence</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cm4twc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../science_repository.html">Science Repository</a> &raquo;</li>
+        
+      <li>Open Water Components</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="open-water-components">
+<h1>Open Water Components<a class="headerlink" href="#open-water-components" title="Permalink to this headline">¶</a></h1>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="openwater/cm4twccontrib.rfm.OpenWaterComponent.html#cm4twccontrib.rfm.OpenWaterComponent" title="cm4twccontrib.rfm.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twccontrib.rfm.OpenWaterComponent</span></code></a></p></td>
+<td><p>River flow model (RFM) is a runoff routing model based on a discrete approximation of the one-directional kinematic wave with lateral inflow (<a class="reference external" href="https://doi.org/10.5194/hess-11-532-2007">Bell et al., 2007</a>, <a class="reference external" href="https://doi.org/10.1016/j.jhydrol.2011.10.002">Dadson et al., 2011</a>).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+      <span class="lastupdated">
+        Last updated on Jul 02, 2021.
+      </span>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+<span class="rst-current-version" data-toggle="rst-current-version">
+  <div style="float:left;">
+    <span class="fa fa-bars"> </span>
+  </div>
+  <div style="float:right;">
+    v: latest
+    <span class="fa fa-caret-down"></span>
+  </div>
+</span>
+<div class="rst-other-versions">
+  
+  <dl>
+    <dt>Versions</dt>
+    
+      <dd><a href="https://cm4twc-org.github.io/cm4twc">latest</a></dd>
+    
+      <dd><a href="https://cm4twc-org.github.io/cm4twc/0.1.0-beta">v0.1.0-beta</a></dd>
+    
+  </dl>
+  
+  <dl>
+    <dt>External Resources</dt>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc.git">Source Code</a></dd>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc/issues">Issue Tracker</a></dd>
+    
+      <dd><a href="https://github.com/cm4twc-org/cm4twc/discussions">User Support</a></dd>
+    
+  </dl>
+  
+</div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
