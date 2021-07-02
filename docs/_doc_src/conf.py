@@ -190,8 +190,10 @@ remote_url = repo.remotes.origin.url
 versions = [
     (tag.name, '/'.join([html_baseurl, tag.name[1:]])) for tag in repo.tags
 ]
-if (version, '/'.join([html_baseurl, __version__])) not in versions:
-    versions.insert(0, (version, '/'.join([html_baseurl, __version__])))
+
+if version != 'latest':
+    if (version, '/'.join([html_baseurl, __version__])) not in versions:
+        versions.insert(0, (version, '/'.join([html_baseurl, __version__])))
 versions.insert(0, ('latest', html_baseurl))
 
 html_context = {
