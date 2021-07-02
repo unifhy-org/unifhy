@@ -1,9 +1,9 @@
 .. default-role:: obj
 
-v0.1.0
+latest
 ------
 
-Released on 2021, ???.
+Yet to be versioned and released. Only available from *dev* branch until then.
 
 .. rubric:: API changes
 
@@ -49,6 +49,6 @@ Released on 2021, ???.
 v0.1.0-beta
 -----------
 
-Released on 2021, Feb 10th.
+Released on 2021-02-10.
 
-* First release
+* first release
