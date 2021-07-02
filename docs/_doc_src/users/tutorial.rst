@@ -14,10 +14,10 @@ This section showcases the basic usage of modelling framework `cm4twc`
    >>> print(cm4twc.__version__)
    0.1.0-beta
 
-The central object in the framework is the `Model`, which is composed of
-`Component`\s for the three compartments of the terrestrial water cycle
-(see the :doc:`science repository <../science_repository>` for the options
-currently available).
+The central object in the framework is the `Model`, which requires three
+`Component`\s for the three compartments of the terrestrial water cycle.
+The components currently available to choose from are listed in the
+:doc:`science repository <../science_repository>` section.
 
 Each component needs to be spatio-temporally configured through `SpaceDomain`
 and `TimeDomain` objects, to be given data contained in a `DataSet` instance,
@@ -169,8 +169,9 @@ and data needs differ.
 .. code-block:: python
    :caption: Exploring the signature of 'Artemis' `SubSurfaceComponent`.
 
-   >>> print(cm4twc.subsurface.Artemis)
-   Artemis(
+   >>> import cm4twccontrib.artemis
+   >>> print(cm4twccontrib.artemis.SubSurfaceComponent)
+   SubSurfaceComponent(
        category: subsurface
        inwards info:
            evaporation_soil_surface [kg m-2 s-1]
@@ -179,35 +180,35 @@ and data needs differ.
            throughfall [kg m-2 s-1]
            snowmelt [kg m-2 s-1]
            water_level [kg m-2]
+       inputs info:
+           topmodel_saturation_capacity [mm m-1]
+           saturated_hydraulic_conductivity [m s-1]
+           topographic_index [1]
+       requires land sea mask: False
+       requires flow direction: False
+       constants info:
+           m [1]
+           rho_lw [kg m-3]
+           S_top [m]
+       states info:
+           subsurface_store [m]
        outwards info:
            surface_runoff [kg m-2 s-1]
            subsurface_runoff [kg m-2 s-1]
            soil_water_stress [1]
-       inputs info:
-           topmodel_saturation_capacity [m]
-           saturated_hydraulic_conductivity [m s-1]
-           topographic_index [1]
-       constants info:
-           m [1]
-           rho_lw [kg m-3]
-       states info:
-           subsurface_store [m]
-       solver history: 1
-       land sea mask: False
-       flow direction: False
    )
 
 .. note::
 
    This information is also available on the online documentation, e.g.
-   see :doc:`Artemis <../science/subsurface/cm4twc.components.subsurface.Artemis>`
+   see :doc:`Artemis <../science/subsurface/cm4twccontrib.artemis.SubSurfaceComponent>`
    subsurface component page.
 
 
 .. code-block:: python
    :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
 
-   >>> component = cm4twc.subsurface.Artemis(
+   >>> component = cm4twccontrib.artemis.SubSurfaceComponent(
    ...     saving_directory='outputs',
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
@@ -216,7 +217,7 @@ and data needs differ.
    ...     records={'surface_runoff': {timedelta(days=1): ['mean']}}
    ... )
    >>> print(component)
-   Artemis(
+   SubSurfaceComponent(
        category: subsurface
        saving directory: outputs
        timedomain: period: 365 days, 0:00:00
@@ -241,6 +242,7 @@ three parts of the terrestrial water cycle.
 .. code-block:: python
    :caption: Instantiating a `Model`.
 
+   >>> import cm4twccontrib.rfm
    >>> model = cm4twc.Model(
    ...     identifier='tutorial',
    ...     config_directory='configurations',
@@ -249,11 +251,11 @@ three parts of the terrestrial water cycle.
    ...         'outputs', timedomain, spacedomain, dataset_surfacelayer,
    ...         parameters={}
    ...     ),
-   ...     subsurface=cm4twc.subsurface.Artemis(
+   ...     subsurface=cm4twccontrib.artemis.SubSurfaceComponent(
    ...         'outputs', timedomain, spacedomain, dataset_subsurface,
    ...         parameters={}
    ...     ),
-   ...     openwater=cm4twc.openwater.RFM(
+   ...     openwater=cm4twccontrib.rfm.OpenWaterComponent(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
    ...         parameters={'c_land': (0.20, 'm s-1'),
    ...                     'cb_land': (0.10, 'm s-1'),

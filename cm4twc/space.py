@@ -1859,7 +1859,8 @@ class Grid(SpaceDomain):
                         rtol=rtol_, atol=atol_,
                         ignore_data_type=True,
                         ignore_fill_value=True,
-                        ignore_properties=properties)
+                        ignore_properties=properties
+                    )
                 else:
                     z = False
             elif field.dim('Z', default=False):
@@ -2544,7 +2545,7 @@ class LatLonGrid(Grid):
         ...                     'axis': 'Z'},
         ...         data=cf.Data([10]),
         ...         bounds=cf.Bounds(data=cf.Data([[0, 20]]))
-        ...         ),
+        ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=1))
         ... )
         >>> sd = LatLonGrid.from_field(f)
@@ -3053,7 +3054,9 @@ class RotatedLatLonGrid(Grid):
         """Return the coordinate reference of the RotatedLatLonGrid
         instance as a `cf.CoordinateReference` instance.
         """
-        return self._f.coordinate_reference('rotated_latitude_longitude')
+        return self._f.coordinate_reference(
+            'grid_mapping_name:rotated_latitude_longitude'
+        )
 
     @classmethod
     def _extract_crs_rotation_parameters_from_field(cls, field):
@@ -3147,9 +3150,8 @@ class RotatedLatLonGrid(Grid):
     def _check_crs_rotation_parameters(self, coord_ref):
         if hasattr(coord_ref, 'coordinate_conversion'):
             conversion = self._f.coordinate_reference(
-                'rotated_latitude_longitude').coordinate_conversion.equals(
-                coord_ref.coordinate_conversion
-            )
+                'grid_mapping_name:rotated_latitude_longitude'
+            ).coordinate_conversion.equals(coord_ref.coordinate_conversion)
         else:
             conversion = False
 
@@ -3764,25 +3766,30 @@ class BritishNationalGrid(Grid):
 
         conversion = False
         if hasattr(field, 'coordinate_reference'):
-            if field.coordinate_reference('transverse_mercator',
+            if field.coordinate_reference('grid_mapping_name:transverse_mercator',
                                           default=False):
                 conversion = inst._check_crs_projection_parameters(
-                    field.coordinate_reference('transverse_mercator')
+                    field.coordinate_reference(
+                        'grid_mapping_name:transverse_mercator'
+                    )
                 )
 
         if conversion:
             return inst
         else:
-            return RuntimeError('field coordinate reference not '
-                                'compatible with British National Grid '
-                                '(EPSG:27700).')
+            raise RuntimeError(
+                'field coordinate reference not compatible '
+                'with British National Grid (EPSG:27700)'
+            )
 
     @property
     def coordinate_reference(self):
         """Return the coordinate reference of the `BritishNationalGrid`
         instance as a `cf.CoordinateReference` instance.
         """
-        return self._f.coordinate_reference('transverse_mercator')
+        return self._f.coordinate_reference(
+            'grid_mapping_name:transverse_mercator'
+        )
 
     def _set_crs_parameters(self):
         # WGS84
@@ -3843,10 +3850,11 @@ class BritishNationalGrid(Grid):
                 and hasattr(coord_ref, 'datum')):
             conversion = (
                 self._f.coordinate_reference(
-                    'transverse_mercator').coordinate_conversion.equals(
-                    coord_ref.coordinate_conversion)
+                    'grid_mapping_name:transverse_mercator'
+                ).coordinate_conversion.equals(coord_ref.coordinate_conversion)
                 and self._f.coordinate_reference(
-                    'transverse_mercator').datum.equals(coord_ref.datum)
+                    'grid_mapping_name:transverse_mercator'
+                ).datum.equals(coord_ref.datum)
             )
         else:
             conversion = False

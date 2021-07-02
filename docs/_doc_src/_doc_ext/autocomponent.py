@@ -31,8 +31,8 @@ class AutoComponentDirective(SphinxDirective):
         # parse class attributes
         for definition in ['inputs', 'inwards', 'outputs', 'outwards',
                            'parameters', 'constants', 'states']:
-            if getattr(cls_, definition + '_info'):
-                attribute = getattr(cls_, definition + '_info')
+            if getattr(cls_, '_{}_info'.format(definition)):
+                attribute = getattr(cls_, '_{}_info'.format(definition))
                 para = nodes.paragraph()
                 if definition[0] == '_':
                     definition = definition[1:]
@@ -84,7 +84,7 @@ class AutoComponentDirective(SphinxDirective):
 
         for name in ['land_sea_mask', 'flow_direction']:
             field_list = nodes.field_list()
-            attribute = getattr(cls_, name)
+            attribute = getattr(cls_, '_requires_{}'.format(name))
             # name
             field = nodes.field()
             field += nodes.field_name(text='name')

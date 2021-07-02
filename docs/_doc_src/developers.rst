@@ -7,4 +7,6 @@ Guide for Developers
 This guide is for people interested in extending the technical
 capabilities of the framework.
 
-[not available yet]
+.. warning::
+
+   Not available yet.

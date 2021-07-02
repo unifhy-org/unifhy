@@ -5,18 +5,22 @@ from os import path, sep
 import cf
 from cfunits import Units
 from numbers import Number
+from copy import deepcopy
+import yaml
 
-from ._utils.states import (State, create_states_dump, update_states_dump,
-                            load_states_dump)
-from ._utils.records import (StateRecord, OutwardRecord, OutputRecord,
-                             RecordStream)
-from ..time import TimeDomain
-from .. import space
-from ..space import SpaceDomain, Grid
-from ..data import (
+from ._utils.state import (
+    State, create_states_dump, update_states_dump, load_states_dump
+)
+from ._utils.record import (
+    StateRecord, OutwardRecord, OutputRecord, RecordStream
+)
+from .time import TimeDomain
+from . import space
+from .space import SpaceDomain, Grid
+from .data import (
     DataSet, Variable, StaticVariable, ClimatologicVariable, DynamicVariable
 )
-from ..settings import dtype_float, array_order
+from .settings import dtype_float, array_order
 
 
 class MetaComponent(abc.ABCMeta):
@@ -33,8 +37,8 @@ class MetaComponent(abc.ABCMeta):
     _states_info = None
     _outputs_info = None
     _solver_history = None
-    _land_sea_mask = None
-    _flow_direction = None
+    _requires_land_sea_mask = None
+    _requires_flow_direction = None
 
     @property
     def category(cls):
@@ -42,63 +46,94 @@ class MetaComponent(abc.ABCMeta):
 
     @property
     def inwards_info(cls):
-        return cls._inwards_info
+        return deepcopy(cls._inwards_info)
 
     @property
     def outwards_info(cls):
-        return cls._outwards_info
+        return deepcopy(cls._outwards_info)
 
     @property
-    def inputs_info(cls):
-        return cls._inputs_info
+    def inwards_metadata(cls):
+        if cls._inwards_info:
+            return yaml.dump(cls._inwards_info)
 
     @property
-    def parameters_info(cls):
-        return cls._parameters_info
+    def outwards_metadata(cls):
+        if cls._outwards_info:
+            return yaml.dump(cls._outwards_info)
 
     @property
-    def constants_info(cls):
-        return cls._constants_info
+    def inputs_metadata(cls):
+        if cls._inputs_info:
+            return yaml.dump(cls._inputs_info)
 
     @property
-    def states_info(cls):
-        return cls._states_info
+    def parameters_metadata(cls):
+        if cls._parameters_info:
+            return yaml.dump(cls._parameters_info)
 
     @property
-    def outputs_info(cls):
-        return cls._outputs_info
+    def constants_metadata(cls):
+        if cls._constants_info:
+            return yaml.dump(cls._constants_info)
+
+    @property
+    def states_metadata(cls):
+        if cls._states_info:
+            return yaml.dump(cls._states_info)
+
+    @property
+    def outputs_metadata(cls):
+        if cls._outputs_info:
+            return yaml.dump(cls._outputs_info)
 
     @property
     def solver_history(cls):
         return cls._solver_history
 
-    @property
-    def flow_direction(cls):
-        return cls._flow_direction
+    def requires_flow_direction(cls):
+        return cls._requires_flow_direction
 
-    @property
-    def land_sea_mask(cls):
-        return cls._land_sea_mask
+    def requires_land_sea_mask(cls):
+        return cls._requires_land_sea_mask
 
     def __str__(cls):
-        info = [
+        info_a = [
             "\n".join(
-                (["    {}:".format(t.replace('_', ' '))]
+                (["    {}:".format(t.replace('_info', ' metadata'))]
                  + ["        {} [{}]".format(n, info['units'])
                     for n, info in getattr(cls, '_' + t).items()])
             )
-            for t in ['inwards_info', 'outwards_info', 'inputs_info',
-                      'parameters_info', 'constants_info', 'outputs_info',
-                      'states_info']
-            if getattr(cls, t)
+            for t in ['inwards_info', 'inputs_info']
+            if getattr(cls, '_' + t)
         ]
+
+        info_b = [
+            "\n".join(
+                (["    {}:".format(t.replace('_info', ' metadata'))]
+                 + ["        {} [{}]".format(n, info['units'])
+                    for n, info in getattr(cls, '_' + t).items()])
+            )
+            for t in ['parameters_info', 'constants_info', 'states_info',
+                      'outwards_info', 'outputs_info']
+            if getattr(cls, '_' + t)
+        ]
+
         return "\n".join(
             ["{}(".format(cls.__name__)]
             + ["    category: {}".format(getattr(cls, '_category'))]
-            + info
-            + ["    solver history: {}".format(getattr(cls, '_solver_history'))]
-            + ["    land sea mask: {}".format(getattr(cls, '_land_sea_mask'))]
-            + ["    flow direction: {}".format(getattr(cls, '_flow_direction'))]
+            + info_a
+            + [
+                "    requires land sea mask: {}".format(
+                    getattr(cls, '_requires_land_sea_mask')
+                )
+            ]
+            + [
+                "    requires flow direction: {}".format(
+                    getattr(cls, '_requires_flow_direction')
+                )
+            ]
+            + info_b
             + [")"]
         )
 
@@ -116,8 +151,8 @@ class Component(metaclass=MetaComponent):
     _states_info = {}
     _outputs_info = {}
     _solver_history = 1
-    _land_sea_mask = False
-    _flow_direction = False
+    _requires_land_sea_mask = False
+    _requires_flow_direction = False
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None,
@@ -544,7 +579,7 @@ class Component(metaclass=MetaComponent):
                 "for spacedomain".format(Grid.__name__)
             )
 
-        if self._land_sea_mask:
+        if self._requires_land_sea_mask:
             if spacedomain.land_sea_mask is None:
                 raise RuntimeError(
                     "'land_sea_mask' must be set in {} of {} "
@@ -553,7 +588,7 @@ class Component(metaclass=MetaComponent):
                                             self.__class__.__name__)
                 )
 
-        if self._flow_direction:
+        if self._requires_flow_direction:
             if spacedomain.flow_direction is None:
                 raise RuntimeError(
                     "'flow_direction' must be set in {} of {} "
@@ -840,12 +875,12 @@ class Component(metaclass=MetaComponent):
     @property
     def inwards_info(self):
         """Return the incoming information expected by the `Component`."""
-        return self._inwards_info
+        return deepcopy(self._inwards_info)
 
     @property
     def outwards_info(self):
         """Return the outgoing information provided by the `Component`."""
-        return self._outwards_info
+        return deepcopy(self._outwards_info)
 
     @classmethod
     def from_config(cls, cfg):
@@ -899,7 +934,7 @@ class Component(metaclass=MetaComponent):
                         # create a new file for it
                         filename = sep.join(
                             [self.saving_directory,
-                             '_'.join([self.identifier, self.category, name])
+                             '_'.join([self.identifier, self._category, name])
                              + ".nc"]
                         )
                         cf.write(original, filename)
@@ -921,7 +956,7 @@ class Component(metaclass=MetaComponent):
                         # create a new file for it
                         filename = sep.join(
                             [self.saving_directory,
-                             '_'.join([self.identifier, self.category, name])
+                             '_'.join([self.identifier, self._category, name])
                              + ".nc"]
                         )
                         cf.write(original, filename)

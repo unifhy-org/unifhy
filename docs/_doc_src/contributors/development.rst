@@ -1,13 +1,13 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-Preparation
+Development
 ===========
 
-This section details the steps required to prepare a component contribution
-for inclusion in the science repository of the framework.
+This section details the steps required to develop a component contribution
+that is compliant with the framework.
 
-You can then follow the steps below to prepare your component contribution:
+You can follow the steps below to develop your component(s):
 
 .. contents::
    :backlinks: none
@@ -23,8 +23,8 @@ three framework components to create subclasses from.
 
 Each component features a fixed interface (i.e. a pre-defined set of
 transfers of information with the other components of the framework):
-inwards information (variables that are given to the component), and
-outwards information (variables that are computed by the component),
+inward information (variables that are given to the component), and
+outward information (variables that are computed by the component),
 see :ref:`Fig. 2<fig_transfers>`.
 
 .. _fig_transfers:
@@ -35,34 +35,41 @@ see :ref:`Fig. 2<fig_transfers>`.
 
    Fig. 2: Transfers of Information between Components.
 
-Contributions to the science repository of `cm4twc` need to comply with
-this fixed interface. If your contribution to `cm4twc` is overlapping
+For component contributions to be `cm4twc`-compliant, they need to comply
+with this fixed interface. If your component contribution is overlapping
 several components, it requires to be refactored into the relevant number
 of components.
 
-Contributions must be implemented as a Python class, and more specifically
-as a subclass of one of the three framework components. This way, the
+Contributions must be implemented as Python classes, and more specifically
+as subclasses of one of the three framework components. This way, the
 interface for the component contribution is already set, and the
 component directly inherits all the functionalities intrinsic to the
 framework so that, as a contributor, you can focus solely on specifying
-the data and science elements of the component.
+the data and science elements of your component(s).
 
 Creating your contribution as a Python class can simply be done by
 subclassing from the relevant framework component, e.g. a surface layer
-component named `MyContribution` would be created as follows:
+component would be created as follows:
 
 .. code-block:: python
    :caption: Subclassing from `SurfaceLayerComponent` class.
 
-   from cm4twc import SurfaceLayerComponent
+   import cm4twc
 
 
-   class MyContribution(SurfaceLayerComponent):
+   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
        pass
 
 
-Note, :py:`pass` is only added here temporarily for this Python example
-script to remain valid, it will be replaced in the subsequent steps.
+.. note::
+
+   :py:`pass` is only added here temporarily for this Python example
+   script to remain valid, it will be replaced in the subsequent steps.
+
+.. note::
+
+   By convention, it is asked that you use the same class name as the
+   one you subclassed from, e.g. *SurfaceLayerComponent* here.
 
 Document your component using its class docstring
 -------------------------------------------------
@@ -77,10 +84,10 @@ in the example below.
 .. code-block:: python
    :caption: Using the component class docstring for description and acknowledgment.
 
-   from cm4twc import SurfaceLayerComponent
+   import cm4twc
 
 
-   class MyContribution(SurfaceLayerComponent):
+   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
        """
        Brief description of the component.
 
@@ -103,12 +110,12 @@ The definition of a component is made of the information about its
 inputs, outputs, states, parameters, and constants.
 
 The inputs/outputs exclude those variables already included in the fixed
-interface, i.e. inwards and outwards transfers (see :ref:`Fig. 2<fig_transfers>`).
+interface, i.e. inward and outward transfers (see :ref:`Fig. 2<fig_transfers>`).
 
 The inputs must be one of three following kinds:
 
 - dynamic: data required for each spatial element and for each time step,
-- static: data required for each spatial location and constant over time,
+- static: data required for each spatial element and constant over time,
 - climatologic: data required for each spatial element and for a given
   frequency within a climatology year.
 
@@ -144,31 +151,31 @@ and/or strings:
 
 The *divisions* item may be useful when considering e.g. different
 vertical layers in a component. Note that scalar/vector/array refer to
-the dimension of the scalar for a given element in the SpaceDomain, so
+the dimension of the state for a given element in the SpaceDomain, so
 a scalar state does not mean that there is only one state value for the
 whole spatial domain, it only means that there is only one state value for
-the given spatial element.
+each spatial element in the space domain.
 
 In addition, the component definition features two special optional
-attributes `_land_sea_mask` and `_flow_direction`. They must be assigned
-a boolean value (True if required by your component, False if not) -- their
-default value is False. If you need land sea mask information for your
-computations, set `_land_sea_mask` to True and access it in your class
-methods using `self.spacedomain.land_sea_mask`. If you need flow
-direction information or want to use the flow routing functionality of
-the component (accessible through `self.spacedomain.route()`), set
-`_flow_direction` to True, and access it in your class methods using
-`self.spacedomain.flow_direction`.
+attributes `_requires_land_sea_mask` and `_requires_flow_direction`.
+They must be assigned a boolean value (True if required by your
+component, False if not) -- their default value is False. If you need
+land sea mask information for your computations, set `_requires_land_sea_mask`
+to True and access it in your class methods using
+`self.spacedomain.land_sea_mask`. If you need flow direction information
+or want to use the flow routing functionality of the component (accessible
+through `self.spacedomain.route(...)`), set `_requires_flow_direction` to True,
+and access it in your class methods using `self.spacedomain.flow_direction`.
 
 See a detailed example of a mock component definition below.
 
 .. code-block:: python
    :caption: Completing the component class definition in the class attributes.
 
-   from cm4twc import SurfaceLayerComponent
+   import cm4twc
 
 
-   class MyContribution(SurfaceLayerComponent):
+   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
        """component description here"""
 
        _inputs_info = {
@@ -216,55 +223,58 @@ See a detailed example of a mock component definition below.
                'default_value': 0.5
            }
        }
-       _land_sea_mask = False
-       _flow_direction = True
+       _requires_land_sea_mask = False
+       _requires_flow_direction = True
 
 
 Implement the initialise-run-finalise component class methods
 -------------------------------------------------------------
 
-The computations of your component contribution must be broken down into
+The computations in your component contribution must be broken down into
 the three phases initialise, run, and finalise. This means that your
 Python class must feature three methods named `initialise`, `run`, and
-`finalise`.
+`finalise`. Note, `initialize` and `finalize` spellings are not supported.
 
 The `initialise` method defines the initial conditions for the component
 states and features any other action required to enable the component to
 start its integration. It is called at the beginning of a model simulation.
-The arguments of this method are the component states. This method is not
-expected to return anything.
+The available arguments for this method are the component states, parameters,
+and constants. This method is not expected to return anything (i.e.
+Python default's `return None`).
 
-The `run` method contains the computations required to integration from
-one time step to the next. It is called multiple times to move through
-the model simulation period. The arguments of this method are the component
-inwards, inputs, states, parameters, and constants (constants must be
-given a default value directly in the method signature). This method is
-expected to return a tuple of two dictionaries: the first dictionary
-must contain the component outward transfers (keys are the outward names,
-values are the outward arrays), the second dictionary must contain the
-component outputs (keys are the output names, values are the output arrays).
-Note, the second dictionary may be empty if the component does not
-feature any custom outputs.
+The `run` method contains the computations required to integrate from
+one time step to the next. It is called iteratively to move through the
+model simulation period. The available arguments for this method are the
+component inwards, inputs, states, parameters, and constants. This method
+is expected to return a tuple of two dictionaries: the first dictionary
+must contain the component outward transfers (keys are the outwards names,
+values are the outwards arrays), the second dictionary must contain the
+component outputs (keys are the outputs names, values are the outputs
+arrays). Note, the second dictionary may be empty if the component does
+not feature any custom outputs.
 
 The `finalise` method contains any action required to guarantee that the
 simulation can be restarted after the last simulation time step. It is
-called at the end of a model simulation. This method is not expected to
-return anything.
+called once at the end of a model simulation. The available arguments
+for this method are the component states, parameters, and constants.
+This method is not expected to return anything (i.e. Python default's
+`return None`).
 
 Since, the arguments of the three methods `initialise`, `run`, and
 `finalise` are going to be passed as keyword arguments, the names of the
-arguments in their signatures must necessarily be the ones found in the
-component class attribute (if renaming is required, this must be done
-internally to the method). Moreover, they must all feature a final
-special argument `**kwargs`.
+arguments in these methods' signatures must necessarily be the ones found
+in the component class attributes (if renaming is required, this must be
+done internally to the methods). Moreover, they must all feature a final
+special argument `**kwargs` to collect all the remaining available
+arguments that are not used.
 
 .. code-block:: python
    :caption: Implementing the three mandatory methods initialise, run, and finalise.
 
-   from cm4twc import SurfaceLayerComponent
+   import cm4twc
 
 
-   class MyContribution(SurfaceLayerComponent):
+   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
        """component description here"""
 
        # component definition here
@@ -310,5 +320,4 @@ special argument `**kwargs`.
            pass
 
 This concludes the preparation of your component contribution, the next
-step is to share your work by submitting it for inclusion in the framework
-(see section :doc:`submission`).
+step is to :doc:`package <packaging>` your component(s).

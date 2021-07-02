@@ -1,7 +1,6 @@
 Sub-Surface Components
 ======================
 
-.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autosummary::
@@ -9,4 +8,4 @@ Sub-Surface Components
    :toctree: subsurface/
    :template: component.rst
 
-   ~cm4twc.components.subsurface.Artemis
+   cm4twccontrib.artemis.SubSurfaceComponent

@@ -3,7 +3,7 @@ from netCDF4 import Dataset
 
 import cm4twc
 from tests.test_time import get_dummy_output_time_and_bounds
-from tests.test_components.test_component import time_resolutions
+from tests.test_component import time_resolutions
 
 # expected raw values for states/transfers/outputs after main run
 # (null initial conditions, no spinup run, 12-day period)
@@ -85,7 +85,7 @@ def get_expected_record(time_, component, name, delta, method):
     category = component.category
 
     # map to default for alias methods
-    method = cm4twc.components._utils.records._methods_map[method]
+    method = cm4twc._utils.record._methods_map[method]
 
     # aggregate raw record using method and relevant slices
     expected_record = aggregate_raw_record(
@@ -106,7 +106,7 @@ def get_produced_record(component, name, delta, method):
     rtol, atol = cm4twc.rtol(), cm4twc.atol()
 
     # map to default for alias methods
-    method = cm4twc.components._utils.records._methods_map[method]
+    method = cm4twc._utils.record._methods_map[method]
 
     # load record from stream file
     with Dataset(component._record_streams[delta].file, 'r') as f:

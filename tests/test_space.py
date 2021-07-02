@@ -74,7 +74,7 @@ class TestLatLonGridAPI(unittest.TestCase):
         self.assertEqual(sd1, sd2)
 
         dataset = get_dummy_dataset('surfacelayer', 'daily', '1deg')
-        field = dataset[list(dataset.keys())[0]]
+        field = dataset[list(dataset.keys())[0]].field
         sd3 = cm4twc.LatLonGrid.from_field(field)
 
         # field from dummy data has no Z coordinate
