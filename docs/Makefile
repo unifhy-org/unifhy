@@ -26,22 +26,23 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	@echo $$PYTHONPATH
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 github_clean:
 	@make local_clean
-	rm -rf _static _sources _images
-	rm -rf classes methods attributes components
-	rm -rf *.html *.inv *.js .buildinfo
+	find . -type f -maxdepth 1 ! -name 'Makefile' -delete
+	find . -type d ! -name '_doc_*' -delete
 
 github_html:
 	@make github_clean
-	@make html
-	@cp -a $(BUILDDIR)/html/. .
+	@make local_html
+	cp -a $(BUILDDIR)/html/. .
+ifdef VERSION_RELEASE
+	cp -a $(BUILDDIR)/html/. ./$(VERSION_RELEASE)
+endif
 
 local_clean:
-	rm -rf $(BUILDDIR)/doctrees $(BUILDDIR)/html
+	rm -rf $(BUILDDIR)/*
 
 local_html:
 	@make local_clean
