@@ -30,8 +30,11 @@ help:
 
 github_clean:
 	@make local_clean
-	find . -type f -maxdepth 1 ! -name 'Makefile' -delete
-	find . -type d ! -name '_doc_*' -delete
+	find . \( -type d -maxdepth 1 ! -name "." \) \
+	-and \( -type d -maxdepth 1 ! -name "*.*.*" \) \
+	-and \( -type d -maxdepth 1 ! -name "_doc_*" \) \
+	-exec rm -rf {} +
+
 
 github_html:
 	@make github_clean
