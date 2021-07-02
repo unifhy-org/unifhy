@@ -30,8 +30,12 @@ copyright = '2020-{}, UK Centre for Ecology & Hydrology'.format(
 author = 'Thibault Hallouin'
 
 # The full version, including alpha/beta/rc tags
-release = __version__
-version = __version__
+if os.getenv('VERSION_RELEASE'):
+    release = 'v{}'.format(__version__)
+    version = 'v{}'.format(__version__)
+else:
+    release = 'latest'
+    version = 'latest'
 
 # -- General configuration ---------------------------------------------------
 
@@ -144,7 +148,7 @@ html_sidebars = {
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
-html_baseurl = 'https://hydro-jules.github.io/cm4twc'
+html_baseurl = 'https://cm4twc-org.github.io/cm4twc'
 
 html_logo = '../_doc_img/logo_colours.svg'
 
@@ -153,7 +157,7 @@ html_theme_options = {
     'navigation_depth': 4,
     'collapse_navigation': False,
     'logo_only': True,
-    'display_version': False
+    'display_version': True
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
@@ -184,20 +188,20 @@ repo = Repo(search_parent_directories=True)
 remote_url = repo.remotes.origin.url
 
 versions = [
-    (tag.name, os.sep.join([html_baseurl, tag.name]))
-    for tag in repo.tags
-    if tag.name != 'v{}'.format(version)
+    (tag.name, '/'.join([html_baseurl, tag.name[1:]])) for tag in repo.tags
 ]
+if (version, '/'.join([html_baseurl, __version__])) not in versions:
+    versions.insert(0, (version, '/'.join([html_baseurl, __version__])))
+versions.insert(0, ('latest', html_baseurl))
+
 html_context = {
-    'current_version': version,
+    'current_version': version if version == 'latest' else __version__,
     'versions': versions,
     'show_versions': True if versions else False,
     'links': [
-        ('<span class="fa fa-code"> Source Code', remote_url),
-        ('<span class="fa fa-bug"> Issue Tracker',
-         os.sep.join([remote_url.replace('.git', ''), 'issues'])),
-        ('<span class="fa fa-users"> User Support',
-         os.sep.join([remote_url.replace('.git', ''), 'discussions']))
+        ('Source Code', remote_url),
+        ('Issue Tracker', '/'.join([remote_url.replace('.git', ''), 'issues'])),
+        ('User Support', '/'.join([remote_url.replace('.git', ''), 'discussions']))
     ]
 }
 
