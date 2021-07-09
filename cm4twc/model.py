@@ -61,10 +61,6 @@ class Model(object):
 
         # assign identifier
         self.identifier = identifier
-        # propagate id to components
-        self.surfacelayer.identifier = identifier
-        self.subsurface.identifier = identifier
-        self.openwater.identifier = identifier
 
         # assign directories
         self.config_directory = config_directory
@@ -76,6 +72,19 @@ class Model(object):
 
         # define attribute exchanger for transfers between components
         self.exchanger = None
+
+    @property
+    def identifier(self):
+        """Return the name used to identify the model files."""
+        return self._identifier
+
+    @identifier.setter
+    def identifier(self, identifier):
+        self._identifier = identifier
+        # propagate id to components
+        self.surfacelayer.identifier = identifier
+        self.subsurface.identifier = identifier
+        self.openwater.identifier = identifier
 
     @staticmethod
     def _process_component_type(component, expected_type):
@@ -101,7 +110,7 @@ class Model(object):
     def __str__(self):
         return "\n".join(
             ["{}(".format(self.__class__.__name__)] +
-            ["    identifier: {}".format(self.identifier)] +
+            ["    identifier: {}".format(self._identifier)] +
             ["    config directory: {}".format(self.config_directory)] +
             ["    saving directory: {}".format(self.saving_directory)] +
             ["    surfacelayer: {}".format(
@@ -149,7 +158,7 @@ class Model(object):
 
     def to_config(self):
         return {
-            'identifier': self.identifier,
+            'identifier': self._identifier,
             'config_directory': self.config_directory,
             'saving_directory': self.saving_directory,
             'surfacelayer': self.surfacelayer.to_config(),
@@ -239,7 +248,7 @@ class Model(object):
 
         # dump configuration in yaml file
         with open(sep.join([self.config_directory,
-                            '.'.join([self.identifier, 'yml'])]), 'w') as f:
+                            '.'.join([self._identifier, 'yml'])]), 'w') as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def initialise_transfers_from_dump(self, dump_file, at=None):
@@ -287,7 +296,7 @@ class Model(object):
         self.exchanger = Exchanger({'surfacelayer': self.surfacelayer,
                                     'subsurface': self.subsurface,
                                     'openwater': self.openwater},
-                                   clock, compass, self.identifier,
+                                   clock, compass, self._identifier,
                                    self.saving_directory)
 
         transfers, at = load_transfers_dump(dump_file, at,
@@ -369,7 +378,7 @@ class Model(object):
         }
         self._set_up_yaml_dumper()
         with open(sep.join([self.config_directory,
-                            '.'.join([self.identifier, 'spin_up', 'yml'])]),
+                            '.'.join([self._identifier, 'spin_up', 'yml'])]),
                   'w') as f:
             yaml.dump(spin_up_config, f, yaml.Dumper, sort_keys=False)
 
@@ -413,6 +422,7 @@ class Model(object):
 
                     dumping_frequency=datetime.timedelta(weeks=4)
 
+
             overwrite: `bool`, optional
                 Whether existing files should be overwritten if they
                 feature the same name as files about to be written by
@@ -426,7 +436,7 @@ class Model(object):
         }
         self._set_up_yaml_dumper()
         with open(sep.join([self.config_directory,
-                            '.'.join([self.identifier, 'simulate', 'yml'])]),
+                            '.'.join([self._identifier, 'simulate', 'yml'])]),
                   'w') as f:
             yaml.dump(simulate_config, f, yaml.Dumper, sort_keys=False)
 
@@ -460,7 +470,7 @@ class Model(object):
             self.exchanger = Exchanger({'surfacelayer': self.surfacelayer,
                                         'subsurface': self.subsurface,
                                         'openwater': self.openwater},
-                                       clock, compass, self.identifier,
+                                       clock, compass, self._identifier,
                                        self.saving_directory)
         else:
             # no need for a new instance, but need to re-run the setup
@@ -555,7 +565,7 @@ class Model(object):
 
         # collect simulate arguments stored in yaml file
         yaml_sig = sep.join([self.config_directory,
-                             '.'.join([self.identifier, '*', 'yml'])])
+                             '.'.join([self._identifier, '*', 'yml'])])
         self._set_up_yaml_loader()
         try:
             with open(yaml_sig.replace('*', method), 'r') as f:
@@ -611,7 +621,7 @@ class Model(object):
 
         # initialise model exchanger transfers from dump file
         dump_file = sep.join([self.saving_directory,
-                              '_'.join([self.identifier, 'exchanger',
+                              '_'.join([self._identifier, 'exchanger',
                                         tag, 'dump_transfers.nc'])])
 
         ats.append(self.initialise_transfers_from_dump(dump_file, at))
