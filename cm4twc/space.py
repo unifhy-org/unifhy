@@ -3100,17 +3100,19 @@ class RotatedLatLonGrid(Grid):
         # WGS84
         coord_conversion = cf.CoordinateConversion(
             parameters={'grid_mapping_name': 'latitude_longitude',
-                        'geographic_crs_name': 'WGS 84'})
+                        'unit_conversion_factor': 0.0174532925199433})
+
+        datum = cf.Datum(
+            parameters={'geographic_crs_name': 'WGS 84',
+                        'horizontal_datum_name': 'WGS_1984',
+                        'semi_major_axis': 6378137.0,
+                        'inverse_flattening': 298.257223563,
+                        'longitude_of_prime_meridian': 0.0}
+        )
+
         self._f.set_construct(
             cf.CoordinateReference(
-                datum=cf.Datum(
-                    parameters={'horizontal_datum_name': 'WGS_1984',
-                                'semi_major_axis': 6378137.0,
-                                'inverse_flattening': 298.257223563,
-                                'longitude_of_prime_meridian': 0.0,
-                                'units': 'degree',
-                                'unit_conversion_factor': 0.0174532925199433}
-                ),
+                datum=datum,
                 coordinate_conversion=coord_conversion,
                 coordinates=[self._f.dim(self._Y_name, key=True),
                              self._f.dim(self._X_name, key=True),
@@ -3122,6 +3124,7 @@ class RotatedLatLonGrid(Grid):
         # Rotated Grid
         coord_conversion = cf.CoordinateConversion(
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                        'unit_conversion_factor': 0.0174532925199433,
                         'grid_north_pole_latitude':
                             grid_north_pole_latitude,
                         'grid_north_pole_longitude':
@@ -3129,16 +3132,17 @@ class RotatedLatLonGrid(Grid):
                         'north_pole_grid_longitude':
                             north_pole_grid_longitude}
         )
+
+        datum = cf.Datum(
+            parameters={'horizontal_datum_name': 'WGS_1984',
+                        'semi_major_axis': 6378137.0,
+                        'inverse_flattening': 298.257223563,
+                        'longitude_of_prime_meridian': 0.0}
+        )
+
         self._f.set_construct(
             cf.CoordinateReference(
-                datum=cf.Datum(
-                    parameters={'horizontal_datum_name': 'WGS_1984',
-                                'semi_major_axis': 6378137.0,
-                                'inverse_flattening': 298.257223563,
-                                'longitude_of_prime_meridian': 0.0,
-                                'units': 'degree',
-                                'unit_conversion_factor': 0.0174532925199433}
-                ),
+                datum=datum,
                 coordinate_conversion=coord_conversion,
                 coordinates=[self._f.dim(self._Y_name, key=True),
                              self._f.dim(self._X_name, key=True),
@@ -3149,6 +3153,14 @@ class RotatedLatLonGrid(Grid):
 
     def _check_crs_rotation_parameters(self, coord_ref):
         if hasattr(coord_ref, 'coordinate_conversion'):
+            # eliminate 'unit'/'units' parameter as it is not standardised in
+            # the CF convention, and the split of the coordinate reference into
+            # coordinate conversion/datum is a CF data model artifact so they
+            # are bundled in as one and can share parameters in CF-netCDF
+            # (which can result in one unit parameter overwriting another)
+            for p in ['unit', 'units']:
+                coord_ref.coordinate_conversion.del_parameter(p, None)
+
             conversion = self._f.coordinate_reference(
                 'grid_mapping_name:rotated_latitude_longitude'
             ).coordinate_conversion.equals(coord_ref.coordinate_conversion)
@@ -3248,10 +3260,13 @@ class RotatedLatLonGrid(Grid):
 
         conversion = False
         if hasattr(field, 'coordinate_reference'):
-            if field.coordinate_reference('rotated_latitude_longitude',
+            if field.coordinate_reference('grid_mapping_name:'
+                                          'rotated_latitude_longitude',
                                           default=False):
                 conversion = self._check_crs_rotation_parameters(
-                    field.coordinate_reference('rotated_latitude_longitude')
+                    field.coordinate_reference(
+                        'grid_mapping_name:rotated_latitude_longitude'
+                    )
                 )
 
         return y_x_z and conversion
@@ -3712,22 +3727,20 @@ class BritishNationalGrid(Grid):
         ...         coordinate_conversion=cf.CoordinateConversion(
         ...             parameters={'grid_mapping_name': 'transverse_mercator',
         ...                         'projected_crs_name': 'OSGB 1936 / British National Grid',
-        ...                         'geographic_crs_name': 'OSGB 1936',
         ...                         'latitude_of_projection_origin': 49.0,
         ...                         'longitude_of_central_meridian': -2.0,
         ...                         'scale_factor_at_central_meridian': 0.9996012717,
         ...                         'false_easting': 400000.0,
         ...                         'false_northing': -100000.0,
-        ...                         'unit': 'metre'}
+        ...                         'unit_conversion_factor': 0.0174532925199433}
         ...         ),
         ...         datum=cf.Datum(
-        ...             parameters={'horizontal_datum_name': 'OSGB_1936',
+        ...             parameters={'geographic_crs_name': 'OSGB 1936',
+        ...                         'horizontal_datum_name': 'OSGB_1936',
         ...                         'semi_major_axis': 6377563.396,
         ...                         'inverse_flattening': 299.3249646,
         ...                         'towgs84': [375., -111., 431., 0., 0., 0., 0.],
-        ...                         'longitude_of_prime_meridian': 0.0,
-        ...                         'units': 'degree',
-        ...                         'unit_conversion_factor': 0.0174532925199433}
+        ...                         'longitude_of_prime_meridian': 0.0}
         ...         ),
         ...         coordinates=(yc, xc)
         ...     )
@@ -3766,7 +3779,8 @@ class BritishNationalGrid(Grid):
 
         conversion = False
         if hasattr(field, 'coordinate_reference'):
-            if field.coordinate_reference('grid_mapping_name:transverse_mercator',
+            if field.coordinate_reference('grid_mapping_name:'
+                                          'transverse_mercator',
                                           default=False):
                 conversion = inst._check_crs_projection_parameters(
                     field.coordinate_reference(
@@ -3795,17 +3809,20 @@ class BritishNationalGrid(Grid):
         # WGS84
         coord_conversion = cf.CoordinateConversion(
             parameters={'grid_mapping_name': 'latitude_longitude',
-                        'geographic_crs_name': 'WGS 84'})
+                        'unit_conversion_factor': 0.0174532925199433}
+        )
+
+        datum = cf.Datum(
+            parameters={'geographic_crs_name': 'WGS 84',
+                        'horizontal_datum_name': 'WGS_1984',
+                        'semi_major_axis': 6378137.0,
+                        'inverse_flattening': 298.257223563,
+                        'longitude_of_prime_meridian': 0.0}
+        )
+
         self._f.set_construct(
             cf.CoordinateReference(
-                datum=cf.Datum(
-                    parameters={'horizontal_datum_name': 'WGS_1984',
-                                'semi_major_axis': 6378137.0,
-                                'inverse_flattening': 298.257223563,
-                                'longitude_of_prime_meridian': 0.0,
-                                'units': 'degree',
-                                'unit_conversion_factor': 0.0174532925199433}
-                ),
+                datum=datum,
                 coordinate_conversion=coord_conversion,
                 coordinates=[self._f.dim(self._Y_name, key=True),
                              self._f.dim(self._X_name, key=True),
@@ -3818,25 +3835,26 @@ class BritishNationalGrid(Grid):
         coord_conversion = cf.CoordinateConversion(
             parameters={'grid_mapping_name': 'transverse_mercator',
                         'projected_crs_name': 'OSGB 1936 / British National Grid',
-                        'geographic_crs_name': 'OSGB 1936',
                         'latitude_of_projection_origin': 49.0,
                         'longitude_of_central_meridian': -2.0,
                         'scale_factor_at_central_meridian': 0.9996012717,
                         'false_easting': 400000.0,
                         'false_northing': -100000.0,
-                        'unit': 'metre'}
+                        'unit_conversion_factor': 0.0174532925199433}
         )
+
+        datum = cf.Datum(
+            parameters={'geographic_crs_name': 'OSGB 1936',
+                        'horizontal_datum_name': 'OSGB_1936',
+                        'semi_major_axis': 6377563.396,
+                        'inverse_flattening': 299.3249646,
+                        'towgs84': [375., -111., 431., 0., 0., 0., 0.],
+                        'longitude_of_prime_meridian': 0.0}
+        )
+
         self._f.set_construct(
             cf.CoordinateReference(
-                datum=cf.Datum(
-                    parameters={'horizontal_datum_name': 'OSGB_1936',
-                                'semi_major_axis': 6377563.396,
-                                'inverse_flattening': 299.3249646,
-                                'towgs84': [375., -111., 431., 0., 0., 0., 0.],
-                                'longitude_of_prime_meridian': 0.0,
-                                'units': 'degree',
-                                'unit_conversion_factor': 0.0174532925199433}
-                ),
+                datum=datum,
                 coordinate_conversion=coord_conversion,
                 coordinates=[self._f.dim(self._Y_name, key=True),
                              self._f.dim(self._X_name, key=True),
@@ -3848,14 +3866,24 @@ class BritishNationalGrid(Grid):
     def _check_crs_projection_parameters(self, coord_ref):
         if (hasattr(coord_ref, 'coordinate_conversion')
                 and hasattr(coord_ref, 'datum')):
-            conversion = (
-                self._f.coordinate_reference(
+            # eliminate 'unit'/'units' parameter as it is not standardised in
+            # the CF convention, and the split of the coordinate reference into
+            # coordinate conversion/datum is a CF data model artifact so they
+            # are bundled in as one and can share parameters in CF-netCDF
+            # (which can result in one unit parameter overwriting another)
+            for p in ['unit', 'units']:
+                coord_ref.coordinate_conversion.del_parameter(p, None)
+                coord_ref.datum.del_parameter(p, None)
+
+            coord_conversion = self._f.coordinate_reference(
                     'grid_mapping_name:transverse_mercator'
-                ).coordinate_conversion.equals(coord_ref.coordinate_conversion)
-                and self._f.coordinate_reference(
+            ).coordinate_conversion.equals(coord_ref.coordinate_conversion)
+
+            datum = self._f.coordinate_reference(
                     'grid_mapping_name:transverse_mercator'
-                ).datum.equals(coord_ref.datum)
-            )
+            ).datum.equals(coord_ref.datum)
+
+            conversion = coord_conversion and datum
         else:
             conversion = False
 
@@ -3947,10 +3975,13 @@ class BritishNationalGrid(Grid):
 
         conversion = False
         if hasattr(field, 'coordinate_reference'):
-            if field.coordinate_reference('transverse_mercator',
+            if field.coordinate_reference('grid_mapping_name:'
+                                          'transverse_mercator',
                                           default=False):
                 conversion = self._check_crs_projection_parameters(
-                    field.coordinate_reference('transverse_mercator')
+                    field.coordinate_reference(
+                        'grid_mapping_name:transverse_mercator'
+                    )
                 )
 
         return y_x_z and conversion
