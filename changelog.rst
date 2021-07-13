@@ -24,8 +24,6 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#32 <https://github.com/cm4twc-org/cm4twc/issues/32>`_)
 * fix model identifier renaming not propagating to its components' identifiers
   (`#48 <https://github.com/cm4twc-org/cm4twc/issues/48>`_)
-* fix impossibility to run `Model` using a `Component` on the `BritishNationalGrid`
-  (`#51 <https://github.com/cm4twc-org/cm4twc/issues/51>`_)
 
 .. rubric:: Enhancements
 
