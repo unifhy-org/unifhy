@@ -357,15 +357,14 @@ def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):
             for axis in axes:
                 # dimension (domain axis)
                 g.createDimension(axis, len(getattr(spacedomain, axis)))
-                # variables
-                # (domain coordinate)
-                coord = spacedomain.to_field().construct(axis)
+                # variables (dimension coordinates)
+                coord = spacedomain.to_field().dim(axis)
                 a = g.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
                 a.bounds = axis + '_bounds'
                 a[:] = coord.data.array
-                # (domain coordinate bounds)
+                # (dimension coordinate bounds)
                 b = g.createVariable(axis + '_bounds', dtype_float(),
                                      (axis, 'nv'))
                 b.units = coord.units

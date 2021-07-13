@@ -280,7 +280,7 @@ class RecordStream(object):
                 f.createDimension(axis, len(getattr(self._spacedomain, axis)))
                 # variables
                 # (domain coordinate)
-                coord = self._spacedomain.to_field().construct(axis)
+                coord = self._spacedomain.to_field().dim(axis)
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
@@ -423,7 +423,7 @@ class RecordStream(object):
             h = f.createVariable('length', np.uint32, ('length',))
             h[:] = np.arange(self._steps_per_slice)
             for axis in axes:
-                coord = self._spacedomain.to_field().construct(axis)
+                coord = self._spacedomain.to_field().dim(axis)
                 # (domain coordinate)
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name

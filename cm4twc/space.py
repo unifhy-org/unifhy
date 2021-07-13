@@ -173,7 +173,7 @@ class Grid(SpaceDomain):
 
     @property
     def shape(self):
-        has_z = self._f.has_construct(self._Z_name)
+        has_z = self._f.dim(self._Z_name, default=False)
         return (
             (self._f.dim('Z').shape if has_z else ())
             + self._f.dim('Y').shape
@@ -1696,46 +1696,59 @@ class Grid(SpaceDomain):
 
     @classmethod
     def _extract_xyz_from_field(cls, field):
-        # check constructs
-        if not field.has_construct(cls._Y_name):
-            raise RuntimeError("{} field missing '{}' construct".format(
-                               cls.__name__, cls._Y_name))
-        y = field.construct(cls._Y_name)
-        if not field.has_construct(cls._X_name):
-            raise RuntimeError("{} field missing '{}' construct".format(
-                               cls.__name__, cls._X_name))
-        x = field.construct(cls._X_name)
+        # check dimension coordinates
+        if not field.dim(cls._Y_name, default=False):
+            raise RuntimeError(
+                "{} field missing '{}' dimension coordinate".format(
+                    cls.__name__, cls._Y_name
+                )
+            )
+        y = field.dim(cls._Y_name)
+        if not field.dim(cls._X_name, default=False):
+            raise RuntimeError(
+                "{} field missing '{}' dimension coordinate".format(
+                    cls.__name__, cls._X_name
+                )
+            )
+        x = field.dim(cls._X_name)
         z_array = None
         z_bounds_array = None
-        if field.has_construct(cls._Z_name):
-            if field.construct(cls._Z_name).has_bounds():
-                z_array = field.construct(cls._Z_name).array
-                z_units = field.construct(cls._Z_name).units
-                z_bounds_array = field.construct(cls._Z_name).bounds.array
+        if field.dim(cls._Z_name, default=False):
+            if field.dim(cls._Z_name).has_bounds():
+                z_array = field.dim(cls._Z_name).array
+                z_units = field.dim(cls._Z_name).units
+                z_bounds_array = field.dim(cls._Z_name).bounds.array
                 if z_units not in cls._Z_units:
                     raise RuntimeError(
-                        "{} field construct '{}' units are not in {}".format(
-                            cls.__name__, cls._Z_name, cls._Z_units[0]))
+                        "{} field dimension coordinate '{}' units are not in "
+                        "{}".format(cls.__name__, cls._Z_name, cls._Z_units[0])
+                    )
 
         # check units
         if y.units not in cls._Y_units:
             raise RuntimeError(
-                "{} field construct '{}' units are not in {}".format(
-                    cls.__name__, cls._Y_name, cls._Y_units[0])
+                "{} field dimension coordinate '{}' units are not in "
+                "{}".format(cls.__name__, cls._Y_name, cls._Y_units[0])
             )
         if x.units not in cls._X_units:
             raise RuntimeError(
-                "{} field construct '{}' units are not in {}".format(
-                    cls.__name__, cls._X_name, cls._X_units[0])
+                "{} field dimension coordinate '{}' units are not in "
+                "{}".format(cls.__name__, cls._X_name, cls._X_units[0])
             )
 
         # check bounds
         if not y.has_bounds():
-            raise RuntimeError("{} field construct '{}' has no bounds".format(
-                                   cls.__name__, cls._Y_name))
+            raise RuntimeError(
+                "{} field dimension coordinate '{}' has no bounds".format(
+                    cls.__name__, cls._Y_name
+                )
+            )
         if not x.has_bounds():
-            raise RuntimeError("{} field construct '{}' has no bounds".format(
-                                   cls.__name__, cls._X_name))
+            raise RuntimeError(
+                "{} field dimension coordinate '{}' has no bounds".format(
+                    cls.__name__, cls._X_name
+                )
+            )
 
         return {
             'X': x.array, 'X_bounds': x.bounds.array,
@@ -1744,7 +1757,7 @@ class Grid(SpaceDomain):
         }
 
     def __str__(self):
-        has_z = self._f.has_construct(self._Z_name)
+        has_z = self._f.dim(self._Z_name, default=False)
         return "\n".join(
             ["{}(".format(self.__class__.__name__)]
             + ["    shape {{{}}}: {}".format(", ".join(self.axes), self.shape)]
@@ -1794,10 +1807,10 @@ class Grid(SpaceDomain):
         rtol_ = rtol()
         atol_ = atol()
 
-        # check whether X/Y constructs are identical
+        # check whether X/Y dimension coordinates are identical
         x_y = []
         for axis_name in [self._X_name, self._Y_name]:
-            # try to retrieve construct using name
+            # try to retrieve dimension coordinate using name
             dim_coord = field.dim(
                 re.compile(r'name={}$'.format(axis_name)), default=None
             )
@@ -1816,7 +1829,7 @@ class Grid(SpaceDomain):
                 if not dim_coord.has_bounds():
                     bounds = self._f.dim(axis_name).del_bounds()
 
-                # compare constructs
+                # compare dimension coordinates
                 try:
                     x_y.append(
                         self._f.dim(axis_name).equals(
@@ -1834,12 +1847,12 @@ class Grid(SpaceDomain):
             else:
                 x_y.append(False)
 
-        # check whether Z constructs are identical (if not ignored)
+        # check whether Z dimension coordinates are identical (if not ignored)
         if ignore_z:
             z = True
         else:
             if self._f.dim('Z', default=False):
-                # try to retrieve construct using name
+                # try to retrieve dimension coordinate using name
                 dim_coord = field.dim(
                     re.compile(r'name={}$'.format(self._Z_name)), default=None
                 )
@@ -1853,7 +1866,7 @@ class Grid(SpaceDomain):
                     except ValueError:
                         pass
 
-                    # compare constructs
+                    # compare dimension coordinates
                     z = self._f.dim(self._Z_name).equals(
                         dim_coord,
                         rtol=rtol_, atol=atol_,
@@ -2507,10 +2520,10 @@ class LatLonGrid(Grid):
             field: `cf.Field`
                 The field object that will be used to instantiate a
                 `LatLonGrid` instance. This field must feature a
-                'latitude' and a 'longitude' constructs, and these
-                constructs must feature bounds. This field may
-                optionally feature an 'altitude' construct alongside its
-                bounds (both required otherwise ignored).
+                'latitude' and a 'longitude' dimension coordinates, and
+                these coordinates must feature bounds. This field may
+                optionally feature an 'altitude' dimension coordinate
+                alongside its bounds (both required otherwise ignored).
 
         :Returns: `LatLonGrid`
 
@@ -3061,9 +3074,13 @@ class RotatedLatLonGrid(Grid):
     @classmethod
     def _extract_crs_rotation_parameters_from_field(cls, field):
         # check conversion parameters
-        if field.has_construct('grid_mapping_name:rotated_latitude_longitude'):
-            crs = field.construct(
-                'grid_mapping_name:rotated_latitude_longitude')
+        if field.coordinate_reference(
+                'grid_mapping_name:rotated_latitude_longitude',
+                default=False
+        ):
+            crs = field.coordinate_reference(
+                'grid_mapping_name:rotated_latitude_longitude'
+            )
         else:
             raise RuntimeError(
                 "{} field missing coordinate conversion 'grid_mapping_name:"

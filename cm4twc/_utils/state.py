@@ -105,7 +105,7 @@ def create_states_dump(filepath, states_info, solver_history,
         h = f.createVariable('history', np.int8, ('history',))
         h[:] = np.arange(-solver_history, 1, 1)
         for axis in axes:
-            coord = spacedomain.to_field().construct(axis)
+            coord = spacedomain.to_field().dim(axis)
             # (domain coordinate)
             a = f.createVariable(axis, dtype_float(), (axis,))
             a.standard_name = coord.standard_name
