@@ -176,7 +176,6 @@ class RecordStream(object):
                 'recording frequency ({}) greater than component '
                 'timedelta ({})'.format(self.frequency, timedomain.period)
             )
-        if (self.frequency % timedomain.period) != timedelta(seconds=0):
         if (timedomain.period % self.frequency) != timedelta(seconds=0):
             raise ValueError(
                 'recording frequency ({}) not a divisor of simulation '
