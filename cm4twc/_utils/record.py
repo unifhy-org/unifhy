@@ -176,6 +176,11 @@ class RecordStream(object):
                 'recording frequency ({}) greater than component '
                 'timedelta ({})'.format(self.frequency, timedomain.period)
             )
+        if (self.frequency % timedomain.period) != timedelta(seconds=0):
+            raise ValueError(
+                'recording frequency ({}) not a divisor of simulation '
+                'period ({})'.format(self.frequency, timedomain.period)
+            )
 
         # determine most suited time slice
         steps_per_beat = int(

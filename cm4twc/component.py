@@ -228,8 +228,9 @@ class Component(metaclass=MetaComponent):
                 The desired records from the `Component`. Each key
                 must be a valid variable recordable for the component
                 chosen (i.e. outwards, outputs, and states), each value
-                is a `dict` of `datetime.timedelta` for keys and
-                aggregation methods as a sequence of `str` for values.
+                is a `dict` of recording temporal resolutions as
+                `datetime.timedelta` for keys and aggregation methods
+                as a sequence of `str` for values.
 
                 *Parameter example:* ::
 
@@ -264,6 +265,10 @@ class Component(metaclass=MetaComponent):
                 ``'max'``        The maximum amongst the values during
                                  the elapsed timedelta.
                 ===============  =======================================
+
+                The recording temporal resolutions must be multiples
+                of the component temporal resolution, and they must be
+                be divisors of the component simulation period.
 
             io_slice: `int`, optional
                 The length of the time slice to use for input/output
