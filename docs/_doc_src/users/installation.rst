@@ -17,7 +17,7 @@ GitHub repository:
 
 .. code-block:: bash
 
-   python -m pip install git+https://github.com/hydro-jules/cm4twc.git@dev
+   python -m pip install git+https://github.com/cm4twc-org/cm4twc.git@dev
 
 .. rubric:: Requirements
 
