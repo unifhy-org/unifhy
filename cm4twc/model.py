@@ -340,12 +340,13 @@ class Model(object):
                 not provided, set to default 1 (cycle).
 
             dumping_frequency: `datetime.timedelta` object, optional
-                The frequency at which Components' states must be
-                stored in a dump file. These dumps can be used to
-                restart a `Component` from a particular point in time.
+                The frequency at which model snapshots must be stored
+                in a dump file. These snapshots can be used to restart
+                a `Model` from a particular point in time. If not
+                provided, set to default None (i.e. no snapshot stored).
 
-                Note, the frequency is to be understood in a modelled
-                time context, not computational time context.
+                Note, the frequency is to be understood in a simulation
+                time context, not in a computational time context.
 
                 *Parameter example:* ::
 
@@ -411,12 +412,13 @@ class Model(object):
         :Parameters:
 
             dumping_frequency: `datetime.timedelta` object, optional
-                The frequency at which Components' states must be
-                stored in a dump file. These dumps can be used to
-                restart a `Component` from a particular point in time.
+                The frequency at which model snapshots must be stored
+                in a dump file. These snapshots can be used to restart
+                a `Model` from a particular point in time. If not
+                provided, set to default None (i.e. no snapshot stored).
 
-                Note, the frequency is to be understood in a modelled
-                time context, not computational time context.
+                Note, the frequency is to be understood in a simulation
+                time context, not in a computational time context.
 
                 *Parameter example:* ::
 
