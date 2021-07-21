@@ -40,6 +40,10 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * cache remapping weights at initialisation
   (`#44 <https://github.com/cm4twc-org/cm4twc/pull/44>`_)
 
+.. rubric:: Dependencies
+
+* add *cf-python>=3.10.0* requirement
+
 .. rubric:: Documentation
 
 * document 'divisions' for component states in preparation page
