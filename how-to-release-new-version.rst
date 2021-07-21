@@ -1,14 +1,17 @@
 How to release a new version for `cm4twc`
 =========================================
 
-Between releases, changes are made on the *dev* branch.
+Between releases, changes are made on the 'dev' branch and recorded in
+the `<changelog.rst>`_ in the *latest* section.
 
-Once the 'dev' branch has reached a staged where a new release is
+Once the 'dev' branch has reached a stage where a new release is
 justified or required, the following steps must be followed.
 
 .. warning::
 
    Always replace #.#.# with the actual version number in the steps below.
+   Version numbers must follow `Semantic Versioning <https://semver.org/>`_
+   guidelines.
 
 1. create and checkout a 'release-v#.#.#' branch from the 'dev' branch:
 
@@ -16,15 +19,16 @@ justified or required, the following steps must be followed.
 
    git checkout -b release-v#.#.# dev
 
-2. update the version in *cm4twc/version.py*:
+2. update the version in `<cm4twc/version.py>`_:
 
 .. code-block:: python
 
    __version__ = '#.#.#'
 
-3. make sure that the *changelog.rst* contains all the noteworthy
+3. make sure that the `<changelog.rst>`_ file contains all the noteworthy
    changes since the last release, change 'latest' to 'v#.#.#' and add
-   "Released on YYYY-MM-DD." (replace with release date):
+   "Released on YYYY-MM-DD." (replace with release date) below the version
+   number:
 
    .. code-block:: rst
 
@@ -41,7 +45,7 @@ justified or required, the following steps must be followed.
 
          export VERSION_RELEASE='#.#.#'
 
-   b. make sure all dependencies in *requirements-docs.txt* are satisfied
+   b. make sure all dependencies in `<requirements-docs.txt>`_ are satisfied
 
    c. use the makefile to build the documentation with sphinx locally:
 
@@ -71,7 +75,7 @@ justified or required, the following steps must be followed.
    in 'main' branch
 
 7. in the pull request, click "Ready for review" to trigger a testing
-   workflow for GitHub Actions
+   workflow in GitHub Actions
 
 8. if tests have failed, fix accordingly, and re-run the GitHub Actions workflow
 
