@@ -339,6 +339,10 @@ respectively
 <ul class="simple">
 <li><p>fix dump file update bug due to missing ‘divisions’ dimension
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/32">#32</a>)</p></li>
+<li><p>fix model identifier renaming not propagating to its components’ identifiers
+(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/48">#48</a>)</p></li>
+<li><p>fix impossibility to run <code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code> using a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> on the <code class="xref py py-obj docutils literal notranslate"><span class="pre">BritishNationalGrid</span></code>
+(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/51">#51</a>)</p></li>
 </ul>
 <p class="rubric">Enhancements</p>
 <ul class="simple">
@@ -352,6 +356,10 @@ respectively
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/42">#42</a>)</p></li>
 <li><p>cache remapping weights at initialisation
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/44">#44</a>)</p></li>
+</ul>
+<p class="rubric">Dependencies</p>
+<ul class="simple">
+<li><p>add <em>cf-python&gt;=3.10.0</em> requirement</p></li>
 </ul>
 <p class="rubric">Documentation</p>
 <ul class="simple">
@@ -385,7 +393,7 @@ respectively
     <p>
         &#169; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
       <span class="lastupdated">
-        Last updated on Jul 02, 2021.
+        Last updated on Jul 21, 2021.
       </span>
 
     </p>

@@ -396,22 +396,20 @@ an ‘altitude’ dimension coordinate alongside its bounds
 <span class="gp">... </span>        <span class="n">coordinate_conversion</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">CoordinateConversion</span><span class="p">(</span>
 <span class="gp">... </span>            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grid_mapping_name&#39;</span><span class="p">:</span> <span class="s1">&#39;transverse_mercator&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;projected_crs_name&#39;</span><span class="p">:</span> <span class="s1">&#39;OSGB 1936 / British National Grid&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                        <span class="s1">&#39;geographic_crs_name&#39;</span><span class="p">:</span> <span class="s1">&#39;OSGB 1936&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;latitude_of_projection_origin&#39;</span><span class="p">:</span> <span class="mf">49.0</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;scale_factor_at_central_meridian&#39;</span><span class="p">:</span> <span class="mf">0.9996012717</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;false_easting&#39;</span><span class="p">:</span> <span class="mf">400000.0</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;false_northing&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">100000.0</span><span class="p">,</span>
-<span class="gp">... </span>                        <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="s1">&#39;metre&#39;</span><span class="p">}</span>
+<span class="gp">... </span>                        <span class="s1">&#39;unit_conversion_factor&#39;</span><span class="p">:</span> <span class="mf">0.0174532925199433</span><span class="p">}</span>
 <span class="gp">... </span>        <span class="p">),</span>
 <span class="gp">... </span>        <span class="n">datum</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Datum</span><span class="p">(</span>
-<span class="gp">... </span>            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;horizontal_datum_name&#39;</span><span class="p">:</span> <span class="s1">&#39;OSGB_1936&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;geographic_crs_name&#39;</span><span class="p">:</span> <span class="s1">&#39;OSGB 1936&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="s1">&#39;horizontal_datum_name&#39;</span><span class="p">:</span> <span class="s1">&#39;OSGB_1936&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;semi_major_axis&#39;</span><span class="p">:</span> <span class="mf">6377563.396</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;inverse_flattening&#39;</span><span class="p">:</span> <span class="mf">299.3249646</span><span class="p">,</span>
 <span class="gp">... </span>                        <span class="s1">&#39;towgs84&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">375.</span><span class="p">,</span> <span class="o">-</span><span class="mf">111.</span><span class="p">,</span> <span class="mf">431.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
-<span class="gp">... </span>                        <span class="s1">&#39;longitude_of_prime_meridian&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="gp">... </span>                        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degree&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                        <span class="s1">&#39;unit_conversion_factor&#39;</span><span class="p">:</span> <span class="mf">0.0174532925199433</span><span class="p">}</span>
+<span class="gp">... </span>                        <span class="s1">&#39;longitude_of_prime_meridian&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
 <span class="gp">... </span>        <span class="p">),</span>
 <span class="gp">... </span>        <span class="n">coordinates</span><span class="o">=</span><span class="p">(</span><span class="n">yc</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="p">)</span>
@@ -456,7 +454,7 @@ an ‘altitude’ dimension coordinate alongside its bounds
     <p>
         &#169; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
       <span class="lastupdated">
-        Last updated on Jul 02, 2021.
+        Last updated on Jul 21, 2021.
       </span>
 
     </p>
