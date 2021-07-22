@@ -26,6 +26,8 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#48 <https://github.com/cm4twc-org/cm4twc/issues/48>`_)
 * fix impossibility to run `Model` using a `Component` on the `BritishNationalGrid`
   (`#51 <https://github.com/cm4twc-org/cm4twc/issues/51>`_)
+* fix failed aggregation of fields with no standard name in `DataSet`
+  (`#52 <https://github.com/cm4twc-org/cm4twc/issues/52>`_)
 
 .. rubric:: Enhancements
 

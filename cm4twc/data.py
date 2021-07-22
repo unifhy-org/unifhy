@@ -170,7 +170,9 @@ class DataSet(MutableMapping):
     def _get_dict_variables_from_file(files, name_mapping, select):
         variables = {}
 
-        for field in cf.read(files, select=select):
+        for field in cf.read(
+                files, aggregate={'relaxed_identities': True}, select=select
+        ):
             filenames = field.get_filenames()
 
             # look for name to use as key in variables dict
