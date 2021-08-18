@@ -104,7 +104,7 @@ class Exchanger(object):
 
                     # determine the time weights that will be used by the
                     # exchanger on the stored timesteps when a transfer
-                    # is asked (i.e. when __getitem__ is called)
+                    # is asked (i.e. when get_transfer is called)
                     t_weights = self._calculate_temporal_weights(
                         src_ts, dst_ts, clock.length
                     )
