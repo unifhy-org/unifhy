@@ -176,8 +176,8 @@ class Component(metaclass=MetaComponent):
                 (i.e. 'dynamic' and/or 'static' and/or 'climatologic').
                 The input data must be compatible in space with
                 *spacedomain*, and compatible in time with *timedomain*
-                for the 'dynamic' type, and with the 'frequency' for
-                the 'climatologic' type (see table below for details).
+                for the 'dynamic' kind, and with the 'frequency' for
+                the 'climatologic' kind (see table below for details).
 
                 ======================  ================================
                 climatologic frequency  length of time dimension in data
@@ -216,6 +216,36 @@ class Component(metaclass=MetaComponent):
                 underlying data can be a scalar or an array (of the same
                 shape as the component's spacedomain).
 
+                *Parameter example:* ::
+
+                    parameters={
+                        'parameter_a': (120, 'm s-1')
+                    }
+
+                *Parameter example:* ::
+
+                    parameters={
+                        'parameter_a': cf.Data(120, 'm s-1')
+                    }
+
+                *Parameter example:* ::
+
+                    parameters={
+                        'parameter_a': ([130, 110, 120], 'm s-1')
+                    }
+
+                *Parameter example:* ::
+
+                    parameters={
+                        'parameter_a': (numpy.array([130, 110, 120]), 'm s-1')
+                    }
+
+                *Parameter example:* ::
+
+                    parameters={
+                        'parameter_a': cf.Data([130, 110, 120], 'm s-1')
+                    }
+
             constants: `dict`, optional
                 The constant values for the `Component` for which
                 adjustment is desired. Each key must correspond to a
@@ -223,6 +253,18 @@ class Component(metaclass=MetaComponent):
                 (with units, where data must be a scalar) or a sequence
                 of 2 items data and units (in this order, where data
                 must be a scalar).
+
+                *Parameter example:* ::
+
+                    constants={
+                        'constant_a': (1000, 'kg m-3')
+                    }
+
+                *Parameter example:* ::
+
+                    constants={
+                        'constant_a': cf.Data(1000, 'kg m-3')
+                    }
 
             records: `dict`, optional
                 The desired records from the `Component`. Each key
