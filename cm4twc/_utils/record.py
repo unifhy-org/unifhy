@@ -46,7 +46,7 @@ def _frequency_to_frequency_tag(freq):
         factor = int(freq.total_seconds())
         adverb = 's'
 
-    return '{}{}'.format(factor, adverb)
+    return f'{factor}{adverb}'
 
 
 def _frequency_to_frequency_str(freq):
@@ -70,7 +70,7 @@ def _frequency_to_frequency_str(freq):
         factor = int(freq.total_seconds())
         units = 'seconds'
 
-    return '{}{}'.format(factor, units)
+    return f'{factor}{units}'
 
 
 class Record(object):
@@ -108,7 +108,7 @@ class RecordStream(object):
     def __init__(self, frequency, writing_slice):
         # check frequency validity
         if not isinstance(frequency, timedelta):
-            raise ValueError('invalid recording frequency {}'.format(frequency))
+            raise ValueError(f"invalid recording frequency {frequency}")
 
         # instantiate attributes to hold temporal information
         self.frequency = frequency
@@ -158,8 +158,9 @@ class RecordStream(object):
             if method in _methods_map:
                 methods_.add(_methods_map[method])
             else:
-                raise ValueError('method {} for record {} aggregation '
-                                 'unknown'.format(method, name))
+                raise ValueError(
+                    f"method {method} for record {name} aggregation unknown"
+                )
         self._methods[name] = methods_
         # map this very stream in the record
         record.streams.append(self)
@@ -168,18 +169,18 @@ class RecordStream(object):
         # check frequency / timedomain resolution compatibility
         if (self.frequency % timedomain.timedelta) != timedelta(seconds=0):
             raise ValueError(
-                'recording frequency ({}) not a multiple of component '
-                'timedelta ({})'.format(self.frequency, timedomain.timedelta)
+                f"recording frequency ({self.frequency}) not a multiple of "
+                f"component timedelta ({timedomain.timedelta})"
             )
         if self.frequency > timedomain.period:
             raise ValueError(
-                'recording frequency ({}) greater than component '
-                'timedelta ({})'.format(self.frequency, timedomain.period)
+                f"recording frequency ({self.frequency}) greater than "
+                f"component timedelta ({timedomain.period})"
             )
         if (timedomain.period % self.frequency) != timedelta(seconds=0):
             raise ValueError(
-                'recording frequency ({}) not a divisor of simulation '
-                'period ({})'.format(self.frequency, timedomain.period)
+                f"recording frequency ({self.frequency}) not a divisor of "
+                f"simulation period ({timedomain.period})"
             )
 
         # determine most suited time slice
@@ -284,10 +285,10 @@ class RecordStream(object):
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
-                a.bounds = axis + '_bounds'
+                a.bounds = f'{axis}_bounds'
                 a[:] = coord.array
                 # (domain coordinate bounds)
-                b = f.createVariable(axis + '_bounds', dtype_float(),
+                b = f.createVariable(f'{axis}_bounds', dtype_float(),
                                      (axis, 'nv'))
                 b.units = coord.units
                 b[:] = coord.bounds.array
@@ -321,8 +322,9 @@ class RecordStream(object):
                     v = f.createVariable(name_method, dtype_float(), dims)
                     v.standard_name = name
                     v.units = record.units
-                    v.cell_methods = "time: {} over {}".format(
-                        method, _frequency_to_frequency_str(self.frequency)
+                    v.cell_methods = (
+                        f"time: {method} over "
+                        f"{_frequency_to_frequency_str(self.frequency)}"
                     )
 
     def update_record_to_stream_file(self):
@@ -405,8 +407,10 @@ class RecordStream(object):
             axes = self._spacedomain.axes
 
             # description
-            f.description = "Dump file created on {}".format(
-                datetime.now().strftime('%Y-%m-%d at %H:%M:%S'))
+            f.description = (
+                f"dump file created on "
+                f"{datetime.now().strftime('%Y-%m-%d at %H:%M:%S')}"
+            )
 
             # dimensions
             f.createDimension('time', None)
@@ -428,10 +432,10 @@ class RecordStream(object):
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
-                a.bounds = axis + '_bounds'
+                a.bounds = f'{axis}_bounds'
                 a[:] = coord.data.array
                 # (domain coordinate bounds)
-                b = f.createVariable(axis + '_bounds', dtype_float(),
+                b = f.createVariable(f'{axis}_bounds', dtype_float(),
                                      (axis, 'nv'))
                 b.units = coord.units
                 b[:] = coord.bounds.data.array
@@ -453,7 +457,7 @@ class RecordStream(object):
                                      fill_value=9.9692099683868690E36)
                 s.standard_name = name
                 s.units = record.units
-                f.createVariable('_'.join([name, 'tracker']), int, ('time',))
+                f.createVariable(f'{name}_tracker', int, ('time',))
 
             # stream-specific variables
             f.createVariable('time_tracker', int, ('time',))
@@ -473,7 +477,7 @@ class RecordStream(object):
 
             for name in self._records:
                 f.variables[name][t, ...] = self._arrays[name]
-                f.variables['_'.join([name, 'tracker'])][t] = (
+                f.variables[f'{name}_tracker'][t] = (
                     self._array_trackers[name]
                 )
             f.variables['time_tracker'][t] = self._time_tracker
@@ -500,8 +504,8 @@ class RecordStream(object):
                     t = cftime.date2index(datetime_, f.variables['time'])
                 except ValueError:
                     raise ValueError(
-                        '{} not available in record stream dump {}'.format(
-                            datetime_, self.dump_file)
+                        f"{datetime_} not available in record stream "
+                        f"dump {self.dump_file}"
                     )
 
             # retrieve each record values
@@ -516,8 +520,7 @@ class RecordStream(object):
                     )
                 except KeyError:
                     raise KeyError(
-                        '{} missing in record stream dump {}'.format(
-                            name, self.dump_file)
+                        f"{name} missing in record stream dump {self.dump_file}"
                     )
             # retrieve stream trackers
             self._time_tracker = f.variables['time_tracker'][t].item()

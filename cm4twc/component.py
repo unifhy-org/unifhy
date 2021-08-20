@@ -100,38 +100,36 @@ class MetaComponent(abc.ABCMeta):
     def __str__(cls):
         info_a = [
             "\n".join(
-                (["    {}:".format(t.replace('_info', ' metadata'))]
-                 + ["        {} [{}]".format(n, info['units'])
-                    for n, info in getattr(cls, '_' + t).items()])
+                ([f"    {t.replace('_info', ' metadata')}:"]
+                 + [f"        {n} [{info['units']}]"
+                    for n, info in getattr(cls, f'_{t}').items()])
             )
             for t in ['inwards_info', 'inputs_info']
-            if getattr(cls, '_' + t)
+            if getattr(cls, f'_{t}')
         ]
 
         info_b = [
             "\n".join(
-                (["    {}:".format(t.replace('_info', ' metadata'))]
-                 + ["        {} [{}]".format(n, info['units'])
-                    for n, info in getattr(cls, '_' + t).items()])
+                ([f"    {t.replace('_info', ' metadata')}:"]
+                 + [f"        {n} [{info['units']}]"
+                    for n, info in getattr(cls, f'_{t}').items()])
             )
             for t in ['parameters_info', 'constants_info', 'states_info',
                       'outwards_info', 'outputs_info']
-            if getattr(cls, '_' + t)
+            if getattr(cls, f'_{t}')
         ]
 
         return "\n".join(
-            ["{}(".format(cls.__name__)]
-            + ["    category: {}".format(getattr(cls, '_category'))]
+            [f"{cls.__name__}("]
+            + [f"    category: {getattr(cls, '_category')}"]
             + info_a
             + [
-                "    requires land sea mask: {}".format(
-                    getattr(cls, '_requires_land_sea_mask')
-                )
+                f"    requires land sea mask: "
+                f"{getattr(cls, '_requires_land_sea_mask')}"
             ]
             + [
-                "    requires flow direction: {}".format(
-                    getattr(cls, '_requires_flow_direction')
-                )
+                f"    requires flow direction: "
+                f"{getattr(cls, '_requires_flow_direction')}"
             ]
             + info_b
             + [")"]
@@ -466,8 +464,10 @@ class Component(metaclass=MetaComponent):
                 if isinstance(methods, (list, tuple, set)):
                     records_[name][delta] = set(methods)
                 else:
-                    raise TypeError('recording methods for {} at {} must be a '
-                                    'sequence of strings'.format(name, delta))
+                    raise TypeError(
+                        f"recording methods for {name} at {delta} "
+                        f"must be a sequence of strings"
+                    )
 
         self._records = records_
 
@@ -491,8 +491,7 @@ class Component(metaclass=MetaComponent):
                 )
             else:
                 raise ValueError(
-                    "{} not available for {} component".format(name,
-                                                               self._category)
+                    f"{name} not available for {self._category} component"
                 )
 
             for delta, methods in frequencies.items():
@@ -510,13 +509,13 @@ class Component(metaclass=MetaComponent):
         # check for units
         for lead in ['inputs', 'parameters', 'constants',
                      'outputs', 'states']:
-            attr = getattr(self, '_{}_info'.format(lead))
+            attr = getattr(self, f'_{lead}_info')
             if attr:
                 for name, info in attr.items():
                     if 'units' not in info:
                         raise RuntimeError(
-                            "units missing for {} in {} component "
-                            "definition".format(name, self._category)
+                            f"units missing for {name} in {self._category} "
+                            f"component definition"
                         )
 
         # check for presence of input kind, if not assume 'dynamic'
@@ -532,22 +531,22 @@ class Component(metaclass=MetaComponent):
                     if info['kind'] not in ['dynamic', 'static',
                                             'climatologic']:
                         raise ValueError(
-                            "invalid type for {} in {} component "
-                            "definition".format(name, self._category)
+                            f"invalid type for {name} in {self._category} "
+                            f"component definition"
                         )
                     if info['kind'] == 'climatologic':
                         if 'frequency' not in info:
                             raise RuntimeError(
-                                "frequency missing for {} in {} component "
-                                "definition".format(name, self._category)
+                                f"frequency missing for {name} in "
+                                f"{self._category} component definition"
                             )
                         freq = info['frequency']
                         if not isinstance(freq, int):
                             if (isinstance(freq, str) and freq
                                     not in ['seasonal', 'monthly', 'daily']):
                                 raise TypeError(
-                                    "invalid frequency for {} in {} component "
-                                    "definition".format(name, self._category)
+                                    f"invalid frequency for {name} in "
+                                    f"{self._category} component definition"
                                 )
 
         # check for presence of constant default_value
@@ -555,8 +554,8 @@ class Component(metaclass=MetaComponent):
             for name, info in self._constants_info.items():
                 if 'default_value' not in info:
                     raise RuntimeError(
-                        "default_value missing for constant {} in {} "
-                        "component definition".format(name, self._category)
+                        f"default_value missing for constant {name} in "
+                        f"{self._category} component definition"
                     )
 
         # check for presence of state divisions, if not assume scalar
@@ -576,25 +575,24 @@ class Component(metaclass=MetaComponent):
                         d = [*d]
                     else:
                         raise TypeError(
-                            "invalid divisions for {} in {} component "
-                            "definition".format(name, self._category)
+                            f"invalid divisions for {name} in "
+                            f"{self._category} component definition"
                         )
 
                 for v in d:
                     # check it has a valid type
                     if not isinstance(v, (Number, str)):
                         raise TypeError(
-                            "invalid divisions for {} in {} component "
-                            "definition".format(name, self._category)
+                            f"invalid divisions for {name} in "
+                            f"{self._category} component definition"
                         )
                     # check that, if string used, constant exists
                     if isinstance(v, str):
                         if v not in self._constants_info:
                             raise ValueError(
-                                "no constant {} to use for divisions of state "
-                                "{} in {} component definition".format(
-                                    v, name, self._category
-                                )
+                                f"no constant {v} to use for divisions of "
+                                f"state {name} in {self._category} component "
+                                f"definition"
                             )
 
                 info['divisions'] = d
@@ -605,8 +603,7 @@ class Component(metaclass=MetaComponent):
         """
         if not isinstance(timedomain, TimeDomain):
             raise TypeError(
-                "not an instance of {} for {}".format(TimeDomain.__name__,
-                                                      self._category)
+                f"not an instance of {TimeDomain.__name__} for {self._category}"
             )
 
     def _check_spacedomain(self, spacedomain):
@@ -616,32 +613,27 @@ class Component(metaclass=MetaComponent):
         """
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError(
-                "not an instance of {} for {}".format(SpaceDomain.__name__,
-                                                      self._category)
+                f"not an instance of {SpaceDomain.__name__} for {self._category}"
             )
 
         if not isinstance(spacedomain, Grid):
             raise NotImplementedError(
-                "only {} currently supported by framework "
-                "for spacedomain".format(Grid.__name__)
+                f"only {Grid.__name__} currently supported by framework "
+                f"for spacedomain"
             )
 
         if self._requires_land_sea_mask:
             if spacedomain.land_sea_mask is None:
                 raise RuntimeError(
-                    "'land_sea_mask' must be set in {} of {} "
-                    "component '{}'".format(SpaceDomain.__name__,
-                                            self._category,
-                                            self.__class__.__name__)
+                    f"'land_sea_mask' must be set in {SpaceDomain.__name__} "
+                    f"of {self._category} component '{self.__class__.__name__}'"
                 )
 
         if self._requires_flow_direction:
             if spacedomain.flow_direction is None:
                 raise RuntimeError(
-                    "'flow_direction' must be set in {} of {} "
-                    "component '{}'".format(SpaceDomain.__name__,
-                                            self._category,
-                                            self.__class__.__name__)
+                    f"'flow_direction' must be set in {SpaceDomain.__name__} "
+                    f"of {self._category} component '{self.__class__.__name__}'"
                 )
 
     def _check_dataset(self, dataset):
@@ -651,10 +643,9 @@ class Component(metaclass=MetaComponent):
         if not isinstance(dataset, DataSet):
 
             raise TypeError(
-                "object given for dataset argument of {} component '{}' "
-                "not of type {}".format(
-                    self._category, self.__class__.__name__, DataSet.__name__
-                )
+                f"object given for dataset argument of {self._category} "
+                f"component '{self.__class__.__name__}' not of type "
+                f"{DataSet.__name__}"
             )
 
         # check data units compatibility with component
@@ -662,27 +653,23 @@ class Component(metaclass=MetaComponent):
             # check that all input data are available in DataSet
             if data_name not in dataset:
                 raise KeyError(
-                    "no data '{}' available in {} for {} component '{}'".format(
-                        data_name, DataSet.__name__, self._category,
-                        self.__class__.__name__)
+                    f"no data '{data_name}' available in {DataSet.__name__} "
+                    f"for {self._category} component '{self.__class__.__name__}'"
                 )
             # check that input data units are compliant with component units
             if hasattr(dataset[data_name].field, 'units'):
                 if not Units(data_info['units']).equals(
                         Units(dataset[data_name].field.units)):
                     raise ValueError(
-                        "units of variable '{}' in {} {} not equal to units "
-                        "required by {} component '{}': {} required".format(
-                            data_name, self._category, DataSet.__name__,
-                            self._category, self.__class__.__name__,
-                            data_info['units']
-                        )
+                        f"units of variable '{data_name}' in {DataSet.__name__} "
+                        f"not equal to units required by {self._category} "
+                        f"component '{self.__class__.__name__}': "
+                        f"{data_info['units']} required"
                     )
             else:
                 raise AttributeError(
-                    "variable '{}' in {} for {} component missing 'units' "
-                    "attribute".format(data_name, DataSet.__name__,
-                                       self._category)
+                    f"variable '{data_name}' in {DataSet.__name__} for "
+                    f"{self._category} component missing 'units' attribute"
                 )
 
     def _check_dataset_space(self, dataset, spacedomain):
@@ -696,20 +683,18 @@ class Component(metaclass=MetaComponent):
                 )
             except RuntimeError:
                 raise ValueError(
-                    "spacedomain of data '{}' not compatible with "
-                    "spacedomain of {} component '{}'".format(
-                        data_name, self._category, self.__class__.__name__
-                    )
+                    f"spacedomain of data '{data_name}' not compatible with "
+                    f"spacedomain of {self._category} component "
+                    f"'{self.__class__.__name__}'"
                 )
 
     def _check_dataset_time(self, timedomain):
         # check time compatibility for 'dynamic' input data
         for data_name in self._inputs_info:
             error = ValueError(
-                "timedomain of data '{}' not compatible with "
-                "timedomain of {} component '{}'".format(
-                    data_name, self._category, self.__class__.__name__
-                )
+                f"timedomain of data '{data_name}' not compatible with "
+                f"timedomain of {self._category} component "
+                f"'{self.__class__.__name__}'"
             )
 
             self.datasubset[data_name] = self._check_time(
@@ -774,7 +759,7 @@ class Component(metaclass=MetaComponent):
                 # check presence of value for parameter
                 if name not in parameters:
                     raise RuntimeError(
-                        "value missing for parameter {}".format(name)
+                        f"value missing for parameter {name}"
                     )
                 parameter = parameters[name]
 
@@ -786,7 +771,7 @@ class Component(metaclass=MetaComponent):
                         parameter = spacedomain.subset_and_compare(parameter)
                     except RuntimeError:
                         raise RuntimeError(
-                            "parameter {} spatially incompatible".format(name)
+                            f"parameter {name} spatially incompatible"
                         )
                     parameter = parameter.data
                 elif isinstance(parameter, (tuple, list)) and len(parameter) == 2:
@@ -794,23 +779,23 @@ class Component(metaclass=MetaComponent):
                         parameter = cf.Data(*parameter)
                     except ValueError:
                         raise ValueError(
-                            "parameter {} not convertible to cf.Data".format(name)
+                            f"parameter {name} not convertible to cf.Data"
                         )
                 else:
                     raise TypeError(
-                        "invalid type for parameter {}".format(name)
+                        f"invalid type for parameter {name}"
                     )
 
                 # check parameter units
                 if not parameter.get_units(False):
                     raise ValueError(
-                        "missing units for parameter {}".format(name)
+                        f"missing units for parameter {name}"
                     )
                 if not parameter.Units.equals(
                         Units(self._parameters_info[name]['units'])
                 ):
                     raise ValueError(
-                        "invalid units for parameter {}".format(name)
+                        f"invalid units for parameter {name}"
                     )
 
                 # check parameter shape (and reshape if scalar-like)
@@ -822,7 +807,7 @@ class Component(metaclass=MetaComponent):
                         p = parameter.array.item()
                     except ValueError:
                         raise ValueError(
-                            "incompatible shape for parameter {}".format(name)
+                            f"incompatible shape for parameter {name}"
                         )
                     # assign scalar to newly created array of spacedomain shape
                     parameter = np.zeros(spacedomain.shape, dtype_float())
@@ -857,23 +842,23 @@ class Component(metaclass=MetaComponent):
                             constant = cf.Data(*constant)
                         except ValueError:
                             raise ValueError(
-                                "constant {} not convertible to cf.Data".format(name)
+                                f"constant {name} not convertible to cf.Data"
                             )
                     else:
                         raise TypeError(
-                            "invalid type for constant {}".format(name)
+                            f"invalid type for constant {name}"
                         )
 
                     # check parameter units
                     if not constant.get_units(False):
                         raise ValueError(
-                            "missing units for constant {}".format(name)
+                            f"missing units for constant {name}"
                         )
                     if not constant.Units.equals(
                             Units(self._constants_info[name]['units'])
                     ):
                         raise ValueError(
-                            "invalid units for constant {}".format(name)
+                            f"invalid units for constant {name}"
                         )
 
                     # assign parameter value in place of cf.Data
@@ -881,7 +866,7 @@ class Component(metaclass=MetaComponent):
                         constants_[name] = constant.array.item()
                     except ValueError:
                         raise ValueError(
-                            "constant {} not a scalar".format(name)
+                            f"constant {name} not a scalar"
                         )
 
         return constants_
@@ -905,8 +890,7 @@ class Component(metaclass=MetaComponent):
                 if new_v <= 0:
                     # cannot have negative dimension for array, also rule out 0
                     raise ValueError(
-                        '{} divisions dimension must be greater '
-                        'than zero'.format(s)
+                        f"{s} divisions dimension must be greater than zero"
                     )
                 elif new_v > 1:
                     # do not add dimension if it is 1
@@ -939,7 +923,7 @@ class Component(metaclass=MetaComponent):
         if cfg.get('parameters'):
             for name, info in cfg['parameters'].items():
                 error = ValueError(
-                    'invalid information in YAML for parameter {}'.format(name)
+                    f"invalid information in YAML for parameter {name}"
                 )
                 if isinstance(info, (tuple, list)):
                     parameters[name] = cf.Data(*info)
@@ -1035,8 +1019,10 @@ class Component(metaclass=MetaComponent):
     def get_spin_up_timedomain(self, start, end):
         if ((end - start)
                 % self.timedomain.timedelta).total_seconds() != 0:
-            raise RuntimeError("spin up start-end incompatible with {} "
-                               "component timedelta".format(self._category))
+            raise RuntimeError(
+                f"spin up start-end incompatible with {self._category} "
+                f"component timedelta"
+            )
 
         timedomain = TimeDomain.from_start_end_step(
             start, end, self.timedomain.timedelta,
@@ -1047,19 +1033,19 @@ class Component(metaclass=MetaComponent):
         return timedomain
 
     def __str__(self):
-        shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
+        shape = ', '.join([f"{ax}: {ln}" for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
 
-        records = ["        {}: {} {}".format(o, d, m)
+        records = [f"        {o}: {d} {m}"
                    for o, f in self.records.items()
                    for d, m in f.items()] if self.records else []
 
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)]
-            + ["    category: {}".format(self._category)]
-            + ["    saving directory: {}".format(self.saving_directory)]
-            + ["    timedomain: period: {}".format(self.timedomain.period)]
-            + ["    spacedomain: shape: ({})".format(shape)]
+            [f"{self.__class__.__name__}("]
+            + [f"    category: {self._category}"]
+            + [f"    saving directory: {self.saving_directory}"]
+            + [f"    timedomain: period: {self.timedomain.period}"]
+            + [f"    spacedomain: shape: ({shape})"]
             + (["    records:"] if records else []) + records
             + [")"]
         )
@@ -1179,8 +1165,8 @@ class Component(metaclass=MetaComponent):
                 o = self._states_info[s].get('order', array_order())
                 self.states[s] = State(states[s], order=o)
             else:
-                raise KeyError("initial conditions for {} component state "
-                               "'{}' not in dump".format(self._category, s))
+                raise KeyError(f"initial conditions for {self._category} "
+                               f"component state '{s}' not in dump")
         self.initialised_states = True
 
         return at
@@ -1286,20 +1272,23 @@ class Component(metaclass=MetaComponent):
     @abc.abstractmethod
     def initialise(self, **kwargs):
         raise NotImplementedError(
-            "{} class '{}' missing an 'initialise' method".format(
-                self._category, self.__class__.__name__))
+            f"{self._category} class '{self.__class__.__name__}' "
+            f"missing an 'initialise' method"
+        )
 
     @abc.abstractmethod
     def run(self, **kwargs):
         raise NotImplementedError(
-            "{} class '{}' missing a 'run' method".format(
-                self._category, self.__class__.__name__))
+            f"{self._category} class '{self.__class__.__name__}' "
+            f"missing a 'run' method"
+        )
 
     @abc.abstractmethod
     def finalise(self, **kwargs):
         raise NotImplementedError(
-            "{} class '{}' missing a 'finalise' method".format(
-                self._category, self.__class__.__name__))
+            f"{self._category} class '{self.__class__.__name__}' "
+            f"missing a 'finalise' method"
+        )
 
 
 class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
@@ -1504,14 +1493,14 @@ class DataComponent(Component):
                                             dataset, io_slice=io_slice)
 
     def __str__(self):
-        shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
+        shape = ', '.join([f"{ax}: {ln}" for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)]
-            + ["    category: {}".format(self._category)]
-            + ["    timedomain: period: {}".format(self.timedomain.period)]
-            + ["    spacedomain: shape: ({})".format(shape)]
-            + ["    dataset: {} variable(s)".format(len(self.dataset))]
+            [f"{self.__class__.__name__}("]
+            + [f"    category: {self._category}"]
+            + [f"    timedomain: period: {self.timedomain.period}"]
+            + [f"    spacedomain: shape: ({shape})"]
+            + [f"    dataset: {len(self.dataset)} variable(s)"]
             + [")"]
         )
 
@@ -1613,13 +1602,13 @@ class NullComponent(Component):
         super(NullComponent, self).__init__(None, timedomain, spacedomain)
 
     def __str__(self):
-        shape = ', '.join(['{}: {}'.format(ax, ln) for ax, ln in
+        shape = ', '.join([f"{ax}: {ln}" for ax, ln in
                            zip(self.spacedomain.axes, self.spaceshape)])
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)]
-            + ["    category: {}".format(self._category)]
-            + ["    timedomain: period: {}".format(self.timedomain.period)]
-            + ["    spacedomain: shape: ({})".format(shape)]
+            [f"{self.__class__.__name__}("]
+            + [f"    category: {self._category}"]
+            + [f"    timedomain: period: {self.timedomain.period}"]
+            + [f"    spacedomain: shape: ({shape})"]
             + [")"]
         )
 

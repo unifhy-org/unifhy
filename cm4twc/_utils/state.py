@@ -87,8 +87,10 @@ def create_states_dump(filepath, states_info, solver_history,
         axes = spacedomain.axes
 
         # description
-        f.description = "Dump file created on {}".format(
-            datetime.now().strftime('%Y-%m-%d at %H:%M:%S'))
+        f.description = (
+            f"dump file created on "
+            f"{datetime.now().strftime('%Y-%m-%d at %H:%M:%S')}"
+        )
 
         # dimensions
         f.createDimension('time', None)
@@ -110,10 +112,10 @@ def create_states_dump(filepath, states_info, solver_history,
             a = f.createVariable(axis, dtype_float(), (axis,))
             a.standard_name = coord.standard_name
             a.units = coord.units
-            a.bounds = axis + '_bounds'
+            a.bounds = f'{axis}_bounds'
             a[:] = coord.data.array
             # (domain coordinate bounds)
-            b = f.createVariable(axis + '_bounds', dtype_float(), (axis, 'nv'))
+            b = f.createVariable(f'{axis}_bounds', dtype_float(), (axis, 'nv'))
             b.units = coord.units
             b[:] = coord.bounds.data.array
 
@@ -123,7 +125,7 @@ def create_states_dump(filepath, states_info, solver_history,
             if d:
                 dims = []
                 for n, v in enumerate(d):
-                    dim_name = '_'.join([var, 'divisions', str(n + 1)])
+                    dim_name = f'{var}_divisions_{str(n + 1)}'
                     f.createDimension(dim_name, v)
                     dims.append(dim_name)
                 dims = ('time', 'history', *axes, *dims)
@@ -171,7 +173,8 @@ def load_states_dump(filepath, datetime_, states_info):
                 t = cftime.date2index(datetime_, f.variables['time'])
             except ValueError:
                 raise ValueError(
-                    '{} not available in dump {}'.format(datetime_, filepath))
+                    f"{datetime_} not available in dump {filepath}"
+                )
 
         # try to get each of the states, if not in file, carry on anyway
         for state in states_info:

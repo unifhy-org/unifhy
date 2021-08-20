@@ -81,8 +81,10 @@ class DataSet(MutableMapping):
         if isinstance(value, Variable):
             self._variables[key] = value
         else:
-            raise TypeError("{} can only contain instances of {}".format(
-                self.__class__.__name__, Variable.__name__))
+            raise TypeError(
+                f"{self.__class__.__name__} can only contain "
+                f"instances of {Variable.__name__}"
+            )
 
     def __delitem__(self, key):
         del self._variables[key]
@@ -96,7 +98,7 @@ class DataSet(MutableMapping):
     def __str__(self):
         return "\n".join(
             ["DataSet{"] +
-            ["    {!r}".format(self._variables[v]).replace(
+            [f"    {self._variables[v]!r}".replace(
                 '<CF Field: ', '').replace('>', '').replace(
                 self._variables[v].identity(), v)
              for v in sorted(self._variables)] +
@@ -184,10 +186,9 @@ class DataSet(MutableMapping):
                 if hasattr(field, attrib):
                     field_names.append(getattr(field, attrib))
                     if name_mapping:
-                        if ('{}={}'.format(attrib, getattr(field, attrib))
-                                in name_mapping):
+                        if f"{attrib}={getattr(field, attrib)}" in name_mapping:
                             name_in_mapping = name_mapping[
-                                '{}={}'.format(attrib, getattr(field, attrib))
+                                f"{attrib}={getattr(field, attrib)}"
                             ]
                         elif getattr(field, attrib) in name_mapping:
                             name_in_mapping = name_mapping[
@@ -200,8 +201,8 @@ class DataSet(MutableMapping):
                     key = field_names[-1]
                 except IndexError:
                     raise RuntimeError(
-                        'variable {} missing standard_name or long_name '
-                        'attribute'.format(field.nc_get_variable())
+                        f"variable {field.nc_get_variable()} missing "
+                        f"standard_name or long_name attribute"
                     )
             else:
                 # use the renaming requested

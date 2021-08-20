@@ -336,8 +336,10 @@ class Exchanger(object):
 def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):
     with Dataset(filepath, 'w') as f:
         # description
-        f.description = "Dump file created on {}".format(
-            datetime.now().strftime('%Y-%m-%d at %H:%M:%S'))
+        f.description = (
+            f"dump file created on "
+            f"{datetime.now().strftime('%Y-%m-%d at %H:%M:%S')}"
+        )
 
         # common to all groups
         # dimensions
@@ -415,7 +417,8 @@ def load_transfers_dump(filepath, datetime_, transfers_info):
                 t = cftime.date2index(datetime_, f.variables['time'])
             except ValueError:
                 raise ValueError(
-                    '{} not available in dump {}'.format(datetime_, filepath))
+                    f"{datetime_} not available in dump {filepath}"
+                )
 
         # try to get each of the transfers, if not in file, carry on anyway
         for trf in transfers_info:

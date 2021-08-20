@@ -42,7 +42,7 @@ class TimeDomain(object):
     """
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
     _calendar = 'gregorian'
-    _units = 'seconds since {}'.format(_epoch.strftime("%Y-%m-%d %H:%M:%SZ"))
+    _units = f"seconds since {_epoch.strftime('%Y-%m-%d %H:%M:%SZ')}"
     _Units = cfunits.Units(_units, calendar=_calendar)
     _timestep_span = (0, 1)
 
@@ -184,7 +184,8 @@ class TimeDomain(object):
         # check that calendar is a classic one for CF-convention
         if calendar.lower() not in _supported_calendar_mapping:
             raise ValueError(
-                "calendar '{}' is not supported".format(calendar))
+                f"calendar '{calendar}' is not supported"
+            )
 
         # get a cf.Units instance from units and calendar
         units = cfunits.Units(units, calendar=calendar)
@@ -210,13 +211,13 @@ class TimeDomain(object):
         timestamps = np.asarray(timestamps)
         if not timestamps.ndim == 1:
             raise ValueError(
-                "timestamps array provided is not uni-dimensional".format(
-                    self.__class__.__name__))
+                "timestamps array provided is not uni-dimensional"
+            )
 
         if not np.issubdtype(timestamps.dtype, np.number):
             raise TypeError(
-                "items in timestamps array must be numerical.".format(
-                    self.__class__.__name__))
+                "items in timestamps array must be numerical"
+            )
 
         # check that the timestamps is regularly spaced
         self._check_dimension_regularity(timestamps)
@@ -241,23 +242,19 @@ class TimeDomain(object):
     def _extract_time_from_field(cls, field):
         # check construct
         if not field.has_construct('time'):
-            raise RuntimeError("no 'time' construct found in field".format(
-                cls.__name__))
+            raise RuntimeError("no 'time' construct found in field")
         t = field.construct('time')
         cls._check_dimension_regularity(t.array)
         if not field.construct('time').has_bounds():
-            raise RuntimeError("no 'time' bounds found in field".format(
-                cls.__name__))
+            raise RuntimeError("no 'time' bounds found in field")
         t_bnds = field.construct('time').bounds
         cls._check_dimension_regularity(t_bnds.array[:, 0])
         cls._check_dimension_regularity(t_bnds.array[:, 1])
 
         if not t.has_property('units'):
-            raise RuntimeError("no 'units' property in field".format(
-                cls.__name__))
+            raise RuntimeError("no 'units' property in field")
         if not t.has_property('calendar'):
-            raise RuntimeError("no 'calendar' property in field".format(
-                cls.__name__))
+            raise RuntimeError("no 'calendar' property in field")
 
         return {
             'start': t_bnds.datetime_array[0, 0],
@@ -270,12 +267,12 @@ class TimeDomain(object):
     def __str__(self):
         return "\n".join(
             ["TimeDomain("]
-            + ["    time {}: {}".format(self.time.shape, self.time)]
-            + ["    bounds {}: {}".format(self.bounds.shape, self.bounds)]
-            + ["    calendar: {}".format(self.calendar)]
-            + ["    units: {}".format(self.units)]
-            + ["    period: {}".format(self.period)]
-            + ["    timedelta: {}".format(self.timedelta)]
+            + [f"    time {self.time.shape}: {self.time}"]
+            + [f"    bounds {self.bounds.shape}: {self.bounds}"]
+            + [f"    calendar: {self.calendar}"]
+            + [f"    units: {self.units}"]
+            + [f"    period: {self.period}"]
+            + [f"    timedelta: {self.timedelta}"]
             + [")"]
         )
 
@@ -290,8 +287,10 @@ class TimeDomain(object):
         if isinstance(other, self.__class__):
             return self.is_time_equal_to(other._f)
         else:
-            raise TypeError("{} cannot be compared to {}".format(
-                self.__class__.__name__, other.__class__.__name__))
+            raise TypeError(
+                f"{self.__class__.__name__} cannot be compared "
+                f"to {other.__class__.__name__}"
+            )
 
     def __ne__(self, other):
         """Compare inequality between the TimeDomain and another
@@ -322,16 +321,17 @@ class TimeDomain(object):
         # check that the field has a time construct
         if field.dim('time', default=None) is None:
             return RuntimeError(
-                "{} cannot be compared to {} because no time construct".format(
-                    field.__class__.__name__, self.__class__.__name__))
+                f"{field.__class__.__name__} cannot be compared to "
+                f"{self.__class__.__name__} because no time construct"
+            )
 
         # check that field calendar is a classic one for CF-convention
         if hasattr(field.dim('time'), 'calendar'):
             if (field.dim('time').calendar.lower()
                     not in _supported_calendar_mapping):
                 raise ValueError(
-                    "{} calendar '{}' is not supported".format(
-                        field.__class__.__name__, field.dim('time').calendar)
+                    f"{field.__class__.__name__} calendar "
+                    f"'{field.dim('time').calendar}' is not supported"
                 )
         else:
             field.dim('time').calendar = 'gregorian'
@@ -347,9 +347,9 @@ class TimeDomain(object):
         # check that the two instances have the same calendar
         if not self_calendar == field_calendar:
             raise ValueError(
-                "{} cannot be compared to {} instance due to different "
-                "calendars".format(field.__class__.__name__,
-                                   self.__class__.__name__))
+                f"{field.__class__.__name__} cannot be compared to "
+                f"{self.__class__.__name__} due to different calendars"
+            )
 
         # check that the two instances have the same time series length
         leading_size = (_trailing_truncation_idx if _leading_truncation_idx
@@ -405,13 +405,14 @@ class TimeDomain(object):
 
             return start.array.item() and end.array.item()
         else:
-            raise TypeError("{} instance cannot be compared to {} "
-                            "instance".format(self.__class__.__name__,
-                                              timedomain.__class__.__name__))
+            raise TypeError(
+                f"{self.__class__.__name__} instance cannot be compared "
+                f"to {timedomain.__class__.__name__}"
+            )
 
     def subset_and_compare(self, field):
         error = RuntimeError(
-            'field not compatible with {}'.format(self.__class__.__name__)
+            f"field not compatible with {self.__class__.__name__}"
         )
 
         # try to subset in time
@@ -525,8 +526,9 @@ class TimeDomain(object):
         # check that datetimes sequence contains datetime objects
         if (not np.issubdtype(datetimes.dtype, np.dtype(datetime)) and
                 not np.issubdtype(datetimes.dtype, np.dtype('datetime64'))):
-            raise TypeError("datetime sequence given does not contain "
-                            "datetime objects")
+            raise TypeError(
+                "datetime sequence given does not contain datetime objects"
+            )
         # set units to default if not given
         if units is None:
             units = cls._units
@@ -660,11 +662,13 @@ class TimeDomain(object):
 
         """
         if not isinstance(start, (datetime, cftime.datetime)):
-            raise TypeError("start date must be of type datetime.datetime "
-                            "or cftime.datetime")
+            raise TypeError(
+                "start date must be of type datetime.datetime or cftime.datetime"
+            )
         if not isinstance(end, (datetime, cftime.datetime)):
-            raise TypeError("end date must be of type datetime.datetime "
-                            "or cftime.datetime")
+            raise TypeError(
+                "end date must be of type datetime.datetime or cftime.datetime"
+            )
         if not isinstance(step, timedelta):
             raise TypeError("step must be of type datetime.timedelta")
 
@@ -758,7 +762,9 @@ class TimeDomain(object):
     def from_config(cls, cfg):
         for required_key in ['start', 'end', 'step']:
             if required_key not in cfg:
-                raise KeyError("no {} property of time found in configuration")
+                raise KeyError(
+                    f"no {required_key} property of time found in configuration"
+                )
         return cls.from_start_end_step(
             start=datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S'),
             end=datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S'),

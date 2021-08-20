@@ -32,10 +32,9 @@ class Clock(object):
             )
             if not steps[category] % supermesh_step == 0:
                 raise ValueError(
-                    "timestep of {} component ({}s) not a multiple "
-                    "integer of timestep of fastest component ({}s).".format(
-                        category, steps[category], supermesh_step
-                    )
+                    f"timestep of {category} component ({steps[category]}s) "
+                    f"not a multiple integer of timestep of fastest "
+                    f"component ({supermesh_step}s)."
                 )
 
         # get boolean arrays (switches) to determine when to run a given
@@ -109,11 +108,9 @@ class Clock(object):
         dumping_step = dumping_frequency.total_seconds()
         if not dumping_step % self.min_dumping_delta.total_seconds() == 0:
             raise ValueError(
-                "dumping frequency ({}s) is not a multiple integer "
-                "of smallest common multiple across components' "
-                "timedomains ({}s).".format(
-                    dumping_step, self.min_dumping_delta.total_seconds()
-                )
+                f"dumping frequency ({dumping_step}s) is not a multiple integer "
+                f"of smallest common multiple across components' "
+                f"timedomains ({self.min_dumping_delta.total_seconds()}s)."
             )
 
         # get boolean arrays (switches) to determine when to dump the

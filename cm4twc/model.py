@@ -95,31 +95,28 @@ class Model(object):
         elif isinstance(component, (DataComponent, NullComponent)):
             if component.category != expected_type.category:
                 raise TypeError(
-                    "'{}' component given must be substituting type {}".format(
-                        expected_type.category,
-                        expected_type.__name__))
+                    f"'{expected_type.category}' component given must be "
+                    f"substituting type {expected_type.__name__}"
+                )
             else:
                 return component
         else:
             raise TypeError(
-                "'{}' component given must either be of type {}, {}, "
-                "or {}".format(
-                    expected_type.category, expected_type.__name__,
-                    DataComponent.__name__, NullComponent.__name__))
+                f"'{expected_type.category}' component given must either be "
+                f"of type {expected_type.__name__}, {DataComponent.__name__}, "
+                f"or {NullComponent.__name__}"
+            )
 
     def __str__(self):
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)] +
-            ["    identifier: {}".format(self._identifier)] +
-            ["    config directory: {}".format(self.config_directory)] +
-            ["    saving directory: {}".format(self.saving_directory)] +
-            ["    surfacelayer: {}".format(
-                self.surfacelayer.__class__.__name__)] +
-            ["    subsurface: {}".format(
-                self.subsurface.__class__.__name__)] +
-            ["    openwater: {}".format(
-                self.openwater.__class__.__name__)] +
-            [")"]
+            [f"{self.__class__.__name__}("]
+            + [f"    identifier: {self._identifier}"]
+            + [f"    config directory: {self.config_directory}"]
+            + [f"    saving directory: {self.saving_directory}"]
+            + [f"    surfacelayer: {self.surfacelayer.__class__.__name__}"]
+            + [f"    subsurface: {self.subsurface.__class__.__name__}"]
+            + [f"    openwater: {self.openwater.__class__.__name__}"]
+            + [")"]
         )
 
     @classmethod
@@ -247,8 +244,8 @@ class Model(object):
         self._set_up_yaml_dumper()
 
         # dump configuration in yaml file
-        with open(sep.join([self.config_directory,
-                            '.'.join([self._identifier, 'yml'])]), 'w') as f:
+        with open(sep.join([self.config_directory, f'{self._identifier}.yml']),
+                  'w') as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def initialise_transfers_from_dump(self, dump_file, at=None):
@@ -308,8 +305,10 @@ class Model(object):
                 else:
                     self.exchanger.transfers[tr]['slices'][-1] = transfers[tr]
             else:
-                raise KeyError("initial conditions for exchanger transfer "
-                               "'{}' not in dump".format(tr))
+                raise KeyError(
+                    f"initial conditions for exchanger transfer '{tr}' "
+                    f"not in dump"
+                )
 
         return at
 
@@ -379,7 +378,7 @@ class Model(object):
         }
         self._set_up_yaml_dumper()
         with open(sep.join([self.config_directory,
-                            '.'.join([self._identifier, 'spin_up', 'yml'])]),
+                            f"{self._identifier}.spin_up.yml"]),
                   'w') as f:
             yaml.dump(spin_up_config, f, yaml.Dumper, sort_keys=False)
 
@@ -395,7 +394,7 @@ class Model(object):
 
         # start the spin up run(s)
         for cycle in range(cycles):
-            tag = 'spinup{}'.format(_cycle_origin_no + cycle + 1)
+            tag = f'spinup{_cycle_origin_no + cycle + 1}'
             self._initialise(tag, overwrite)
             self._run(tag, dumping_frequency, overwrite)
             self._finalise()
@@ -438,7 +437,7 @@ class Model(object):
         }
         self._set_up_yaml_dumper()
         with open(sep.join([self.config_directory,
-                            '.'.join([self._identifier, 'simulate', 'yml'])]),
+                            f"{self._identifier}.simulate.yml"]),
                   'w') as f:
             yaml.dump(simulate_config, f, yaml.Dumper, sort_keys=False)
 
@@ -561,13 +560,13 @@ class Model(object):
             method = 'spin_up'
             res = re.compile(r"spinup[0-9]+").match(tag)
             if not res or ((res.end() - res.start()) != len(tag)):
-                raise ValueError("tag '{}' for resume is invalid".format(tag))
+                raise ValueError(f"tag '{tag}' for resume is invalid")
         else:
-            raise ValueError("tag '{}' for resume is invalid".format(tag))
+            raise ValueError(f"tag '{tag}' for resume is invalid")
 
         # collect simulate arguments stored in yaml file
         yaml_sig = sep.join([self.config_directory,
-                             '.'.join([self._identifier, '*', 'yml'])])
+                             f"{self._identifier}.*.yml"])
         self._set_up_yaml_loader()
         try:
             with open(yaml_sig.replace('*', method), 'r') as f:
@@ -674,8 +673,8 @@ class Model(object):
                               self.openwater]:
                 if at == component.timedomain.bounds.datetime_array[-1, -1]:
                     raise RuntimeError(
-                        "{} component run already completed successfully, "
-                        "cannot resume".format(component.category)
+                        f"{component.category} component run already completed "
+                        f"successfully, cannot resume"
                     )
 
                 remaining_td = TimeDomain.from_start_end_step(

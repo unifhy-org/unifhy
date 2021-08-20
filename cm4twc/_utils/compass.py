@@ -15,4 +15,5 @@ class Compass(object):
             if not spacedomains[category].spans_same_region_as(
                     spacedomains[self.categories[0]]):
                 raise NotImplementedError(
-                    "components' spacedomains are not identical")
+                    "components' spacedomains are not identical"
+                )

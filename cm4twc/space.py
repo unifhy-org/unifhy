@@ -318,7 +318,7 @@ class Grid(SpaceDomain):
     @land_sea_mask.setter
     def land_sea_mask(self, mask):
         error = RuntimeError(
-            "mask shape incompatible with {}".format(self.__class__.__name__)
+            f"mask shape incompatible with {self.__class__.__name__}"
         )
 
         # check type
@@ -491,8 +491,8 @@ class Grid(SpaceDomain):
     def flow_direction(self, directions):
         error_valid = RuntimeError("flow direction contains invalid data")
         error_dim = RuntimeError(
-            "flow direction dimensions not compatible with {}".format(
-                self.__class__.__name__)
+            f"flow direction dimensions not compatible "
+            f"with {self.__class__.__name__}"
         )
 
         # check type
@@ -852,8 +852,8 @@ class Grid(SpaceDomain):
         # check for values outside of limits
         if limits is not None:
             if np.amin(dimension) < limits[0] or np.amax(dimension) > limits[1]:
-                raise RuntimeError("{} dimension beyond limits "
-                                   "[{}, {}]".format(name, *limits))
+                raise RuntimeError(f"{name} dimension beyond limits "
+                                   f"[{limits[0]}, {limits[1]}]")
 
         # check for duplicated coordinates, meaning domain overlap
         # for cyclic dimensions, but should not happen anyway so check
@@ -862,8 +862,7 @@ class Grid(SpaceDomain):
             sort_dim = np.sort(dimension)
             dup_dim = sort_dim[1:][sort_dim[1:] == sort_dim[:-1]]
             if dup_dim.size > 0:
-                raise RuntimeError("duplicates in {} dimension: "
-                                   "{}".format(name, dup_dim))
+                raise RuntimeError(f"duplicates in {name} dimension: {dup_dim}")
 
     @staticmethod
     def _check_dimension_direction(dimension, name, limits, wrap_around):
@@ -890,8 +889,7 @@ class Grid(SpaceDomain):
             ...
         RuntimeError: test dimension not directed positively
         """
-        error = RuntimeError("{} dimension not directed "
-                             "positively".format(name))
+        error = RuntimeError(f"{name} dimension not directed positively")
 
         if dimension.ndim > 0:
             space_diff = np.diff(dimension)
@@ -959,7 +957,8 @@ class Grid(SpaceDomain):
         if not np.isclose(np.amin(space_diff), np.amax(space_diff),
                           rtol(), atol()):
             raise RuntimeError(
-                "{} space gap not constant across region".format(name))
+                f"{name} space gap not constant across region"
+            )
 
     @staticmethod
     def _check_dimension_bounds_limits(bounds, name, limits):
@@ -990,8 +989,8 @@ class Grid(SpaceDomain):
         """
         if limits is not None:
             if np.amin(bounds) < limits[0] or np.amax(bounds) > limits[1]:
-                raise RuntimeError("{} dimension bounds beyond limits "
-                                   "[{}, {}]".format(name, *limits))
+                raise RuntimeError(f"{name} dimension bounds beyond limits "
+                                   f"[{limits[0]}, {limits[1]}]")
 
     @staticmethod
     def _check_dimension_bounds_direction(bounds, name, limits, wrap_around):
@@ -1066,8 +1065,7 @@ class Grid(SpaceDomain):
         if wrap_around:
             bnds[np.isclose(bnds, limits[0], rtol(), atol())] = limits[1]
 
-        error = RuntimeError("{} dimension bounds not directed "
-                             "positively".format(name))
+        error = RuntimeError(f"{name} dimension bounds not directed positively")
 
         if bnds.ndim > 0:
             space_diff = np.diff(bnds, axis=0)
@@ -1165,8 +1163,7 @@ class Grid(SpaceDomain):
         if wrap_around:
             bnds[np.isclose(bnds, limits[0], rtol_, atol_)] = limits[1]
 
-        error = RuntimeError("{} bounds space gap not constant "
-                             "across region".format(name))
+        error = RuntimeError(f"{name} bounds space gap not constant across region")
 
         if bnds.ndim > 0:
             space_diff = np.diff(bnds, axis=0)
@@ -1253,8 +1250,7 @@ class Grid(SpaceDomain):
         prev_to_next = (bnds[1:, 0] - bnds[:-1, 1]
                         if bnds.ndim > 1 else 0)
         if not np.allclose(prev_to_next, 0, rtol_, atol_):
-            raise RuntimeError(
-                "{} bounds not contiguous across region".format(name))
+            raise RuntimeError(f"{name} bounds not contiguous across region")
 
     @staticmethod
     def _check_dimension_in_bounds(dimension, bounds, name, limits, wrap_around):
@@ -1371,8 +1367,7 @@ class Grid(SpaceDomain):
                         )
 
         if not np.all(inside):
-            raise RuntimeError(
-                "{} coordinates not all in their bounds".format(name))
+            raise RuntimeError(f"{name} coordinates not all in their bounds")
 
     def _set_space(self, dimension, dimension_bounds, name,
                    units, axis, limits, wrap_around):
@@ -1391,7 +1386,7 @@ class Grid(SpaceDomain):
         ...                   'test', '1', 'I', (-3, 3), True)
         Traceback (most recent call last):
             ...
-        RuntimeError: Grid test bounds not compatible in size with test
+        RuntimeError: Grid test bounds not compatible in size with test coordinates
         """
         # checks on dimension coordinates
         if not isinstance(dimension, np.ndarray):
@@ -1399,8 +1394,8 @@ class Grid(SpaceDomain):
         dimension = np.squeeze(dimension)
         if dimension.ndim > 1:
             raise RuntimeError(
-                "{} {} not convertible to 1D-array".format(
-                    self.__class__.__name__, name))
+                f"{self.__class__.__name__} {name} not convertible to 1D-array"
+            )
         self._check_dimension_limits(dimension, name, limits)
         self._check_dimension_direction(dimension, name, limits, wrap_around)
         self._check_dimension_regularity(dimension, name, limits, wrap_around)
@@ -1411,8 +1406,9 @@ class Grid(SpaceDomain):
         dimension_bounds = np.squeeze(dimension_bounds)
         if dimension_bounds.shape != (*dimension.shape, 2):
             raise RuntimeError(
-                "{} {} bounds not compatible in size with {}".format(
-                    self.__class__.__name__, name, name))
+                f"{self.__class__.__name__} {name} bounds not compatible "
+                f"in size with {name} coordinates"
+            )
         self._check_dimension_bounds_limits(dimension_bounds, name, limits)
         self._check_dimension_bounds_direction(
             dimension_bounds, name, limits, wrap_around
@@ -1473,8 +1469,9 @@ class Grid(SpaceDomain):
             x_span, y_span = [[-1, 0]], [[-1, 0]]
         else:
             raise ValueError(
-                "{} {}-{} location '{}' not supported".format(
-                    cls.__name__, cls._Y_name, cls._X_name, yx_location))
+                f"{cls.__name__} {cls._Y_name}-{cls._X_name} location "
+                f"'{yx_location}' not supported"
+            )
 
         # determine Y and X coordinates and their bounds
         y, y_bounds = cls._get_dimension_from_extent_and_resolution(
@@ -1496,8 +1493,9 @@ class Grid(SpaceDomain):
                 z_span = [[-1, 0]]
             else:
                 raise ValueError(
-                    "{} {} location '{}' not supported".format(
-                        cls.__name__, cls._Z_name, z_location))
+                    f"{cls.__name__} {cls._Z_name} location '{z_location}' "
+                    f"not supported"
+                )
 
             # determine latitude and longitude coordinates and their bounds
             z, z_bounds = cls._get_dimension_from_extent_and_resolution(
@@ -1520,18 +1518,21 @@ class Grid(SpaceDomain):
                                                   name, limits, wrap_around):
         # check sign of resolution
         if resolution <= 0:
-            raise ValueError(
-                "{} resolution must be positive".format(name))
+            raise ValueError(f"{name} resolution must be positive")
 
         # check extent
         dim_start, dim_end = extent
         if limits is not None:
             if (dim_start < limits[0]) or (dim_start > limits[1]):
                 raise ValueError(
-                    "{} extent start beyond limits [{}, {}]".format(name, *limits))
+                    f"{name} extent start beyond limits "
+                    f"[{limits[0]}, {limits[1]}]"
+                )
             if (dim_end < limits[0]) or (dim_end > limits[1]):
                 raise ValueError(
-                    "{} extent end beyond limits [{}, {}]".format(name, *limits))
+                    f"{name} extent end beyond limits "
+                    f"[{limits[0]}, {limits[1]}]"
+                )
 
         if wrap_around:
             if dim_end == dim_start:
@@ -1540,9 +1541,9 @@ class Grid(SpaceDomain):
                 dim_end += limits[1] - limits[0]
         else:
             if dim_start == dim_end:
-                raise ValueError("{} extent empty".format(name))
+                raise ValueError(f"{name} extent empty")
             if dim_end < dim_start:
-                raise ValueError("{} extent oriented negatively".format(name))
+                raise ValueError(f"{name} extent oriented negatively")
 
         # check compatibility between extent and resolution
         # (i.e. need to produce a whole number of grid cells)
@@ -1555,8 +1556,9 @@ class Grid(SpaceDomain):
             dim_size = ((dim_end - dim_start) // resolution) + 1
         else:
             raise RuntimeError(
-                "{} extent and resolution do not define a whole number "
-                "of grid cells".format(name))
+                f"{name} extent and resolution do not define a whole number "
+                f"of grid cells"
+            )
 
         # determine dimension coordinates
         dim = (
@@ -1594,7 +1596,7 @@ class Grid(SpaceDomain):
             # infer from first and second coordinates along dimension
             else:
                 dim = getattr(self, axis).array
-                dim_bnds = getattr(self, axis + '_bounds').array
+                dim_bnds = getattr(self, f'{axis}_bounds').array
                 return np.around(dim[1] - dim[0] if dim.size > 1
                                  else dim_bnds[0, 1] - dim_bnds[0, 0],
                                  decr()).tolist()
@@ -1611,7 +1613,7 @@ class Grid(SpaceDomain):
             # infer from first coordinate lower/upper bounds along dimension
             else:
                 decr_ = decr()
-                dim_bnds = getattr(self, axis + '_bounds').array
+                dim_bnds = getattr(self, f'{axis}_bounds').array
                 return (np.around(dim_bnds[0, 0], decr_).tolist(),
                         np.around(dim_bnds[-1, -1], decr_).tolist())
 
@@ -1622,7 +1624,7 @@ class Grid(SpaceDomain):
             # infer dimension span from first coordinate and its bounds
             # (i.e. relative location of bounds around coordinate)
             dim = getattr(self, axis).array
-            dim_bnds = getattr(self, axis + '_bounds').array
+            dim_bnds = getattr(self, f'{axis}_bounds').array
             dim_res = self._get_dimension_resolution(axis)
 
             left_wing = (dim_bnds[0, 0] - dim[0]) / dim_res
@@ -1699,16 +1701,14 @@ class Grid(SpaceDomain):
         # check dimension coordinates
         if not field.dim(cls._Y_name, default=False):
             raise RuntimeError(
-                "{} field missing '{}' dimension coordinate".format(
-                    cls.__name__, cls._Y_name
-                )
+                f"{cls.__name__} field missing '{cls._Y_name}' "
+                f"dimension coordinate"
             )
         y = field.dim(cls._Y_name)
         if not field.dim(cls._X_name, default=False):
             raise RuntimeError(
-                "{} field missing '{}' dimension coordinate".format(
-                    cls.__name__, cls._X_name
-                )
+                f"{cls.__name__} field missing '{cls._X_name}' "
+                f"dimension coordinate"
             )
         x = field.dim(cls._X_name)
         z_array = None
@@ -1720,34 +1720,32 @@ class Grid(SpaceDomain):
                 z_bounds_array = field.dim(cls._Z_name).bounds.array
                 if z_units not in cls._Z_units:
                     raise RuntimeError(
-                        "{} field dimension coordinate '{}' units are not in "
-                        "{}".format(cls.__name__, cls._Z_name, cls._Z_units[0])
+                        f"{cls.__name__} field dimension coordinate "
+                        f"'{cls._Z_name}' units are not in {cls._Z_units[0]}"
                     )
 
         # check units
         if y.units not in cls._Y_units:
             raise RuntimeError(
-                "{} field dimension coordinate '{}' units are not in "
-                "{}".format(cls.__name__, cls._Y_name, cls._Y_units[0])
+                f"{cls.__name__} field dimension coordinate "
+                f"'{cls._Y_name}' units are not in {cls._Y_units[0]}"
             )
         if x.units not in cls._X_units:
             raise RuntimeError(
-                "{} field dimension coordinate '{}' units are not in "
-                "{}".format(cls.__name__, cls._X_name, cls._X_units[0])
+                f"{cls.__name__} field dimension coordinate "
+                f"'{cls._X_name}' units are not in {cls._X_units[0]}"
             )
 
         # check bounds
         if not y.has_bounds():
             raise RuntimeError(
-                "{} field dimension coordinate '{}' has no bounds".format(
-                    cls.__name__, cls._Y_name
-                )
+                f"{cls.__name__} field dimension coordinate "
+                f"'{cls._Y_name}' has no bounds"
             )
         if not x.has_bounds():
             raise RuntimeError(
-                "{} field dimension coordinate '{}' has no bounds".format(
-                    cls.__name__, cls._X_name
-                )
+                f"{cls.__name__} field dimension coordinate "
+                f"'{cls._X_name}' has no bounds"
             )
 
         return {
@@ -1759,8 +1757,8 @@ class Grid(SpaceDomain):
     def __str__(self):
         has_z = self._f.dim(self._Z_name, default=False)
         return "\n".join(
-            ["{}(".format(self.__class__.__name__)]
-            + ["    shape {{{}}}: {}".format(", ".join(self.axes), self.shape)]
+            [f"{self.__class__.__name__}("]
+            + [f"    shape {{{', '.join(self.axes)}}}: {self.shape}"]
             + (["    Z, {} {}: {}".format(
                 self._f.dim('Z').standard_name,
                 self._f.dim('Z').data.shape,
@@ -1930,13 +1928,14 @@ class Grid(SpaceDomain):
                         start_z, end_z))
 
         else:
-            raise TypeError("{} instance cannot be compared to {} "
-                            "instance".format(self.__class__.__name__,
-                                              grid.__class__.__name__))
+            raise TypeError(
+                f"{self.__class__.__name__} instance cannot be "
+                f"compared to {grid.__class__.__name__} instance"
+            )
 
     def subset_and_compare(self, field):
         error = RuntimeError(
-            'field not compatible with {}'.format(self.__class__.__name__)
+            f"field not compatible with {self.__class__.__name__}"
         )
 
         # avoid floating-point error problems by rounding up
@@ -1967,26 +1966,25 @@ class Grid(SpaceDomain):
     def from_extent_and_resolution(cls, **kwargs):
         inst = cls(
             **cls._get_grid_from_extent_and_resolution(
-                kwargs['{}_extent'.format(cls._Y_name)],
-                kwargs['{}_extent'.format(cls._X_name)],
-                kwargs['{}_resolution'.format(cls._Y_name)],
-                kwargs['{}_resolution'.format(cls._X_name)],
-                kwargs['{}_{}_location'.format(cls._Y_name, cls._X_name)],
-                kwargs['{}_extent'.format(cls._Z_name)],
-                kwargs['{}_resolution'.format(cls._Z_name)],
-                kwargs['{}_location'.format(cls._Z_name)]
+                kwargs[f'{cls._Y_name}_extent'],
+                kwargs[f'{cls._X_name}_extent'],
+                kwargs[f'{cls._Y_name}_resolution'],
+                kwargs[f'{cls._X_name}_resolution'],
+                kwargs[f'{cls._Y_name}_{cls._X_name}_location'],
+                kwargs[f'{cls._Z_name}_extent'],
+                kwargs[f'{cls._Z_name}_resolution'],
+                kwargs[f'{cls._Z_name}_location']
             )
         )
 
-        inst._extent = {'Z': kwargs['{}_extent'.format(cls._Z_name)],
-                        'Y': kwargs['{}_extent'.format(cls._Y_name)],
-                        'X': kwargs['{}_extent'.format(cls._X_name)]}
-        inst._resolution = {'Z': kwargs['{}_resolution'.format(cls._Z_name)],
-                            'Y': kwargs['{}_resolution'.format(cls._Y_name)],
-                            'X': kwargs['{}_resolution'.format(cls._X_name)]}
-        inst._location = {'Z': kwargs['{}_location'.format(cls._Z_name)],
-                          'YX': kwargs['{}_{}_location'.format(cls._Y_name,
-                                                               cls._X_name)]}
+        inst._extent = {'Z': kwargs[f'{cls._Z_name}_extent'],
+                        'Y': kwargs[f'{cls._Y_name}_extent'],
+                        'X': kwargs[f'{cls._X_name}_extent']}
+        inst._resolution = {'Z': kwargs[f'{cls._Z_name}_resolution'],
+                            'Y': kwargs[f'{cls._Y_name}_resolution'],
+                            'X': kwargs[f'{cls._X_name}_resolution']}
+        inst._location = {'Z': kwargs[f'{cls._Z_name}_location'],
+                          'YX': kwargs[f'{cls._Y_name}_{cls._X_name}_location']}
 
         return inst
 
@@ -2014,22 +2012,14 @@ class Grid(SpaceDomain):
     def to_config(self):
         return {
             'class': self.__class__.__name__,
-            '{}_extent'.format(self._Y_name):
-                self._get_dimension_extent('Y'),
-            '{}_resolution'.format(self._Y_name):
-                self._get_dimension_resolution('Y'),
-            '{}_extent'.format(self._X_name):
-                self._get_dimension_extent('X'),
-            '{}_resolution'.format(self._X_name):
-                self._get_dimension_resolution('X'),
-            '{}_{}_location'.format(self._Y_name, self._X_name):
-                self._get_yx_location(),
-            '{}_extent'.format(self._Z_name):
-                self._get_dimension_extent('Z'),
-            '{}_resolution'.format(self._Z_name):
-                self._get_dimension_resolution('Z'),
-            '{}_location'.format(self._Z_name):
-                self._get_z_location(),
+            f'{self._Y_name}_extent': self._get_dimension_extent('Y'),
+            f'{self._Y_name}_resolution': self._get_dimension_resolution('Y'),
+            f'{self._X_name}_extent': self._get_dimension_extent('X'),
+            f'{self._X_name}_resolution': self._get_dimension_resolution('X'),
+            f'{self._Y_name}_{self._X_name}_location': self._get_yx_location(),
+            f'{self._Z_name}_extent': self._get_dimension_extent('Z'),
+            f'{self._Z_name}_resolution': self._get_dimension_resolution('Z'),
+            f'{self._Z_name}_location': self._get_z_location(),
             'land_sea_mask': (
                 {'files': self._land_sea_mask_field.get_filenames(),
                  'select': self._land_sea_mask_field.identity()}
@@ -2052,7 +2042,7 @@ class Grid(SpaceDomain):
 
         return cls(
             **{
-                getattr(cls, '_{}_name'.format(axis)) + prop:
+                getattr(cls, f'_{axis}_name') + prop:
                     extraction[axis + prop]
                 for axis in ['X', 'Y', 'Z']
                 for prop in ['', '_bounds']
@@ -3083,22 +3073,25 @@ class RotatedLatLonGrid(Grid):
             )
         else:
             raise RuntimeError(
-                "{} field missing coordinate conversion 'grid_mapping_name:"
-                "rotated_latitude_longitude".format(cls.__name__))
+                f"{cls.__name__} field missing coordinate conversion "
+                f"'grid_mapping_name:rotated_latitude_longitude"
+            )
         if crs.coordinate_conversion.has_parameter('grid_north_pole_latitude'):
             grid_north_pole_lat = crs.coordinate_conversion.get_parameter(
                 'grid_north_pole_latitude')
         else:
             raise RuntimeError(
-                "{} field coordinate conversion missing property "
-                "'grid_north_pole_latitude'".format(cls.__name__))
+                f"{cls.__name__} field coordinate conversion missing "
+                f"property 'grid_north_pole_latitude'"
+            )
         if crs.coordinate_conversion.has_parameter('grid_north_pole_longitude'):
             grid_north_pole_lon = crs.coordinate_conversion.get_parameter(
                 'grid_north_pole_longitude')
         else:
             raise RuntimeError(
-                "{} field coordinate conversion missing property"
-                "'grid_north_pole_longitude'".format(cls.__name__))
+                f"{cls.__name__} field coordinate conversion missing "
+                f"property 'grid_north_pole_longitude'"
+            )
         if crs.coordinate_conversion.has_parameter('north_pole_grid_longitude'):
             north_pole_grid_lon = crs.coordinate_conversion.get_parameter(
                 'north_pole_grid_longitude')
@@ -3192,12 +3185,10 @@ class RotatedLatLonGrid(Grid):
         # define transformation from rotated lat/lon to 'true' lat/lon
         trans = pyproj.Transformer.from_crs(
             # Rotated Grid
-            '+proj=ob_tran +o_proj=lonlat +ellps=WGS84 +datum=WGS84 '
-            '+o_lat_p={} +o_lon_p={} +lon_0={}'.format(
-                grid_north_pole_latitude,
-                north_pole_grid_longitude,
-                grid_north_pole_longitude + 180.
-            ),
+            f"+proj=ob_tran +o_proj=lonlat +ellps=WGS84 +datum=WGS84 "
+            f"+o_lat_p={grid_north_pole_latitude} "
+            f"+o_lon_p={north_pole_grid_longitude} "
+            f"+lon_0={grid_north_pole_longitude + 180.}",
             # WGS84
             'epsg:4326',
             always_xy=True
