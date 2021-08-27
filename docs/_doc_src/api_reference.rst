@@ -4,6 +4,14 @@
 API Reference
 =============
 
+.. _fig_uml:
+.. figure:: ../_doc_img/simplified-uml.gv.svg
+   :scale: 50 %
+   :align: center
+   :alt: UML class diagram
+
+   Fig. 3: UML Class Diagram of `cm4twc`.
+
 Model
 -----
 
