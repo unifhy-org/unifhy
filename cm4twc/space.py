@@ -344,6 +344,9 @@ class Grid(SpaceDomain):
         if not mask.shape == self.shape:
             raise error
 
+        # apply mask to underlying data to be taken into account in remapping
+        self._f.data[:] = np.ma.array(self._f.array, mask=~mask)
+
         self._land_sea_mask = mask
 
     @property
