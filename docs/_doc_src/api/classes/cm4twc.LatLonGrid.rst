@@ -62,3 +62,4 @@ Attributes
    ~cm4twc.LatLonGrid.Z_name
    ~cm4twc.LatLonGrid.land_sea_mask
    ~cm4twc.LatLonGrid.flow_direction
+   ~cm4twc.LatLonGrid.cell_area

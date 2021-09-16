@@ -43,6 +43,9 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#42 <https://github.com/cm4twc-org/cm4twc/pull/42>`_)
 * cache remapping weights at initialisation
   (`#44 <https://github.com/cm4twc-org/cm4twc/pull/44>`_)
+* add `cell_area` property to `SpaceDomain` that can be provided by the
+  user or else automatically computed for `Grid`
+  (`#61 <https://github.com/cm4twc-org/cm4twc/issues/61>`_)
 
 .. rubric:: Dependencies
 

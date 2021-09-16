@@ -3,6 +3,7 @@ import numpy as np
 from copy import deepcopy
 import re
 import cf
+import cfunits
 import pyproj
 
 from .settings import atol, rtol, decr, dtype_float
@@ -19,6 +20,7 @@ class SpaceDomain(metaclass=abc.ABCMeta):
     def __init__(self):
         # inner CF data model
         self._f = cf.Field()
+        self._cell_area = None
 
         # optional flow direction attributes
         self._flow_direction = None
@@ -66,6 +68,16 @@ class SpaceDomain(metaclass=abc.ABCMeta):
     @land_sea_mask.setter
     @abc.abstractmethod
     def land_sea_mask(self, **kwargs):
+        pass
+
+    @property
+    @abc.abstractmethod
+    def cell_area(self):
+        return self._cell_area
+
+    @cell_area.setter
+    @abc.abstractmethod
+    def cell_area(self, **kwargs):
         pass
 
     def __eq__(self, other):
@@ -167,6 +179,9 @@ class Grid(SpaceDomain):
         'bottom': ('bottom', '1', 1),
         'top': ('top', '2', 2)
     }
+
+    # geometrical properties
+    _earth_radius_m = 6371229.0
 
     def __init__(self, **kwargs):
         super(Grid, self).__init__()
@@ -307,6 +322,7 @@ class Grid(SpaceDomain):
         ...                            [True, True, False],
         ...                            [False, True, False],
         ...                            [False, False, False]]))
+        >>> grid.land_sea_mask = mask
         >>> print(grid.land_sea_mask)
         [[False  True  True]
          [ True  True False]
@@ -385,7 +401,7 @@ class Grid(SpaceDomain):
                                    7 for West, 8 for North West.
 
                 relative           The field data contains the direction
-                                   using pairs of 'int' (Y, X) for the
+                                   using pairs of `int` (Y, X) for the
                                    eight following cardinal points:
                                    (1, 0) for North, (1, 1) for
                                    North-East, (0, 1) for East, (-1, 1)
@@ -488,7 +504,7 @@ class Grid(SpaceDomain):
           [0 1]
           [-1 -1]]]
         """
-        return super(Grid, self).flow_direction
+        return self._flow_direction
 
     @flow_direction.setter
     def flow_direction(self, directions):
@@ -823,6 +839,105 @@ class Grid(SpaceDomain):
                                                  axis=(-2, -1))[mask]
 
         return variable_routed, variable_out
+
+    @property
+    def cell_area(self):
+        """The horizontal area for the grid cells of the SpaceDomain in
+        square metres given as a `cf.Field` and returned as a
+        `numpy.ndarray`.
+
+        :Parameters:
+
+            areas: `cf.Field`
+                The field containing the horizontal grid cell area. The
+                shape of the data array must be the same as the
+                SpaceDomain. The field data must contain surface area
+                values in square metres.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The array containing the horizontal grid cell area
+                values in square metres. If not set previously, computed
+                automatically.
+
+        **Examples**
+
+        >>> import numpy
+        >>> grid = LatLonGrid.from_extent_and_resolution(
+        ...     latitude_extent=(51, 55),
+        ...     latitude_resolution=1,
+        ...     longitude_extent=(-2, 1),
+        ...     longitude_resolution=1
+        ... )
+        >>> print(grid.cell_area)
+        [[7.69725703e+09 7.69725703e+09 7.69725703e+09]
+         [7.52719193e+09 7.52719193e+09 7.52719193e+09]
+         [7.35483450e+09 7.35483450e+09 7.35483450e+09]
+         [7.18023725e+09 7.18023725e+09 7.18023725e+09]]
+
+        >>> area = grid.to_field()
+        >>> area.set_data(numpy.array([[7.70e+09, 7.70e+09, 7.70e+09],
+        ...                            [7.53e+09, 7.53e+09, 7.53e+09],
+        ...                            [7.35e+09, 7.35e+09, 7.35e+09],
+        ...                            [7.18e+09, 7.18e+09, 7.18e+09]]))
+        >>> area.units = 'm2'
+        >>> grid.cell_area = area
+        >>> print(grid.cell_area)
+        [[7.70e+09 7.70e+09 7.70e+09]
+         [7.53e+09 7.53e+09 7.53e+09]
+         [7.35e+09 7.35e+09 7.35e+09]
+         [7.18e+09 7.18e+09 7.18e+09]]
+
+        """
+        if self._cell_area is None:
+            self._cell_area = self._compute_cell_area()
+        return self._cell_area
+
+    @cell_area.setter
+    def cell_area(self, areas):
+        error_dim = RuntimeError(
+            f"cell_area shape incompatible with {self.__class__.__name__}"
+        )
+        error_units = ValueError(
+            "cell_area units are missing or not in square metres"
+        )
+
+        # check type
+        if not isinstance(areas, cf.Field):
+            raise TypeError("cell_area not a cf.Field")
+
+        # check that mask and spacedomain are compatible
+        try:
+            areas = self.subset_and_compare(areas)
+        except RuntimeError:
+            raise error_dim
+
+        # check area units
+        if not (areas.data.has_units()
+                and cfunits.Units('m2').equals(areas.Units)):
+            raise error_units
+
+        # get field's data array
+        areas = areas.array
+
+        self._cell_area = areas
+
+    def _compute_cell_area(self):
+        # make use of cf-python to retrieve ESMF objects
+        operator = self._f.regrids(
+            self._f, 'conservative', return_operator=True
+        )
+        # retrieve ESMF source (arbitrarily chosen) field
+        esmf_field = operator.regrid.srcfield
+
+        # let ESMF compute the cell area
+        esmf_field.get_area()
+        # retrieve the values and scale them from unit sphere to Earth
+        area_unit_sphere = esmf_field.data.T
+        area = area_unit_sphere * self._earth_radius_m ** 2
+
+        return area
 
     @staticmethod
     def _check_dimension_limits(dimension, name, limits):
@@ -3952,6 +4067,63 @@ class BritishNationalGrid(Grid):
             ),
             axes=['Y', 'X']
         )
+
+    @Grid.cell_area.getter
+    def cell_area(self):
+        """The horizontal area for the grid cells of the SpaceDomain in
+        square metres given as a `cf.Field` and returned as a
+        `numpy.ndarray`.
+
+        :Parameters:
+
+           areas: `cf.Field`
+               The field containing the horizontal grid cell area. The
+               shape of the data array must be the same as the
+               SpaceDomain. The field data must contain surface area
+               values in square metres.
+
+        :Returns:
+
+           `numpy.ndarray`
+               The array containing the horizontal grid cell area
+               values in square metres. If not set previously, computed
+               automatically.
+
+        **Examples**
+
+        >>> import numpy
+        >>> grid = BritishNationalGrid.from_extent_and_resolution(
+        ...     projection_y_coordinate_extent=(12000, 15000),
+        ...     projection_y_coordinate_resolution=1000,
+        ...     projection_x_coordinate_extent=(80000, 84000),
+        ...     projection_x_coordinate_resolution=2000
+        ... )
+        >>> print(grid.cell_area)
+        [[2000000. 2000000.]
+         [2000000. 2000000.]
+         [2000000. 2000000.]]
+
+        >>> areas = grid.to_field()
+        >>> areas.set_data(numpy.array([[1999999, 1999999],
+        ...                             [1999999, 1999999],
+        ...                             [1999999, 1999999]]))
+        >>> areas.units = 'm2'
+        >>> grid.cell_area = areas
+        >>> print(grid.cell_area)
+        [[1999999. 1999999.]
+         [1999999. 1999999.]
+         [1999999. 1999999.]]
+
+        """
+        if self._cell_area is None:
+            self._cell_area = self._compute_cell_area()
+        return self._cell_area
+
+    def _compute_cell_area(self):
+        x_side = self.X_bounds.array[:, 1] - self.X_bounds.array[:, 0]
+        y_side = self.Y_bounds.array[:, 1] - self.Y_bounds.array[:, 0]
+
+        return np.dot(y_side[:, np.newaxis], x_side[np.newaxis, :])
 
     def is_space_equal_to(self, field, ignore_z=False):
         """Compare equality between the BritishNationalGrid and the

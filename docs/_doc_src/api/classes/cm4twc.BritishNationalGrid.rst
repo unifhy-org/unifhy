@@ -59,4 +59,6 @@ Attributes
    ~cm4twc.BritishNationalGrid.X_name
    ~cm4twc.BritishNationalGrid.Y_name
    ~cm4twc.BritishNationalGrid.Z_name
+   ~cm4twc.BritishNationalGrid.land_sea_mask
    ~cm4twc.BritishNationalGrid.flow_direction
+   ~cm4twc.BritishNationalGrid.cell_area
