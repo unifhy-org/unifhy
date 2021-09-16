@@ -59,4 +59,6 @@ Attributes
    ~cm4twc.RotatedLatLonGrid.X_name
    ~cm4twc.RotatedLatLonGrid.Y_name
    ~cm4twc.RotatedLatLonGrid.Z_name
+   ~cm4twc.RotatedLatLonGrid.land_sea_mask
    ~cm4twc.RotatedLatLonGrid.flow_direction
+   ~cm4twc.RotatedLatLonGrid.cell_area
