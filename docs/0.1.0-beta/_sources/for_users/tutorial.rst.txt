@@ -12,7 +12,7 @@ This section showcases the basic usage of modelling framework `cm4twc`
 
    >>> import cm4twc
    >>> print(cm4twc.__version__)
-   0.0.1-beta
+   0.0.1
 
 The central object in the framework is the `Model`, which is composed of
 `Component`\s for the three compartments of the terrestrial water cycle

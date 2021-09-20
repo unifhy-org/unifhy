@@ -435,7 +435,7 @@ class TimeDomain(object):
 
     @classmethod
     def from_datetime_sequence(cls, datetimes, units=None, calendar=None):
-        """Initialise a `TimeDomain` from a sequence of datetime objects.
+        """Instantiate a `TimeDomain` from a sequence of datetime objects.
 
         :Parameters:
 
@@ -548,7 +548,7 @@ class TimeDomain(object):
 
     @classmethod
     def from_start_end_step(cls, start, end, step, units=None, calendar=None):
-        """Initialise a `TimeDomain` from start, end, and step for period.
+        """Instantiate a `TimeDomain` from start, end, and step for period.
 
         :Parameters:
 
@@ -697,7 +697,7 @@ class TimeDomain(object):
 
     @classmethod
     def from_field(cls, field):
-        """Initialise a `TimeDomain` from temporal dimension coordinate
+        """Instantiate a `TimeDomain` from temporal dimension coordinate
         of a `cf.Field`.
 
         :Parameters:

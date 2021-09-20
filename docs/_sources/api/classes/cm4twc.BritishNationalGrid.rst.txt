@@ -11,7 +11,8 @@ BritishNationalGrid
 Methods
 -------
 
-.. rubric:: Construction
+Construction
+~~~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -21,7 +22,8 @@ Methods
    ~cm4twc.BritishNationalGrid.from_extent_and_resolution
    ~cm4twc.BritishNationalGrid.from_field
 
-.. rubric:: Comparison
+Comparison
+~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -31,7 +33,8 @@ Methods
    ~cm4twc.BritishNationalGrid.is_space_equal_to
    ~cm4twc.BritishNationalGrid.spans_same_region_as
 
-.. rubric:: Utility
+Utility
+~~~~~~~
 
 .. autosummary::
    :nosignatures:

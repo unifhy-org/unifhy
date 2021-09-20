@@ -54,7 +54,6 @@ documented:
 .. toctree::
    :maxdepth: 1
 
-   support
    changelog
    licence
 

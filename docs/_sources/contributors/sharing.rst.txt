@@ -52,7 +52,7 @@ install a few Python packages:
 
    python -m pip install setuptools wheel twine
 
-Then, you need to generate distribution archives, to do so, go to your
+Then, you need to generate distribution archives. To do so, go to your
 repository root (i.e. where *setup.py* is) and run:
 
 .. code-block:: bash
@@ -68,7 +68,7 @@ Finally, upload the distribution archives to PyPI:
 .. hint::
 
    You will need to create an account on PyPI before being able to
-   upload your distribution archives, more details can be found on
+   upload your distribution archives. More details can be found on
    the `official Python website
    <https://packaging.python.org/tutorials/packaging-projects/#uploading-the-distribution-archives>`_.
 

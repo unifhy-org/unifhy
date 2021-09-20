@@ -10,7 +10,8 @@ Model
 Methods
 -------
 
-.. rubric:: Construction
+Construction
+~~~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -20,7 +21,8 @@ Methods
    ~cm4twc.Model.from_yaml
    ~cm4twc.Model.to_yaml
 
-.. rubric:: Initialisation
+Initialisation
+~~~~~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -29,7 +31,8 @@ Methods
 
    ~cm4twc.Model.initialise_transfers_from_dump
 
-.. rubric:: Simulation
+Simulation
+~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:

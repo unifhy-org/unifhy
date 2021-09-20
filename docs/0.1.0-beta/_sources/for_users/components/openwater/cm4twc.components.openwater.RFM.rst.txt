@@ -1,7 +1,6 @@
-RFM
+﻿cm4twc.components.openwater
 ===============================
 
-.. currentmodule:: cm4twc
 .. default-role:: obj
 
 .. autocomponent::

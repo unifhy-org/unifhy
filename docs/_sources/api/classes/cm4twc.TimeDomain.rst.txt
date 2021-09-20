@@ -9,7 +9,9 @@ TimeDomain
 
 Methods
 -------
-.. rubric:: Construction
+
+Construction
+~~~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -20,7 +22,8 @@ Methods
    ~cm4twc.TimeDomain.from_start_end_step
    ~cm4twc.TimeDomain.from_field
 
-.. rubric:: Comparison
+Comparison
+~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
