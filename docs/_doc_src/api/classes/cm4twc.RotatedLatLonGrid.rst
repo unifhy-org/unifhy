@@ -11,7 +11,8 @@ RotatedLatLonGrid
 Methods
 -------
 
-.. rubric:: Construction
+Construction
+~~~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -21,7 +22,8 @@ Methods
    ~cm4twc.RotatedLatLonGrid.from_extent_and_resolution
    ~cm4twc.RotatedLatLonGrid.from_field
 
-.. rubric:: Comparison
+Comparison
+~~~~~~~~~~
 
 .. autosummary::
    :nosignatures:
@@ -31,7 +33,8 @@ Methods
    ~cm4twc.RotatedLatLonGrid.is_space_equal_to
    ~cm4twc.RotatedLatLonGrid.spans_same_region_as
 
-.. rubric:: Utility
+Utility
+~~~~~~~
 
 .. autosummary::
    :nosignatures:
