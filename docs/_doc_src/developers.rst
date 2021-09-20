@@ -1,8 +1,8 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-Guide for Developers
-====================
+Developer Guide
+===============
 
 This guide is for people interested in extending the technical
 capabilities of the framework.

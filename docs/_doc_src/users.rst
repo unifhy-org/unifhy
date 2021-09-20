@@ -1,8 +1,8 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-Guide for Users
-===============
+User Guide
+==========
 
 This guide is for people interested in running simulations with the framework.
 
@@ -12,3 +12,4 @@ This guide is for people interested in running simulations with the framework.
    users/installation
    users/tutorial
    users/files
+   users/support
