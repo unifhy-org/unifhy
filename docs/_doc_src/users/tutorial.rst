@@ -295,9 +295,9 @@ three parts of the terrestrial water cycle.
 
 .. note::
 
-   If a component is irrelevant to your use case, convenient
-   alternatives `DataComponent` and `NullComponent` exist. Any of the
-   three components can be replaced by these alternatives.
+   `DataComponent` and `NullComponent` represent convenient utility to
+   substitute science components. Any of the three components can be
+   replaced by these alternatives.
 
    `DataComponent` is provided to act the part of a component of the water
    cycle by sourcing the component's outwards transfers from a `DataSet`,
@@ -305,7 +305,7 @@ three parts of the terrestrial water cycle.
 
    `NullComponent` is provided to ignore a component of the water cycle
    by not processing the component's inwards transfers received, and by
-   returning null values for the component' outwards transfers.
+   returning null values for the component's outwards transfers.
 
 At this stage, the `Model` as such is fully configured, and the configuration
 can be saved as a YAML file in the *config_directory* and named using the
