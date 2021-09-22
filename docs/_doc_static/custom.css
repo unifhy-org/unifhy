@@ -4,10 +4,10 @@
 /* cm4twc green: #92d050 (146, 208, 80) */
 /* cm4twc brown: #ab7942 (171, 121, 66) */
 :root {
-    --pst-font-size-h1: 34px;
-    --pst-font-size-h2: 30px;
-    --pst-font-size-h3: 25px;
-    --pst-font-size-h4: 21px;
+    --pst-font-size-h1: 30px;
+    --pst-font-size-h2: 26px;
+    --pst-font-size-h3: 22px;
+    --pst-font-size-h4: 20px;
     --pst-font-size-h5: 18px;
     --pst-font-size-h6: 16px;
 
