@@ -56,7 +56,7 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * document 'divisions' for component states in preparation page
   (`#35 <https://github.com/cm4twc-org/cm4twc/issues/35>`_)
 * move API reference page to doc tree root
-* move science repository page to doc tree root
+* move science library page to doc tree root
 * add support page
 * add change log page
 * add logo for package
