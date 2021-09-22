@@ -1222,7 +1222,8 @@ class Component(metaclass=MetaComponent):
 
                 *Parameter example:* ::
 
-                    dump_file_pattern='out/dummy_surfacelayer_run_dump_record_stream_{}.nc'
+                    dump_file_pattern='out/dummy_surfacelayer_run_'
+                                      'dump_record_stream_{}.nc'
 
             timedomain: `TimeDomain`, optional
                 This is required if the run to be revived is a spin-up

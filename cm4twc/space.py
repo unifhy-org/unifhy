@@ -35,19 +35,17 @@ class SpaceDomain(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def shape(self):
-        """Return the size of the SpaceDomain dimension axes as a
-        `tuple`. The corresponding names and order of the axes is
-        accessible through the `axes` property.
-        """
+        # The sizes of the SpaceDomain dimension axes as a `tuple`.
+        # The corresponding names and order of the axes is accessible
+        # through the `axes` property.
         return None
 
     @property
     @abc.abstractmethod
     def axes(self):
-        """Return the name of the SpaceDomain dimension axes as a
-        `tuple`. These names are properties of SpaceDomain, which give
-        access to the coordinate values along each axis.
-        """
+        # The names of the SpaceDomain dimension axes as a `tuple`.
+        # These names are properties of SpaceDomain, which give access
+        # to the coordinate values along each axis.
         return None
 
     @property
@@ -188,6 +186,10 @@ class Grid(SpaceDomain):
 
     @property
     def shape(self):
+        """Return the size of the `Grid` dimension axes as a `tuple`.
+        The corresponding names and order of the axes is accessible
+        through the `axes` property.
+        """
         has_z = self._f.dim(self._Z_name, default=False)
         return (
             (self._f.dim('Z').shape if has_z else ())
@@ -198,15 +200,15 @@ class Grid(SpaceDomain):
     @property
     def axes(self):
         """Return the name of the properties to use to get access to
-        the axes defined for the SpaceDomain instance as a tuple.
+        the axes defined for the `Grid` instance as a `tuple`.
         """
         has_z = self._f.dim(self._Z_name, default=False)
         return ('Z', 'Y', 'X') if has_z else ('Y', 'X')
 
     @property
     def Z(self):
-        """Return the Z-axis of the SpaceDomain instance as a `cf.Data`
-        instance if the Z-axis exists, otherwise return None.
+        """Return the Z-axis of the `Grid` instance as a `cf.Data`
+        instance if the Z-axis exists, otherwise return `None`.
         """
         if self._f.dim('Z', default=False):
             return self._f.dim('Z').data
@@ -215,23 +217,23 @@ class Grid(SpaceDomain):
 
     @property
     def Y(self):
-        """Return the Y-axis of the SpaceDomain instance as a `cf.Data`
+        """Return the Y-axis of the `Grid` instance as a `cf.Data`
         instance.
         """
         return self._f.dim('Y').data
 
     @property
     def X(self):
-        """Return the X-axis of the SpaceDomain instance as a `cf.Data`
+        """Return the X-axis of the `Grid` instance as a `cf.Data`
         instance.
         """
         return self._f.dim('X').data
 
     @property
     def Z_bounds(self):
-        """Return the bounds of the Z-axis of the SpaceDomain instance
+        """Return the bounds of the Z-axis of the `Grid` instance
         as a `cf.Data` instance if the Z-axis exists, otherwise
-        return None.
+        return `None`.
         """
         if self._f.dim('Z', default=False):
             return self._f.dim('Z').bounds.data
@@ -240,22 +242,22 @@ class Grid(SpaceDomain):
 
     @property
     def Y_bounds(self):
-        """Return the bounds of the Y-axis of the SpaceDomain instance
+        """Return the bounds of the Y-axis of the `Grid` instance
         as a `cf.Data` instance.
         """
         return self._f.dim('Y').bounds.data
 
     @property
     def X_bounds(self):
-        """Return the bounds of the X-axis of the SpaceDomain instance
+        """Return the bounds of the X-axis of the `Grid` instance
         as a `cf.Data` instance.
         """
         return self._f.dim('X').bounds.data
 
     @property
     def Z_name(self):
-        """Return the name of the Z-axis of the SpaceDomain instance
-        as a `str` if the Z-axis exists, otherwise return None.
+        """Return the name of the Z-axis of the `Grid` instance
+        as a `str` if the Z-axis exists, otherwise return `None`.
         """
         if self._f.dim('Z', default=False):
             return self._f.dim('Z').standard_name
@@ -264,21 +266,21 @@ class Grid(SpaceDomain):
 
     @property
     def Y_name(self):
-        """Return the name of the Y-axis of the SpaceDomain instance
+        """Return the name of the Y-axis of the `Grid` instance
         as a `str`.
         """
         return self._f.dim('Y').standard_name
 
     @property
     def X_name(self):
-        """Return the name of the X-axis of the SpaceDomain instance
+        """Return the name of the X-axis of the `Grid` instance
         as a `str`.
         """
         return self._f.dim('X').standard_name
 
     @property
     def land_sea_mask(self):
-        """The land-sea mask for the SpaceDomain of boolean/binary
+        """The land-sea mask for the `Grid` of boolean/binary
         values (i.e. True/1 for land, False/0 for sea) given as a
         `cf.Field` and returned as a processed `numpy.ndarray`.
 
@@ -287,7 +289,7 @@ class Grid(SpaceDomain):
             mask: `cf.Field`
                 The field containing the land-sea information. The
                 shape of the data array must be the same as the
-                SpaceDomain. The field data must contain boolean/binary
+                `Grid`. The field data must contain boolean/binary
                 values (True/1 for land, False/0 for sea).
 
         :Returns:
@@ -295,8 +297,8 @@ class Grid(SpaceDomain):
             `numpy.ndarray`
                 The array containing the land-sea information as boolean
                 values (True for land, False for sea). The shape of the
-                array is the same as of the SpaceDomain. If not set,
-                return None.
+                array is the same as of the `Grid`. If not set,
+                return `None`.
 
         >>> import numpy
         >>> grid = LatLonGrid.from_extent_and_resolution(
@@ -369,7 +371,7 @@ class Grid(SpaceDomain):
     def flow_direction(self):
         """The information necessary to move any variable laterally
         (i.e. along Y and/or X) to its nearest receiving neighbour in
-        the Grid given as a `cf.Field` and returned as a processed
+        the `Grid` given as a `cf.Field` and returned as a processed
         `numpy.ndarray`.
 
         :Parameters:
@@ -414,8 +416,8 @@ class Grid(SpaceDomain):
 
             `numpy.ndarray`
                 The information to route any variable to its destination
-                in the Grid in the relative format (see table above). If
-                not set, return None.
+                in the `Grid` in the relative format (see table above).
+                If not set, return `None`.
 
         **Examples**
 
@@ -657,7 +659,7 @@ class Grid(SpaceDomain):
     def route(self, variable_to_route):
         """Perform the movement of the given variable values from
         their current location to the next nearest receiving neighbour
-        according to the *flow_direction* property of the Grid.
+        according to the *flow_direction* property of the `Grid`.
 
         :Parameters:
 
@@ -842,7 +844,7 @@ class Grid(SpaceDomain):
 
     @property
     def cell_area(self):
-        """The horizontal area for the grid cells of the SpaceDomain in
+        """The horizontal area for the grid cells of the `Grid` in
         square metres given as a `cf.Field` and returned as a
         `numpy.ndarray`.
 
@@ -850,9 +852,9 @@ class Grid(SpaceDomain):
 
             areas: `cf.Field`
                 The field containing the horizontal grid cell area. The
-                shape of the data array must be the same as the
-                SpaceDomain. The field data must contain surface area
-                values in square metres.
+                shape of the data array must be the same as the `Grid`.
+                The field data must contain surface area values in
+                square metres.
 
         :Returns:
 
@@ -1123,7 +1125,7 @@ class Grid(SpaceDomain):
               so the second negative difference was tolerated
               erroneously. This is likely to be really an edge case, so
               it is kept as is for now. Plus, it is caught as an error
-              in _check_dimension_bounds_regularity.
+              in `_check_dimension_bounds_regularity`.
 
         **Examples:**
 
@@ -1902,20 +1904,20 @@ class Grid(SpaceDomain):
         )
 
     def is_space_equal_to(self, field, ignore_z=False):
-        """Compare equality between the Grid and the spatial (X, Y,
+        """Compare equality between the `Grid` and the spatial (X, Y,
         and Z) dimension coordinates in a `cf.Field`.
 
         The coordinate values, the bounds (if field has some), and the
-        units of the field are compared against those of the Grid.
+        units of the field are compared against those of the `Grid`.
 
         :Parameters:
 
             field: `cf.Field`
-                The field that needs to be compared against Grid.
+                The field that needs to be compared against this grid.
 
             ignore_z: `bool`, optional
                 Option to ignore the dimension coordinate along the Z
-                axis. If not provided, set to default False (i.e. Z is
+                axis. If not provided, set to default `False` (i.e. Z is
                 not ignored).
 
         :Returns: `bool`
@@ -2000,8 +2002,8 @@ class Grid(SpaceDomain):
         return all(x_y) and z
 
     def spans_same_region_as(self, grid, ignore_z=False):
-        """Compare equality in region spanned between the Grid
-        and another instance of Grid.
+        """Compare equality in region spanned between the grid
+        and another instance of `Grid`.
 
         For each axis, the lower bound of their first cell and the
         upper bound of their last cell are compared.
@@ -2009,12 +2011,12 @@ class Grid(SpaceDomain):
         :Parameters:
 
             grid: `Grid`
-                The other Grid to be compared against Grid.
+                The other grid to be compared against this grid.
 
             ignore_z: `bool`, optional
                 If True, the dimension coordinates along the Z axes of
-                the Grid instances will not be compared. If not
-                provided, set to default value False (i.e. Z is not
+                the `Grid` instances will not be compared. If not
+                provided, set to default value `False` (i.e. Z is not
                 ignored).
 
         :Returns: `bool`
@@ -2169,7 +2171,7 @@ class Grid(SpaceDomain):
 
 
 class LatLonGrid(Grid):
-    """LatLonGrid characterises the spatial dimension for a `Component`
+    """This class characterises the spatial dimension for a `Component`
     as a regular grid on a spherical domain whose coordinates are
     latitudes and longitudes, and whose rotation axis is aligned with
     the North pole (`EPSG:4326 <https://epsg.io/4326>`_).
@@ -2695,9 +2697,9 @@ class LatLonGrid(Grid):
 
 
 class RotatedLatLonGrid(Grid):
-    """RotatedLatLonGrid characterises the spatial dimension for a
-    `Component` as a regular grid on a spherical domain whose coordinates
-    are latitudes and longitudes, and whose rotation axis is not aligned
+    """This class characterises the spatial dimension for a `Component`
+    as a regular grid on a spherical domain whose coordinates are
+    latitudes and longitudes, and whose rotation axis is not aligned
     with the North pole. Its ellipsoid and datum are those of WGS 84
     (see `EPSG:4326 <https://epsg.io/4326>`_).
     """
@@ -3436,10 +3438,10 @@ class RotatedLatLonGrid(Grid):
 
 
 class BritishNationalGrid(Grid):
-    """BritishNationalGrid characterises the spatial dimension for a
-    `Component` as a regular grid on a cartesian domain whose
-    coordinates are northings and eastings covering Great Britain and
-    Northern Ireland (`EPSG:27700 <https://epsg.io/27700>`_).
+    """This class characterises the spatial dimension for a `Component`
+    as a regular grid on a cartesian domain whose coordinates are
+    northings and eastings covering Great Britain and Northern Ireland
+    (`EPSG:27700 <https://epsg.io/27700>`_).
     """
     # characteristics of the dimension coordinates
     _Z_name = 'altitude'
