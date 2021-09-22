@@ -20,7 +20,8 @@
     --pst-color-link-hover: 146, 208, 80;
 
     --pst-color-preformatted-background: 250, 250, 250;
-    --pst-color-inline-code: var(--pst-color-text-base);
+    --pst-color-block-code: 51, 51, 51;
+    --pst-color-inline-code: 0, 0, 0;
 
     --pst-color-headerlink: var(--pst-color-link);
     --pst-color-headerlink-hover: var(--pst-color-link-hover);
