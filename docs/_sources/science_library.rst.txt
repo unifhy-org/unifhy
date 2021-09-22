@@ -1,8 +1,8 @@
 .. currentmodule:: cm4twc
 .. default-role:: obj
 
-Science Repository
-==================
+Science Library
+===============
 
 The modularity of `cm4twc` allows for different combinations of
 components to be used to close the terrestrial water cycle. Below is a

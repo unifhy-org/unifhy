@@ -17,7 +17,7 @@ This section showcases the basic usage of modelling framework `cm4twc`
 The central object in the framework is the `Model`, which requires three
 `Component`\s for the three compartments of the terrestrial water cycle.
 The components currently available to choose from are listed in the
-:doc:`science repository <../science_repository>` section.
+:doc:`science library <../science_library>` section.
 
 Each component needs to be spatio-temporally configured through `SpaceDomain`
 and `TimeDomain` objects, to be given data contained in a `DataSet` instance,

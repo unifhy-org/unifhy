@@ -40,7 +40,7 @@ in the framework:
 .. toctree::
    :maxdepth: 2
 
-   science_repository
+   science_library
 
 
 The Application Programming Interface (API) for the framework is also

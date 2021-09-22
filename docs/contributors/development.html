@@ -101,8 +101,8 @@
 </li>
 
 <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../science_repository.html">
-  Science Repository
+ <a class="reference internal nav-link" href="../science_library.html">
+  Science Library
  </a>
 </li>
 
@@ -492,7 +492,7 @@ arguments that are not used.</p>
         <span class="n">state_2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inwards_1</span><span class="p">,</span> <span class="n">inwards_2</span><span class="p">,</span> <span class="n">inwards_3</span><span class="p">,</span> <span class="n">input_1</span><span class="p">,</span> <span class="n">input_2</span><span class="p">,</span> <span class="n">input_3</span><span class="p">,</span>
-            <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="n">parameter_1</span><span class="p">,</span> <span class="n">constant_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="n">parameter_1</span><span class="p">,</span> <span class="n">constant_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="c1"># compute science using available inwards/inputs/parameters/constants</span>
         <span class="n">routed</span><span class="p">,</span> <span class="n">outed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacedomain</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">inwards_1</span> <span class="o">+</span> <span class="n">inwards_2</span> <span class="o">+</span> <span class="n">inwards_3</span><span class="p">)</span>
@@ -521,7 +521,7 @@ arguments that are not used.</p>
              <span class="s1">&#39;output_2&#39;</span><span class="p">:</span> <span class="n">output_2</span><span class="p">}</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># cleanly wrap up simulation here</span>
         <span class="c1"># to be able to restart from where simulation stopped</span>
         <span class="k">pass</span>
@@ -556,7 +556,7 @@ step is to <a class="reference internal" href="packaging.html"><span class="doc"
     
     <div class="footer-item">
       <p class="last-updated">
-Last updated on Sep 20, 2021.<br/>
+Last updated on Sep 22, 2021.<br/>
 </p>
     </div>
     

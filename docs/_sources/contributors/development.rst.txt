@@ -285,7 +285,7 @@ arguments that are not used.
            state_2[-1][...] = 0
 
        def run(self, inwards_1, inwards_2, inwards_3, input_1, input_2, input_3,
-               state_1, state_2, parameter_1, constant_1, **kwargs)
+               state_1, state_2, parameter_1, constant_1, **kwargs):
 
            # compute science using available inwards/inputs/parameters/constants
            routed, outed = self.spacedomain.route(inwards_1 + inwards_2 + inwards_3)
@@ -314,7 +314,7 @@ arguments that are not used.
                 'output_2': output_2}
            )
 
-       def finalise(self, state_1, state_2, **kwargs)
+       def finalise(self, state_1, state_2, **kwargs):
            # cleanly wrap up simulation here
            # to be able to restart from where simulation stopped
            pass

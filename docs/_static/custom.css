@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@1,400;1,600&family=Open+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
 /* cm4twc blue:  #00b0f0 (0, 176, 240) */
 /* cm4twc green: #92d050 (146, 208, 80) */
 /* cm4twc brown: #ab7942 (171, 121, 66) */
 :root {
-    --pst-font-size-h1: 34px;
-    --pst-font-size-h2: 30px;
-    --pst-font-size-h3: 25px;
-    --pst-font-size-h4: 21px;
+    --pst-font-size-h1: 30px;
+    --pst-font-size-h2: 26px;
+    --pst-font-size-h3: 22px;
+    --pst-font-size-h4: 20px;
     --pst-font-size-h5: 18px;
     --pst-font-size-h6: 16px;
 
@@ -18,11 +20,14 @@
     --pst-color-link-hover: 146, 208, 80;
 
     --pst-color-preformatted-background: 250, 250, 250;
-    --pst-color-inline-code: var(--pst-color-text-base);
+    --pst-color-block-code: 51, 51, 51;
+    --pst-color-inline-code: 0, 0, 0;
 
     --pst-color-headerlink: var(--pst-color-link);
     --pst-color-headerlink-hover: var(--pst-color-link-hover);
 
+    --pst-font-family-base-system: 'Open Sans', sans-serif;
+    --pst-font-family-monospace-system: 'JetBrains Mono', monospace;
 }
 
 /* override style for code blocks */
@@ -87,12 +92,18 @@ a.headerlink:hover{
 
 /* override style for inline code */
 code.literal{
+    font-size: 100%;
+    font-weight: normal;
     color: rgba(var(--pst-color-inline-code),1);
 }
 a code.literal{
+    font-size: 100%;
+    font-weight: normal;
     color: rgba(var(--pst-color-link),1);
 }
 a:hover code.literal{
+    font-size: 100%;
+    font-weight: normal;
     color: rgba(var(--pst-color-link-hover),1);
 }
 

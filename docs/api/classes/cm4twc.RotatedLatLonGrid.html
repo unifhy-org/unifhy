@@ -101,8 +101,8 @@
 </li>
 
 <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../science_repository.html">
-  Science Repository
+ <a class="reference internal nav-link" href="../../science_library.html">
+  Science Library
  </a>
 </li>
 
@@ -711,9 +711,9 @@
 <dt class="sig sig-object py" id="cm4twc.RotatedLatLonGrid">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cm4twc.</span></span><span class="sig-name descname"><span class="pre">RotatedLatLonGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_longitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_latitude_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_longitude_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_north_pole_latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_north_pole_longitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">north_pole_grid_longitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altitude_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.RotatedLatLonGrid" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cm4twc.space.Grid</span></code></p>
-<p>RotatedLatLonGrid characterises the spatial dimension for a
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> as a regular grid on a spherical domain whose coordinates
-are latitudes and longitudes, and whose rotation axis is not aligned
+<p>This class characterises the spatial dimension for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
+as a regular grid on a spherical domain whose coordinates are
+latitudes and longitudes, and whose rotation axis is not aligned
 with the North pole. Its ellipsoid and datum are those of WGS 84
 (see <a class="reference external" href="https://epsg.io/4326">EPSG:4326</a>).</p>
 <p><strong>Instantiation</strong></p>
@@ -879,7 +879,7 @@ to 2. Must contain numerical values. Ignored if
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.RotatedLatLonGrid.route.html#cm4twc.RotatedLatLonGrid.route" title="cm4twc.RotatedLatLonGrid.route"><code class="xref py py-obj docutils literal notranslate"><span class="pre">route</span></code></a></p></td>
-<td><p>Perform the movement of the given variable values from their current location to the next nearest receiving neighbour according to the <em>flow_direction</em> property of the Grid.</p></td>
+<td><p>Perform the movement of the given variable values from their current location to the next nearest receiving neighbour according to the <em>flow_direction</em> property of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -894,46 +894,46 @@ to 2. Must contain numerical values. Ignored if
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.shape.html#cm4twc.RotatedLatLonGrid.shape" title="cm4twc.RotatedLatLonGrid.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
-<td><p>Return the size of the SpaceDomain dimension axes as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>.</p></td>
+<td><p>Return the size of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> dimension axes as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.axes.html#cm4twc.RotatedLatLonGrid.axes" title="cm4twc.RotatedLatLonGrid.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></a></p></td>
-<td><p>Return the name of the properties to use to get access to the axes defined for the SpaceDomain instance as a tuple.</p></td>
+<td><p>Return the name of the properties to use to get access to the axes defined for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.X.html#cm4twc.RotatedLatLonGrid.X" title="cm4twc.RotatedLatLonGrid.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
-<td><p>Return the X-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+<td><p>Return the X-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.Y.html#cm4twc.RotatedLatLonGrid.Y" title="cm4twc.RotatedLatLonGrid.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
-<td><p>Return the Y-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+<td><p>Return the Y-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.Z.html#cm4twc.RotatedLatLonGrid.Z" title="cm4twc.RotatedLatLonGrid.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
-<td><p>Return the Z-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance if the Z-axis exists, otherwise return None.</p></td>
+<td><p>Return the Z-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance if the Z-axis exists, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.X_bounds.html#cm4twc.RotatedLatLonGrid.X_bounds" title="cm4twc.RotatedLatLonGrid.X_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X_bounds</span></code></a></p></td>
-<td><p>Return the bounds of the X-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+<td><p>Return the bounds of the X-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.Y_bounds.html#cm4twc.RotatedLatLonGrid.Y_bounds" title="cm4twc.RotatedLatLonGrid.Y_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y_bounds</span></code></a></p></td>
-<td><p>Return the bounds of the Y-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
+<td><p>Return the bounds of the Y-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.Z_bounds.html#cm4twc.RotatedLatLonGrid.Z_bounds" title="cm4twc.RotatedLatLonGrid.Z_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_bounds</span></code></a></p></td>
-<td><p>Return the bounds of the Z-axis of the SpaceDomain instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance if the Z-axis exists, otherwise return None.</p></td>
+<td><p>Return the bounds of the Z-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance if the Z-axis exists, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.X_name.html#cm4twc.RotatedLatLonGrid.X_name" title="cm4twc.RotatedLatLonGrid.X_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X_name</span></code></a></p></td>
-<td><p>Return the name of the X-axis of the SpaceDomain instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return the name of the X-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.Y_name.html#cm4twc.RotatedLatLonGrid.Y_name" title="cm4twc.RotatedLatLonGrid.Y_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y_name</span></code></a></p></td>
-<td><p>Return the name of the Y-axis of the SpaceDomain instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return the name of the Y-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.Z_name.html#cm4twc.RotatedLatLonGrid.Z_name" title="cm4twc.RotatedLatLonGrid.Z_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z_name</span></code></a></p></td>
-<td><p>Return the name of the Z-axis of the SpaceDomain instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> if the Z-axis exists, otherwise return None.</p></td>
+<td><p>Return the name of the Z-axis of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instance as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> if the Z-axis exists, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.land_sea_mask.html#cm4twc.RotatedLatLonGrid.land_sea_mask" title="cm4twc.RotatedLatLonGrid.land_sea_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">land_sea_mask</span></code></a></p></td>
-<td><p>The land-sea mask for the SpaceDomain of boolean/binary values (i.e.</p></td>
+<td><p>The land-sea mask for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> of boolean/binary values (i.e.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.flow_direction.html#cm4twc.RotatedLatLonGrid.flow_direction" title="cm4twc.RotatedLatLonGrid.flow_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flow_direction</span></code></a></p></td>
 <td><p>The information necessary to move any variable laterally (i.e.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attributes/cm4twc.RotatedLatLonGrid.cell_area.html#cm4twc.RotatedLatLonGrid.cell_area" title="cm4twc.RotatedLatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a></p></td>
-<td><p>The horizontal area for the grid cells of the SpaceDomain in square metres given as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> and returned as a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.</p></td>
+<td><p>The horizontal area for the grid cells of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> in square metres given as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> and returned as a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -963,7 +963,7 @@ to 2. Must contain numerical values. Ignored if
     
     <div class="footer-item">
       <p class="last-updated">
-Last updated on Sep 20, 2021.<br/>
+Last updated on Sep 22, 2021.<br/>
 </p>
     </div>
     
