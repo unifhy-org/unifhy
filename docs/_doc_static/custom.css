@@ -12,6 +12,11 @@
     --pst-font-size-h6: 16px;
 
     --pst-color-primary: 77, 77, 77;
+    --pst-color-success: 146, 208, 80;
+    --pst-color-info: 0, 176, 240;
+    --pst-color-warning: 171, 121, 66;
+    --pst-color-danger: 220, 53, 69;
+
     --pst-color-text-base: 77, 77, 77;
 
     --pst-color-active-navigation: 0, 176, 240;
