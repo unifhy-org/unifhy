@@ -308,7 +308,7 @@ class Component(metaclass=MetaComponent):
 
                 The recording temporal resolutions must be multiples
                 of the component temporal resolution, and they must be
-                be divisors of the component simulation period.
+                divisors of the component simulation period.
 
             io_slice: `int`, optional
                 The length of the time slice to use for input/output
