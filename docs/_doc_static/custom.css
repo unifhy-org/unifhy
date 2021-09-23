@@ -147,3 +147,12 @@ a:hover code.literal{
 table {
     margin-top: 10px;
 }
+
+/* */
+dt:target, span.highlighted {
+    background-color: rgba(var(--pst-color-link-hover), 0.3);
+}
+
+rect.highlighted {
+    fill: rgba(var(--pst-color-link-hover), 0.3);
+}
