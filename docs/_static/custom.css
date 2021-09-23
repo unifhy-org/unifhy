@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400;1,600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap");
 
-/* cm4twc blue:  #00b0f0 (0, 176, 240) */
+/* cm4twc blue:  #00b0f0 (0, 176, 240)  */
 /* cm4twc green: #92d050 (146, 208, 80) */
 /* cm4twc brown: #ab7942 (171, 121, 66) */
 :root {
@@ -45,6 +45,7 @@ pre {
 
 /* override style for class and attributes */
 .sig {
+    font-family: var(--pst-font-family-monospace-system);
     font-weight: lighter;
 }
 
@@ -145,4 +146,13 @@ a:hover code.literal{
 /* override style for tables */
 table {
     margin-top: 10px;
+}
+
+/* */
+dt:target, span.highlighted {
+    background-color: rgba(var(--pst-color-link-hover), 0.3);
+}
+
+rect.highlighted {
+    fill: rgba(var(--pst-color-link-hover), 0.3);
 }

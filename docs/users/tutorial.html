@@ -376,18 +376,19 @@ instances.</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">Instantiating <a class="reference internal" href="../api/classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> from a CF-compliant netCDF file.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_surfacelayer</span> <span class="o">=</span> <span class="n">cm4twc</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/ancillary/leaf_area_index.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/ancillary/canopy_height.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>       <span class="s1">&#39;in/ancillary/soil_albedo.nc&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;leaf-area index&#39;</span><span class="p">:</span> <span class="s1">&#39;leaf_area_index&#39;</span><span class="p">,</span>
-<span class="gp">... </span>              <span class="s1">&#39;canopy height&#39;</span><span class="p">:</span> <span class="s1">&#39;vegetation_height&#39;</span><span class="p">,</span>
-<span class="gp">... </span>              <span class="s1">&#39;soil albedo&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_albedo&#39;</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/leaf_area_index.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/canopy_height.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/soil_albedo.nc&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;leaf-area index&#39;</span><span class="p">:</span> <span class="s1">&#39;leaf_area_index&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s1">&#39;canopy height&#39;</span><span class="p">:</span> <span class="s1">&#39;vegetation_height&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s1">&#39;soil albedo&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_albedo&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 <span class="go">DataSet{</span>
 <span class="go">    air_temperature(time(8760), latitude(20), longitude(28)) K</span>

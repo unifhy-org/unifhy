@@ -119,18 +119,19 @@ instances.
    :caption: Instantiating `DataSet` from a CF-compliant netCDF file.
 
    >>> dataset_surfacelayer = cm4twc.DataSet(
-   ... files=['in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc',
-   ...        'in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc',
-   ...        'in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc',
-   ...        'in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc',
-   ...        'in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc',
-   ...        'in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc',
-   ...        'in/ancillary/leaf_area_index.nc',
-   ...        'in/ancillary/canopy_height.nc',
-   ...        'in/ancillary/soil_albedo.nc'],
-   ... name_mapping={'leaf-area index': 'leaf_area_index',
-   ...               'canopy height': 'vegetation_height',
-   ...               'soil albedo': 'surface_albedo'}
+   ...     files=['in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc',
+   ...            'in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc',
+   ...            'in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc',
+   ...            'in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc',
+   ...            'in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc',
+   ...            'in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc',
+   ...            'in/ancillary/leaf_area_index.nc',
+   ...            'in/ancillary/canopy_height.nc',
+   ...            'in/ancillary/soil_albedo.nc'],
+   ...     name_mapping={'leaf-area index': 'leaf_area_index',
+   ...                   'canopy height': 'vegetation_height',
+   ...                   'soil albedo': 'surface_albedo'}
+   ... )
    >>> print(dataset)
    DataSet{
        air_temperature(time(8760), latitude(20), longitude(28)) K
