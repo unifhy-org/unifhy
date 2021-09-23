@@ -112,7 +112,7 @@ inputs, outputs, states, parameters, and constants.
 The inputs/outputs exclude those variables already included in the fixed
 interface, i.e. inward and outward transfers (see :ref:`Fig. 2<fig_transfers>`).
 
-The inputs must be one of three following kinds:
+The inputs must be one of the three following kinds:
 
 - dynamic: data required for each spatial element and for each time step,
 - static: data required for each spatial element and constant over time,
