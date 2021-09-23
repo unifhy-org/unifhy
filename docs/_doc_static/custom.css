@@ -22,7 +22,7 @@
     --pst-color-active-navigation: 0, 176, 240;
 
     --pst-color-link: 0, 176, 240;
-    --pst-color-link-hover: 146, 208, 80;
+    --pst-color-link-hover: 0, 176, 240;
 
     --pst-color-preformatted-background: 250, 250, 250;
     --pst-color-block-code: 51, 51, 51;
@@ -38,6 +38,7 @@
 /* override style for code blocks */
 pre {
     border: 1px solid rgba(var(--pst-color-preformatted-background),1); /* e1e4e5 */
+    border-radius: 4px;
     box-shadow: none;
 }
 
@@ -83,7 +84,7 @@ div.topic {
 
 /* override style for permalink */
 a.headerlink{
-    color:rgba(var(--pst-color-headerlink),1);
+    color:rgba(var(--pst-color-text-base),1);
     text-align: center;
     padding-left: 10px;
     font-size: 14px;
@@ -95,19 +96,47 @@ a.headerlink:hover{
     border-bottom: hidden;
 }
 
+/* override style for hyperlinks in paragraphs */
+a {
+    color: rgba(var(--pst-color-text-base),1);
+    border-bottom: 1px dotted;
+}
+
+a:hover {
+    text-decoration: none;  /* to remove text-decoration: underline */
+    border-bottom: 1px solid;
+}
+
+nav a, nav a:hover,
+.figure a, .figure a:hover,
+a.image-reference, a.image-reference:hover {
+    border-bottom: hidden
+}
+
+p a, .code-block-caption a code.literal {
+    color: rgba(var(--pst-color-text-base),1);
+    border-bottom: 1px dotted;
+}
+
+p a:hover, .code-block-caption a:hover code.literal {
+    text-decoration: none;
+    color: rgba(var(--pst-color-link-hover),1);
+    border-bottom: 1px solid;
+}
+
 /* override style for inline code */
 code.literal{
-    font-size: 100%;
+    font-size: 95%;
     font-weight: normal;
     color: rgba(var(--pst-color-inline-code),1);
 }
 a code.literal{
-    font-size: 100%;
+    font-size: 95%;
     font-weight: normal;
-    color: rgba(var(--pst-color-link),1);
+    color: rgba(var(--pst-color-inline-code),1);
 }
 a:hover code.literal{
-    font-size: 100%;
+    font-size: 95%;
     font-weight: normal;
     color: rgba(var(--pst-color-link-hover),1);
 }
