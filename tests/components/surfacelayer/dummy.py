@@ -85,6 +85,7 @@ class Dummy(SurfaceLayerComponent):
     _solver_history = 1
     _requires_land_sea_mask = True
     _requires_flow_direction = True
+    _requires_cell_area = False
 
     def initialise(self,
                    # component states

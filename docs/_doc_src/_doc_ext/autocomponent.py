@@ -3,7 +3,6 @@ from docutils.statemachine import StringList
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util import nested_parse_with_titles
 from importlib import import_module
-import inspect
 import re
 import numpy as np
 
@@ -82,7 +81,7 @@ class AutoComponentDirective(SphinxDirective):
                                   nodes.Text('SpaceDomain Properties'))
             para += rubric
 
-        for name in ['land_sea_mask', 'flow_direction']:
+        for name in ['land_sea_mask', 'flow_direction', 'cell_area']:
             field_list = nodes.field_list()
             attribute = getattr(cls_, '_requires_{}'.format(name))
             # name

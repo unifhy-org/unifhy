@@ -81,6 +81,9 @@ class Dummy(OpenWaterComponent):
         }
     }
     _solver_history = 1
+    _requires_land_sea_mask = False
+    _requires_flow_direction = False
+    _requires_cell_area = False
 
     def initialise(self,
                    # component states

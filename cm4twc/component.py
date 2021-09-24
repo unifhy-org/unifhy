@@ -39,6 +39,7 @@ class MetaComponent(abc.ABCMeta):
     _solver_history = None
     _requires_land_sea_mask = None
     _requires_flow_direction = None
+    _requires_cell_area = None
 
     @property
     def category(cls):
@@ -108,6 +109,11 @@ class MetaComponent(abc.ABCMeta):
         component spacedomain, otherwise return `False`."""
         return cls._requires_land_sea_mask
 
+    def requires_cell_area(cls):
+        """Return `True` if cell area must be available in the
+        component spacedomain, otherwise return `False`."""
+        return cls._requires_cell_area
+
     def __str__(cls):
         info_a = [
             "\n".join(
@@ -142,6 +148,10 @@ class MetaComponent(abc.ABCMeta):
                 f"    requires flow direction: "
                 f"{getattr(cls, '_requires_flow_direction')}"
             ]
+            + [
+                f"    requires cell area: "
+                f"{getattr(cls, '_requires_cell_area')}"
+            ]
             + info_b
             + [")"]
         )
@@ -162,6 +172,7 @@ class Component(metaclass=MetaComponent):
     _solver_history = 1
     _requires_land_sea_mask = False
     _requires_flow_direction = False
+    _requires_cell_area = False
 
     def __init__(self, saving_directory, timedomain, spacedomain,
                  dataset=None, parameters=None, constants=None, records=None,
@@ -619,8 +630,8 @@ class Component(metaclass=MetaComponent):
 
     def _check_spacedomain(self, spacedomain):
         """The purpose of this method is to check that the spacedomain
-        is of the right type and that special properties land_sea_mask
-        and flow_direction are set if required by component.
+        is of the right type and that special properties land_sea_mask,
+        flow_direction, and cell_area are set if required by component.
         """
         if not isinstance(spacedomain, SpaceDomain):
             raise TypeError(
@@ -633,19 +644,13 @@ class Component(metaclass=MetaComponent):
                 f"for spacedomain"
             )
 
-        if self._requires_land_sea_mask:
-            if spacedomain.land_sea_mask is None:
-                raise RuntimeError(
-                    f"'land_sea_mask' must be set in {SpaceDomain.__name__} "
-                    f"of {self._category} component '{self.__class__.__name__}'"
-                )
-
-        if self._requires_flow_direction:
-            if spacedomain.flow_direction is None:
-                raise RuntimeError(
-                    f"'flow_direction' must be set in {SpaceDomain.__name__} "
-                    f"of {self._category} component '{self.__class__.__name__}'"
-                )
+        for extra in ['land_sea_mask', 'flow_direction', 'cell_area']:
+            if getattr(self, '_requires_{}'.format(extra)):
+                if getattr(spacedomain, extra) is None:
+                    raise RuntimeError(
+                        f"'{extra}' must be set in {SpaceDomain.__name__} of "
+                        f"{self._category} component '{self.__class__.__name__}'"
+                    )
 
     def _check_dataset(self, dataset):
         # checks for input data

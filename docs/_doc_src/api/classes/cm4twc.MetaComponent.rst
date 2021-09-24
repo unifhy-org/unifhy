@@ -18,3 +18,4 @@ Methods to query on special data requirements
 
    ~cm4twc.component.MetaComponent.requires_land_sea_mask
    ~cm4twc.component.MetaComponent.requires_flow_direction
+   ~cm4twc.component.MetaComponent.requires_cell_area
