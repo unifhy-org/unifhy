@@ -5,7 +5,6 @@
 
 .. _fig_diagram:
 .. figure:: ../_doc_img/framework_diagram.svg
-   :scale: 50 %
    :align: center
    :alt: modelling framework diagram
 
