@@ -54,36 +54,43 @@ class MetaComponent(abc.ABCMeta):
 
     @property
     def inwards_metadata(cls):
+        """Return details on the component inward transfers as a `str`."""
         if cls._inwards_info:
             return yaml.dump(cls._inwards_info)
 
     @property
     def outwards_metadata(cls):
+        """Return details on the component outward transfers as a `str`."""
         if cls._outwards_info:
             return yaml.dump(cls._outwards_info)
 
     @property
     def inputs_metadata(cls):
+        """Return details on the component input data as a `str`."""
         if cls._inputs_info:
             return yaml.dump(cls._inputs_info)
 
     @property
     def parameters_metadata(cls):
+        """Return details on the component parameters as a `str`."""
         if cls._parameters_info:
             return yaml.dump(cls._parameters_info)
 
     @property
     def constants_metadata(cls):
+        """Return details on the component constants as a `str`."""
         if cls._constants_info:
             return yaml.dump(cls._constants_info)
 
     @property
     def states_metadata(cls):
+        """Return details on the component states as a `str`."""
         if cls._states_info:
             return yaml.dump(cls._states_info)
 
     @property
     def outputs_metadata(cls):
+        """Return details on the component outputs as a `str`."""
         if cls._outputs_info:
             return yaml.dump(cls._outputs_info)
 
@@ -92,9 +99,13 @@ class MetaComponent(abc.ABCMeta):
         return cls._solver_history
 
     def requires_flow_direction(cls):
+        """Return `True` if flow direction must be available in the
+        component spacedomain, otherwise return `False`."""
         return cls._requires_flow_direction
 
     def requires_land_sea_mask(cls):
+        """Return `True` if land sea mask must be available in the
+        component spacedomain, otherwise return `False`."""
         return cls._requires_land_sea_mask
 
     def __str__(cls):

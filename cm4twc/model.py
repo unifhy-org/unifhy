@@ -50,12 +50,13 @@ class Model(object):
 
         """
         # assign components to model if of the correct type
+        #: Return the surface layer component of the model.
         self.surfacelayer = self._process_component_type(
             surfacelayer, SurfaceLayerComponent)
-
+        #: Return the sub-surface component of the model.
         self.subsurface = self._process_component_type(
             subsurface, SubSurfaceComponent)
-
+        #: Return the open water component of the model.
         self.openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
@@ -63,7 +64,9 @@ class Model(object):
         self.identifier = identifier
 
         # assign directories
+        #: Return the directory used to store the model configurations.
         self.config_directory = config_directory
+        #: Return the directory used to store the model output files.
         self.saving_directory = saving_directory
 
         # save model configuration in yaml file

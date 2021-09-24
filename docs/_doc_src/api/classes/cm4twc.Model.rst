@@ -42,3 +42,19 @@ Simulation
    ~cm4twc.Model.spin_up
    ~cm4twc.Model.simulate
    ~cm4twc.Model.resume
+
+
+Attributes
+----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attributes/
+   :template: attribute.rst
+
+   ~cm4twc.Model.identifier
+   ~cm4twc.Model.config_directory
+   ~cm4twc.Model.saving_directory
+   ~cm4twc.Model.surfacelayer
+   ~cm4twc.Model.subsurface
+   ~cm4twc.Model.openwater
