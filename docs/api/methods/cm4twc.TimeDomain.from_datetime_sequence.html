@@ -197,6 +197,36 @@
      cm4twc.Model.resume
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.identifier.html">
+     cm4twc.Model.identifier
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.config_directory.html">
+     cm4twc.Model.config_directory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.saving_directory.html">
+     cm4twc.Model.saving_directory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.surfacelayer.html">
+     cm4twc.Model.surfacelayer
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.subsurface.html">
+     cm4twc.Model.subsurface
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.openwater.html">
+     cm4twc.Model.openwater
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -707,7 +737,8 @@ of the last timestep (not its start).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">datetimes</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
     <span class="n">numpy</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">&#39;1970-01-01 09:00:00&#39;</span><span class="p">),</span>
     <span class="n">numpy</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">&#39;1970-01-11 09:00:00&#39;</span><span class="p">),</span>
-    <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd>
@@ -750,7 +781,8 @@ default ‘gregorian’.</p>
 <span class="gp">... </span>    <span class="n">datetimes</span><span class="o">=</span><span class="p">[</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
 <span class="gp">... </span>               <span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)],</span>
 <span class="gp">... </span>    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;seconds since 1970-01-01 00:00:00&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;standard&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;standard&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
 <span class="go">TimeDomain(</span>
 <span class="go">    time (3,): [1970-01-01 00:00:00, 1970-01-02 00:00:00, 1970-01-03 00:00:00] standard</span>
@@ -780,25 +812,17 @@ default ‘gregorian’.</p>
 
   <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.<br/>
-</p>
+            &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+      </p>
     </div>
-    
-    <div class="footer-item">
-      <p class="last-updated">
-Last updated on Sep 23, 2021.<br/>
-</p>
-    </div>
-    
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
-</p>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
+        Last updated on Sep 24, 2021.<br>
+      </p>
     </div>
-    
   </div>
 </footer>
   </body>

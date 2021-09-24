@@ -197,6 +197,36 @@
      cm4twc.Model.resume
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.identifier.html">
+     cm4twc.Model.identifier
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.config_directory.html">
+     cm4twc.Model.config_directory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.saving_directory.html">
+     cm4twc.Model.saving_directory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.surfacelayer.html">
+     cm4twc.Model.surfacelayer
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.subsurface.html">
+     cm4twc.Model.subsurface
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.openwater.html">
+     cm4twc.Model.openwater
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -687,6 +717,10 @@ of the field are compared against those of the TimeDomain.</p>
 <dd class="field-odd"><dl class="simple">
 <dt>field: <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a></dt><dd><p>The field that needs to be compared against TimeDomain.</p>
 </dd>
+<dt>ignore_bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Option to ignore the time bounds in the comparison. If
+not provided, set to default value <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> (i.e. bounds
+are ignored in the comparison).</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -711,25 +745,17 @@ of the field are compared against those of the TimeDomain.</p>
 
   <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.<br/>
-</p>
+            &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+      </p>
     </div>
-    
-    <div class="footer-item">
-      <p class="last-updated">
-Last updated on Sep 23, 2021.<br/>
-</p>
-    </div>
-    
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
-</p>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
+        Last updated on Sep 24, 2021.<br>
+      </p>
     </div>
-    
   </div>
 </footer>
   </body>

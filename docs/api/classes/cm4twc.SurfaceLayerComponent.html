@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="SubSurfaceComponent" href="cm4twc.SubSurfaceComponent.html" />
-    <link rel="prev" title="cm4twc.Model.resume" href="../methods/cm4twc.Model.resume.html" />
+    <link rel="prev" title="cm4twc.Model.openwater" href="../attributes/cm4twc.Model.openwater.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -195,6 +195,36 @@
    <li class="toctree-l2">
     <a class="reference internal" href="../methods/cm4twc.Model.resume.html">
      cm4twc.Model.resume
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.identifier.html">
+     cm4twc.Model.identifier
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.config_directory.html">
+     cm4twc.Model.config_directory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.saving_directory.html">
+     cm4twc.Model.saving_directory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.surfacelayer.html">
+     cm4twc.Model.surfacelayer
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.subsurface.html">
+     cm4twc.Model.subsurface
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../attributes/cm4twc.Model.openwater.html">
+     cm4twc.Model.openwater
     </a>
    </li>
   </ul>
@@ -651,9 +681,24 @@
               
               <div class="toc-item">
                 
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#metadata-properties">
+   Metadata properties
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#methods-to-query-on-special-data-requirements">
+   Methods to query on special data requirements
+  </a>
+ </li>
+</ul>
+
 </nav>
               </div>
               
@@ -1012,6 +1057,55 @@ as a <a class="reference external" href="https://docs.python.org/3/library/funct
 
 </dd></dl>
 
+<div class="section" id="metadata-properties">
+<h2>Metadata properties<a class="headerlink" href="#metadata-properties" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<table class="longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inwards_metadata</span></code></p></td>
+<td><p>Return details on the component inward transfers as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">outwards_metadata</span></code></p></td>
+<td><p>Return details on the component outward transfers as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inputs_metadata</span></code></p></td>
+<td><p>Return details on the component input data as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters_metadata</span></code></p></td>
+<td><p>Return details on the component parameters as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">constants_metadata</span></code></p></td>
+<td><p>Return details on the component constants as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">states_metadata</span></code></p></td>
+<td><p>Return details on the component states as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">outputs_metadata</span></code></p></td>
+<td><p>Return details on the component outputs as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="methods-to-query-on-special-data-requirements">
+<h2>Methods to query on special data requirements<a class="headerlink" href="#methods-to-query-on-special-data-requirements" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<table class="longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_land_sea_mask</span></code>()</p></td>
+<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if land sea mask must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_flow_direction</span></code>()</p></td>
+<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if flow direction must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -1028,25 +1122,17 @@ as a <a class="reference external" href="https://docs.python.org/3/library/funct
 
   <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.<br/>
-</p>
+            &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+      </p>
     </div>
-    
-    <div class="footer-item">
-      <p class="last-updated">
-Last updated on Sep 23, 2021.<br/>
-</p>
-    </div>
-    
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
-</p>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
+        Last updated on Sep 24, 2021.<br>
+      </p>
     </div>
-    
   </div>
 </footer>
   </body>

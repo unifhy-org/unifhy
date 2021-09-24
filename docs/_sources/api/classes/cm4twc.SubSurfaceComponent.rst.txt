@@ -8,3 +8,5 @@ SubSurfaceComponent
    :show-inheritance:
    :members:
    :inherited-members:
+
+.. include:: cm4twc.MetaComponent.rst

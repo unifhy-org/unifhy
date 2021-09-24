@@ -6,7 +6,7 @@ API Reference
 
 .. _fig_uml:
 .. figure:: ../_doc_img/simplified-uml.gv.svg
-   :scale: 50 %
+   :width: 100 %
    :align: center
    :alt: UML class diagram
 
