@@ -78,13 +78,18 @@ The current supported spatial configurations can be found in the
        X_bounds (6, 2): [[-2.0, ..., 1.0]] degrees_east
    )
 
-Two additional properties of `SpaceDomain` may require to be set
-depending on the component's requirements: *land_sea_mask* and
-*flow_direction*. *land_sea_mask* may be used by a component to be
-aware of where there is land and where there is sea, but if set, it is
-also used to mask the component records. *flow_direction* may be used by
-a component to determine where to move flow downstream, it is namely
-compulsory if the component is using the `SpaceDomain`'s *route* method.
+Three additional properties of `SpaceDomain` may require to be set
+depending on the component's requirements: *land_sea_mask*,
+*flow_direction*, and *cell_area*. *land_sea_mask* may be used by a
+component to be aware of where there is land and where there is sea,
+but if set, it is also used to mask the component records. *flow_direction*
+may be used by a component to determine where to move flow downstream,
+it is namely compulsory if the component is using the `SpaceDomain`'s
+*route* method. *cell_area* may be used by a component to determine the
+surface area of each spatial element in the component spacedomain. For
+some spacedomains (e.g. `LatLonGrid`, `RotatedLatLonGrid`,
+`BritishNationalGrid`), the cell_area is calculated automatically by the
+framework if not already set.
 
 .. code-block:: python
    :caption: Setting land sea mask and flow direction for `LatLonGrid`.
@@ -187,6 +192,7 @@ and data needs differ.
            topographic_index [1]
        requires land sea mask: False
        requires flow direction: False
+       requires cell area: False
        constants info:
            m [1]
            rho_lw [kg m-3]

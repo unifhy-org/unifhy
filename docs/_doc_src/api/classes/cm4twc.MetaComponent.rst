@@ -11,8 +11,8 @@ Metadata properties
    ~cm4twc.component.MetaComponent.states_metadata
    ~cm4twc.component.MetaComponent.outputs_metadata
 
-Methods to query on special data requirements
----------------------------------------------
+Methods to query special data requirements
+------------------------------------------
 
 .. autosummary::
 

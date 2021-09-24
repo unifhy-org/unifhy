@@ -338,13 +338,18 @@ The current supported spatial configurations can be found in the
 </pre></div>
 </div>
 </div>
-<p>Two additional properties of <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> may require to be set
-depending on the component’s requirements: <em>land_sea_mask</em> and
-<em>flow_direction</em>. <em>land_sea_mask</em> may be used by a component to be
-aware of where there is land and where there is sea, but if set, it is
-also used to mask the component records. <em>flow_direction</em> may be used by
-a component to determine where to move flow downstream, it is namely
-compulsory if the component is using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>’s <em>route</em> method.</p>
+<p>Three additional properties of <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> may require to be set
+depending on the component’s requirements: <em>land_sea_mask</em>,
+<em>flow_direction</em>, and <em>cell_area</em>. <em>land_sea_mask</em> may be used by a
+component to be aware of where there is land and where there is sea,
+but if set, it is also used to mask the component records. <em>flow_direction</em>
+may be used by a component to determine where to move flow downstream,
+it is namely compulsory if the component is using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>’s
+<em>route</em> method. <em>cell_area</em> may be used by a component to determine the
+surface area of each spatial element in the component spacedomain. For
+some spacedomains (e.g. <a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>, <a class="reference internal" href="../api/classes/cm4twc.RotatedLatLonGrid.html#cm4twc.RotatedLatLonGrid" title="cm4twc.RotatedLatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RotatedLatLonGrid</span></code></a>,
+<a class="reference internal" href="../api/classes/cm4twc.BritishNationalGrid.html#cm4twc.BritishNationalGrid" title="cm4twc.BritishNationalGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BritishNationalGrid</span></code></a>), the cell_area is calculated automatically by the
+framework if not already set.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="../api/classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
@@ -443,6 +448,7 @@ and data needs differ.</p>
 <span class="go">        topographic_index [1]</span>
 <span class="go">    requires land sea mask: False</span>
 <span class="go">    requires flow direction: False</span>
+<span class="go">    requires cell area: False</span>
 <span class="go">    constants info:</span>
 <span class="go">        m [1]</span>
 <span class="go">        rho_lw [kg m-3]</span>
