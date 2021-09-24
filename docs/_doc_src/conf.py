@@ -161,8 +161,7 @@ html_theme_options = {
         }
     ],
     "show_prev_next": False,
-    "navbar_align": "left",
-    "footer_items": ['copyright', 'last-updated', 'sphinx-version']
+    "navbar_align": "left"
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
