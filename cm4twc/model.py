@@ -240,7 +240,8 @@ class Model(object):
         return cls.from_config(cfg)
 
     def to_yaml(self):
-        """Store configuration of `Model` as a YAML file."""
+        """Store configuration of `Model` as a YAML file in the
+        configuration directory."""
         self._set_up_yaml_dumper()
 
         # dump configuration in yaml file
@@ -249,7 +250,7 @@ class Model(object):
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def initialise_transfers_from_dump(self, dump_file, at=None):
-        """Initialise the transfers of the Exchanger from a dump file.
+        """Initialise the transfers of the `Exchanger` from a dump file.
 
         :Parameters:
 

@@ -316,6 +316,11 @@ class TimeDomain(object):
             field: `cf.Field`
                 The field that needs to be compared against TimeDomain.
 
+            ignore_bounds: `bool`, optional
+                Option to ignore the time bounds in the comparison. If
+                not provided, set to default value `True` (i.e. bounds
+                are ignored in the comparison).
+
         :Returns: `bool`
         """
         # check that the field has a time construct
@@ -468,7 +473,8 @@ class TimeDomain(object):
                     datetimes=numpy.arange(
                         numpy.datetime64('1970-01-01 09:00:00'),
                         numpy.datetime64('1970-01-11 09:00:00'),
-                        datetime.timedelta(days=3))
+                        datetime.timedelta(days=3)
+                    )
 
             units: `str`, optional
                 Reference in time for the *timestamps* that will be
@@ -509,7 +515,8 @@ class TimeDomain(object):
         ...     datetimes=[datetime(1970, 1, 1), datetime(1970, 1, 2),
         ...                datetime(1970, 1, 3), datetime(1970, 1, 4)],
         ...     units='seconds since 1970-01-01 00:00:00',
-        ...     calendar='standard')
+        ...     calendar='standard'
+        ... )
         >>> print(td)
         TimeDomain(
             time (3,): [1970-01-01 00:00:00, 1970-01-02 00:00:00, 1970-01-03 00:00:00] standard
@@ -632,7 +639,8 @@ class TimeDomain(object):
         ...     end=datetime(2020, 3, 1),
         ...     step=timedelta(days=1),
         ...     units='seconds since 1970-01-01 00:00:00',
-        ...     calendar='standard')
+        ...     calendar='standard'
+        ... )
         >>> print(td)
         TimeDomain(
             time (60,): [2020-01-01 00:00:00, ..., 2020-02-29 00:00:00] standard
@@ -649,7 +657,8 @@ class TimeDomain(object):
         ...     end=datetime(2020, 3, 1),
         ...     step=timedelta(days=1),
         ...     units='seconds since 1970-01-01 00:00:00',
-        ...     calendar='noleap')
+        ...     calendar='noleap'
+        ... )
         >>> print(td)
         TimeDomain(
             time (59,): [2020-01-01 00:00:00, ..., 2020-02-28 00:00:00] noleap

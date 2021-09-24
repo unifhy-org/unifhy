@@ -467,27 +467,34 @@ class Grid(SpaceDomain):
         >>> dim = cf.DimensionCoordinate(
         ...     properties={'name': 'relative flow direction along y and x components',
         ...                 'units': '1'},
-        ...     data=cf.Data(['y_rel', 'x_rel']))
+        ...     data=cf.Data(['y_rel', 'x_rel'])
+        ... )
         >>> dim = directions.set_construct(dim, axes=ax)
-        >>> directions.set_data(numpy.array([[[-1, 1], [-1, 0], [0, 1]],
-        ...                                  [[1, 1], [0, 1], [1, 0]],
-        ...                                  [[-1, 0], [-1, 0], [0, -1]],
-        ...                                  [[1, -1], [0, 1], [-1, -1]]]),
-        ...                     axes=('Y', 'X', dim))
+        >>> directions.set_data(
+        ...     numpy.array([[[-1, 1], [-1, 0], [0, 1]],
+        ...                  [[1, 1], [0, 1], [1, 0]],
+        ...                  [[-1, 0], [-1, 0], [0, -1]],
+        ...                  [[1, -1], [0, 1], [-1, -1]]]
+        ...     ),
+        ...     axes=('Y', 'X', dim)
+        ... )
         >>> grid.flow_direction = directions
         >>> numpy.array_equal(flow_direction, grid.flow_direction)
         True
 
         >>> directions = grid.to_field()
-        >>> directions.set_data(numpy.ma.array(
-        ...     [['SE', 'S', 'E'],
-        ...      ['NE', 'E', 'N'],
-        ...      ['S', 'S', 'W'],
-        ...      ['NW', 'E', 'SW']],
-        ...     mask=[[1, 0, 0],
-        ...           [1, 0, 0],
-        ...           [1, 1, 0],
-        ...           [0, 0, 0]]))
+        >>> directions.set_data(
+        ...     numpy.ma.array(
+        ...         [['SE', 'S', 'E'],
+        ...          ['NE', 'E', 'N'],
+        ...          ['S', 'S', 'W'],
+        ...          ['NW', 'E', 'SW']],
+        ...         mask=[[1, 0, 0],
+        ...               [1, 0, 0],
+        ...               [1, 1, 0],
+        ...               [0, 0, 0]]
+        ...     )
+        ... )
         >>> grid.flow_direction = directions
         >>> print(grid.flow_direction)
         [[[-- --]
@@ -719,15 +726,18 @@ class Grid(SpaceDomain):
          [ 0  0  0]
          [10  0 12]]
 
-        >>> directions.set_data(numpy.ma.array(
-        ...     [['NE', 'N', 'E'],
-        ...      ['SE', 'E', 'S'],
-        ...      ['N', 'N', 'W'],
-        ...      ['SW', 'E', 'NW']],
-        ...     mask=[[1, 0, 0],
-        ...           [1, 0, 0],
-        ...           [1, 1, 0],
-        ...           [0, 0, 0]]))
+        >>> directions.set_data(
+        ...     numpy.ma.array(
+        ...         [['NE', 'N', 'E'],
+        ...          ['SE', 'E', 'S'],
+        ...          ['N', 'N', 'W'],
+        ...          ['SW', 'E', 'NW']],
+        ...         mask=[[1, 0, 0],
+        ...               [1, 0, 0],
+        ...               [1, 1, 0],
+        ...               [0, 0, 0]]
+        ...     )
+        ... )
         >>> grid.flow_direction = directions
         >>> moved, outed = grid.route(variable)
         >>> print(moved)
@@ -878,13 +888,13 @@ class Grid(SpaceDomain):
          [7.35483450e+09 7.35483450e+09 7.35483450e+09]
          [7.18023725e+09 7.18023725e+09 7.18023725e+09]]
 
-        >>> area = grid.to_field()
-        >>> area.set_data(numpy.array([[7.70e+09, 7.70e+09, 7.70e+09],
-        ...                            [7.53e+09, 7.53e+09, 7.53e+09],
-        ...                            [7.35e+09, 7.35e+09, 7.35e+09],
-        ...                            [7.18e+09, 7.18e+09, 7.18e+09]]))
-        >>> area.units = 'm2'
-        >>> grid.cell_area = area
+        >>> areas = grid.to_field()
+        >>> areas.set_data(numpy.array([[7.70e+09, 7.70e+09, 7.70e+09],
+        ...                             [7.53e+09, 7.53e+09, 7.53e+09],
+        ...                             [7.35e+09, 7.35e+09, 7.35e+09],
+        ...                             [7.18e+09, 7.18e+09, 7.18e+09]]))
+        >>> areas.units = 'm2'
+        >>> grid.cell_area = areas
         >>> print(grid.cell_area)
         [[7.70e+09 7.70e+09 7.70e+09]
          [7.53e+09 7.53e+09 7.53e+09]
@@ -3817,10 +3827,12 @@ class BritishNationalGrid(Grid):
         ...                     'axis': 'Y'},
         ...         data=cf.Data([12500, 13500, 14500]),
         ...         bounds=cf.Bounds(
-        ...             data=cf.Data(numpy.column_stack(
-        ...                 (numpy.arange(12000, 15000, 1000),
-        ...                  numpy.arange(13000, 16000, 1000))
-        ...             ))
+        ...             data=cf.Data(
+        ...                 numpy.column_stack(
+        ...                     (numpy.arange(12000, 15000, 1000),
+        ...                      numpy.arange(13000, 16000, 1000))
+        ...                 )
+        ...             )
         ...         )
         ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=3))
@@ -3832,10 +3844,12 @@ class BritishNationalGrid(Grid):
         ...                     'axis': 'X'},
         ...         data=cf.Data([80500, 81500, 82500, 83500]),
         ...         bounds=cf.Bounds(
-        ...             data=cf.Data(numpy.column_stack(
-        ...                 (numpy.arange(80000, 84000, 1000),
-        ...                  numpy.arange(81000, 85000, 1000))
-        ...             ))
+        ...             data=cf.Data(
+        ...                 numpy.column_stack(
+        ...                     (numpy.arange(80000, 84000, 1000),
+        ...                      numpy.arange(81000, 85000, 1000))
+        ...                 )
+        ...             )
         ...         )
         ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=4))
@@ -3847,7 +3861,7 @@ class BritishNationalGrid(Grid):
         ...                     'axis': 'Z'},
         ...         data=cf.Data([10]),
         ...         bounds=cf.Bounds(data=cf.Data([[0, 20]]))
-        ...         ),
+        ...     ),
         ...     axes=f.set_construct(cf.DomainAxis(size=1))
         ... )
         >>> crs = f.set_construct(
