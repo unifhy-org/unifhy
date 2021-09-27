@@ -34,11 +34,13 @@
 
     --pst-font-family-base-system: 'Open Sans', sans-serif;
     --pst-font-family-monospace-system: 'JetBrains Mono', monospace;
+    --pst-font-family-monospace: var(--pst-font-family-monospace-system);
 }
 
 /* override style for code blocks */
 pre {
     border: 1px solid rgba(var(--pst-color-preformatted-background),1); /* e1e4e5 */
+    font-family: var(--pst-font-family-monospace-system);
     border-radius: 4px;
     box-shadow: none;
 }
@@ -46,31 +48,43 @@ pre {
 /* override style for class and attributes */
 .sig {
     font-family: var(--pst-font-family-monospace-system);
-    font-weight: lighter;
+    font-weight: 300;
 }
 
 .sig-paren {
+    font-family: var(--pst-font-family-monospace-system);
     font-size: 100%;
 }
 
 .sig-param {
-    font-weight: lighter;
+    font-family: var(--pst-font-family-monospace-system);
+    font-style: italic;
+    font-weight: 300;
     font-size: 100%;
 }
 
 em.property{
+    font-family: var(--pst-font-family-monospace-system);
     font-size: 100%;
     padding-right: 6px;
 }
 
+code {
+    font-family: var(--pst-font-family-monospace-system);
+}
+
 code.descclassname {
-	font-weight: lighter;
+    font-weight: 300;
     font-size: 100%;
 }
 
 code.descname {
-    font-weight: bold;
-	font-size: 100%;
+    font-weight: 600;
+    font-size: 100%;
+}
+
+.text-monospace {
+    font-family: var(--pst-font-family-monospace-system);
 }
 
 /* override style for images */

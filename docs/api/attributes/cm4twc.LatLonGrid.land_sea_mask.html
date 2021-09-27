@@ -751,7 +751,18 @@ return <a class="reference external" href="https://docs.python.org/3/library/con
 <span class="go"> [ True  True False]</span>
 <span class="go"> [False  True False]</span>
 <span class="go"> [False False False]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="go">LatLonGrid(</span>
+<span class="go">    shape {Y, X}: (4, 3)</span>
+<span class="go">    Y, latitude (4,): [51.5, ..., 54.5] degrees_north</span>
+<span class="go">    X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east</span>
+<span class="go">    Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north</span>
+<span class="go">    X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east</span>
+<span class="go">    land_sea_mask (4, 3): [[False, ..., False]]</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
 <span class="gp">... </span>                           <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
 <span class="gp">... </span>                           <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
 <span class="gp">... </span>                           <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]]))</span>
@@ -789,7 +800,7 @@ return <a class="reference external" href="https://docs.python.org/3/library/con
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Sep 24, 2021.<br>
+        Last updated on Sep 27, 2021.<br>
       </p>
     </div>
   </div>
