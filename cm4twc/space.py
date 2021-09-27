@@ -894,7 +894,6 @@ class Grid(SpaceDomain):
 
         **Examples**
 
-        >>> import numpy
         >>> grid = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(51, 55),
         ...     latitude_resolution=1,
@@ -906,7 +905,17 @@ class Grid(SpaceDomain):
          [7.52719193e+09 7.52719193e+09 7.52719193e+09]
          [7.35483450e+09 7.35483450e+09 7.35483450e+09]
          [7.18023725e+09 7.18023725e+09 7.18023725e+09]]
+        >>> print(grid)
+        LatLonGrid(
+            shape {Y, X}: (4, 3)
+            Y, latitude (4,): [51.5, ..., 54.5] degrees_north
+            X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east
+            Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north
+            X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east
+            cell_area (4, 3): [[7697257030.02173, ..., 7180237253.914141]] m2
+        )
 
+        >>> import numpy
         >>> areas = grid.to_field()
         >>> areas.set_data(numpy.array([[7.70e+09, 7.70e+09, 7.70e+09],
         ...                             [7.53e+09, 7.53e+09, 7.53e+09],
@@ -4138,7 +4147,6 @@ class BritishNationalGrid(Grid):
 
         **Examples**
 
-        >>> import numpy
         >>> grid = BritishNationalGrid.from_extent_and_resolution(
         ...     projection_y_coordinate_extent=(12000, 15000),
         ...     projection_y_coordinate_resolution=1000,
@@ -4149,7 +4157,17 @@ class BritishNationalGrid(Grid):
         [[2000000. 2000000.]
          [2000000. 2000000.]
          [2000000. 2000000.]]
+        >>> print(grid)
+        BritishNationalGrid(
+            shape {Y, X}: (3, 2)
+            Y, projection_y_coordinate (3,): [12500.0, 13500.0, 14500.0] m
+            X, projection_x_coordinate (2,): [81000.0, 83000.0] m
+            Y_bounds (3, 2): [[12000.0, ..., 15000.0]] m
+            X_bounds (2, 2): [[80000.0, ..., 84000.0]] m
+            cell_area (3, 2): [[2000000.0, ..., 2000000.0]] m2
+        )
 
+        >>> import numpy
         >>> areas = grid.to_field()
         >>> areas.set_data(numpy.array([[1999999, 1999999],
         ...                             [1999999, 1999999],
