@@ -116,9 +116,9 @@ class Model(object):
             + [f"    identifier: {self._identifier}"]
             + [f"    config directory: {self.config_directory}"]
             + [f"    saving directory: {self.saving_directory}"]
-            + [f"    surfacelayer: {self.surfacelayer.__class__.__name__}"]
-            + [f"    subsurface: {self.subsurface.__class__.__name__}"]
-            + [f"    openwater: {self.openwater.__class__.__name__}"]
+            + [f"    surfacelayer: {self.surfacelayer.__module__}"]
+            + [f"    subsurface: {self.subsurface.__module__}"]
+            + [f"    openwater: {self.openwater.__module__}"]
             + [")"]
         )
 

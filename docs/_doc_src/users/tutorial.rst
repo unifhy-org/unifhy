@@ -137,7 +137,7 @@ instances.
    ...                   'canopy height': 'vegetation_height',
    ...                   'soil albedo': 'surface_albedo'}
    ... )
-   >>> print(dataset)
+   >>> print(dataset_surfacelayer)
    DataSet{
        air_temperature(time(8760), latitude(20), longitude(28)) K
        leaf_area_index(time(12), latitude(360), longitude(720)) 1
@@ -280,9 +280,9 @@ three parts of the terrestrial water cycle.
    ... )
    >>> print(model)
    Model(
-       surfacelayer: Artemis
-       subsurface: Artemis
-       openwater: RFM
+       surfacelayer: cm4twccontrib.artemis.surfacelayer
+       subsurface: cm4twccontrib.artemis.subsurface
+       openwater: cm4twccontrib.rfm.openwater
    )
 
 .. warning::
