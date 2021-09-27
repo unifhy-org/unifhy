@@ -320,6 +320,16 @@ class Grid(SpaceDomain):
          [ True  True False]
          [False  True False]
          [False False False]]
+        >>> print(grid)
+        LatLonGrid(
+            shape {Y, X}: (4, 3)
+            Y, latitude (4,): [51.5, ..., 54.5] degrees_north
+            X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east
+            Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north
+            X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east
+            land_sea_mask (4, 3): [[False, ..., False]]
+        )
+
         >>> mask.set_data(numpy.array([[False, True, True],
         ...                            [True, True, False],
         ...                            [False, True, False],
@@ -452,8 +462,17 @@ class Grid(SpaceDomain):
          [[ 1 -1]
           [ 0  1]
           [-1 -1]]]
-        >>> flow_direction = grid.flow_direction
+        >>> print(grid)
+        LatLonGrid(
+            shape {Y, X}: (4, 3)
+            Y, latitude (4,): [51.5, ..., 54.5] degrees_north
+            X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east
+            Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north
+            X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east
+            flow_direction (4, 3, 2): [[[-1, ..., -1]]]
+        )
 
+        >>> flow_direction = grid.flow_direction
         >>> directions.set_data(numpy.array([[4, 5, 3],
         ...                                  [2, 3, 1],
         ...                                  [5, 5, 7],
@@ -1910,6 +1929,18 @@ class Grid(SpaceDomain):
             + ["    X_bounds {}: {}".format(
                 self._f.dim('X').bounds.data.shape,
                 self._f.dim('X').bounds.data)]
+            + (["    cell_area {}: {}".format(
+                self._cell_area.shape,
+                cf.Data(self._cell_area, 'm2'))]
+               if self._cell_area is not None else [])
+            + (["    land_sea_mask {}: {}".format(
+                self._land_sea_mask.shape,
+                cf.Data(self._land_sea_mask))]
+               if self._land_sea_mask is not None else [])
+            + (["    flow_direction {}: {}".format(
+                self._flow_direction.shape,
+                cf.Data(self._flow_direction))]
+               if self._flow_direction is not None else [])
             + [")"]
         )
 
@@ -2772,8 +2803,8 @@ class RotatedLatLonGrid(Grid):
                 *Parameter example:* ::
 
                     grid_latitude_bounds=[[1.1, 0.66], [0.66, 0.22],
-                                            [0.22, -0.22], [-0.22, -0.66],
-                                            [-0.66, -1.1]]
+                                          [0.22, -0.22], [-0.22, -0.66],
+                                          [-0.66, -1.1]]
 
             grid_longitude_bounds: two-dimensional array-like object
                 The array of longitude coordinate bounds in degrees
