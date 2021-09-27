@@ -731,8 +731,7 @@ automatically.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">BritishNationalGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">BritishNationalGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">projection_y_coordinate_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">15000</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">projection_y_coordinate_resolution</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">projection_x_coordinate_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">80000</span><span class="p">,</span> <span class="mi">84000</span><span class="p">),</span>
@@ -742,9 +741,19 @@ automatically.</p>
 <span class="go">[[2000000. 2000000.]</span>
 <span class="go"> [2000000. 2000000.]</span>
 <span class="go"> [2000000. 2000000.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="go">BritishNationalGrid(</span>
+<span class="go">    shape {Y, X}: (3, 2)</span>
+<span class="go">    Y, projection_y_coordinate (3,): [12500.0, 13500.0, 14500.0] m</span>
+<span class="go">    X, projection_x_coordinate (2,): [81000.0, 83000.0] m</span>
+<span class="go">    Y_bounds (3, 2): [[12000.0, ..., 15000.0]] m</span>
+<span class="go">    X_bounds (2, 2): [[80000.0, ..., 84000.0]] m</span>
+<span class="go">    cell_area (3, 2): [[2000000.0, ..., 2000000.0]] m2</span>
+<span class="go">)</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">areas</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">to_field</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">areas</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">to_field</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">areas</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1999999</span><span class="p">,</span> <span class="mi">1999999</span><span class="p">],</span>
 <span class="gp">... </span>                            <span class="p">[</span><span class="mi">1999999</span><span class="p">,</span> <span class="mi">1999999</span><span class="p">],</span>
 <span class="gp">... </span>                            <span class="p">[</span><span class="mi">1999999</span><span class="p">,</span> <span class="mi">1999999</span><span class="p">]]))</span>
