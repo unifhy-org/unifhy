@@ -230,9 +230,9 @@ class Model(object):
             identifier: test-dummy-sync-match
             config directory: outputs
             saving directory: outputs
-            surfacelayer: Dummy
-            subsurface: Dummy
-            openwater: Dummy
+            surfacelayer: tests.components.surfacelayer.dummy
+            subsurface: tests.components.subsurface.dummy
+            openwater: tests.components.openwater.dummy
         )
 
         """
