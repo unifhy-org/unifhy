@@ -156,16 +156,19 @@ a scalar state does not mean that there is only one state value for the
 whole spatial domain, it only means that there is only one state value for
 each spatial element in the space domain.
 
-In addition, the component definition features two special optional
-attributes `_requires_land_sea_mask` and `_requires_flow_direction`.
-They must be assigned a boolean value (True if required by your
-component, False if not) -- their default value is False. If you need
-land sea mask information for your computations, set `_requires_land_sea_mask`
-to True and access it in your class methods using
-`self.spacedomain.land_sea_mask`. If you need flow direction information
+In addition, the component definition features three special optional
+attributes `_requires_land_sea_mask`, `_requires_flow_direction` and
+`_requires_cell_area`. They must be assigned a boolean value (True if
+required by your component, False if not) -- their default value is
+False. If you need land sea mask information for your computations,
+set `_requires_land_sea_mask` to True and access it in your class methods
+using `self.spacedomain.land_sea_mask`. If you need flow direction information
 or want to use the flow routing functionality of the component (accessible
 through `self.spacedomain.route(...)`), set `_requires_flow_direction` to True,
 and access it in your class methods using `self.spacedomain.flow_direction`.
+If you need the horizontal cell area of the space domain elements, set
+`_requires_cell_area` to True and access it in your class methods using
+`self.spacedomain.cell_area`.
 
 See a detailed example of a mock component definition below.
 
@@ -225,6 +228,7 @@ See a detailed example of a mock component definition below.
        }
        _requires_land_sea_mask = False
        _requires_flow_direction = True
+       _requires_cell_area = False
 
 
 Implement the initialise-run-finalise component class methods
