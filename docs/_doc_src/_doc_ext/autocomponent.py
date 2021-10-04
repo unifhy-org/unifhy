@@ -66,6 +66,8 @@ class AutoComponentDirective(SphinxDirective):
                                     value, trim='0'
                                 )
                             )
+                        elif key == 'to':
+                            field_body += nodes.paragraph(text=', '.join(value))
                         else:
                             field_body += nodes.paragraph(text=value)
                         field += field_body
