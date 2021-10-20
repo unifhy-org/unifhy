@@ -280,6 +280,9 @@ three parts of the terrestrial water cycle.
    ... )
    >>> print(model)
    Model(
+       identifier: tutorial
+       config directory: configurations
+       saving directory: outputs
        surfacelayer: cm4twccontrib.artemis.surfacelayer
        subsurface: cm4twccontrib.artemis.subsurface
        openwater: cm4twccontrib.rfm.openwater

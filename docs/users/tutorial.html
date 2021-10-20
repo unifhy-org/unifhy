@@ -371,7 +371,7 @@ framework if not already set.</p>
 <div class="section" id="data">
 <h3>Data<a class="headerlink" href="#data" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> must be used to gather all of the data required to run a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
-of <a class="reference internal" href="../api/classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> . It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
+of <a class="reference internal" href="../api/classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> . It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
 instances.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -536,6 +536,9 @@ three parts of the terrestrial water cycle.</p>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 <span class="go">Model(</span>
+<span class="go">    identifier: tutorial</span>
+<span class="go">    config directory: configurations</span>
+<span class="go">    saving directory: outputs</span>
 <span class="go">    surfacelayer: cm4twccontrib.artemis.surfacelayer</span>
 <span class="go">    subsurface: cm4twccontrib.artemis.subsurface</span>
 <span class="go">    openwater: cm4twccontrib.rfm.openwater</span>
@@ -640,7 +643,7 @@ used to select the given snapshot in time to restart from.</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Sep 27, 2021.<br>
+        Last updated on Oct 20, 2021.<br>
       </p>
     </div>
   </div>

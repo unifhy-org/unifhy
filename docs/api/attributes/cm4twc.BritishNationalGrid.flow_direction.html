@@ -710,12 +710,12 @@
 <span class="sig-prename descclassname"><span class="pre">BritishNationalGrid.</span></span><span class="sig-name descname"><span class="pre">flow_direction</span></span><a class="headerlink" href="#cm4twc.BritishNationalGrid.flow_direction" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>The information necessary to move any variable laterally
 (i.e. along Y and/or X) to its nearest receiving neighbour in
-the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> given as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> and returned as a processed
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> given as a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> and returned as a processed
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>directions: <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a></dt><dd><p>The field containing flow direction. The supported kinds
+<dt>directions: <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a></dt><dd><p>The field containing flow direction. The supported kinds
 of directional information are listed in the table
 below. The shape of the array must be the same as the
 Grid, except for the relative kind, where an additional
@@ -734,7 +734,7 @@ present.</p>
 <tbody>
 <tr class="row-even"><td><p>cardinal</p></td>
 <td><p>The field data contains the direction
-using <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> for the eight following
+using <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> for the eight following
 cardinal points: ‘N’ for North, ‘NE’
 for North-East, ‘E’ for East,
 ‘SE’ for South East, ‘S’ for South,
@@ -743,7 +743,7 @@ for North-East, ‘E’ for East,
 </tr>
 <tr class="row-odd"><td><p>digits</p></td>
 <td><p>The field data contains the direction
-using <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> for the eight following
+using <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> for the eight following
 cardinal points: 1 for North, 2 for
 North-East, 3 for East, 4 for South
 East, 5 for South, 6 for South West,
@@ -751,7 +751,7 @@ East, 5 for South, 6 for South West,
 </tr>
 <tr class="row-even"><td><p>relative</p></td>
 <td><p>The field data contains the direction
-using pairs of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (Y, X) for the
+using pairs of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (Y, X) for the
 eight following cardinal points:
 (1, 0) for North, (1, 1) for
 North-East, (0, 1) for East, (-1, 1)
@@ -768,7 +768,7 @@ for West, (1, -1) for North West.</p></td>
 <dd class="field-even"><dl class="simple">
 <dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The information to route any variable to its destination
 in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> in the relative format (see table above).
-If not set, return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+If not set, return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -905,7 +905,7 @@ If not set, return <a class="reference external" href="https://docs.python.org/3
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Sep 27, 2021.<br>
+        Last updated on Oct 20, 2021.<br>
       </p>
     </div>
   </div>

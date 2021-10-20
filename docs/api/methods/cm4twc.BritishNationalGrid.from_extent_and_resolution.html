@@ -714,47 +714,47 @@ coordinates.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>projection_y_coordinate_extent: pair of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The extent of northing coordinates in metres for the
+<dt>projection_y_coordinate_extent: pair of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The extent of northing coordinates in metres for the
 desired grid. The first element of the pair is the
 location of the start of the extent along the northing
 coordinate, the second element of the pair is the
 location of the end of the extent along the northing
 coordinate. Extent must be oriented positively. May be
-any type that can be unpacked (e.g. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+any type that can be unpacked (e.g. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>).</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">projection_y_coordinate_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">15000</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
-<dt>projection_x_coordinate_extent: pair of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The extent of easting coordinates in metres for the
+<dt>projection_x_coordinate_extent: pair of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The extent of easting coordinates in metres for the
 desired grid. The first element of the pair is the
 location of the start of the extent along the easting
 coordinate, the second element of the pair is the
 location of the end of the extent along the easting
 coordinate. Extent must be oriented positively. May be
-any type that can be unpacked (e.g. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+any type that can be unpacked (e.g. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>).</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">projection_x_coordinate_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">80000</span><span class="p">,</span> <span class="mi">84000</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
-<dt>projection_y_coordinate_resolution: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The spacing between two consecutive northing coordinates
+<dt>projection_y_coordinate_resolution: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The spacing between two consecutive northing coordinates
 in metres for the desired grid. Must be positive.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">projection_y_coordinate_resolution</span><span class="o">=</span><span class="mi">1000</span>
 </pre></div>
 </div>
 </dd>
-<dt>projection_x_coordinate_resolution: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The spacing between two consecutive easting coordinates
+<dt>projection_x_coordinate_resolution: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The spacing between two consecutive easting coordinates
 in metres for the desired grid. Must be positive.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">projection_x_coordinate_resolution</span><span class="o">=</span><span class="mi">1000</span>
 </pre></div>
 </div>
 </dd>
-<dt>projection_y_coordinate_projection_x_coordinate_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The location of the northing and easting coordinates
+<dt>projection_y_coordinate_projection_x_coordinate_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The location of the northing and easting coordinates
 in relation to their grid cells (i.e. their bounds).
 This information is required to generate the latitude
 and longitude bounds for each grid coordinate. If not
@@ -771,26 +771,26 @@ are northwards and eastwards).</p>
 <a class="reference internal" href="cm4twc.LatLonGrid.from_extent_and_resolution.html#cm4twc.LatLonGrid.from_extent_and_resolution" title="cm4twc.LatLonGrid.from_extent_and_resolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.from_extent_and_resolution</span></code></a></p>
 </div>
 </dd>
-<dt>altitude_extent: pair of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The extent of altitude coordinate in metres for the
+<dt>altitude_extent: pair of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The extent of altitude coordinate in metres for the
 desired grid. The first element of the pair is the
 location of the start of the extent along the altitude
 coordinate, the second element of the pair is the
 location of the end of the extent along the altitude
 coordinate. May be any type that can be unpacked (e.g.
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>).</p>
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>).</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
-<dt>altitude_resolution: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The spacing between two consecutive altitude coordinates
+<dt>altitude_resolution: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The spacing between two consecutive altitude coordinates
 in metres for the desired grid.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">altitude_resolution</span><span class="o">=</span><span class="mi">20</span>
 </pre></div>
 </div>
 </dd>
-<dt>altitude_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The location of the altitude coordinates in relation to
+<dt>altitude_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The location of the altitude coordinates in relation to
 their grid cells (i.e. their bounds). This information
 is required to generate the altitude bounds for each
 grid coordinate. If not provided, set to default
@@ -872,7 +872,7 @@ direction is upwards.</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Sep 27, 2021.<br>
+        Last updated on Oct 20, 2021.<br>
       </p>
     </div>
   </div>

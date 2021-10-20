@@ -730,7 +730,7 @@ in the open water compartment of the hydrological cycle.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>saving_directory: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The path to the directory where to save the component
+<dt>saving_directory: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The path to the directory where to save the component
 dump and record files.</p>
 </dd>
 <dt>timedomain: <a class="reference internal" href="cm4twc.TimeDomain.html#cm4twc.TimeDomain" title="cm4twc.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> object</dt><dd><p>The temporal dimension of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
@@ -773,7 +773,7 @@ the days in the calendar year
 December 31st, including value
 for February 29th).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 <td><p>Length according to the integer
 value (e.g. a value of 6 means
 6 climatologic values for the
@@ -782,13 +782,13 @@ calendar year).</p></td>
 </tbody>
 </table>
 </dd>
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Each key must
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Each key must
 correspond to a parameter name, and each value can be
-a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> (with units), a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> (with units),
+a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> (with units), a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> (with units),
 or a sequence of 2 items data and units (in this order).</p>
-<p>If it is a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, it must contains data for all
+<p>If it is a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, it must contains data for all
 spatial elements in the region covered by the component’s
-spacedomain. If it is a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> or sequence of 2 items,
+spacedomain. If it is a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> or sequence of 2 items,
 underlying data can be a scalar or an array (of the same
 shape as the component’s spacedomain).</p>
 <p><em>Parameter example:</em></p>
@@ -822,9 +822,9 @@ shape as the component’s spacedomain).</p>
 </pre></div>
 </div>
 </dd>
-<dt>constants: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The constant values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> for which
+<dt>constants: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The constant values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> for which
 adjustment is desired. Each key must correspond to a
-constant name, and each value must either be a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
+constant name, and each value must either be a <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Data.html#cf.Data" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
 (with units, where data must be a scalar) or a sequence
 of 2 items data and units (in this order, where data
 must be a scalar).</p>
@@ -841,12 +841,12 @@ must be a scalar).</p>
 </pre></div>
 </div>
 </dd>
-<dt>records: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The desired records from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Each key
+<dt>records: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The desired records from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Each key
 must be a valid variable recordable for the component
 chosen (i.e. outwards, outputs, and states), each value
-is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of recording temporal resolutions as
-<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.timedelta</span></code></a> for keys and aggregation methods
-as a sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> for values.</p>
+is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of recording temporal resolutions as
+<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.timedelta</span></code></a> for keys and aggregation methods
+as a sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> for values.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">records</span><span class="o">=</span><span class="p">{</span>
     <span class="s1">&#39;output_a&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -898,7 +898,7 @@ the elapsed timedelta.</p></td>
 of the component temporal resolution, and they must be
 divisors of the component simulation period.</p>
 </dd>
-<dt>io_slice: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The length of the time slice to use for input/output
+<dt>io_slice: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The length of the time slice to use for input/output
 operations. This corresponds to the number of component
 timesteps to read/write at once. If not set, its default
 value is 100 (arbitrary).</p>
@@ -913,7 +913,7 @@ value is 100 (arbitrary).</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>dump_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string providing the path to the netCDF dump file
+<dt>dump_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string providing the path to the netCDF dump file
 containing values to be used as initial conditions for
 the states of the Component.</p>
 </dd>
@@ -948,7 +948,7 @@ conditions.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>dump_filepath_pattern: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string providing the path to the netCDF dump file
+<dt>dump_filepath_pattern: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string providing the path to the netCDF dump file
 containing values to be used as initial conditions for
 the record streams of the Component. Note, curly
 brackets {} should be used where the record stream delta
@@ -992,7 +992,7 @@ record streams.</p>
 <dt class="sig sig-object py" id="cm4twc.OpenWaterComponent.constants">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">constants</span></span><a class="headerlink" href="#cm4twc.OpenWaterComponent.constants" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Return the collection of adjusted constant values for the
-Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. Potentially returning an empty dictionary
+Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. Potentially returning an empty dictionary
 if no default constant value is adjusted.</p>
 </dd></dl>
 
@@ -1014,14 +1014,14 @@ the Component as a <a class="reference internal" href="cm4twc.DataSet.html#cm4tw
 <dt class="sig sig-object py" id="cm4twc.OpenWaterComponent.parameters">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#cm4twc.OpenWaterComponent.parameters" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Return the collection of parameter values for the Component
-as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cm4twc.OpenWaterComponent.records">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">records</span></span><a class="headerlink" href="#cm4twc.OpenWaterComponent.records" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Return the collection of desired records to be saved for the
-Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. Potentially returning an empty dictionary
+Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. Potentially returning an empty dictionary
 if no record are desired.</p>
 </dd></dl>
 
@@ -1036,7 +1036,7 @@ if no record are desired.</p>
 <dt class="sig sig-object py" id="cm4twc.OpenWaterComponent.spaceshape">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">spaceshape</span></span><a class="headerlink" href="#cm4twc.OpenWaterComponent.spaceshape" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Return the length of each dimension in the spatial
-configuration of the Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+configuration of the Component as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1044,7 +1044,7 @@ configuration of the Component as a <a class="reference external" href="https://
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">timedelta_in_seconds</span></span><a class="headerlink" href="#cm4twc.OpenWaterComponent.timedelta_in_seconds" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Return the number of seconds separating two consecutive
 timestamps in the temporal configuration of the Component
-as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>.</p>
+as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1065,25 +1065,25 @@ as a <a class="reference external" href="https://docs.python.org/3/library/funct
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inwards_metadata</span></code></p></td>
-<td><p>Return details on the component inward transfers as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component inward transfers as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">outwards_metadata</span></code></p></td>
-<td><p>Return details on the component outward transfers as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component outward transfers as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inputs_metadata</span></code></p></td>
-<td><p>Return details on the component input data as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component input data as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters_metadata</span></code></p></td>
-<td><p>Return details on the component parameters as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component parameters as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">constants_metadata</span></code></p></td>
-<td><p>Return details on the component constants as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component constants as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">states_metadata</span></code></p></td>
-<td><p>Return details on the component states as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component states as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">outputs_metadata</span></code></p></td>
-<td><p>Return details on the component outputs as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
+<td><p>Return details on the component outputs as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1097,13 +1097,13 @@ as a <a class="reference external" href="https://docs.python.org/3/library/funct
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_land_sea_mask</span></code>()</p></td>
-<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if land sea mask must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
+<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if land sea mask must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_flow_direction</span></code>()</p></td>
-<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if flow direction must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
+<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if flow direction must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_cell_area</span></code>()</p></td>
-<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if cell area must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
+<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if cell area must be available in the component spacedomain, otherwise return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1132,7 +1132,7 @@ as a <a class="reference external" href="https://docs.python.org/3/library/funct
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Sep 27, 2021.<br>
+        Last updated on Oct 20, 2021.<br>
       </p>
     </div>
   </div>

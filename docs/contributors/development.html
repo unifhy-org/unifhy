@@ -371,16 +371,19 @@ the dimension of the state for a given element in the SpaceDomain, so
 a scalar state does not mean that there is only one state value for the
 whole spatial domain, it only means that there is only one state value for
 each spatial element in the space domain.</p>
-<p>In addition, the component definition features two special optional
-attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code>.
-They must be assigned a boolean value (True if required by your
-component, False if not) – their default value is False. If you need
-land sea mask information for your computations, set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code>
-to True and access it in your class methods using
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>. If you need flow direction information
+<p>In addition, the component definition features three special optional
+attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code>. They must be assigned a boolean value (True if
+required by your component, False if not) – their default value is
+False. If you need land sea mask information for your computations,
+set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code> to True and access it in your class methods
+using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>. If you need flow direction information
 or want to use the flow routing functionality of the component (accessible
 through <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.route(...)</span></code>), set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> to True,
-and access it in your class methods using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>.</p>
+and access it in your class methods using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>.
+If you need the horizontal cell area of the space domain elements, set
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code> to True and access it in your class methods using
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.cell_area</span></code>.</p>
 <p>See a detailed example of a mock component definition below.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
@@ -437,6 +440,7 @@ and access it in your class methods using <code class="xref py py-obj docutils l
     <span class="p">}</span>
     <span class="n">_requires_land_sea_mask</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">_requires_flow_direction</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_requires_cell_area</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 </div>
 </div>
@@ -555,7 +559,7 @@ step is to <a class="reference internal" href="packaging.html"><span class="doc"
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Sep 27, 2021.<br>
+        Last updated on Oct 20, 2021.<br>
       </p>
     </div>
   </div>
