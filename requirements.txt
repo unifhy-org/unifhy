@@ -3,6 +3,6 @@ netCDF4>=1.5
 esmpy
 cftime
 cfunits
-cf-python>=3.10.0
+cf-python>=3.11.0
 pyyaml>=5.3
 pyproj>=3.0

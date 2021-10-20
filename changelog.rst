@@ -49,7 +49,7 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 
 .. rubric:: Dependencies
 
-* add *cf-python>=3.10.0* requirement
+* change dependency ``cf-python>=3.11.0``
 
 .. rubric:: Documentation
 
