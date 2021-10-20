@@ -43,9 +43,9 @@ class Clock(object):
         self.increments = {}
         for category in timedomains:
             self.switches[category] = np.zeros((supermesh_length,), dtype=bool)
-            sl_increment = int(steps[category] // supermesh_step)
-            self.switches[category][sl_increment - 1::sl_increment] = True
-            self.increments[category] = sl_increment
+            increment = int(steps[category] // supermesh_step)
+            self.switches[category][increment - 1::increment] = True
+            self.increments[category] = increment
 
         # determine model states minimum dumping delta and set initial dump
         self.switches['dumping'] = np.zeros((supermesh_length,), dtype=bool)
