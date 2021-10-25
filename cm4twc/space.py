@@ -300,6 +300,10 @@ class Grid(SpaceDomain):
                 array is the same as of the `Grid`. If not set,
                 return `None`.
 
+        **Examples**
+
+        Assigning land sea mask to grid using binary values:
+
         >>> import numpy
         >>> grid = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(51, 55),
@@ -330,6 +334,8 @@ class Grid(SpaceDomain):
             land_sea_mask (4, 3): [[False, ..., False]]
         )
 
+        Assigning land sea mask to grid using boolean values:
+
         >>> mask.set_data(numpy.array([[False, True, True],
         ...                            [True, True, False],
         ...                            [False, True, False],
@@ -341,7 +347,7 @@ class Grid(SpaceDomain):
          [False  True False]
          [False False False]]
         """
-        return super(Grid, self).land_sea_mask
+        return self._land_sea_mask
 
     @land_sea_mask.setter
     def land_sea_mask(self, mask):
@@ -431,6 +437,8 @@ class Grid(SpaceDomain):
 
         **Examples**
 
+        Assigning flow direction to grid using cardinal values:
+
         >>> import numpy
         >>> grid = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(51, 55),
@@ -472,6 +480,8 @@ class Grid(SpaceDomain):
             flow_direction (4, 3, 2): [[[-1, ..., -1]]]
         )
 
+        Assigning flow direction to grid using digits:
+
         >>> flow_direction = grid.flow_direction
         >>> directions.set_data(numpy.array([[4, 5, 3],
         ...                                  [2, 3, 1],
@@ -480,6 +490,8 @@ class Grid(SpaceDomain):
         >>> grid.flow_direction = directions
         >>> numpy.array_equal(flow_direction, grid.flow_direction)
         True
+
+        Assigning flow direction to grid using relative values:
 
         >>> import cf
         >>> ax = directions.set_construct(cf.DomainAxis(2))
@@ -500,6 +512,8 @@ class Grid(SpaceDomain):
         >>> grid.flow_direction = directions
         >>> numpy.array_equal(flow_direction, grid.flow_direction)
         True
+
+        Assigning masked flow direction to grid:
 
         >>> directions = grid.to_field()
         >>> directions.set_data(
@@ -714,6 +728,8 @@ class Grid(SpaceDomain):
 
         **Examples**
 
+        Using grid routing functionality with basic domain and flow direction:
+
         >>> import numpy
         >>> grid = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(51, 55),
@@ -745,6 +761,8 @@ class Grid(SpaceDomain):
          [ 0  0  0]
          [10  0 12]]
 
+        Using grid routing functionality with masked flow direction:
+
         >>> directions.set_data(
         ...     numpy.ma.array(
         ...         [['NE', 'N', 'E'],
@@ -769,6 +787,8 @@ class Grid(SpaceDomain):
          [-- 0 0]
          [-- -- 9]
          [10 0 12]]
+
+        Using grid routing functionality with a wrap-around domain:
 
         >>> grid = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(-90, 90),
@@ -800,6 +820,8 @@ class Grid(SpaceDomain):
          [0 0 0]
          [0 0 0]]
 
+        Using grid routing functionality on a whole cartesian domain:
+
         >>> grid = BritishNationalGrid.from_extent_and_resolution(
         ...     projection_y_coordinate_extent=(0, 1300000),
         ...     projection_y_coordinate_resolution=325000,
@@ -824,7 +846,6 @@ class Grid(SpaceDomain):
          [ 0  0  0]
          [ 0  0  0]
          [10  0 12]]
-
         """
         # check whether method can be used
         if self.flow_direction is None:
@@ -2258,7 +2279,7 @@ class LatLonGrid(Grid):
                 defining a spatial dimension of the domain. May be any
                 type that can be cast to a `numpy.ndarray`. Must contain
                 numerical values. Coordinates must be ordered from South
-                to North.
+                to North. Coordinates must be regularly spaced.
 
                 *Parameter example:* ::
 
@@ -2273,7 +2294,7 @@ class LatLonGrid(Grid):
                 defining a spatial dimension of the domain. May be any
                 type that can be cast to a `numpy.ndarray`. Must contain
                 numerical values. Coordinates must be ordered from West
-                to East.
+                to East. Coordinates must be regularly spaced.
 
                 *Parameter example:* ::
 
@@ -2349,6 +2370,8 @@ class LatLonGrid(Grid):
 
         **Examples**
 
+        Instantiating grid using lists:
+
         >>> import numpy
         >>> sd = LatLonGrid(
         ...     latitude=[15, 45, 75],
@@ -2364,6 +2387,9 @@ class LatLonGrid(Grid):
             Y_bounds (3, 2): [[0, ..., 90]] degrees_north
             X_bounds (3, 2): [[0, ..., 180]] degrees_east
         )
+
+        Instantiating grid using numpy arrays:
+
         >>> sd = LatLonGrid(
         ...     latitude=numpy.arange(-89.5, 90.5, 1),
         ...     longitude=numpy.arange(-179.5, 180.5, 1),
@@ -2388,8 +2414,11 @@ class LatLonGrid(Grid):
             Y_bounds (180, 2): [[-90, ..., 90]] degrees_north
             X_bounds (360, 2): [[-180, ..., 180]] degrees_east
         )
+
+        Trying to instantiate grid with latitudes from East to West:
+
         >>> sd = LatLonGrid(
-        ...     latitude=[75, 45, 25],
+        ...     latitude=[75, 45, 15],
         ...     longitude=[30, 90, 150],
         ...     latitude_bounds=[[90, 60], [60, 30], [30, 0]],
         ...     longitude_bounds=[[0, 60], [60, 120], [120, 180]]
@@ -2397,6 +2426,18 @@ class LatLonGrid(Grid):
         Traceback (most recent call last):
             ...
         RuntimeError: latitude dimension not directed positively
+
+        Trying to instantiate grid with latitude cells of varying width:
+
+        >>> sd = LatLonGrid(
+        ...     latitude=[15, 45, 75],
+        ...     longitude=[30, 90, 150],
+        ...     latitude_bounds=[[10, 20], [20, 70], [70, 80]],
+        ...     longitude_bounds=[[0, 60], [60, 120], [120, 180]]
+        ... )
+        Traceback (most recent call last):
+            ...
+        RuntimeError: latitude bounds space gap not constant across region
         """
         super(LatLonGrid, self).__init__()
 
@@ -2625,6 +2666,8 @@ class LatLonGrid(Grid):
 
         **Examples**
 
+        Instantiating grid with optional altitude coordinates:
+
         >>> sd = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(30, 70),
         ...     longitude_extent=(0, 90),
@@ -2643,6 +2686,9 @@ class LatLonGrid(Grid):
             Y_bounds (8, 2): [[30.0, ..., 70.0]] degrees_north
             X_bounds (9, 2): [[0.0, ..., 90.0]] degrees_east
         )
+
+        Instantiating grid using non-standard coordinates location in their cells:
+
         >>> sd = LatLonGrid.from_extent_and_resolution(
         ...     latitude_extent=(30, 70),
         ...     longitude_extent=(0, 90),
@@ -3090,7 +3136,6 @@ class RotatedLatLonGrid(Grid):
             Y_bounds (5, 2): [[-1.1, ..., 1.1]] degrees
             X_bounds (4, 2): [[-2.72, ..., -0.96]] degrees
         )
-
         """
         inst = cls(
             **cls._get_grid_from_extent_and_resolution(
@@ -3786,6 +3831,8 @@ class BritishNationalGrid(Grid):
 
         **Examples**
 
+        Instantiating grid with optional altitude coordinates:
+
         >>> sd = BritishNationalGrid.from_extent_and_resolution(
         ...     projection_y_coordinate_extent=(12000, 15000),
         ...     projection_x_coordinate_extent=(80000, 84000),
@@ -3804,6 +3851,9 @@ class BritishNationalGrid(Grid):
             Y_bounds (3, 2): [[12000.0, ..., 15000.0]] m
             X_bounds (4, 2): [[80000.0, ..., 84000.0]] m
         )
+
+        Instantiating grid using non-standard coordinates location in their cells:
+
         >>> sd = BritishNationalGrid.from_extent_and_resolution(
         ...     projection_y_coordinate_extent=(12000, 15000),
         ...     projection_x_coordinate_extent=(80000, 84000),
@@ -4147,6 +4197,8 @@ class BritishNationalGrid(Grid):
 
         **Examples**
 
+        Retrieving automatically computed grid cell area:
+
         >>> grid = BritishNationalGrid.from_extent_and_resolution(
         ...     projection_y_coordinate_extent=(12000, 15000),
         ...     projection_y_coordinate_resolution=1000,
@@ -4167,6 +4219,8 @@ class BritishNationalGrid(Grid):
             cell_area (3, 2): [[2000000.0, ..., 2000000.0]] m2
         )
 
+        Manually assigning grid cell area values:
+
         >>> import numpy
         >>> areas = grid.to_field()
         >>> areas.set_data(numpy.array([[1999999, 1999999],
@@ -4178,7 +4232,6 @@ class BritishNationalGrid(Grid):
         [[1999999. 1999999.]
          [1999999. 1999999.]
          [1999999. 1999999.]]
-
         """
         if self._cell_area is None:
             self._cell_area = self._compute_cell_area()
