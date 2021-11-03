@@ -32,7 +32,9 @@ if __name__ == '__main__':
     test_suite.addTests(doctest.DocTestSuite(cm4twc.time))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.space))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc._utils.clock))
     test_suite.addTests(doctest.DocTestSuite(cm4twc._utils.exchanger))
+    test_suite.addTests(doctest.DocTestSuite(cm4twc._utils.compass))
 
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(test_suite)
