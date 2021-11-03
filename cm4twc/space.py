@@ -934,14 +934,14 @@ class Grid(SpaceDomain):
          [7.52719193e+09 7.52719193e+09 7.52719193e+09]
          [7.35483450e+09 7.35483450e+09 7.35483450e+09]
          [7.18023725e+09 7.18023725e+09 7.18023725e+09]]
-        >>> print(grid)
+        >>> print(grid)  # doctest: +ELLIPSIS
         LatLonGrid(
             shape {Y, X}: (4, 3)
             Y, latitude (4,): [51.5, ..., 54.5] degrees_north
             X, longitude (3,): [-1.5, -0.5, 0.5] degrees_east
             Y_bounds (4, 2): [[51.0, ..., 55.0]] degrees_north
             X_bounds (3, 2): [[-2.0, ..., 1.0]] degrees_east
-            cell_area (4, 3): [[7697257030.02173, ..., 7180237253.914141]] m2
+            cell_area (4, 3): [[7697257030.0..., ..., 7180237253.9...]] m2
         )
 
         >>> import numpy
