@@ -5,6 +5,12 @@ latest
 
 Yet to be versioned and released. Only available from *dev* branch until then.
 
+.. rubric:: Functional changes
+
+* constrain temporal and spatial resolutions of components forming a
+  model to be integer multiples of one another
+  (`#67 <https://github.com/cm4twc-org/cm4twc/pull/67>`_)
+
 .. rubric:: API changes
 
 * add units requirement for component parameters and constants
