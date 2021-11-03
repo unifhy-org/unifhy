@@ -28,6 +28,10 @@ if __name__ == '__main__':
     test_suite.addTests(
         test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
 
+    test_suite.addTests(
+        test_loader.discover('./test_utils', pattern='test_*.py')
+    )
+
     test_suite.addTests(doctest.DocTestSuite(cm4twc.data))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.time))
     test_suite.addTests(doctest.DocTestSuite(cm4twc.space))
