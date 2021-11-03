@@ -153,7 +153,16 @@ class Exchanger(object):
 
     @staticmethod
     def _calculate_temporal_weights(src, dst, length):
-        """**Examples:**
+        """
+        TODO: since the constraint on the temporal resolutions has been
+              pushed further to only support integer multiples of one
+              another, this function could be extensively simplified in
+              the future, although "qui peut le plus peut le moins"
+              (who can do more can do less), so it still works and could
+              be kept as is in case this constraint is relaxed in the
+              future.
+
+        **Examples:**
 
         >>> Exchanger._calculate_temporal_weights(3, 7, 42)
         array([[3, 3, 1],
