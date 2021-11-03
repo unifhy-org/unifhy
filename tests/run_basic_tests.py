@@ -2,21 +2,22 @@ import unittest
 import doctest
 
 from tests.test_model import BasicTestModel
+from tests.test_utils.test_clock import TestClock
 import cm4twc
 
 
 class TestModelSameTimeSameSpace(BasicTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
-    t = 'sync'
+    t = 'same_t'
     # flag to specify that components are to run at same spatial resolution
-    s = 'match'
+    s = 'same_s'
 
 
 class TestModelDiffTimeDiffSpace(BasicTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
-    t = 'async'
+    t = 'diff_t'
     # flag to specify that components are to run at different spatial resolutions
-    s = 'remap'
+    s = 'diff_s'
 
 
 if __name__ == '__main__':
@@ -24,9 +25,11 @@ if __name__ == '__main__':
     test_suite = unittest.TestSuite()
 
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
+        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace)
+    )
 
     test_suite.addTests(
         test_loader.discover('./test_utils', pattern='test_*.py')

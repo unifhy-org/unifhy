@@ -13,60 +13,60 @@ from tests.test_data import (get_dummy_dataset,
 
 time_resolutions = {
     'surfacelayer': {
-        'sync': 'daily',
-        'async': 'daily'
+        'same_t': 'daily',
+        'diff_t': 'daily'
     },
     'subsurface': {
-        'sync': 'daily',
-        'async': '3daily'
+        'same_t': 'daily',
+        'diff_t': '4daily'
     },
     'openwater': {
-        'sync': 'daily',
-        'async': '2daily'
+        'same_t': 'daily',
+        'diff_t': '2daily'
     },
 }
 
 space_resolutions = {
     'surfacelayer': {
-        'match': '1deg',
-        'remap': '1deg'
+        'same_s': '1deg',
+        'diff_s': '1deg'
     },
     'subsurface': {
-        'match': '1deg',
-        'remap': 'pt5deg'
+        'same_s': '1deg',
+        'diff_s': 'pt5deg'
     },
     'openwater': {
-        'match': '1deg',
-        'remap': 'pt2deg'
+        'same_s': '1deg',
+        'diff_s': 'pt25deg'
     },
 }
 
 parameters = {
     'surfacelayer': {
-        'match': {},
-        'remap': {}
+        'same_s': {},
+        'diff_s': {}
     },
     'subsurface': {
-        'match': {
+        'same_s': {
             'parameter_a':
                 cf.read(
                     'data/dummy_subsurface_parameter_a_{}'
-                    '.nc'.format(space_resolutions['subsurface']['match'])
+                    '.nc'.format(space_resolutions['subsurface']['same_s'])
                 ).select_field('long_name=parameter_a')
         },
-        'remap': {
+        'diff_s': {
             'parameter_a':
                 cf.read(
                     'data/dummy_subsurface_parameter_a_{}'
-                    '.nc'.format(space_resolutions['subsurface']['remap'])
+                    '.nc'.format(space_resolutions['subsurface']['diff_s'])
                 ).select_field('long_name=parameter_a')
         }
     },
     'openwater': {
-        'match': {
+        'same_s': {
             'parameter_c': [3, '1']
         },
-        'remap': {
+        'diff_s': {
             'parameter_c': [3, '1']
         }
     },
@@ -74,18 +74,18 @@ parameters = {
 
 constants = {
     'surfacelayer': {
-        'match': {},
-        'remap': {}
+        'same_s': {},
+        'diff_s': {}
     },
     'subsurface': {
-        'match': {},
-        'remap': {}
+        'same_s': {},
+        'diff_s': {}
     },
     'openwater': {
-        'match': {
+        'same_s': {
             'constant_c': cf.Data(3, '1')
         },
-        'remap': {
+        'diff_s': {
             'constant_c': cf.Data(3, '1')
         }
     },
@@ -93,60 +93,60 @@ constants = {
 
 records = {
     'surfacelayer': {
-        'sync': {'output_x': {timedelta(days=1): ['instantaneous'],
-                              timedelta(days=6): ['cumulative', 'average',
-                                                  'min', 'max']},
-                 # using aliases for methods in 'output_x'
-                 'transfer_i': {timedelta(days=1): ['point']},
-                 'transfer_j': {timedelta(days=1): ['point']},
-                 'state_a': {timedelta(days=1): ['point']},
-                 'state_b': {timedelta(days=1): ['point']}},
-        'async': {'output_x': {timedelta(days=1): ['point'],
-                               timedelta(days=6): ['sum', 'mean',
-                                                   'minimum', 'maximum']},
-                  # using defaults for methods in 'output_x'
-                  'transfer_i': {timedelta(days=1): ['point']},
-                  'transfer_j': {timedelta(days=1): ['point']},
-                  'state_a': {timedelta(days=1): ['point']},
-                  'state_b': {timedelta(days=1): ['point']}}
+        'same_t': {'output_x': {timedelta(days=1): ['instantaneous'],
+                                timedelta(days=8): ['cumulative', 'average',
+                                                    'min', 'max']},
+                   # using aliases for methods in 'output_x'
+                   'transfer_i': {timedelta(days=1): ['point']},
+                   'transfer_j': {timedelta(days=1): ['point']},
+                   'state_a': {timedelta(days=1): ['point']},
+                   'state_b': {timedelta(days=1): ['point']}},
+        'diff_t': {'output_x': {timedelta(days=1): ['point'],
+                                timedelta(days=8): ['sum', 'mean',
+                                                    'minimum', 'maximum']},
+                   # using defaults for methods in 'output_x'
+                   'transfer_i': {timedelta(days=1): ['point']},
+                   'transfer_j': {timedelta(days=1): ['point']},
+                   'state_a': {timedelta(days=1): ['point']},
+                   'state_b': {timedelta(days=1): ['point']}}
     },
     'subsurface': {
-        'sync': {'output_x': {timedelta(days=1): ['instantaneous'],
-                              timedelta(days=6): ['cumulative', 'average',
-                                                  'min', 'max']},
-                 # using aliases for methods in 'output_x'
-                 'transfer_k': {timedelta(days=1): ['point']},
-                 'transfer_m': {timedelta(days=1): ['point']},
-                 'state_a': {timedelta(days=1): ['point']},
-                 'state_b': {timedelta(days=1): ['point']}},
-        'async': {'output_x': {timedelta(days=3): ['point'],
-                               timedelta(days=6): ['sum', 'mean',
-                                                   'minimum', 'maximum']},
-                  # using defaults for methods in 'output_x'
-                  'transfer_k': {timedelta(days=3): ['point']},
-                  'transfer_m': {timedelta(days=3): ['point']},
-                  'state_a': {timedelta(days=3): ['point']},
-                  'state_b': {timedelta(days=3): ['point']}},
+        'same_t': {'output_x': {timedelta(days=1): ['instantaneous'],
+                                timedelta(days=8): ['cumulative', 'average',
+                                                    'min', 'max']},
+                   # using aliases for methods in 'output_x'
+                   'transfer_k': {timedelta(days=1): ['point']},
+                   'transfer_m': {timedelta(days=1): ['point']},
+                   'state_a': {timedelta(days=1): ['point']},
+                   'state_b': {timedelta(days=1): ['point']}},
+        'diff_t': {'output_x': {timedelta(days=4): ['point'],
+                                timedelta(days=8): ['sum', 'mean',
+                                                    'minimum', 'maximum']},
+                   # using defaults for methods in 'output_x'
+                   'transfer_k': {timedelta(days=4): ['point']},
+                   'transfer_m': {timedelta(days=4): ['point']},
+                   'state_a': {timedelta(days=4): ['point']},
+                   'state_b': {timedelta(days=4): ['point']}},
     },
     'openwater': {
-        'sync': {'output_x': {timedelta(days=1): ['instantaneous'],
-                              timedelta(days=6): ['cumulative', 'average',
-                                                  'min', 'max']},
-                 # using aliases for methods in 'output_x'
-                 'output_y': {timedelta(days=1): ['point']},
-                 'transfer_l': {timedelta(days=1): ['point']},
-                 'transfer_n': {timedelta(days=1): ['point']},
-                 'transfer_o': {timedelta(days=1): ['point']},
-                 'state_a': {timedelta(days=1): ['point']}},
-        'async': {'output_x': {timedelta(days=2): ['point'],
-                               timedelta(days=6): ['sum', 'mean',
-                                                   'minimum', 'maximum']},
-                  # using defaults for methods in 'output_x'
-                  'output_y': {timedelta(days=2): ['point']},
-                  'transfer_l': {timedelta(days=2): ['point']},
-                  'transfer_n': {timedelta(days=2): ['point']},
-                  'transfer_o': {timedelta(days=2): ['point']},
-                  'state_a': {timedelta(days=2): ['point']}}
+        'same_t': {'output_x': {timedelta(days=1): ['instantaneous'],
+                                timedelta(days=8): ['cumulative', 'average',
+                                                    'min', 'max']},
+                   # using aliases for methods in 'output_x'
+                   'output_y': {timedelta(days=1): ['point']},
+                   'transfer_l': {timedelta(days=1): ['point']},
+                   'transfer_n': {timedelta(days=1): ['point']},
+                   'transfer_o': {timedelta(days=1): ['point']},
+                   'state_a': {timedelta(days=1): ['point']}},
+        'diff_t': {'output_x': {timedelta(days=2): ['point'],
+                                timedelta(days=8): ['sum', 'mean',
+                                                    'minimum', 'maximum']},
+                   # using defaults for methods in 'output_x'
+                   'output_y': {timedelta(days=2): ['point']},
+                   'transfer_l': {timedelta(days=2): ['point']},
+                   'transfer_n': {timedelta(days=2): ['point']},
+                   'transfer_o': {timedelta(days=2): ['point']},
+                   'state_a': {timedelta(days=2): ['point']}}
     }
 }
 

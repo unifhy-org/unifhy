@@ -27,12 +27,12 @@ def get_dummy_spacedomain(resolution):
             altitude_extent=(0, 4),
             altitude_resolution=4
         )
-    elif resolution == 'pt2deg':
+    elif resolution == 'pt25deg':
         return cm4twc.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
-            latitude_resolution=0.2,
+            latitude_resolution=0.25,
             longitude_extent=(-2, 1),
-            longitude_resolution=0.2,
+            longitude_resolution=0.25,
             altitude_extent=(0, 4),
             altitude_resolution=4
         )
@@ -53,6 +53,7 @@ def get_dummy_flow_direction_field(resolution):
 class TestLatLonGridAPI(unittest.TestCase):
 
     def test_init_variants(self):
+        # create a spacedomain using default instantiation
         sd1 = cm4twc.LatLonGrid(
             latitude=[51.5, 52.5, 53.5, 54.5],
             longitude=np.array([-1.5, -0.5, 0.5]),
@@ -62,6 +63,7 @@ class TestLatLonGridAPI(unittest.TestCase):
             altitude_bounds=[0, 4]
         )
 
+        # create a spacedomain using constructor method based on parameters
         sd2 = cm4twc.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=1,
@@ -73,12 +75,15 @@ class TestLatLonGridAPI(unittest.TestCase):
 
         self.assertEqual(sd1, sd2)
 
+        # create a spacedomain using constructor method based on field
         dataset = get_dummy_dataset('surfacelayer', 'daily', '1deg')
         field = dataset[list(dataset.keys())[0]].field
         sd3 = cm4twc.LatLonGrid.from_field(field)
 
-        # field from dummy data has no Z coordinate
+        # check that they are not equal
+        # (because field from dummy data has no Z coordinate)
         self.assertNotEqual(sd1, sd3)
+        # check that they are equal if Z axis is ignored
         self.assertTrue(sd1.is_space_equal_to(sd3.to_field(), ignore_z=True))
 
 
@@ -134,6 +139,7 @@ class TestGridComparison(unittest.TestCase):
         for spacedomain in self.grids:
             cls_name = spacedomain.__name__
             with self.subTest(spacedomain=cls_name):
+                # create a simple spacedomain
                 params = {
                     "_".join([self.axis_name[cls_name][axis], prop]): val
                     for prop in ['extent', 'resolution']
@@ -144,10 +150,13 @@ class TestGridComparison(unittest.TestCase):
 
                 sd1 = spacedomain.from_extent_and_resolution(**params, **extras)
 
+                # create another spacedomain with same extents but halved X/Y resolutions
                 params["{}_resolution".format(self.axis_name[cls_name]['X'])] /= 2
                 params["{}_resolution".format(self.axis_name[cls_name]['Y'])] /= 2
                 sd2 = spacedomain.from_extent_and_resolution(**params, **extras)
 
+                # check that they are not equal
+                # (because of different resolutions)
                 self.assertNotEqual(sd1, sd2)
                 self.assertTrue(sd1.spans_same_region_as(sd2))
 
@@ -155,6 +164,7 @@ class TestGridComparison(unittest.TestCase):
         for spacedomain in self.grids:
             cls_name = spacedomain.__name__
             with self.subTest(spacedomain=cls_name):
+                # create a simple spacedomain
                 params = {
                     "_".join([self.axis_name[cls_name][axis], prop]): val
                     for prop in ['extent', 'resolution']
@@ -165,14 +175,17 @@ class TestGridComparison(unittest.TestCase):
 
                 sd1 = spacedomain.from_extent_and_resolution(**params, **extras)
 
+                # create another spacedomain with one more coordinate on X axis
                 params2 = deepcopy(params)
                 params2["{}_extent".format(self.axis_name[cls_name]['X'])][0] -= (
                     params2["{}_resolution".format(self.axis_name[cls_name]['X'])]
                 )
                 sd2 = spacedomain.from_extent_and_resolution(**params2, **extras)
 
+                # check that these are not equal
                 self.assertNotEqual(sd1, sd2)
 
+                # create another spacedomain with a smaller Z axis extent
                 params3 = deepcopy(params)
                 params3["{}_resolution".format(self.axis_name[cls_name]['Z'])] = (
                     params3["{}_resolution".format(self.axis_name[cls_name]['Z'])] / 2
@@ -182,7 +195,10 @@ class TestGridComparison(unittest.TestCase):
                 )
                 sd3 = spacedomain.from_extent_and_resolution(**params3, **extras)
 
+                # check that they are not equal
+                # (because of different on Z axis)
                 self.assertNotEqual(sd1, sd3)
+                # check that they are equal if Z axis is ignored
                 self.assertTrue(sd1.is_space_equal_to(sd3.to_field(), ignore_z=True))
 
 
