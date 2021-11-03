@@ -231,7 +231,7 @@
 save the configuration of a <a class="reference internal" href="../api/classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Content of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> configuration YAML file for <a class="reference internal" href="../api/classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">identifier</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test-dummy-sync-match</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">identifier</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test-dummy-same_t-same_s</span>
 <span class="nt">config_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
 <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
 <span class="nt">surfacelayer</span><span class="p">:</span>
@@ -240,7 +240,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
   <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
   <span class="nt">timedomain</span><span class="p">:</span>
     <span class="nt">start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span>
-    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-13 09:00:00</span>
+    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span>
     <span class="nt">step</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span>
     <span class="nt">units</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span>
     <span class="nt">calendar</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gregorian</span>
@@ -278,7 +278,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
   <span class="nt">records</span><span class="p">:</span>
     <span class="nt">output_x</span><span class="p">:</span>
       <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
-      <span class="nt">timedelta(days=6)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">cumulative</span><span class="p p-Indicator">,</span> <span class="nv">average</span><span class="p p-Indicator">,</span> <span class="nv">min</span><span class="p p-Indicator">,</span> <span class="nv">max</span><span class="p p-Indicator">]</span>
+      <span class="nt">timedelta(days=8)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">cumulative</span><span class="p p-Indicator">,</span> <span class="nv">average</span><span class="p p-Indicator">,</span> <span class="nv">min</span><span class="p p-Indicator">,</span> <span class="nv">max</span><span class="p p-Indicator">]</span>
     <span class="nt">transfer_i</span><span class="p">:</span>
       <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
     <span class="nt">transfer_j</span><span class="p">:</span>
@@ -293,7 +293,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
   <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
   <span class="nt">timedomain</span><span class="p">:</span>
     <span class="nt">start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span>
-    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-13 09:00:00</span>
+    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span>
     <span class="nt">step</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span>
     <span class="nt">units</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span>
     <span class="nt">calendar</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gregorian</span>
@@ -319,7 +319,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
   <span class="nt">records</span><span class="p">:</span>
     <span class="nt">output_x</span><span class="p">:</span>
       <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-      <span class="nt">timedelta(days=6)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span> <span class="nv">mean</span><span class="p p-Indicator">,</span> <span class="nv">minimum</span><span class="p p-Indicator">,</span> <span class="nv">maximum</span><span class="p p-Indicator">]</span>
+      <span class="nt">timedelta(days=8)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span> <span class="nv">mean</span><span class="p p-Indicator">,</span> <span class="nv">minimum</span><span class="p p-Indicator">,</span> <span class="nv">maximum</span><span class="p p-Indicator">]</span>
     <span class="nt">transfer_k</span><span class="p">:</span>
       <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
     <span class="nt">transfer_m</span><span class="p">:</span>
@@ -334,7 +334,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
   <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
   <span class="nt">timedomain</span><span class="p">:</span>
     <span class="nt">start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span>
-    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-13 09:00:00</span>
+    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span>
     <span class="nt">step</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span>
     <span class="nt">units</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span>
     <span class="nt">calendar</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gregorian</span>
@@ -361,7 +361,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
   <span class="nt">records</span><span class="p">:</span>
     <span class="nt">output_x</span><span class="p">:</span>
       <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-      <span class="nt">timedelta(days=6)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span> <span class="nv">mean</span><span class="p p-Indicator">,</span> <span class="nv">minimum</span><span class="p p-Indicator">,</span> <span class="nv">maximum</span><span class="p p-Indicator">]</span>
+      <span class="nt">timedelta(days=8)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span> <span class="nv">mean</span><span class="p p-Indicator">,</span> <span class="nv">minimum</span><span class="p p-Indicator">,</span> <span class="nv">maximum</span><span class="p p-Indicator">]</span>
     <span class="nt">output_y</span><span class="p">:</span>
       <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
     <span class="nt">transfer_l</span><span class="p">:</span>
@@ -400,7 +400,7 @@ save the configuration of a <a class="reference internal" href="../api/classes/c
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Oct 20, 2021.<br>
+        Last updated on Nov 03, 2021.<br>
       </p>
     </div>
   </div>

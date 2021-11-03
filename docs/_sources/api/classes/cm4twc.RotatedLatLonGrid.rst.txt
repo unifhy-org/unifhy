@@ -32,6 +32,7 @@ Comparison
 
    ~cm4twc.RotatedLatLonGrid.is_space_equal_to
    ~cm4twc.RotatedLatLonGrid.spans_same_region_as
+   ~cm4twc.RotatedLatLonGrid.is_matched_in
 
 Utility
 ~~~~~~~
