@@ -32,6 +32,7 @@ Comparison
 
    ~cm4twc.BritishNationalGrid.is_space_equal_to
    ~cm4twc.BritishNationalGrid.spans_same_region_as
+   ~cm4twc.BritishNationalGrid.is_matched_in
 
 Utility
 ~~~~~~~

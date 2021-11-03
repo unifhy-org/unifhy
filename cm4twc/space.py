@@ -92,6 +92,10 @@ class SpaceDomain(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def is_matched_in(self, *args):
+        pass
+
+    @abc.abstractmethod
     def subset_and_compare(self, field):
         pass
 
@@ -2082,7 +2086,9 @@ class Grid(SpaceDomain):
         :Parameters:
 
             grid: `Grid`
-                The other grid to be compared against this grid.
+                The other grid to be compared against this grid. Note,
+                the two grids must be of the same type (e.g.
+                `LatLonGrid`).
 
             ignore_z: `bool`, optional
                 If True, the dimension coordinates along the Z axes of
@@ -2117,6 +2123,40 @@ class Grid(SpaceDomain):
             return all((start_x.array.item(), end_x.array.item(),
                         start_y.array.item(), end_y.array.item(),
                         start_z, end_z))
+
+        else:
+            raise TypeError(
+                f"{self.__class__.__name__} instance cannot be "
+                f"compared to {grid.__class__.__name__} instance"
+            )
+
+    def is_matched_in(self, grid):
+        """Determine whether the horizontal cell bounds of the grid are
+        overlapping with the cell bounds of another instance of `Grid`.
+
+        In other words, determine whether the cells of the grid are
+        fully containing the cells (i.e. not area fractions) of another
+        instance of `Grid`.
+
+        :Parameters:
+
+            grid: `Grid`
+                The grid whose cells are checked as being fully
+                contained this grid. Note, the two grids must be of
+                the same type (e.g. `LatLonGrid`).
+
+        :Returns: `bool`
+        """
+        if isinstance(grid, self.__class__):
+            x_match = (
+                np.all(np.in1d(self.X_bounds[:, 0], grid.X_bounds[:, 0]))
+                and self.X_bounds.array[-1, -1] == grid.X_bounds.array[-1, -1]
+            )
+            y_match = (
+                np.all(np.in1d(self.Y_bounds[:, 0], grid.Y_bounds[:, 0]))
+                and self.Y_bounds.array[-1, -1] == grid.Y_bounds.array[-1, -1]
+            )
+            return x_match and y_match
 
         else:
             raise TypeError(

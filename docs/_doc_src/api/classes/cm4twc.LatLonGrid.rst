@@ -32,6 +32,7 @@ Comparison
 
    ~cm4twc.LatLonGrid.is_space_equal_to
    ~cm4twc.LatLonGrid.spans_same_region_as
+   ~cm4twc.LatLonGrid.is_matched_in
 
 Utility
 ~~~~~~~
