@@ -92,6 +92,10 @@ class SpaceDomain(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def spans_same_region_as(self, *args):
+        pass
+
+    @abc.abstractmethod
     def is_matched_in(self, *args):
         pass
 
