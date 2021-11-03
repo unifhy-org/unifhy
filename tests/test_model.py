@@ -746,32 +746,33 @@ class AdvancedTestModel(BasicTestModel):
                 # clean up
                 simulator.clean_up_files()
 
+
 class TestModelSameTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
-    t = 'sync'
+    t = 'same_t'
     # flag to specify that components are to run at same spatial resolution
-    s = 'match'
+    s = 'same_s'
 
 
 class TestModelDiffTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
-    t = 'async'
+    t = 'diff_t'
     # flag to specify that components are to run at same spatial resolution
-    s = 'match'
+    s = 'same_s'
 
 
 class TestModelSameTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
-    t = 'sync'
+    t = 'same_t'
     # flag to specify that components are to run at different spatial resolutions
-    s = 'remap'
+    s = 'diff_s'
 
 
 class TestModelDiffTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
-    t = 'async'
+    t = 'diff_t'
     # flag to specify that components are to run at different spatial resolutions
-    s = 'remap'
+    s = 'diff_s'
 
 
 if __name__ == '__main__':
@@ -779,13 +780,17 @@ if __name__ == '__main__':
     test_suite = unittest.TestSuite()
 
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
+        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace))
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace))
+        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace)
+    )
 
     test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
 

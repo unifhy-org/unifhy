@@ -1,4 +1,4 @@
-identifier: test-dummy-sync-match
+identifier: test-dummy-same_t-same_s
 config_directory: outputs
 saving_directory: outputs
 surfacelayer:
@@ -7,7 +7,7 @@ surfacelayer:
   saving_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
-    end: 2019-01-13 09:00:00
+    end: 2019-01-17 09:00:00
     step: timedelta(days=1)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
@@ -45,7 +45,7 @@ surfacelayer:
   records:
     output_x:
       timedelta(days=1): [instantaneous]
-      timedelta(days=6): [cumulative, average, min, max]
+      timedelta(days=8): [cumulative, average, min, max]
     transfer_i:
       timedelta(days=1): [instantaneous]
     transfer_j:
@@ -60,16 +60,16 @@ subsurface:
   saving_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
-    end: 2019-01-13 09:00:00
-    step: timedelta(days=3)
+    end: 2019-01-17 09:00:00
+    step: timedelta(days=1)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
     latitude_extent: [51, 55]
-    latitude_resolution: 0.5
+    latitude_resolution: 1
     longitude_extent: [-2, 1]
-    longitude_resolution: 0.5
+    longitude_resolution: 1
     latitude_longitude_location: centre
     altitude_extent: [0, 4]
     altitude_resolution: 4
@@ -78,39 +78,39 @@ subsurface:
     flow_direction: null
   dataset:
     driving_a:
-      files: [data/dummy_subsurface_data_3daily_pt5deg.nc]
+      files: [data/dummy_subsurface_data_daily_1deg.nc]
       select: driving_a
   parameters:
     parameter_a: [1, '1']
   constants: null
   records:
     output_x:
-      timedelta(days=3): [point]
-      timedelta(days=6): [sum, mean, minimum, maximum]
+      timedelta(days=1): [point]
+      timedelta(days=8): [sum, mean, minimum, maximum]
     transfer_k:
-      timedelta(days=3): [point]
+      timedelta(days=1): [point]
     transfer_m:
-      timedelta(days=3): [point]
+      timedelta(days=1): [point]
     state_a:
-      timedelta(days=3): [point]
+      timedelta(days=1): [point]
     state_b:
-      timedelta(days=3): [point]
+      timedelta(days=1): [point]
 openwater:
   module: tests.components.openwater.dummy
   class: Dummy
   saving_directory: outputs
   timedomain:
     start: 2019-01-01 09:00:00
-    end: 2019-01-13 09:00:00
-    step: timedelta(days=2)
+    end: 2019-01-17 09:00:00
+    step: timedelta(days=1)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
     class: LatLonGrid
     latitude_extent: [51, 55]
-    latitude_resolution: 0.2
+    latitude_resolution: 1
     longitude_extent: [-2, 1]
-    longitude_resolution: 0.2
+    longitude_resolution: 1
     latitude_longitude_location: centre
     altitude_extent: [0, 4]
     altitude_resolution: 4
@@ -119,7 +119,7 @@ openwater:
     flow_direction: null
   dataset:
     ancillary_b:
-      files: [data/dummy_openwater_data_2daily_pt2deg.nc]
+      files: [data/dummy_openwater_data_daily_1deg.nc]
       select: ancillary_b
   parameters:
     parameter_c: [3, '1']
@@ -127,15 +127,15 @@ openwater:
     constant_c: [3, '1']
   records:
     output_x:
-      timedelta(days=2): [point]
-      timedelta(days=6): [sum, mean, minimum, maximum]
+      timedelta(days=1): [point]
+      timedelta(days=8): [sum, mean, minimum, maximum]
     output_y:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     transfer_l:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     transfer_n:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     transfer_o:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     state_a:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]

@@ -11,19 +11,20 @@ import cm4twc
 def get_dummy_timedomain(resolution):
     if resolution == 'daily':
         return cm4twc.TimeDomain(
-            timestamps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            timestamps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                        10, 11, 12, 13, 14, 15, 16],
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
         )
     elif resolution == '2daily':
         return cm4twc.TimeDomain(
-            timestamps=[0, 2, 4, 6, 8, 10, 12],
+            timestamps=[0, 2, 4, 6, 8, 10, 12, 14, 16],
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
         )
-    elif resolution == '3daily':
+    elif resolution == '4daily':
         return cm4twc.TimeDomain(
-            timestamps=[0, 3, 6, 9, 12],
+            timestamps=[0, 4, 8, 12, 16],
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
         )
@@ -41,14 +42,14 @@ def get_dummy_timedomain_different_start(resolution):
 
 def get_dummy_spin_up_start_end():
     return (cftime.DatetimeGregorian(2019, 1, 1, 9),
-            cftime.DatetimeGregorian(2019, 1, 7, 9))
+            cftime.DatetimeGregorian(2019, 1, 9, 9))
 
 
-def get_dummy_dumping_frequency(sync):
-    if sync == 'sync':
+def get_dummy_dumping_frequency(tag):
+    if tag == 'same_t':
         return timedelta(days=1)
     else:
-        return timedelta(days=6)
+        return timedelta(days=8)
 
 
 def get_dummy_output_time_and_bounds(resolution, delta):
@@ -66,6 +67,7 @@ def get_dummy_output_time_and_bounds(resolution, delta):
 class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_standard_on_leap_year(self):
+        # create a spacedomain using default instantiation
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
@@ -318,7 +320,7 @@ class TestTimeDomainAPI(unittest.TestCase):
 
 class TestTimeDomainComparison(unittest.TestCase):
 
-    def test_timedomain_not_equal_with_different_reference_dates(self):
+    def test_timedomain_with_different_reference_dates(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([1, 2, 3, 4]),
             units='days since 2019-01-01 09:00:00Z',
@@ -341,7 +343,7 @@ class TestTimeDomainComparison(unittest.TestCase):
 
         self.assertNotEqual(td1, td3)
 
-    def test_timedomain_equal_with_different_units_of_time(self):
+    def test_timedomain_with_different_units_of_time(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]) * 86400,
             units='seconds since 2019-01-01 09:00:00Z',
@@ -364,7 +366,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td1, td3)
         self.assertEqual(td2, td3)
 
-    def test_timedomain_equal_with_different_alias_calendars(self):
+    def test_timedomain_with_different_alias_calendars(self):
         for cal, alias in cm4twc.time._supported_calendar_mapping.items():
             if not cal == alias:
 
@@ -387,7 +389,7 @@ class TestTimeDomainComparison(unittest.TestCase):
                         "The calendar '{}' and its alias '{}' are not "
                         "found equal.".format(cal, alias)) from e
 
-    def test_timedomain_equal_with_different_dtypes(self):
+    def test_timedomain_with_different_dtypes(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3], dtype=np.float32),
             units='days since 2019-01-01 09:00:00Z',
@@ -410,7 +412,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td1, td3)
         self.assertEqual(td2, td3)
 
-    def test_timedomain_not_equal_with_different_lengths(self):
+    def test_timedomain_with_different_lengths(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3, 4]),
             units='days since 2019-01-01 09:00:00Z',
@@ -426,7 +428,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertNotEqual(td1, td2)
 
     @unittest.expectedFailure
-    def test_timedomain_equal_with_different_non_alias_calendars(self):
+    def test_timedomain_with_different_non_alias_calendars(self):
         # should fail because it cannot compare across different calendars
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
@@ -442,7 +444,7 @@ class TestTimeDomainComparison(unittest.TestCase):
 
         self.assertEqual(td1, td2)
 
-    def test_timedomain_equal_span_periods(self):
+    def test_timedomain_spanned_periods(self):
         td1 = cm4twc.TimeDomain(
             timestamps=np.array([1, 2, 3, 4, 5]),
             units='days since 1970-01-01 00:00:00',
@@ -468,9 +470,9 @@ class TestTimeDomainComparison(unittest.TestCase):
         )
         # same start/end, different timesteps, should be True
         self.assertTrue(td1.spans_same_period_as(td2))
-        # same start, same ends, different timesteps, should be False
+        # same start, different ends, should be False
         self.assertFalse(td1.spans_same_period_as(td3))
-        # different starts, same end, different timesteps, should be False
+        # different starts, same end, should be False
         self.assertFalse(td1.spans_same_period_as(td4))
 
 
