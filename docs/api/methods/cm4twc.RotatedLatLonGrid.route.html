@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="cm4twc.RotatedLatLonGrid.shape" href="../attributes/cm4twc.RotatedLatLonGrid.shape.html" />
-    <link rel="prev" title="cm4twc.RotatedLatLonGrid.spans_same_region_as" href="cm4twc.RotatedLatLonGrid.spans_same_region_as.html" />
+    <link rel="prev" title="cm4twc.RotatedLatLonGrid.is_matched_in" href="cm4twc.RotatedLatLonGrid.is_matched_in.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -358,6 +358,11 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.LatLonGrid.is_matched_in.html">
+     cm4twc.LatLonGrid.is_matched_in
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.LatLonGrid.route.html">
      cm4twc.LatLonGrid.route
     </a>
@@ -462,6 +467,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.RotatedLatLonGrid.spans_same_region_as.html">
      cm4twc.RotatedLatLonGrid.spans_same_region_as
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.RotatedLatLonGrid.is_matched_in.html">
+     cm4twc.RotatedLatLonGrid.is_matched_in
     </a>
    </li>
    <li class="toctree-l2 current active">
@@ -569,6 +579,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.BritishNationalGrid.spans_same_region_as.html">
      cm4twc.BritishNationalGrid.spans_same_region_as
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.BritishNationalGrid.is_matched_in.html">
+     cm4twc.BritishNationalGrid.is_matched_in
     </a>
    </li>
    <li class="toctree-l2">
@@ -740,6 +755,7 @@ same as of the Grid.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
+<p>Using grid routing functionality with basic domain and flow direction:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">55</span><span class="p">),</span>
@@ -772,6 +788,7 @@ same as of the Grid.</p>
 <span class="go"> [10  0 12]]</span>
 </pre></div>
 </div>
+<p>Using grid routing functionality with masked flow direction:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">directions</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
 <span class="gp">... </span>        <span class="p">[[</span><span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">],</span>
@@ -798,6 +815,7 @@ same as of the Grid.</p>
 <span class="go"> [10 0 12]]</span>
 </pre></div>
 </div>
+<p>Using grid routing functionality with a wrap-around domain:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">latitude_resolution</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
@@ -829,6 +847,7 @@ same as of the Grid.</p>
 <span class="go"> [0 0 0]]</span>
 </pre></div>
 </div>
+<p>Using grid routing functionality on a whole cartesian domain:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">BritishNationalGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">projection_y_coordinate_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1300000</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">projection_y_coordinate_resolution</span><span class="o">=</span><span class="mi">325000</span><span class="p">,</span>
@@ -881,7 +900,7 @@ same as of the Grid.</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Oct 20, 2021.<br>
+        Last updated on Nov 03, 2021.<br>
       </p>
     </div>
   </div>

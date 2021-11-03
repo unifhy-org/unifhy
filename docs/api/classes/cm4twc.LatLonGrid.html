@@ -358,6 +358,11 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="../methods/cm4twc.LatLonGrid.is_matched_in.html">
+     cm4twc.LatLonGrid.is_matched_in
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="../methods/cm4twc.LatLonGrid.route.html">
      cm4twc.LatLonGrid.route
     </a>
@@ -465,6 +470,11 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="../methods/cm4twc.RotatedLatLonGrid.is_matched_in.html">
+     cm4twc.RotatedLatLonGrid.is_matched_in
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="../methods/cm4twc.RotatedLatLonGrid.route.html">
      cm4twc.RotatedLatLonGrid.route
     </a>
@@ -569,6 +579,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="../methods/cm4twc.BritishNationalGrid.spans_same_region_as.html">
      cm4twc.BritishNationalGrid.spans_same_region_as
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../methods/cm4twc.BritishNationalGrid.is_matched_in.html">
+     cm4twc.BritishNationalGrid.is_matched_in
     </a>
    </li>
    <li class="toctree-l2">
@@ -753,7 +768,7 @@ the North pole (<a class="reference external" href="https://epsg.io/4326">EPSG:4
 defining a spatial dimension of the domain. May be any
 type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain
 numerical values. Coordinates must be ordered from South
-to North.</p>
+to North. Coordinates must be regularly spaced.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">75</span><span class="p">]</span>
 </pre></div>
@@ -767,7 +782,7 @@ to North.</p>
 defining a spatial dimension of the domain. May be any
 type that can be cast to a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>. Must contain
 numerical values. Coordinates must be ordered from West
-to East.</p>
+to East. Coordinates must be regularly spaced.</p>
 <p><em>Parameter example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">longitude</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
 </pre></div>
@@ -841,6 +856,7 @@ to 2. Must contain numerical values. Ignored if
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
+<p>Instantiating grid using lists:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">75</span><span class="p">],</span>
@@ -856,7 +872,10 @@ to 2. Must contain numerical values. Ignored if
 <span class="go">    Y_bounds (3, 2): [[0, ..., 90]] degrees_north</span>
 <span class="go">    X_bounds (3, 2): [[0, ..., 180]] degrees_east</span>
 <span class="go">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
+</pre></div>
+</div>
+<p>Instantiating grid using numpy arrays:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">89.5</span><span class="p">,</span> <span class="mf">90.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">longitude</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">179.5</span><span class="p">,</span> <span class="mf">180.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">latitude_bounds</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
@@ -880,8 +899,11 @@ to 2. Must contain numerical values. Ignored if
 <span class="go">    Y_bounds (180, 2): [[-90, ..., 90]] degrees_north</span>
 <span class="go">    X_bounds (360, 2): [[-180, ..., 180]] degrees_east</span>
 <span class="go">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">75</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">25</span><span class="p">],</span>
+</pre></div>
+</div>
+<p>Trying to instantiate grid with latitudes from East to West:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">75</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">latitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>
 <span class="gp">... </span>    <span class="n">longitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">]]</span>
@@ -889,6 +911,18 @@ to 2. Must contain numerical values. Ignored if
 <span class="gt">Traceback (most recent call last):</span>
     <span class="o">...</span>
 <span class="gr">RuntimeError</span>: <span class="n">latitude dimension not directed positively</span>
+</pre></div>
+</div>
+<p>Trying to instantiate grid with latitude cells of varying width:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sd</span> <span class="o">=</span> <span class="n">LatLonGrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">75</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">latitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">70</span><span class="p">],</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">80</span><span class="p">]],</span>
+<span class="gp">... </span>    <span class="n">longitude_bounds</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">]]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">RuntimeError</span>: <span class="n">latitude bounds space gap not constant across region</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -925,6 +959,9 @@ to 2. Must contain numerical values. Ignored if
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../methods/cm4twc.LatLonGrid.spans_same_region_as.html#cm4twc.LatLonGrid.spans_same_region_as" title="cm4twc.LatLonGrid.spans_same_region_as"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spans_same_region_as</span></code></a></p></td>
 <td><p>Compare equality in region spanned between the grid and another instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../methods/cm4twc.LatLonGrid.is_matched_in.html#cm4twc.LatLonGrid.is_matched_in" title="cm4twc.LatLonGrid.is_matched_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_matched_in</span></code></a></p></td>
+<td><p>Determine whether the horizontal cell bounds of the grid are overlapping with the cell bounds of another instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1021,7 +1058,7 @@ to 2. Must contain numerical values. Ignored if
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Oct 20, 2021.<br>
+        Last updated on Nov 03, 2021.<br>
       </p>
     </div>
   </div>

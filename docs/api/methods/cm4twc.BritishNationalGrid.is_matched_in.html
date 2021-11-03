@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>cm4twc.Model.to_yaml &#8212; cm4twc latest documentation</title>
+    <title>cm4twc.BritishNationalGrid.is_matched_in &#8212; cm4twc latest documentation</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -33,12 +33,12 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/api/methods/cm4twc.Model.to_yaml.html" />
+    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/api/methods/cm4twc.BritishNationalGrid.is_matched_in.html" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="cm4twc.Model.initialise_transfers_from_dump" href="cm4twc.Model.initialise_transfers_from_dump.html" />
-    <link rel="prev" title="cm4twc.Model.from_yaml" href="cm4twc.Model.from_yaml.html" />
+    <link rel="next" title="cm4twc.BritishNationalGrid.route" href="cm4twc.BritishNationalGrid.route.html" />
+    <link rel="prev" title="cm4twc.BritishNationalGrid.spans_same_region_as" href="cm4twc.BritishNationalGrid.spans_same_region_as.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -156,24 +156,24 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active has-children">
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../classes/cm4twc.Model.html">
    Model
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul class="current">
+  <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.Model.from_yaml.html">
      cm4twc.Model.from_yaml
     </a>
    </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
+   <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.Model.to_yaml.html">
      cm4twc.Model.to_yaml
     </a>
    </li>
@@ -326,7 +326,7 @@
   </ul>
  </li>
 </ul>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../classes/cm4twc.LatLonGrid.html">
    LatLonGrid
@@ -551,16 +551,16 @@
    </li>
   </ul>
  </li>
- <li class="toctree-l1 has-children">
+ <li class="toctree-l1 current active has-children">
   <a class="reference internal" href="../classes/cm4twc.BritishNationalGrid.html">
    BritishNationalGrid
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
   <label for="toctree-checkbox-5">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
+  <ul class="current">
    <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.BritishNationalGrid.from_extent_and_resolution.html">
      cm4twc.BritishNationalGrid.from_extent_and_resolution
@@ -581,8 +581,8 @@
      cm4twc.BritishNationalGrid.spans_same_region_as
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="cm4twc.BritishNationalGrid.is_matched_in.html">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      cm4twc.BritishNationalGrid.is_matched_in
     </a>
    </li>
@@ -718,13 +718,29 @@
               
               <div>
                 
-  <div class="section" id="cm4twc-model-to-yaml">
-<h1>cm4twc.Model.to_yaml<a class="headerlink" href="#cm4twc-model-to-yaml" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
+  <div class="section" id="cm4twc-britishnationalgrid-is-matched-in">
+<h1>cm4twc.BritishNationalGrid.is_matched_in<a class="headerlink" href="#cm4twc-britishnationalgrid-is-matched-in" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="cm4twc.Model.to_yaml">
-<span class="sig-prename descclassname"><span class="pre">Model.</span></span><span class="sig-name descname"><span class="pre">to_yaml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.Model.to_yaml" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
-<dd><p>Store configuration of <a class="reference internal" href="../classes/cm4twc.Model.html#cm4twc.Model" title="cm4twc.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> as a YAML file in the
-configuration directory.</p>
+<dt class="sig sig-object py" id="cm4twc.BritishNationalGrid.is_matched_in">
+<span class="sig-prename descclassname"><span class="pre">BritishNationalGrid.</span></span><span class="sig-name descname"><span class="pre">is_matched_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc.BritishNationalGrid.is_matched_in" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
+<dd><p>Determine whether the horizontal cell bounds of the grid are
+overlapping with the cell bounds of another instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>.</p>
+<p>In other words, determine whether the cells of the grid are
+fully containing the cells (i.e. not area fractions) of another
+instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>grid: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code></dt><dd><p>The grid whose cells are checked as being fully
+contained this grid. Note, the two grids must be of
+the same type (e.g. <a class="reference internal" href="../classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -37,7 +37,7 @@
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="cm4twc.LatLonGrid.route" href="cm4twc.LatLonGrid.route.html" />
+    <link rel="next" title="cm4twc.LatLonGrid.is_matched_in" href="cm4twc.LatLonGrid.is_matched_in.html" />
     <link rel="prev" title="cm4twc.LatLonGrid.is_space_equal_to" href="cm4twc.LatLonGrid.is_space_equal_to.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -358,6 +358,11 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.LatLonGrid.is_matched_in.html">
+     cm4twc.LatLonGrid.is_matched_in
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.LatLonGrid.route.html">
      cm4twc.LatLonGrid.route
     </a>
@@ -465,6 +470,11 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.RotatedLatLonGrid.is_matched_in.html">
+     cm4twc.RotatedLatLonGrid.is_matched_in
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.RotatedLatLonGrid.route.html">
      cm4twc.RotatedLatLonGrid.route
     </a>
@@ -569,6 +579,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="cm4twc.BritishNationalGrid.spans_same_region_as.html">
      cm4twc.BritishNationalGrid.spans_same_region_as
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="cm4twc.BritishNationalGrid.is_matched_in.html">
+     cm4twc.BritishNationalGrid.is_matched_in
     </a>
    </li>
    <li class="toctree-l2">
@@ -715,7 +730,9 @@ upper bound of their last cell are compared.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>grid: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code></dt><dd><p>The other grid to be compared against this grid.</p>
+<dt>grid: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code></dt><dd><p>The other grid to be compared against this grid. Note,
+the two grids must be of the same type (e.g.
+<a class="reference internal" href="../classes/cm4twc.LatLonGrid.html#cm4twc.LatLonGrid" title="cm4twc.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>).</p>
 </dd>
 <dt>ignore_z: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the dimension coordinates along the Z axes of
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> instances will not be compared. If not
@@ -754,7 +771,7 @@ ignored).</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Oct 20, 2021.<br>
+        Last updated on Nov 03, 2021.<br>
       </p>
     </div>
   </div>

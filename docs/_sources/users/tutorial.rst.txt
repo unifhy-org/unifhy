@@ -293,14 +293,23 @@ three parts of the terrestrial water cycle.
    While the resolutions of the three components of the `Model` can be
    different, there are limitations.
 
-   In space, the `SpaceDomain`\s of the three components must be in the
-   same coordinate system (e.g. all using `LatLonGrid`) and their
-   respective domains must span the same geographical region (i.e. the
-   edges of their domains must overlap).
+   In space, the `SpaceDomain`\s of the three components must:
 
-   In time, the `TimeDomain`\s of the three components must be in the
-   same calendar (e.g. 'gregorian') and their respective resolutions
-   must be a multiple integer of the fastest `Component`'s resolution.
+   - be in the same coordinate system (e.g. all using `LatLonGrid`);
+   - span the same geographical region (i.e. the edges of their domains
+     must overlap);
+   - feature resolutions that are integer multiples of one another (i.e.
+     grid cells of a domain must fully include or fully be included
+     in grid cells of the other domains).
+
+   In time, the `TimeDomain`\s of the three components must:
+
+   - be in the same calendar (e.g. all in 'gregorian');
+   - span the same period (i.e. the start and end of their domains
+     must coincide);
+   - feature resolutions that are integer multiples of one another (i.e.
+     time steps of a domain must fully include or fully be included in
+     time steps of the other domains)
 
 
 .. note::
