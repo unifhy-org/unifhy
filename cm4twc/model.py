@@ -224,10 +224,10 @@ class Model(object):
 
         **Examples**
 
-        >>> m = Model.from_yaml('configurations/dummy_sync_match.yml')
+        >>> m = Model.from_yaml('configurations/dummy_same_t_same_s.yml')
         >>> print(m)
         Model(
-            identifier: test-dummy-sync-match
+            identifier: test-dummy-same_t-same_s
             config directory: outputs
             saving directory: outputs
             surfacelayer: tests.components.surfacelayer.dummy
