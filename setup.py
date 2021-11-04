@@ -34,13 +34,10 @@ def read_authors(filename):
 
 setup(
     name='cm4twc',
-
     version=__version__,
-
     description='Community Model for the Terrestrial Water Cycle',
     long_description=long_desc,
     long_description_content_type="text/x-rst",
-
     download_url="https://pypi.python.org/pypi/cm4twc",
     project_urls={
         'Bug Tracker': 'https://github.com/hydro-jules/cm4twc/issues',
@@ -48,34 +45,21 @@ setup(
         'Documentation': 'https://hydro-jules.github.io/cm4twc',
         'Source Code': 'https://github.com/hydro-jules/cm4twc',
     },
-
     author=read_authors('.zenodo.json'),
-
     license='BSD-3',
-
     classifiers=[
         'Development Status :: 4 - Beta',
-
         'Natural Language :: English',
-
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Hydrology',
-
         'Operating System :: MacOS',
         'Operating System :: POSIX :: Linux',
-
         'License :: OSI Approved :: BSD License',
-
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python'
     ],
-
     packages=find_packages(exclude=["docs*"]),
-
+    python_requires=">=3.7",
     install_requires=requirements('requirements.txt'),
-
     extras_require={
         'docs': requirements('requirements-docs.txt')
     }
