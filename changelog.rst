@@ -56,6 +56,7 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 .. rubric:: Dependencies
 
 * change dependency ``cf-python>=3.11.0``
+* drop support for Python 3.6
 
 .. rubric:: Documentation
 
