@@ -903,6 +903,11 @@ class Grid(SpaceDomain):
             raise RuntimeError("method 'route' requires setting "
                                "property 'flow_direction'")
 
+        # check that variable to route has the same shape as flow_direction
+        if not self.flow_direction.shape[:-1] == variable_to_route.shape:
+            raise RuntimeError("shape mismatch between 'variable_to_route' "
+                               "and 'flow_direction' in 'route' method")
+
         # initialise routed and out arrays depending on mask/no-mask
         if np.ma.is_masked(self.flow_direction):
             mask = self.flow_direction.mask[..., 0]
