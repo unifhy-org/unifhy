@@ -14,27 +14,21 @@ def get_dummy_spacedomain(resolution):
             latitude_extent=(51, 55),
             latitude_resolution=1,
             longitude_extent=(-2, 1),
-            longitude_resolution=1,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
+            longitude_resolution=1
         )
     elif resolution == 'pt5deg':
         return cm4twc.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=0.5,
             longitude_extent=(-2, 1),
-            longitude_resolution=0.5,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
+            longitude_resolution=0.5
         )
     elif resolution == 'pt25deg':
         return cm4twc.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=0.25,
             longitude_extent=(-2, 1),
-            longitude_resolution=0.25,
-            altitude_extent=(0, 4),
-            altitude_resolution=4
+            longitude_resolution=0.25
         )
 
 
