@@ -18,9 +18,6 @@ surfacelayer:
     longitude_extent: [-2, 1]
     longitude_resolution: 1
     latitude_longitude_location: centre
-    altitude_extent: [0, 4]
-    altitude_resolution: 4
-    altitude_location: centre
     land_sea_mask:
       files: [data/dummy_global_land_sea_mask_1deg.nc]
       select: land_sea_mask
@@ -72,9 +69,6 @@ subsurface:
     longitude_extent: [-2, 1]
     longitude_resolution: 0.5
     latitude_longitude_location: centre
-    altitude_extent: [0, 4]
-    altitude_resolution: 4
-    altitude_location: centre
     land_sea_mask: null
     flow_direction: null
     cell_area: null
@@ -114,9 +108,6 @@ openwater:
     longitude_extent: [-2, 1]
     longitude_resolution: 0.25
     latitude_longitude_location: centre
-    altitude_extent: [0, 4]
-    altitude_resolution: 4
-    altitude_location: centre
     land_sea_mask: null
     flow_direction: null
     cell_area: null
