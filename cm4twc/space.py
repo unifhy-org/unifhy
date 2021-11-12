@@ -48,6 +48,16 @@ class SpaceDomain(metaclass=abc.ABCMeta):
         # to the coordinate values along each axis.
         return None
 
+    @abc.abstractmethod
+    def has_vertical_axis(self):
+        return None
+
+    @property
+    @abc.abstractmethod
+    def vertical_axis(self):
+        # The name of the SpaceDomain vertical dimension axis as a `str`.
+        return None
+
     @property
     @abc.abstractmethod
     def flow_direction(self):
@@ -198,9 +208,8 @@ class Grid(SpaceDomain):
         The corresponding names and order of the axes is accessible
         through the `axes` property.
         """
-        has_z = self._f.dim(self._Z_name, default=False)
         return (
-            (self._f.dim('Z').shape if has_z else ())
+            (self._f.dim('Z').shape if self.has_vertical_axis() else ())
             + self._f.dim('Y').shape
             + self._f.dim('X').shape
         )
@@ -210,15 +219,31 @@ class Grid(SpaceDomain):
         """Return the name of the properties to use to get access to
         the axes defined for the `Grid` instance as a `tuple`.
         """
-        has_z = self._f.dim(self._Z_name, default=False)
-        return ('Z', 'Y', 'X') if has_z else ('Y', 'X')
+        return ('Z', 'Y', 'X') if self.has_vertical_axis() else ('Y', 'X')
+
+    def has_vertical_axis(self):
+        """Determine whether the `Grid` features a vertical dimension.
+        Return a `bool`.
+        """
+        return (
+            True if self._f.dim(self._Z_name, key=True, default=False)
+            else False
+        )
+
+    @property
+    def vertical_axis(self):
+        """Return the name of the property to use to get access to
+        the vertical axis defined for the `Grid` as a `str`. If not
+        defined, return `None`.
+        """
+        return 'Z' if self.has_vertical_axis() else None
 
     @property
     def Z(self):
         """Return the Z-axis of the `Grid` instance as a `cf.Data`
         instance if the Z-axis exists, otherwise return `None`.
         """
-        if self._f.dim('Z', default=False):
+        if self.has_vertical_axis():
             return self._f.dim('Z').data
         else:
             return None
@@ -243,7 +268,7 @@ class Grid(SpaceDomain):
         as a `cf.Data` instance if the Z-axis exists, otherwise
         return `None`.
         """
-        if self._f.dim('Z', default=False):
+        if self.has_vertical_axis():
             return self._f.dim('Z').bounds.data
         else:
             return None
@@ -267,7 +292,7 @@ class Grid(SpaceDomain):
         """Return the name of the Z-axis of the `Grid` instance
         as a `str` if the Z-axis exists, otherwise return `None`.
         """
-        if self._f.dim('Z', default=False):
+        if self.has_vertical_axis():
             return self._f.dim('Z').standard_name
         else:
             return None
@@ -1942,7 +1967,7 @@ class Grid(SpaceDomain):
         }
 
     def __str__(self):
-        has_z = self._f.dim(self._Z_name, default=False)
+        has_z = self.has_vertical_axis()
         return "\n".join(
             [f"{self.__class__.__name__}("]
             + [f"    shape {{{', '.join(self.axes)}}}: {self.shape}"]
