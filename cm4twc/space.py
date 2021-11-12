@@ -394,11 +394,20 @@ class Grid(SpaceDomain):
         # store given field for config file
         self._land_sea_mask_field = mask
 
+        # drop potential size-1 Z axis since land sea mask is
+        # only relevant horizontally
+        if mask.domain_axis(self.vertical_axis, key=True, default=False):
+            mask.squeeze(self.vertical_axis, inplace=True)
+
         # check that mask and spacedomain are compatible
+        grid = self.to_horizontal_grid()
         try:
-            mask = self.subset_and_compare(mask)
+            mask = grid.subset_and_compare(mask)
         except RuntimeError:
             raise error
+
+        # determine horizontal-only shape of spacedomain
+        shp = grid.shape
 
         # get field's data array
         mask = mask.array
@@ -408,7 +417,7 @@ class Grid(SpaceDomain):
                 mask = np.asarray(mask, dtype=bool)
             else:
                 raise TypeError("mask must contain boolean/binary values")
-        if not mask.shape == self.shape:
+        if not mask.shape == shp:
             raise error
 
         # apply mask to underlying data to be taken into account in remapping
@@ -595,41 +604,50 @@ class Grid(SpaceDomain):
         # store given field for config file
         self._flow_direction_field = directions
 
+        # drop potential size-1 Z axis since flow direction is
+        # only relevant horizontally
+        if directions.domain_axis(self.vertical_axis, key=True, default=False):
+            directions.squeeze(self.vertical_axis, inplace=True)
+
         # check that directions and spacedomain are compatible
+        grid = self.to_horizontal_grid()
         try:
-            directions = self.subset_and_compare(directions)
+            directions = grid.subset_and_compare(directions)
         except RuntimeError:
             raise error_dim
 
         # get field's data array
         directions = directions.array
 
+        # determine horizontal-only shape of spacedomain
+        shp = grid.shape
+
         # initialise info array by extending by one trailing axis of
         # size 2 (for relative Y movement, and relative X movement)
 
         # if masked array, use same mask on info
         if np.ma.is_masked(directions):
-            if (self.shape + (2,)) == directions.shape:
+            if (shp + (2,)) == directions.shape:
                 info = np.ma.masked_array(
-                    np.zeros(self.shape + (2,), int),
+                    np.zeros(shp + (2,), int),
                     mask=directions.mask
                 )
-            elif self.shape == directions.shape:
+            elif shp == directions.shape:
                 info = np.ma.masked_array(
-                    np.zeros(self.shape + (2,), int),
+                    np.zeros(shp + (2,), int),
                     mask=np.tile(directions.mask[..., np.newaxis], 2)
                 )
             else:
                 raise error_dim
             info[~info.mask] = -9
         else:
-            info = np.zeros(self.shape + (2,), int)
+            info = np.zeros(shp + (2,), int)
             info[:] = -9
 
         # convert directions to relative Y X movement
         if directions.dtype == np.dtype('<U2'):
             # cardinal
-            if not directions.shape == self.shape:
+            if not directions.shape == shp:
                 raise error_dim
 
             # strip and capitalise strings
@@ -648,7 +666,7 @@ class Grid(SpaceDomain):
                 if np.amin(directions) < -1 or np.amax(directions) > 1:
                     raise error_valid
                 info[:] = directions
-            elif self.shape == directions.shape:
+            elif shp == directions.shape:
                 # digits
                 for digit, yx_rel in self._routing_digits_map.items():
                     info[directions == digit] = yx_rel
@@ -666,7 +684,7 @@ class Grid(SpaceDomain):
 
         # find outflow towards outside domain
         # to set relative direction special value 9
-        info_ = np.zeros(self.shape + (2,), int)
+        info_ = np.zeros(shp + (2,), int)
         info_[:] = info
         if not (self._Y_limits_contiguous
                 and (self.Y_bounds.array[0, 0] in self._Y_limits)
@@ -711,7 +729,7 @@ class Grid(SpaceDomain):
             info_[..., 1][to_msk] = 9
 
         else:
-            to_msk = np.zeros(self.shape, dtype=bool)
+            to_msk = np.zeros(shp, dtype=bool)
 
         # pre-process some convenience masks out of main routing mask
         # to avoid generating them every time *route* method is called
@@ -1000,10 +1018,18 @@ class Grid(SpaceDomain):
         # check type
         if not isinstance(areas, cf.Field):
             raise TypeError("cell_area not a cf.Field")
+        # store given field for config file
+        self._cell_area_field = areas
+
+        # drop potential size-1 Z axis since areas is
+        # only relevant horizontally
+        if areas.domain_axis(self.vertical_axis, key=True, default=False):
+            areas.squeeze(self.vertical_axis, inplace=True)
 
         # check that mask and spacedomain are compatible
+        grid = self.to_horizontal_grid()
         try:
-            areas = self.subset_and_compare(areas)
+            areas = grid.subset_and_compare(areas)
         except RuntimeError:
             raise error_dim
 
@@ -2308,6 +2334,18 @@ class Grid(SpaceDomain):
                 for prop in ['', '_bounds']
             }
         )
+
+    def to_horizontal_grid(self, drop_extras=True):
+        cfg = self.to_config()
+
+        for prop in ['extent', 'resolution']:
+            cfg.pop(f'{self._Z_name}_{prop}')
+
+        if drop_extras:
+            for extra in ['land_sea_mask', 'flow_direction']:
+                cfg.pop(extra)
+
+        return self.__class__.from_config(cfg)
 
 
 class LatLonGrid(Grid):
