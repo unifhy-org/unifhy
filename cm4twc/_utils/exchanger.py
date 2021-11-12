@@ -64,7 +64,14 @@ class Exchanger(object):
         # set up each transfer
         for t in self.transfers:
             histories = []
-            shape = self.transfers[t]['src_sd'].shape
+
+            # determine shape of transfer while dropping Z axis if
+            # spacedomain is 3D because transfers are along 2D interface
+            shape = (
+                self.transfers[t]['src_sd'].shape[1:]
+                if self.transfers[t]['src_sd'].has_vertical_axis()
+                else self.transfers[t]['src_sd'].shape
+            )
 
             # special case for transfers towards a DataComponent or
             # a NullComponent (or towards outside framework, which will
@@ -88,9 +95,17 @@ class Exchanger(object):
                     # to None to avoid unnecessary remapping
                     src_sd = self.transfers[t]['src_sd']
                     src_fld = src_sd.to_field()
-                    dst_fld = compass.spacedomains[c].to_field()
+                    dst_sd = compass.spacedomains[c]
+                    dst_fld = dst_sd.to_field()
 
-                    if src_sd.is_space_equal_to(dst_fld, ignore_z=True):
+                    # eliminate Z axis by squeezing fields because
+                    # remapping for transfers on a 2D interface
+                    if src_sd.has_vertical_axis():
+                        src_fld.squeeze(src_sd.vertical_axis, inplace=True)
+                    if dst_sd.has_vertical_axis():
+                        dst_fld.squeeze(dst_sd.vertical_axis, inplace=True)
+
+                    if src_sd.is_space_equal_to(dst_fld):
                         self.transfers[t][c]['remap'] = None
                     else:
                         # now assign a tuple to 'remap' where first item
@@ -363,7 +378,15 @@ def create_transfers_dump(filepath, transfers_info, timedomain, spacedomains):
         for c in spacedomains:
             g = f.createGroup(c)
             spacedomain = spacedomains[c]
-            axes = spacedomain.axes
+
+            # drop Z axis if spacedomain is 3D because transfers are
+            # along 2D interface only
+            axes = (
+                spacedomain.axes[1:]
+                if spacedomain.has_vertical_axis()
+                else spacedomain.axes
+            )
+
             # dimensions and coordinate variables
             for axis in axes:
                 # dimension (domain axis)
