@@ -287,7 +287,7 @@ class BasicTestModel(object):
         # start main run
         simulator.run_model()
 
-        # start main run
+        # resume main run
         simulator.resume_model()
 
         # check final state and transfer values
@@ -340,7 +340,7 @@ class BasicTestModel(object):
             )
         )
 
-        # start main run
+        # resume first spin-up run
         simulator_2.resume_model(tag='spinup1')
 
         # check final state and transfer values
@@ -355,7 +355,7 @@ class BasicTestModel(object):
             )
         )
 
-        # start main run
+        # resume second spin-up run
         simulator_3.resume_model(tag='spinup2')
 
         # check final state and transfer values
@@ -401,7 +401,7 @@ class BasicTestModel(object):
         # clean up
         simulator_2.clean_up_files()
 
-    def test_setup_spinup_simulate_resume(self):
+    def test_setup_spinup_simulate_resume_run(self):
         """
         The purpose of this test is to check that a complete workflow is
         functional, i.e.:
@@ -446,21 +446,24 @@ class BasicTestModel(object):
             )
         )
 
-        # resume model
+        # resume model run
         simulator_2.resume_model()
 
         # check final state values are coherent
         self.assertTrue(
-            compare_states(last_states_sl,
-                           simulator_2.model.surfacelayer.states)
+            compare_states(
+                last_states_sl, simulator_2.model.surfacelayer.states
+            )
         )
         self.assertTrue(
-            compare_states(last_states_ss,
-                           simulator_2.model.subsurface.states)
+            compare_states(
+                last_states_ss, simulator_2.model.subsurface.states
+            )
         )
         self.assertTrue(
-            compare_states(last_states_ow,
-                           simulator_2.model.openwater.states)
+            compare_states(
+                last_states_ow, simulator_2.model.openwater.states
+            )
         )
 
         # clean up
@@ -572,7 +575,7 @@ class BasicTestModel(object):
 
 class AdvancedTestModel(BasicTestModel):
 
-    def test_setup_spinup_simulate_resume(self):
+    def test_setup_spinup_simulate_resume_run(self):
         """
         The purpose of this test is to check that a complete workflow is
         functional, i.e.:
@@ -633,7 +636,7 @@ class AdvancedTestModel(BasicTestModel):
                     )
                 )
 
-                # resume model
+                # resume model run
                 simulator_2.resume_model()
 
                 # check final state values are coherent
