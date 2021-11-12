@@ -2229,16 +2229,12 @@ class Grid(SpaceDomain):
             field.dim(axis, error).round(decr(), inplace=True)
 
         # try to subset in space
-        if field.subspace(
-                'test',
-                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
-                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
-        ):
-            # subset in space
-            field_subset = field.subspace(
-                **{self.X_name: cf.wi(*self.X.array[[0, -1]]),
-                   self.Y_name: cf.wi(*self.Y.array[[0, -1]])}
-            )
+        kwargs = {
+            self.X_name: cf.wi(*self.X.array[[0, -1]]),
+            self.Y_name: cf.wi(*self.Y.array[[0, -1]])
+        }
+        if field.subspace('test', **kwargs):
+            field_subset = field.subspace(**kwargs)
         else:
             raise error
 
