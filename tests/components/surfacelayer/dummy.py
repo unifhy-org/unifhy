@@ -111,16 +111,19 @@ class Dummy(SurfaceLayerComponent):
         state_a[0][:] = state_a[-1] + 1
         state_b[0][:] = state_b[-1] + 2
 
-        output_x, _ = self.spacedomain.route(driving_a + driving_b + driving_c
-                                             + transfer_n - state_a[0])
+        output_x, _ = self.spacedomain.route(
+            driving_a + driving_b + driving_c + transfer_n - state_a[0]
+        )
 
         return (
             # to exchanger
             {
                 'transfer_i':
-                    driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
+                    driving_a + driving_b + transfer_l
+                    + ancillary_c * state_a[0],
                 'transfer_j':
-                    driving_a + driving_b + driving_c + transfer_k + state_b[0]
+                    driving_a + driving_b + driving_c
+                    + transfer_k + state_b[0]
             },
             # component outputs
             {

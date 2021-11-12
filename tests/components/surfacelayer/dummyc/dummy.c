@@ -1,23 +1,22 @@
-void initialise_(int nz, int ny, int nx,
+void initialise_(int ny, int nx,
                  // component states
                  double *state_a_m1, double *state_b_m1)
 {
-  int i, j, k;
-  int ijk;
+  int j, k;
+  int jk;
 
-  for (i=0; i < nz; i++)
-    for (j=0; j < ny; j++)
-      for (k=0; k < nx; k++)
-      {
-        // vectorisation of 3d-array
-        ijk = k + nx * (j + ny * i);
-        // initialise states
-        state_a_m1[ijk] = 0.0;
-        state_b_m1[ijk] = 0.0;
-      }
+  for (j=0; j < ny; j++)
+    for (k=0; k < nx; k++)
+    {
+      // vectorisation of 2d-array
+      jk = k + nx * j;
+      // initialise states
+      state_a_m1[jk] = 0.0;
+      state_b_m1[jk] = 0.0;
+    }
 }
 
-void run_(int nz, int ny, int nx,
+void run_(int ny, int nx,
           // from exchanger
           double *transfer_k, double *transfer_l, double *transfer_n,
           // component driving data
@@ -32,27 +31,26 @@ void run_(int nz, int ny, int nx,
           // component outputs
           double *output_x)
 {
-  int i, j, k;
-  int ijk;
+  int j, k;
+  int jk;
 
-  for (i=0; i < nz; i++)
-    for (j=0; j < ny; j++)
-      for (k=0; k < nx; k++)
-      {
-        // vectorisation of 3d-array
-        ijk = k + nx * (j + ny * i);
-        // update states
-        state_a_0[ijk] = state_a_m1[ijk] + 1;
-        state_b_0[ijk] = state_b_m1[ijk] + 2;
-        // compute transfers to exchanger
-        transfer_i[ijk] = driving_a[ijk] + driving_b[ijk] + transfer_l[ijk]
-          + (ancillary_c[ijk] * state_a_0[ijk]);
-        transfer_j[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
-          + transfer_k[ijk] + state_b_0[ijk];
-        // compute outputs
-        output_x[ijk] = driving_a[ijk] + driving_b[ijk] + driving_c[ijk]
-          + transfer_n[ijk] - state_a_0[ijk];
-      }
+  for (j=0; j < ny; j++)
+    for (k=0; k < nx; k++)
+    {
+      // vectorisation of 2d-array
+      jk = k + nx * j;
+      // update states
+      state_a_0[jk] = state_a_m1[jk] + 1;
+      state_b_0[jk] = state_b_m1[jk] + 2;
+      // compute transfers to exchanger
+      transfer_i[jk] = driving_a[jk] + driving_b[jk] + transfer_l[jk]
+        + (ancillary_c[jk] * state_a_0[jk]);
+      transfer_j[jk] = driving_a[jk] + driving_b[jk] + driving_c[jk]
+        + transfer_k[jk] + state_b_0[jk];
+      // compute outputs
+      output_x[jk] = driving_a[jk] + driving_b[jk] + driving_c[jk]
+        + transfer_n[jk] - state_a_0[jk];
+    }
 }
 
 void finalise_(void)

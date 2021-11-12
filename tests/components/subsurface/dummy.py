@@ -101,12 +101,15 @@ class Dummy(SubSurfaceComponent):
         return (
             # to exchanger
             {
-                'transfer_k': driving_a * parameter_a + transfer_n + state_a[0],
-                'transfer_m': driving_a * parameter_a + transfer_i + state_b[0]
+                'transfer_k':
+                    driving_a * parameter_a + transfer_n + state_a[0],
+                'transfer_m':
+                    driving_a * parameter_a + transfer_i + state_b[0]
             },
             # component outputs
             {
-                'output_x': driving_a * parameter_a + transfer_n - state_a[0]
+                'output_x':
+                    driving_a * parameter_a + transfer_n - state_a[0]
             }
         )
 
