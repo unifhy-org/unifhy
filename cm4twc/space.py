@@ -21,6 +21,7 @@ class SpaceDomain(metaclass=abc.ABCMeta):
         # inner CF data model
         self._f = cf.Field()
         self._cell_area = None
+        self._cell_area_field = None
 
         # optional flow direction attributes
         self._flow_direction = None
@@ -2280,23 +2281,32 @@ class Grid(SpaceDomain):
         cfg = cfg.copy()
         cfg.pop('class')
 
-        lsm = cfg.pop('land_sea_mask', None)
-        fd = cfg.pop('flow_direction', None)
+        extras = {}
+        for extra in ['land_sea_mask', 'flow_direction', 'cell_area']:
+            extras[extra] = cfg.pop(extra, None)
 
         inst = cls.from_extent_and_resolution(**cfg)
 
-        if lsm is not None:
-            inst.land_sea_mask = (
-                cf.read(lsm['files']).select_field(lsm['select'])
-            )
-        if fd is not None:
-            inst.flow_direction = (
-                cf.read(fd['files']).select_field(fd['select'])
-            )
+        for extra in ['land_sea_mask', 'flow_direction', 'cell_area']:
+            value = extras[extra]
+            if value is not None:
+                setattr(
+                    inst, extra,
+                    cf.read(value['files']).select_field(value['select'])
+                )
 
         return inst
 
     def to_config(self):
+        extras = {}
+        for extra in ['land_sea_mask', 'flow_direction', 'cell_area']:
+            attrib = getattr(self, f'_{extra}_field')
+            if attrib and attrib.get_filenames():
+                extras[extra] = {'files': attrib.get_filenames(),
+                                 'select': attrib.identity()}
+            else:
+                extras[extra] = None
+
         return {
             'class': self.__class__.__name__,
             f'{self._Y_name}_extent': self._get_dimension_extent('Y'),
@@ -2307,20 +2317,7 @@ class Grid(SpaceDomain):
             f'{self._Z_name}_extent': self._get_dimension_extent('Z'),
             f'{self._Z_name}_resolution': self._get_dimension_resolution('Z'),
             f'{self._Z_name}_location': self._get_z_location(),
-            'land_sea_mask': (
-                {'files': self._land_sea_mask_field.get_filenames(),
-                 'select': self._land_sea_mask_field.identity()}
-                if (self._land_sea_mask_field
-                    and self._land_sea_mask_field.get_filenames())
-                else None
-            ),
-            'flow_direction': (
-                {'files': self._flow_direction_field.get_filenames(),
-                 'select': self._flow_direction_field.identity()}
-                if (self._flow_direction_field
-                    and self._flow_direction_field.get_filenames())
-                else None
-            )
+            **extras
         }
 
     @classmethod
@@ -2343,7 +2340,7 @@ class Grid(SpaceDomain):
             cfg.pop(f'{self._Z_name}_{prop}')
 
         if drop_extras:
-            for extra in ['land_sea_mask', 'flow_direction']:
+            for extra in ['land_sea_mask', 'flow_direction', 'cell_area']:
                 cfg.pop(extra)
 
         return self.__class__.from_config(cfg)

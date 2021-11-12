@@ -27,6 +27,7 @@ surfacelayer:
     flow_direction:
       files: [data/dummy_global_flow_direction_1deg.nc]
       select: flow_direction
+    cell_area: null
   dataset:
     driving_a:
       files: [data/dummy_surfacelayer_data_daily_1deg.nc]
@@ -76,6 +77,7 @@ subsurface:
     altitude_location: centre
     land_sea_mask: null
     flow_direction: null
+    cell_area: null
   dataset:
     driving_a:
       files: [data/dummy_subsurface_data_daily_1deg.nc]
@@ -117,6 +119,7 @@ openwater:
     altitude_location: centre
     land_sea_mask: null
     flow_direction: null
+    cell_area: null
   dataset:
     ancillary_b:
       files: [data/dummy_openwater_data_daily_1deg.nc]
