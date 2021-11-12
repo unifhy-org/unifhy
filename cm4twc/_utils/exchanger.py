@@ -335,7 +335,7 @@ class Exchanger(object):
         lhs[:] = rhs[:]
 
         self.transfers[name]['slices'][:] = lhs
-        self.transfers[name]['slices'][-1] = array
+        self.transfers[name]['slices'][-1][:] = array
 
     def update_transfers(self, transfers):
         for name, array in transfers.items():
