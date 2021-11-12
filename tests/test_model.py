@@ -192,20 +192,20 @@ class BasicTestModel(object):
         - initialise second model with dumps from first model last snapshot;
         - spin-up second model.
 
-        The test only works with one combination of actual components.
+        The test only works with a combination of actual components.
 
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
         - checking the correctness of the final exchanger transfer values.
 
-        Note, since simulate period is of 12 days, and each spinup cycle
-        is of 6 days, and given that the driving data is constant for
-        the 12-day period, the final conditions with spinup+spinup
+        Note, since simulate period is of 16 days, and each spinup cycle
+        is of 8 days, and given that the driving data is constant for
+        the 16-day period, the final conditions with spinup+spinup
         will be the same as with simulate without spinup, which means
         that correctness of final conditions can be checked, but not
         records because they are scattered across two files of for
-        simulation periods 6 days each.
+        simulation periods 8 days each.
         """
         # set up a model, and spin it up
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
@@ -314,13 +314,13 @@ class BasicTestModel(object):
         - checking the correctness of the final component state values;
         - checking the correctness of the final exchanger transfer values.
 
-        Note, since simulate period is of 12 days, and each spinup cycle
-        is of 6 days, and given that the driving data is constant for
-        the 12-day period, the final conditions with spinup+spinup
+        Note, since simulate period is of 16 days, and each spinup cycle
+        is of 8 days, and given that the driving data is constant for
+        the 16-day period, the final conditions with spinup+spinup
         will be the same as with simulate without spinup, which means
         that correctness of final conditions can be checked, but not
         records because they are scattered across two files of for
-        simulation periods 6 days each.
+        simulation periods 8 days each.
         """
         # set up a model
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
