@@ -57,13 +57,13 @@ Attributes
    ~cm4twc.LatLonGrid.axes
    ~cm4twc.LatLonGrid.X
    ~cm4twc.LatLonGrid.Y
-   ~cm4twc.LatLonGrid.Z
+   .. ~cm4twc.LatLonGrid.Z
    ~cm4twc.LatLonGrid.X_bounds
    ~cm4twc.LatLonGrid.Y_bounds
-   ~cm4twc.LatLonGrid.Z_bounds
+   .. ~cm4twc.LatLonGrid.Z_bounds
    ~cm4twc.LatLonGrid.X_name
    ~cm4twc.LatLonGrid.Y_name
-   ~cm4twc.LatLonGrid.Z_name
+   .. ~cm4twc.LatLonGrid.Z_name
    ~cm4twc.LatLonGrid.land_sea_mask
    ~cm4twc.LatLonGrid.flow_direction
    ~cm4twc.LatLonGrid.cell_area

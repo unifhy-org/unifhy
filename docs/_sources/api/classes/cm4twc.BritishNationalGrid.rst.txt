@@ -56,13 +56,13 @@ Attributes
    ~cm4twc.BritishNationalGrid.axes
    ~cm4twc.BritishNationalGrid.X
    ~cm4twc.BritishNationalGrid.Y
-   ~cm4twc.BritishNationalGrid.Z
+   .. ~cm4twc.BritishNationalGrid.Z
    ~cm4twc.BritishNationalGrid.X_bounds
    ~cm4twc.BritishNationalGrid.Y_bounds
-   ~cm4twc.BritishNationalGrid.Z_bounds
+   .. ~cm4twc.BritishNationalGrid.Z_bounds
    ~cm4twc.BritishNationalGrid.X_name
    ~cm4twc.BritishNationalGrid.Y_name
-   ~cm4twc.BritishNationalGrid.Z_name
+   .. ~cm4twc.BritishNationalGrid.Z_name
    ~cm4twc.BritishNationalGrid.land_sea_mask
    ~cm4twc.BritishNationalGrid.flow_direction
    ~cm4twc.BritishNationalGrid.cell_area

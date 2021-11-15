@@ -56,13 +56,13 @@ Attributes
    ~cm4twc.RotatedLatLonGrid.axes
    ~cm4twc.RotatedLatLonGrid.X
    ~cm4twc.RotatedLatLonGrid.Y
-   ~cm4twc.RotatedLatLonGrid.Z
+   .. ~cm4twc.RotatedLatLonGrid.Z
    ~cm4twc.RotatedLatLonGrid.X_bounds
    ~cm4twc.RotatedLatLonGrid.Y_bounds
-   ~cm4twc.RotatedLatLonGrid.Z_bounds
+   .. ~cm4twc.RotatedLatLonGrid.Z_bounds
    ~cm4twc.RotatedLatLonGrid.X_name
    ~cm4twc.RotatedLatLonGrid.Y_name
-   ~cm4twc.RotatedLatLonGrid.Z_name
+   .. ~cm4twc.RotatedLatLonGrid.Z_name
    ~cm4twc.RotatedLatLonGrid.land_sea_mask
    ~cm4twc.RotatedLatLonGrid.flow_direction
    ~cm4twc.RotatedLatLonGrid.cell_area

@@ -10,6 +10,8 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * constrain temporal and spatial resolutions of components forming a
   model to be integer multiples of one another
   (`#67 <https://github.com/cm4twc-org/cm4twc/pull/67>`_)
+* enforce two-dimensional spatial domains for components
+  (`#69 <https://github.com/cm4twc-org/cm4twc/pull/69>`_)
 
 .. rubric:: API changes
 
@@ -23,6 +25,9 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#46 <https://github.com/cm4twc-org/cm4twc/pull/46>`_)
 * remove science components (Artemis and RFM) from framework
   (`#45 <https://github.com/cm4twc-org/cm4twc/issues/45>`_)
+* remove vertical dimension (i.e. altitude) in `LatLonGrid`,
+  `RotatedLatLonGrid`, and `BritishNationalGrid`
+  (`#69 <https://github.com/cm4twc-org/cm4twc/pull/69>`_)
 
 .. rubric:: Bug fixes
 

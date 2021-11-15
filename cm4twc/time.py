@@ -421,14 +421,11 @@ class TimeDomain(object):
         )
 
         # try to subset in time
-        if field.subspace(
-                'test',
-                time=cf.wi(*self.time.datetime_array[[0, -1]])
-        ):
-            # subset in time
-            field_subset = field.subspace(
-                time=cf.wi(*self.time.datetime_array[[0, -1]])
-            )
+        kwargs = {
+            'time': cf.wi(*self.time.datetime_array[[0, -1]])
+        }
+        if field.subspace('test', **kwargs):
+            field_subset = field.subspace(**kwargs)
         else:
             raise error
 

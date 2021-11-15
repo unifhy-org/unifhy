@@ -18,15 +18,13 @@ surfacelayer:
     longitude_extent: [-2, 1]
     longitude_resolution: 1
     latitude_longitude_location: centre
-    altitude_extent: [0, 4]
-    altitude_resolution: 4
-    altitude_location: centre
     land_sea_mask:
       files: [data/dummy_global_land_sea_mask_1deg.nc]
       select: land_sea_mask
     flow_direction:
       files: [data/dummy_global_flow_direction_1deg.nc]
       select: flow_direction
+    cell_area: null
   dataset:
     driving_a:
       files: [data/dummy_surfacelayer_data_daily_1deg.nc]
@@ -71,11 +69,9 @@ subsurface:
     longitude_extent: [-2, 1]
     longitude_resolution: 1
     latitude_longitude_location: centre
-    altitude_extent: [0, 4]
-    altitude_resolution: 4
-    altitude_location: centre
     land_sea_mask: null
     flow_direction: null
+    cell_area: null
   dataset:
     driving_a:
       files: [data/dummy_subsurface_data_4daily_1deg.nc]
@@ -112,11 +108,9 @@ openwater:
     longitude_extent: [-2, 1]
     longitude_resolution: 1
     latitude_longitude_location: centre
-    altitude_extent: [0, 4]
-    altitude_resolution: 4
-    altitude_location: centre
     land_sea_mask: null
     flow_direction: null
+    cell_area: null
   dataset:
     ancillary_b:
       files: [data/dummy_openwater_data_2daily_1deg.nc]

@@ -114,15 +114,20 @@ class Dummy(OpenWaterComponent):
             # to exchanger
             {
                 'transfer_l':
-                    ancillary_b[11] * transfer_m + state_a[0][..., 0, 0],
-                'transfer_n': parameter_c * transfer_j,
-                'transfer_o': constant_c + transfer_j
+                    ancillary_b[11] * transfer_m
+                    + state_a[0][..., 0, 0],
+                'transfer_n':
+                    parameter_c * transfer_j,
+                'transfer_o':
+                    constant_c + transfer_j
             },
             # component outputs
             {
-                'output_x': parameter_c * transfer_j + constant_c,
+                'output_x':
+                    parameter_c * transfer_j + constant_c,
                 'output_y':
-                    ancillary_b[11] * transfer_m - state_a[0][..., 0, 0]
+                    ancillary_b[11][0] * transfer_m
+                    - state_a[0][..., 0, 0]
             }
         )
 
