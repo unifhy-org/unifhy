@@ -13,19 +13,20 @@ You can follow the steps below to develop your component(s):
    :backlinks: none
    :local:
 
-Create your component by subclassing a generic framework component
-------------------------------------------------------------------
+Create your science component by subclassing a generic framework component
+--------------------------------------------------------------------------
 
 In the modelling framework, the terrestrial water cycle is divided into
 three components, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
 and `OpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
-three framework components to create subclasses from.
+three framework components to create subclasses from to start your
+science component.
 
 Each component features a fixed interface (i.e. a pre-defined set of
 transfers of information with the other components of the framework):
-inward information (variables that are given to the component), and
-outward information (variables that are computed by the component),
-see :ref:`Fig. 2<fig_transfers>`.
+inward information (variables that are given to the component, i.e.
+"inwards"), and outward information (variables that are computed by the
+component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`.
 
 .. _fig_transfers:
 .. figure:: ../../_doc_img/framework_detailed_transfers.png
@@ -36,20 +37,23 @@ see :ref:`Fig. 2<fig_transfers>`.
    Fig. 2: Transfers of Information between Components.
 
 For component contributions to be `cm4twc`-compliant, they need to comply
-with this fixed interface. If your component contribution is overlapping
-several components, it requires to be refactored into the relevant number
-of components.
+with this fixed interface. If your science component contribution is
+overlapping several components, it requires to be refactored into the
+relevant number of components.
 
 Contributions must be implemented as Python classes, and more specifically
 as subclasses of one of the three framework components. This way, the
-interface for the component contribution is already set, and the
+interface for the science component contribution is already set, and the
 component directly inherits all the functionalities intrinsic to the
 framework so that, as a contributor, you can focus solely on specifying
 the data and science elements of your component(s).
 
 Creating your contribution as a Python class can simply be done by
-subclassing from the relevant framework component, e.g. a surface layer
-component would be created as follows:
+subclassing from the relevant framework component.
+
+.. rubric:: Example
+
+See an example of a mock surface layer component creation below.
 
 .. code-block:: python
    :caption: Subclassing from `SurfaceLayerComponent` class.
@@ -71,15 +75,23 @@ component would be created as follows:
    By convention, it is asked that you use the same class name as the
    one you subclassed from, e.g. *SurfaceLayerComponent* here.
 
-Document your component using its class docstring
--------------------------------------------------
+Document your science component using its class docstring
+---------------------------------------------------------
 
-A brief description of the component (with reference(s) if applicable)
-alongside a field list containing e.g. name(s) of contributor(s),
-affiliation(s) of contributor(s), licence, copyright, etc. must be provided.
-To do so, use your class docstring and follow a `reStructuredText syntax
-<https://docutils.sourceforge.io/docs/user/rst/quickref.html>`_ as
-in the example below.
+A description of the component (with reference(s) if applicable) alongside
+a field list containing e.g. name(s) of contributor(s), affiliation(s) of
+contributor(s), licence, copyright, etc. must be provided. To do so, use
+your class docstring and follow a `reStructuredText syntax
+<https://docutils.sourceforge.io/docs/user/rst/quickref.html>`_.
+
+For the structure of the docstring itself, please start with a short summary line
+followed by a blank line before providing a more elaborate description as per
+`PEP 257 <https://www.python.org/dev/peps/pep-0257/#multi-line-docstrings>`_.
+The field list should be placed last and preceded by a blank line.
+
+.. rubric:: Example
+
+See an example of a mock component description below.
 
 .. code-block:: python
    :caption: Using the component class docstring for description and acknowledgment.
@@ -88,10 +100,12 @@ in the example below.
 
 
    class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
-       """
-       Brief description of the component.
+       """Summary line describing the component.
 
-       Details published in `Doe et al. (2020) <https://doi.org/##.####/XXX>`_.
+       More elaborate description for the component.
+
+       References:
+       `Doe et al. (2020) <https://doi.org/##.####/XXX>`_.
 
        :Contributors: Jane Doe [1]
        :Affiliations: [1] University
@@ -101,43 +115,95 @@ in the example below.
 
 
 
-Define your component using its class attributes
-------------------------------------------------
+Define your science component using its class attributes
+--------------------------------------------------------
 
-The component definition is used by `cm4twc` to make sure that all the
-information required by the component to run is provided by the user.
-The definition of a component is made of the information about its
+The component definition is used by the framework to make sure that all
+the information required by the component to run is provided by the
+user. The definition of a component is made of the information about its
 inputs, outputs, states, parameters, and constants.
-
-The inputs/outputs exclude those variables already included in the fixed
-interface, i.e. inward and outward transfers (see :ref:`Fig. 2<fig_transfers>`).
-
-The inputs must be one of the three following kinds:
-
-- dynamic: data required for each spatial element and for each time step,
-- static: data required for each spatial element and constant over time,
-- climatologic: data required for each spatial element and for a given
-  frequency within a climatology year.
-
-The parameters are those subject to tuning, while the constants are those
-not subject to tuning. Note, parameter tuning/calibration is not a
-functionality offered by the framework.
 
 The definition for the component is specified by assigning dictionaries
 to the class attributes `_inputs_info`, `_outputs_info`, `_states_info`,
-`_parameters_info`, and `_constants_info`. For example, in the `_inputs_info`
-dictionary, each item corresponds to a different input, and for this item
-the key is the name of the input, and the value is a dictionary containing
-the metadata for the input, featuring at least two items, one for its *kind*
-and one for its *units* (and one for its *frequency* if *kind* is
-*climatologic*). All other items in the component definition must feature
-at least a *units* metadata item, and an optional *description* metadata
-item is strongly encouraged. An additional item *default_value* is
-mandatory for each constant in `_constants_info`.
+`_parameters_info`, and `_constants_info`. In such a dictionary, the
+keys correspond to the variable names, and the corresponding value
+is another dictionary containing the metadata for the variable. The
+metadata must at least feature the variable *units* in the
+`SI system <https://en.wikipedia.org/wiki/International_System_of_Units>`_
+and a brief *description* of the variable in plain english is encouraged.
 
-An optional *divisions* item exists for the `_states_info` dictionary,
-where its expected value is an integer, a string, or a sequence of integers
-and/or strings:
+See an example below:
+
+.. code-block:: python
+
+   {
+       'variable_name': {
+           'units': 'SI unit',
+           'description': 'plain english'
+       }
+   }
+
+Details on what each type of variable is, and their potential additional
+metadata are provided in the sub-sections below.
+
+.. rubric:: Inputs
+
+The inputs correspond to the driving data required by the component.
+They exclude those variables already included in the fixed interface,
+i.e. inwards (see :ref:`Fig. 2<fig_transfers>`).
+
+In addition to its *units* and *description*, input variables must be
+given a *kind*. The inputs can be one of the three following kinds:
+
+- `'dynamic'`: data required for each spatial element and for each time step,
+- `'static'`: data required for each spatial element and constant over time,
+- `'climatologic'`: data required for each spatial element and for a given
+  frequency within a climatology year.
+
+If not kind is specified, a dynamic kind is assumed.
+
+If the input is of climatologic kind, *frequency* must also be given and it
+can take one of the supported values described in :ref:`Tab. 1<tab_frequencies>`
+below.
+
+.. _tab_frequencies:
+.. table:: Tab. 1: Supported frequencies for climatologic inputs
+
+   ======================  ====================================================
+   climatologic frequency  length of time dimension in data
+   ======================  ====================================================
+   ``'seasonal'``          Length of 4, corresponding to the meteorological
+                           seasons (i.e. Winter [DJF], Spring [MAM],
+                           Summer [JJA], Autumn [SON], in this order).
+
+   ``'monthly'``           Length of 12, corresponding to the months in the
+                           calendar year (i.e. from January to December).
+
+   ``'day_of_year'``       Length of 366, corresponding to the days in the
+                           calendar year (i.e. from January 1st to December
+                           31st, including value for February 29th).
+
+   `int`                   Length according to the integer value (e.g. a
+                           value of 6 means 6 climatologic values for the
+                           calendar year).
+   ======================  ====================================================
+
+.. rubric:: Outputs
+
+The outputs correspond to the variables computed by the component and of
+potential interest to the component users. The outputs exclude those
+variables already included in the fixed interface, i.e. outwards
+(see :ref:`Fig. 2<fig_transfers>`).
+
+.. rubric:: States
+
+The states correspond to the component variables that need to be given
+initial values to start the component time integration, and whose values
+need to be sustained from one time step to the next.
+
+In addition to its *units* and *description*, an optional *divisions*
+metadata exists, where its expected value is an integer, a string, or
+a sequence of integers and/or strings:
 
 - by default its value is 1, indicating the state is a scalar;
 - if its value is an integer greater than 1, it indicates that the state
@@ -146,29 +212,60 @@ and/or strings:
   component constant, whose value will be used in place of the string
   as divisions;
 - if its value is a sequence, it indicates that the state is an array,
-  and its values are the length of the dimensions of the array (in the
+  and its values are the lengths of the dimensions of the array (in the
   order in the sequence).
 
-The *divisions* item may be useful when considering e.g. different
+The *divisions* item can be used when considering e.g. different
 vertical layers in a component. Note that scalar/vector/array refer to
-the dimension of the state for a given element in the SpaceDomain, so
+the dimension of the state for a given element in the space domain, so
 a scalar state does not mean that there is only one state value for the
-whole spatial domain, it only means that there is only one state value for
-each spatial element in the space domain.
+whole spatial domain, it only means that there is only one state value
+for each spatial element in the space domain.
 
-In addition, the component definition features three special optional
+.. rubric:: Parameters
+
+The parameters are those variables subject to tuning. Note, parameter
+tuning/calibration is not a functionality offered by the framework.
+
+In addition to its *units* and *description*, a *valid_range* metadata
+is recommended to be given and it takes a sequence of two numbers as
+value to define the extent of the valid range of parameter values.
+Providing such a range helps the users of your component to determine
+its parameters values for their specific modelling context.
+
+.. rubric:: Constants
+
+The constants are those variable not subject to tuning. Nevertheless,
+they can be adjusted by the users, e.g. to adjust its precision, or to
+adapt it to their modelling context.
+
+In addition to its *units* and *description*, a *default_value* metadata
+is mandatory for each constant. This is to provide a value for the user
+if they are not interested in providing/adjusting it.
+
+.. rubric:: Extra spatial attributes
+
+In addition, the component definition features three spatial optional
 attributes `_requires_land_sea_mask`, `_requires_flow_direction` and
 `_requires_cell_area`. They must be assigned a boolean value (True if
 required by your component, False if not) -- their default value is
-False. If you need land sea mask information for your computations,
-set `_requires_land_sea_mask` to True and access it in your class methods
-using `self.spacedomain.land_sea_mask`. If you need flow direction information
-or want to use the flow routing functionality of the component (accessible
-through `self.spacedomain.route(...)`), set `_requires_flow_direction` to True,
-and access it in your class methods using `self.spacedomain.flow_direction`.
+False. If they are required, the framework will ensure that the user
+provides the information so that the component can be used successfully.
+
+If you need land sea mask information for your computations, set
+`_requires_land_sea_mask` to True and access it in your class methods
+using `self.spacedomain.land_sea_mask`.
+
+If you need flow direction information or want to use the flow routing
+functionality of the component (accessible through `self.spacedomain.route(...)`),
+set `_requires_flow_direction` to True, and access it in your class methods
+using `self.spacedomain.flow_direction`.
+
 If you need the horizontal cell area of the space domain elements, set
 `_requires_cell_area` to True and access it in your class methods using
 `self.spacedomain.cell_area`.
+
+.. rubric:: Example
 
 See a detailed example of a mock component definition below.
 
@@ -216,7 +313,8 @@ See a detailed example of a mock component definition below.
        _parameters_info = {
            'parameter_1': {
                'description': 'brief parameter description here',
-               'units': '1'
+               'units': '1',
+               'valid_range': [0, 1]
            }
        }
        _constants_info = {
@@ -239,38 +337,74 @@ the three phases initialise, run, and finalise. This means that your
 Python class must feature three methods named `initialise`, `run`, and
 `finalise`. Note, `initialize` and `finalize` spellings are not supported.
 
-The `initialise` method defines the initial conditions for the component
-states and features any other action required to enable the component to
-start its integration. It is called at the beginning of a model simulation.
-The available arguments for this method are the component states, parameters,
-and constants. This method is not expected to return anything (i.e.
-Python default's `return None`).
-
-The `run` method contains the computations required to integrate from
-one time step to the next. It is called iteratively to move through the
-model simulation period. The available arguments for this method are the
-component inwards, inputs, states, parameters, and constants. This method
-is expected to return a tuple of two dictionaries: the first dictionary
-must contain the component outward transfers (keys are the outwards names,
-values are the outwards arrays), the second dictionary must contain the
-component outputs (keys are the outputs names, values are the outputs
-arrays). Note, the second dictionary may be empty if the component does
-not feature any custom outputs.
-
-The `finalise` method contains any action required to guarantee that the
-simulation can be restarted after the last simulation time step. It is
-called once at the end of a model simulation. The available arguments
-for this method are the component states, parameters, and constants.
-This method is not expected to return anything (i.e. Python default's
-`return None`).
-
-Since, the arguments of the three methods `initialise`, `run`, and
+Since the arguments of the three methods `initialise`, `run`, and
 `finalise` are going to be passed as keyword arguments, the names of the
 arguments in these methods' signatures must necessarily be the ones found
 in the component class attributes (if renaming is required, this must be
-done internally to the methods). Moreover, they must all feature a final
-special argument `**kwargs` to collect all the remaining available
-arguments that are not used.
+done internally to the methods). In turn, the order of the arguments
+does not matter. Moreover, they must all feature a final special
+argument `**kwargs` to collect all the remaining available arguments
+given by the framework that the component is not using.
+
+.. rubric:: Initialise
+
+The `initialise` method defines the initial conditions for the component
+states and features any other action required to enable the component to
+start its integration.
+
+It is called at the beginning of a model simulation.
+
+The available arguments for this method are the component states, parameters,
+and constants.
+
+.. important::
+
+   The available component states are given as framework `State` objects.
+   Each object stores the different timesteps of a component state. To
+   retrieve or assign values for a given timestep, the methods
+   `get_timestep` and `set_timestep` must be used.
+
+   .. list-table::
+
+      * - .. automethod:: cm4twc._utils.state.State.get_timestep
+      * - .. automethod:: cm4twc._utils.state.State.set_timestep
+
+This method is not expected to return anything.
+
+.. rubric:: Run
+
+The `run` method contains the computations required to integrate from
+one time step to the next.
+
+It is called iteratively to move through the model simulation period.
+Between each call, the component states are automatically incremented in
+time by the framework.
+
+The available arguments for this method are the component inwards,
+inputs, states, parameters, and constants.
+
+This method is expected to return a tuple of two dictionaries: the first
+dictionary must contain the component outward transfers (keys are the
+outwards names, values are the outwards arrays), the second dictionary
+must contain the component outputs (keys are the outputs names, values
+are the outputs arrays). Note, the second dictionary may be empty if the
+component does not feature any outputs.
+
+.. rubric:: Finalise
+
+The `finalise` method contains any action required to guarantee that the
+simulation can be restarted after the last simulation time step.
+
+It is called once at the end of a model simulation.
+
+The available arguments for this method are the component states,
+parameters, and constants.
+
+This method is not expected to return anything.
+
+.. rubric:: Example
+
+See a detailed example of a mock component implementation below.
 
 .. code-block:: python
    :caption: Implementing the three mandatory methods initialise, run, and finalise.
@@ -283,10 +417,10 @@ arguments that are not used.
 
        # component definition here
 
-       def initialise(self, state_1, state_2, **kwargs):
+       def initialise(self, state_1, state_2, parameter_1, constant_1, **kwargs):
            # set here initial condition values for component states
-           state_1[-1][...] = 0
-           state_2[-1][...] = 0
+           state_1.set_timestep(-1, 0.)
+           state_2.set_timestep(-1, 0.)
 
        def run(self, inwards_1, inwards_2, inwards_3, input_1, input_2, input_3,
                state_1, state_2, parameter_1, constant_1, **kwargs):
@@ -294,7 +428,7 @@ arguments that are not used.
            # compute science using available inwards/inputs/parameters/constants
            routed, outed = self.spacedomain.route(inwards_1 + inwards_2 + inwards_3)
 
-           outwards_1 = (routed + input_1 + state_1[-1]
+           outwards_1 = (routed + input_1 + state_1.get_timestep(-1)
                          / self.timedelta_in_seconds) * parameter_1
 
            m = self.current_datetime.month
@@ -303,13 +437,20 @@ arguments that are not used.
 
            output_2 = input_2[m - 1, ...] * (1 - constant_1)
            for i in range(4):
-               output_2 += (0.05 * state_2[-1][..., i]
+               output_2 += (0.05 * state_2.get_timestep(-1)[..., i]
                             / self.timedelta_in_seconds)
            output_2 /= input_3
 
            # update component state
-           state_1[0][:] = state_1[-1] * (1 - self.timedelta_in_seconds * parameter_1)
-           state_2[0][...] =  0.95 * state_2[-1][...]
+           state_1.set_timestep(
+               0,
+               state_1.get_timestep(-1)
+               * (1 - self.timedelta_in_seconds * parameter_1)
+           )
+           state_2.set_timestep(
+               0,
+               0.95 * state_2.get_timestep(-1)
+           )
 
            # return outwards and outputs
            return (
@@ -318,7 +459,7 @@ arguments that are not used.
                 'output_2': output_2}
            )
 
-       def finalise(self, state_1, state_2, **kwargs):
+       def finalise(self, state_1, state_2, parameter_1, constant_1, **kwargs):
            # cleanly wrap up simulation here
            # to be able to restart from where simulation stopped
            pass
