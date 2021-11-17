@@ -28,6 +28,9 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * remove vertical dimension (i.e. altitude) in `LatLonGrid`,
   `RotatedLatLonGrid`, and `BritishNationalGrid`
   (`#69 <https://github.com/cm4twc-org/cm4twc/pull/69>`_)
+* replace `State` dunder methods `__getitem__` and `__setitem__` with
+  `get_timestep` and `set_timestep` methods
+  (`#71 <https://github.com/cm4twc-org/cm4twc/pull/71>`_)
 
 .. rubric:: Bug fixes
 
