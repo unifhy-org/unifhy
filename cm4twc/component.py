@@ -194,35 +194,11 @@ class Component(metaclass=MetaComponent):
             dataset: `DataSet` object, optional
                 The collection of input data required by the `Component`
                 (i.e. 'dynamic' and/or 'static' and/or 'climatologic').
-                The input data must be compatible in space with
+                The input data must always be compatible in space with
                 *spacedomain*, and compatible in time with *timedomain*
                 for the 'dynamic' kind, and with the 'frequency' for
-                the 'climatologic' kind (see table below for details).
-
-                ======================  ================================
-                climatologic frequency  length of time dimension in data
-                ======================  ================================
-                ``'seasonal'``          Length of 4, corresponding to
-                                        the meteorological seasons (i.e.
-                                        Winter [DJF], Spring [MAM],
-                                        Summer [JJA], Autumn [SON], in
-                                        this order).
-
-                ``'monthly'``           Length of 12, corresponding to
-                                        the months in the calendar year
-                                        (i.e. from January to December).
-
-                ``'day_of_year'``       Length of 366, corresponding to
-                                        the days in the calendar year
-                                        (i.e. from January 1st to
-                                        December 31st, including value
-                                        for February 29th).
-
-                `int`                   Length according to the integer
-                                        value (e.g. a value of 6 means
-                                        6 climatologic values for the
-                                        calendar year).
-                ======================  ================================
+                the 'climatologic' kind (see :ref:`Tab. 1<tab_frequencies>`
+                for details).
 
             parameters: `dict`, optional
                 The parameter values for the `Component`. Each key must
