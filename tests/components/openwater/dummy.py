@@ -92,7 +92,7 @@ class Dummy(OpenWaterComponent):
                    constant_c,
                    **kwargs):
 
-        state_a[-1][:] = 0
+        state_a.set_timestep(-1, 0)
 
     def run(self,
             # from exchanger
@@ -108,14 +108,14 @@ class Dummy(OpenWaterComponent):
             constant_c,
             **kwargs):
 
-        state_a[0][:] = state_a[-1] + 1
+        state_a.set_timestep(0, state_a.get_timestep(-1) + 1)
 
         return (
             # to exchanger
             {
                 'transfer_l':
                     ancillary_b[11] * transfer_m
-                    + state_a[0][..., 0, 0],
+                    + state_a.get_timestep(0)[..., 0, 0],
                 'transfer_n':
                     parameter_c * transfer_j,
                 'transfer_o':
@@ -127,7 +127,7 @@ class Dummy(OpenWaterComponent):
                     parameter_c * transfer_j + constant_c,
                 'output_y':
                     ancillary_b[11][0] * transfer_m
-                    - state_a[0][..., 0, 0]
+                    - state_a.get_timestep(0)[..., 0, 0]
             }
         )
 
@@ -135,6 +135,7 @@ class Dummy(OpenWaterComponent):
                  # component states
                  state_a,
                  **kwargs):
+
         pass
 
 
@@ -154,7 +155,10 @@ class DummyFortran(Dummy):
                    # component constants
                    constant_c,
                    **kwargs):
-        dummyfortran.initialise(state_a[-1], constant_c=constant_c)
+
+        dummyfortran.initialise(
+            state_a.get_timestep(-1), constant_c=constant_c
+        )
 
     def run(self,
             # from exchanger
@@ -173,7 +177,8 @@ class DummyFortran(Dummy):
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
             dummyfortran.run(
                 transfer_j, transfer_m, ancillary_b, parameter_c,
-                state_a[-1], state_a[0], constant_c=constant_c
+                state_a.get_timestep(-1), state_a.get_timestep(0),
+                constant_c=constant_c
             )
         )
 
@@ -195,6 +200,7 @@ class DummyFortran(Dummy):
                  # component states
                  state_a,
                  **kwargs):
+
         dummyfortran.finalise()
 
 
@@ -206,7 +212,10 @@ class DummyC(Dummy):
                    # component constants
                    constant_c,
                    **kwargs):
-        dummyc.initialise(constant_c, state_a[-1])
+
+        dummyc.initialise(
+            constant_c, state_a.get_timestep(-1)
+        )
 
     def run(self,
             # from exchanger
@@ -225,7 +234,8 @@ class DummyC(Dummy):
         transfer_l, transfer_n, transfer_o, output_x, output_y = (
             dummyc.run(
                 transfer_j, transfer_m, ancillary_b, parameter_c,
-                state_a[-1], state_a[0], constant_c
+                state_a.get_timestep(-1), state_a.get_timestep(0),
+                constant_c
             )
         )
 
@@ -247,4 +257,5 @@ class DummyC(Dummy):
                  # component states
                  state_a,
                  **kwargs):
+
         dummyc.finalise()

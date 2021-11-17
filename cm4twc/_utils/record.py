@@ -86,7 +86,7 @@ class StateRecord(Record):
     # record for component state
     def __call__(self, states, to_exchanger, outputs):
         for s in self.streams:
-            s.update_record(self.name, states[self.name][0])
+            s.update_record(self.name, states[self.name].get_timestep(0))
 
 
 class OutwardRecord(Record):

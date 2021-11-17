@@ -7,12 +7,12 @@ from ..settings import dtype_float
 
 
 class State(object):
-    """The State class behaves like a list which stores the values of a
-    given component state for several consecutive timesteps (in
+    """`State` behaves like a `list` in which the values of a given
+    component state are stored for several consecutive timesteps (in
     chronological order, i.e. the oldest timestep is the first item,
     the most recent is the last item).
 
-    Although, unlike a list, its indexing is shifted so that the last
+    Although, unlike a `list`, its indexing is shifted so that the last
     item has index 0, and all previous items are accessible via a
     negative integer (e.g. -1 for the 2nd-to-last, -2 for the
     3rd-to-last, etc.). The first item (i.e. the oldest timestep stored)
@@ -21,64 +21,114 @@ class State(object):
     means that for a given timestep t, index -1 corresponds to timestep
     t-1, index -2 to timestep t-2, etc. Current timestep t is accessible
     at index 0.
+
+    To avoid confusion with standard python list indexing, special
+    `get_timestep`/`set_timestep` methods must be used instead of the
+    evaluation/assignment of `self[key]` (i.e. `__getitem__`/
+    `__setitem__`).
     """
     def __init__(self, array, order='C'):
-        self.array = array
-        self.slices = [
-            np.asfortranarray(array[i, ...]) if order == 'F' else array[i, ...]
-            for i in range(array.shape[0])
-        ]
+        if order == 'F':
+            array = np.asfortranarray(array)
+        self._array = array
+        self._slices = [array[i, ...] for i in range(array.shape[0])]
 
-    def __getitem__(self, index):
-        index = self._shift_index(index)
-        return self.slices[index]
+    def get_timestep(self, timeindex):
+        """Return the state value(s) for the given time index (indices).
 
-    def __setitem__(self, index, item):
-        index = self._shift_index(index)
-        self.slices[index] = item
+        :Parameters:
+
+            timeindex: `int` (or `slice`)
+                The temporal index (or indices) of the state to evaluate.
+                The indices must be lower or equal to zero. Index `0`
+                corresponds to the most recent timestep, index `-1`
+                corresponds to the second most recent timestep, index
+                `-2` corresponds to the third most recent timestep, etc.
+
+        :Returns:
+
+            (list of) `numpy.ndarray.view`
+                The state value (or list of values) for the requested
+                time index (indices).
+        """
+        timeindex = self._shift_index(timeindex)
+        return self._slices[timeindex]
+
+    def set_timestep(self, timeindex, value):
+        """Assign the state value(s) at the given time index (indices).
+
+        :Parameters:
+
+            timeindex: `int` (or `slice`)
+                The temporal index (or indices) of the state to assign
+                value(s) for. The indices must be lower or equal to
+                zero. Index `0` corresponds to the most recent timestep,
+                index `-1` corresponds to the second most recent
+                timestep, index `-2` corresponds to the third most
+                recent timestep, etc.
+
+            value: `numpy.ndarray`
+                The state value(s) to assign at the given time index
+                (indices).
+        """
+        timeindex = self._shift_index(timeindex)
+        self._slices[timeindex][:] = value
 
     def _shift_index(self, index):
+        error = IndexError("state time index out of range")
         if isinstance(index, int):
             index = index + len(self) - 1
+            if index < 0:
+                raise error
         elif isinstance(index, slice):
             start, stop = index.start, index.stop
             if start is not None:
                 start = start + len(self) - 1
+                if start < 0:
+                    raise error
             if stop is not None:
                 stop = stop + len(self) - 1
+                if stop < 0:
+                    raise error
             index = slice(start, stop, index.step)
         return index
 
-    def __delitem__(self, index):
-        index = self._shift_index(index)
-        del self.slices[index]
-
     def __len__(self):
-        return len(self.slices)
+        return len(self._slices)
 
     def __iter__(self):
-        return iter(self.slices)
+        return iter(self._slices)
 
     def __repr__(self):
-        return "%r" % self.slices
+        return "%r" % self._slices
 
     def increment(self):
+        """Increment forward in time the state values across its history.
+
+        The value for the most recent timestep becomes the one for the
+        second most recent, the value for the second most recent
+        timestep becomes the value for the third most recent, etc.
+        The least recent timestep is value is lost, while the new most
+        recent timestep is initialised with a value of 0.
+        """
         # determine first index in the State
         # (function of solver's history)
         first_index = -len(self) + 1
         # prepare the left-hand side for the permutation of views
         lhs = [t for t in self]
         # prepare the right-hand side for the permutation of views
-        rhs = [t for t in self[first_index + 1:]] + \
-              [self[first_index]]
+        rhs = (
+            [t for t in self.get_timestep(slice(first_index + 1, None))]
+            + [self.get_timestep(first_index)]
+        )
         # carry out the permutation of views
         # to avoid new object creations
         lhs[:] = rhs[:]
         # apply new list of views to the State
-        self[:] = lhs
+        self._slices[:] = lhs
 
         # re-initialise current timestep of State to zero
-        self[0][:] = 0.0
+        self.set_timestep(0, 0.0)
 
 
 def create_states_dump(filepath, states_info, solver_history,
@@ -152,7 +202,7 @@ def update_states_dump(filepath, states, timestamp, solver_history):
 
         for state in states:
             for i, step in enumerate(range(-solver_history, 1, 1)):
-                f.variables[state][t, i, ...] = states[state][step]
+                f.variables[state][t, i, ...] = states[state].get_timestep(step)
 
 
 def load_states_dump(filepath, datetime_, states_info):

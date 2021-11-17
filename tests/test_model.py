@@ -496,7 +496,7 @@ class BasicTestModel(object):
                     # some components feature only one state
                     continue
                 # retrieve last state values
-                arr = component.states[state][-1]
+                arr = component.states[state].get_timestep(-1)
                 # compare both min/max, as arrays are homogeneous
                 try:
                     val = exp_records_raw[self.t][cat][state][-1]
