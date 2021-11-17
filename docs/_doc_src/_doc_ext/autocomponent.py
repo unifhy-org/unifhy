@@ -22,7 +22,10 @@ class AutoComponentDirective(SphinxDirective):
         # parse class docstring
         sig = ".. class:: {}\n".format(content)
         sect = nodes.section()
-        sl = StringList(sig.split('\n') + cls_.__doc__.split('\n'), self.content.parent)
+        sl = StringList(
+            sig.split('\n') + ("\n    " + cls_.__doc__).split('\n'),
+            self.content.parent
+        )
         sect.document = self.state.document
         nested_parse_with_titles(self.state, sl, sect)
         document.extend(sect.children)
