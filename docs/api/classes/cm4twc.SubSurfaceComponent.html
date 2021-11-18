@@ -709,48 +709,11 @@ dump and record files.</p>
 </dd>
 <dt>dataset: <a class="reference internal" href="cm4twc.DataSet.html#cm4twc.DataSet" title="cm4twc.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> object, optional</dt><dd><p>The collection of input data required by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
 (i.e. ‘dynamic’ and/or ‘static’ and/or ‘climatologic’).
-The input data must be compatible in space with
+The input data must always be compatible in space with
 <em>spacedomain</em>, and compatible in time with <em>timedomain</em>
 for the ‘dynamic’ kind, and with the ‘frequency’ for
-the ‘climatologic’ kind (see table below for details).</p>
-<table class="table">
-<colgroup>
-<col style="width: 41%" />
-<col style="width: 59%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>climatologic frequency</p></th>
-<th class="head"><p>length of time dimension in data</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'seasonal'</span></code></p></td>
-<td><p>Length of 4, corresponding to
-the meteorological seasons (i.e.
-Winter [DJF], Spring [MAM],
-Summer [JJA], Autumn [SON], in
-this order).</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'monthly'</span></code></p></td>
-<td><p>Length of 12, corresponding to
-the months in the calendar year
-(i.e. from January to December).</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'day_of_year'</span></code></p></td>
-<td><p>Length of 366, corresponding to
-the days in the calendar year
-(i.e. from January 1st to
-December 31st, including value
-for February 29th).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
-<td><p>Length according to the integer
-value (e.g. a value of 6 means
-6 climatologic values for the
-calendar year).</p></td>
-</tr>
-</tbody>
-</table>
+the ‘climatologic’ kind (see <a class="reference internal" href="../../contributors/development.html#tab-frequencies"><span class="std std-ref">Tab. 1</span></a>
+for details).</p>
 </dd>
 <dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The parameter values for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>. Each key must
 correspond to a parameter name, and each value can be
@@ -1102,7 +1065,7 @@ as a <a class="reference external" href="https://docs.python.org/3/library/funct
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Nov 15, 2021.<br>
+        Last updated on Nov 18, 2021.<br>
       </p>
     </div>
   </div>
