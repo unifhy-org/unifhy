@@ -160,7 +160,7 @@ given a *kind*. The inputs can be one of the three following kinds:
 - `'climatologic'`: data required for each spatial element and for a given
   frequency within a climatology year.
 
-If not kind is specified, a dynamic kind is assumed.
+If no kind is specified, a dynamic kind is assumed.
 
 If the input is of climatologic kind, *frequency* must also be given and it
 can take one of the supported values described in :ref:`Tab. 1<tab_frequencies>`
@@ -188,12 +188,23 @@ below.
                            calendar year).
    ======================  ====================================================
 
+The framework gives the inputs as keyword arguments to the component
+`run` method. They are given as arrays of the same shape as the component
+space domain.
+
 .. rubric:: Outputs
 
-The outputs correspond to the variables computed by the component and of
-potential interest to the component users. The outputs exclude those
-variables already included in the fixed interface, i.e. outwards
-(see :ref:`Fig. 2<fig_transfers>`).
+The outputs correspond to the variables computed by the component that
+you want the component users to be able to record. The outputs exclude
+those variables already included in the fixed interface, i.e. outwards
+(see :ref:`Fig. 2<fig_transfers>`). The component users will always be
+able to record the component outwards and the component states they would
+like, component outputs offer you the possibility to add more variables
+to their list of recordable variables.
+
+Any output returned must be a `numpy.ndarray` of the same shape as the
+component space domain. The output name used in the returned dictionary
+can differ from the Python variable pointing to the array.
 
 .. rubric:: States
 
@@ -215,12 +226,35 @@ a sequence of integers and/or strings:
   and its values are the lengths of the dimensions of the array (in the
   order in the sequence).
 
-The *divisions* item can be used when considering e.g. different
-vertical layers in a component. Note that scalar/vector/array refer to
+The *divisions* metadata can be used when considering e.g. different
+vertical layers in a component. Note that scalar/vector/array refers to
 the dimension of the state for a given element in the space domain, so
 a scalar state does not mean that there is only one state value for the
 whole spatial domain, it only means that there is only one state value
 for each spatial element in the space domain.
+
+The framework gives the states as keyword arguments to the component
+`initialise`, `run`, and `finalise` methods. They are given as framework
+`State` objects.
+
+.. important::
+
+   Each `State` object stores the different timesteps of a component
+   state. To retrieve or assign values for a given timestep, the methods
+   `get_timestep` and `set_timestep` must be used.
+
+   .. list-table::
+
+      * - .. automethod:: cm4twc._utils.state.State.get_timestep
+      * - .. automethod:: cm4twc._utils.state.State.set_timestep
+
+The retrieved state arrays are of the same size as the component space
+domain plus (an) additional trailing axis (axes) if the given component
+state features *divisions* (i.e. a scalar state will feature no additional
+axis, a vector state will feature one additional axis of size equal to the
+vector length, and an array state will feature as many additional axes
+as the array dimension of sizes equal to the array dimension lengths and
+in the same order).
 
 .. rubric:: Parameters
 
@@ -228,10 +262,14 @@ The parameters are those variables subject to tuning. Note, parameter
 tuning/calibration is not a functionality offered by the framework.
 
 In addition to its *units* and *description*, a *valid_range* metadata
-is recommended to be given and it takes a sequence of two numbers as
+is recommended to be given and take a sequence of two numbers as
 value to define the extent of the valid range of parameter values.
 Providing such a range helps the users of your component to determine
 its parameters values for their specific modelling context.
+
+The framework gives the parameters as keyword arguments to the component
+`initialise`, `run`, `finalise` methods. They are given as arrays of the
+same shape as the component space domain.
 
 .. rubric:: Constants
 
@@ -243,27 +281,36 @@ In addition to its *units* and *description*, a *default_value* metadata
 is mandatory for each constant. This is to provide a value for the user
 if they are not interested in providing/adjusting it.
 
+The framework gives the constants as keyword arguments to the component
+`initialise`, `run`, and `finalise` methods. They are given as scalars.
+
 .. rubric:: Extra spatial attributes
 
-In addition, the component definition features three spatial optional
+In addition, the component definition features three optional spatial
 attributes `_requires_land_sea_mask`, `_requires_flow_direction` and
 `_requires_cell_area`. They must be assigned a boolean value (True if
 required by your component, False if not) -- their default value is
 False. If they are required, the framework will ensure that the user
-provides the information so that the component can be used successfully.
+provides the information so that the component can run successfully.
 
 If you need land sea mask information for your computations, set
 `_requires_land_sea_mask` to True and access it in your class methods
-using `self.spacedomain.land_sea_mask`.
+using `self.spacedomain.land_sea_mask`. This will return an array of the
+same size as the space domain (see e.g. `LatLonGrid.land_sea_mask` for
+details).
 
 If you need flow direction information or want to use the flow routing
 functionality of the component (accessible through `self.spacedomain.route(...)`),
 set `_requires_flow_direction` to True, and access it in your class methods
-using `self.spacedomain.flow_direction`.
+using `self.spacedomain.flow_direction`. This will return an array of the
+same size as the space domain plus an additional trailing axis of size 2
+for gridded space domains (see e.g. `LatLonGrid.flow_direction` for
+details).
 
 If you need the horizontal cell area of the space domain elements, set
 `_requires_cell_area` to True and access it in your class methods using
-`self.spacedomain.cell_area`.
+`self.spacedomain.cell_area`. This will return an array of the same size
+as the space domain (see e.g. `LatLonGrid.cell_area` for details).
 
 .. rubric:: Example
 
@@ -281,47 +328,56 @@ See a detailed example of a mock component definition below.
        _inputs_info = {
            'input_1': {
                'kind': 'dynamic',
-               'units': 'kg m-2 s-1'
+               'units': 'kg m-2 s-1',
+               'description': 'plain english'
            },
            'input_2': {
                'kind': 'climatologic',
                'frequency': 'monthly',
-               'units': 'kg m-2 s-1''
+               'units': 'kg m-2 s-1',
+               'description': 'plain english'
            },
            'input_3': {
                'kind': 'static',
-               'units': 'm'
+               'units': 'm',
+               'description': 'plain english'
            }
        }
        _outputs_info = {
            'output_1': {
-               'units': 'kg m-2 s-1'
+               'units': 'kg m-2 s-1',
+               'description': 'plain english'
            },
            'output_2': {
-               'units': 'kg m-3 s-1'
+               'units': 'kg m-3 s-1',
+               'description': 'plain english'
            }
        }
        _states_info = {
            'state_1': {
-               'units': 'kg m-2'
+               'units': 'kg m-2',
+               'description': 'plain english'
            },
            'state_2': {
                'divisions': 4,
-               'units': 'kg m-2'
+               'units': 'kg m-2',
+               'description': 'plain english'
            }
        }
        _parameters_info = {
            'parameter_1': {
                'description': 'brief parameter description here',
                'units': '1',
-               'valid_range': [0, 1]
+               'valid_range': [0, 1],
+               'description': 'plain english'
            }
        }
        _constants_info = {
            'constant_1': {
                'description': 'brief constant description here',
                'units': '1',
-               'default_value': 0.5
+               'default_value': 0.5,
+               'description': 'plain english'
            }
        }
        _requires_land_sea_mask = False
@@ -332,42 +388,33 @@ See a detailed example of a mock component definition below.
 Implement the initialise-run-finalise component class methods
 -------------------------------------------------------------
 
-The computations in your component contribution must be broken down into
-the three phases initialise, run, and finalise. This means that your
-Python class must feature three methods named `initialise`, `run`, and
-`finalise`. Note, `initialize` and `finalize` spellings are not supported.
+The numerical calculations in your component contribution must be broken
+down into the three phases initialise, run, and finalise. This means that
+your Python class must feature three methods named `initialise`, `run`,
+and `finalise`. Note, `initialize` and `finalize` spellings are not
+supported.
 
-Since the arguments of the three methods `initialise`, `run`, and
+Since the parameters of the three methods `initialise`, `run`, and
 `finalise` are going to be passed as keyword arguments, the names of the
-arguments in these methods' signatures must necessarily be the ones found
-in the component class attributes (if renaming is required, this must be
-done internally to the methods). In turn, the order of the arguments
-does not matter. Moreover, they must all feature a final special
-argument `**kwargs` to collect all the remaining available arguments
-given by the framework that the component is not using.
+parameters in the signatures of these methods must necessarily be the ones
+found in the component definition attributes (if renaming is required,
+this can be done internally to the methods). In turn, this means that the
+order of the method parameters in the method signatures does not matter.
+Moreover, your method signatures must all feature a final special
+method parameter `**kwargs` to collect all the remaining available
+arguments given by the framework that the component is not using.
 
 .. rubric:: Initialise
 
-The `initialise` method defines the initial conditions for the component
-states and features any other action required to enable the component to
-start its integration.
+The `initialise` method should define the initial conditions for the
+component states for its integration start. It can also feature any other
+action that is required to be done only once before the start of the
+integration over the whole simulation period.
 
-It is called at the beginning of a model simulation.
+It is called at the beginning of a model simulation period.
 
-The available arguments for this method are the component states, parameters,
-and constants.
-
-.. important::
-
-   The available component states are given as framework `State` objects.
-   Each object stores the different timesteps of a component state. To
-   retrieve or assign values for a given timestep, the methods
-   `get_timestep` and `set_timestep` must be used.
-
-   .. list-table::
-
-      * - .. automethod:: cm4twc._utils.state.State.get_timestep
-      * - .. automethod:: cm4twc._utils.state.State.set_timestep
+The possible method parameters in the method signature are the component
+states, parameters, and constants.
 
 This method is not expected to return anything.
 
@@ -380,25 +427,31 @@ It is called iteratively to move through the model simulation period.
 Between each call, the component states are automatically incremented in
 time by the framework.
 
-The available arguments for this method are the component inwards,
-inputs, states, parameters, and constants.
+The possible method parameters in the method signature are the component
+inwards, inputs, states, parameters, and constants.
 
-This method is expected to return a tuple of two dictionaries: the first
-dictionary must contain the component outward transfers (keys are the
-outwards names, values are the outwards arrays), the second dictionary
-must contain the component outputs (keys are the outputs names, values
-are the outputs arrays). Note, the second dictionary may be empty if the
-component does not feature any outputs.
+This method is expected to return a tuple of two dictionaries:
+
+  - the first dictionary must contain the component outward transfers
+    (keys are the outwards names, values are the outwards arrays),
+  - the second dictionary must contain the component outputs
+    (keys are the outputs names, values are the outputs arrays).
+
+Note, the second dictionary may be empty if the component does not
+feature any outputs in its definition.
 
 .. rubric:: Finalise
 
-The `finalise` method contains any action required to guarantee that the
-simulation can be restarted after the last simulation time step.
+The `finalise` method should contain any action required to guarantee
+that the simulation completes "elegantly" and can be restarted after
+the last simulation time step. It can also feature any other action
+that is required to be done only once after the end of the integration
+over the whole simulation period.
 
-It is called once at the end of a model simulation.
+It is called once at the end of a model simulation period.
 
-The available arguments for this method are the component states,
-parameters, and constants.
+The possible method parameters in the method signature are the component
+states, parameters, and constants.
 
 This method is not expected to return anything.
 

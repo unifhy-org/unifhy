@@ -368,7 +368,7 @@ given a <em>kind</em>. The inputs can be one of the three following kinds:</p>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">'climatologic'</span></code>: data required for each spatial element and for a given
 frequency within a climatology year.</p></li>
 </ul>
-<p>If not kind is specified, a dynamic kind is assumed.</p>
+<p>If no kind is specified, a dynamic kind is assumed.</p>
 <p>If the input is of climatologic kind, <em>frequency</em> must also be given and it
 can take one of the supported values described in <a class="reference internal" href="#tab-frequencies"><span class="std std-ref">Tab. 1</span></a>
 below.</p>
@@ -405,11 +405,20 @@ calendar year).</p></td>
 </tr>
 </tbody>
 </table>
+<p>The framework gives the inputs as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code> method. They are given as arrays of the same shape as the component
+space domain.</p>
 <p class="rubric">Outputs</p>
-<p>The outputs correspond to the variables computed by the component and of
-potential interest to the component users. The outputs exclude those
-variables already included in the fixed interface, i.e. outwards
-(see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>).</p>
+<p>The outputs correspond to the variables computed by the component that
+you want the component users to be able to record. The outputs exclude
+those variables already included in the fixed interface, i.e. outwards
+(see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>). The component users will always be
+able to record the component outwards and the component states they would
+like, component outputs offer you the possibility to add more variables
+to their list of recordable variables.</p>
+<p>Any output returned must be a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> of the same shape as the
+component space domain. The output name used in the returned dictionary
+can differ from the Python variable pointing to the array.</p>
 <p class="rubric">States</p>
 <p>The states correspond to the component variables that need to be given
 initial values to start the component time integration, and whose values
@@ -428,133 +437,19 @@ as divisions;</p></li>
 and its values are the lengths of the dimensions of the array (in the
 order in the sequence).</p></li>
 </ul>
-<p>The <em>divisions</em> item can be used when considering e.g. different
-vertical layers in a component. Note that scalar/vector/array refer to
+<p>The <em>divisions</em> metadata can be used when considering e.g. different
+vertical layers in a component. Note that scalar/vector/array refers to
 the dimension of the state for a given element in the space domain, so
 a scalar state does not mean that there is only one state value for the
 whole spatial domain, it only means that there is only one state value
 for each spatial element in the space domain.</p>
-<p class="rubric">Parameters</p>
-<p>The parameters are those variables subject to tuning. Note, parameter
-tuning/calibration is not a functionality offered by the framework.</p>
-<p>In addition to its <em>units</em> and <em>description</em>, a <em>valid_range</em> metadata
-is recommended to be given and it takes a sequence of two numbers as
-value to define the extent of the valid range of parameter values.
-Providing such a range helps the users of your component to determine
-its parameters values for their specific modelling context.</p>
-<p class="rubric">Constants</p>
-<p>The constants are those variable not subject to tuning. Nevertheless,
-they can be adjusted by the users, e.g. to adjust its precision, or to
-adapt it to their modelling context.</p>
-<p>In addition to its <em>units</em> and <em>description</em>, a <em>default_value</em> metadata
-is mandatory for each constant. This is to provide a value for the user
-if they are not interested in providing/adjusting it.</p>
-<p class="rubric">Extra spatial attributes</p>
-<p>In addition, the component definition features three spatial optional
-attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> and
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code>. They must be assigned a boolean value (True if
-required by your component, False if not) – their default value is
-False. If they are required, the framework will ensure that the user
-provides the information so that the component can be used successfully.</p>
-<p>If you need land sea mask information for your computations, set
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code> to True and access it in your class methods
-using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>.</p>
-<p>If you need flow direction information or want to use the flow routing
-functionality of the component (accessible through <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.route(...)</span></code>),
-set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> to True, and access it in your class methods
-using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>.</p>
-<p>If you need the horizontal cell area of the space domain elements, set
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code> to True and access it in your class methods using
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.cell_area</span></code>.</p>
-<p class="rubric">Example</p>
-<p>See a detailed example of a mock component definition below.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
-
-
-<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
-
-    <span class="n">_inputs_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;input_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;input_2&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;climatologic&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;monthly&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;&#39;</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;input_3&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;static&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">_outputs_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;output_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;output_2&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-3 s-1&#39;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">_states_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;state_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;state_2&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;divisions&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">_parameters_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;parameter_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief parameter description here&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;valid_range&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">_constants_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;constant_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief constant description here&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;default_value&#39;</span><span class="p">:</span> <span class="mf">0.5</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">_requires_land_sea_mask</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">_requires_flow_direction</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">_requires_cell_area</span> <span class="o">=</span> <span class="kc">False</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="implement-the-initialise-run-finalise-component-class-methods">
-<h2>Implement the initialise-run-finalise component class methods<a class="headerlink" href="#implement-the-initialise-run-finalise-component-class-methods" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<p>The computations in your component contribution must be broken down into
-the three phases initialise, run, and finalise. This means that your
-Python class must feature three methods named <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code>. Note, <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize</span></code> spellings are not supported.</p>
-<p>Since the arguments of the three methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> are going to be passed as keyword arguments, the names of the
-arguments in these methods’ signatures must necessarily be the ones found
-in the component class attributes (if renaming is required, this must be
-done internally to the methods). In turn, the order of the arguments
-does not matter. Moreover, they must all feature a final special
-argument <code class="xref py py-obj docutils literal notranslate"><span class="pre">**kwargs</span></code> to collect all the remaining available arguments
-given by the framework that the component is not using.</p>
-<p class="rubric">Initialise</p>
-<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> method defines the initial conditions for the component
-states and features any other action required to enable the component to
-start its integration.</p>
-<p>It is called at the beginning of a model simulation.</p>
-<p>The available arguments for this method are the component states, parameters,
-and constants.</p>
+<p>The framework gives the states as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> methods. They are given as framework
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code> objects.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The available component states are given as framework <code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code> objects.
-Each object stores the different timesteps of a component state. To
-retrieve or assign values for a given timestep, the methods
+<p>Each <code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code> object stores the different timesteps of a component
+state. To retrieve or assign values for a given timestep, the methods
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timestep</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_timestep</span></code> must be used.</p>
 <table class="table">
 <colgroup>
@@ -615,6 +510,152 @@ recent timestep, etc.</p>
 </tbody>
 </table>
 </div>
+<p>The retrieved state arrays are of the same size as the component space
+domain plus (an) additional trailing axis (axes) if the given component
+state features <em>divisions</em> (i.e. a scalar state will feature no additional
+axis, a vector state will feature one additional axis of size equal to the
+vector length, and an array state will feature as many additional axes
+as the array dimension of sizes equal to the array dimension lengths and
+in the same order).</p>
+<p class="rubric">Parameters</p>
+<p>The parameters are those variables subject to tuning. Note, parameter
+tuning/calibration is not a functionality offered by the framework.</p>
+<p>In addition to its <em>units</em> and <em>description</em>, a <em>valid_range</em> metadata
+is recommended to be given and take a sequence of two numbers as
+value to define the extent of the valid range of parameter values.
+Providing such a range helps the users of your component to determine
+its parameters values for their specific modelling context.</p>
+<p>The framework gives the parameters as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> methods. They are given as arrays of the
+same shape as the component space domain.</p>
+<p class="rubric">Constants</p>
+<p>The constants are those variable not subject to tuning. Nevertheless,
+they can be adjusted by the users, e.g. to adjust its precision, or to
+adapt it to their modelling context.</p>
+<p>In addition to its <em>units</em> and <em>description</em>, a <em>default_value</em> metadata
+is mandatory for each constant. This is to provide a value for the user
+if they are not interested in providing/adjusting it.</p>
+<p>The framework gives the constants as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> methods. They are given as scalars.</p>
+<p class="rubric">Extra spatial attributes</p>
+<p>In addition, the component definition features three optional spatial
+attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code>. They must be assigned a boolean value (True if
+required by your component, False if not) – their default value is
+False. If they are required, the framework will ensure that the user
+provides the information so that the component can run successfully.</p>
+<p>If you need land sea mask information for your computations, set
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code> to True and access it in your class methods
+using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>. This will return an array of the
+same size as the space domain (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.land_sea_mask.html#cm4twc.LatLonGrid.land_sea_mask" title="cm4twc.LatLonGrid.land_sea_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.land_sea_mask</span></code></a> for
+details).</p>
+<p>If you need flow direction information or want to use the flow routing
+functionality of the component (accessible through <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.route(...)</span></code>),
+set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> to True, and access it in your class methods
+using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>. This will return an array of the
+same size as the space domain plus an additional trailing axis of size 2
+for gridded space domains (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.flow_direction.html#cm4twc.LatLonGrid.flow_direction" title="cm4twc.LatLonGrid.flow_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.flow_direction</span></code></a> for
+details).</p>
+<p>If you need the horizontal cell area of the space domain elements, set
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code> to True and access it in your class methods using
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.cell_area</span></code>. This will return an array of the same size
+as the space domain (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.cell_area.html#cm4twc.LatLonGrid.cell_area" title="cm4twc.LatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.cell_area</span></code></a> for details).</p>
+<p class="rubric">Example</p>
+<p>See a detailed example of a mock component definition below.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
+
+
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
+
+    <span class="n">_inputs_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;input_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;input_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;climatologic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;monthly&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;input_3&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;static&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_outputs_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;output_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;output_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-3 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_states_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;state_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;state_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;divisions&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_parameters_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;parameter_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief parameter description here&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;valid_range&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_constants_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;constant_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief constant description here&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;default_value&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_requires_land_sea_mask</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_requires_flow_direction</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_requires_cell_area</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="implement-the-initialise-run-finalise-component-class-methods">
+<h2>Implement the initialise-run-finalise component class methods<a class="headerlink" href="#implement-the-initialise-run-finalise-component-class-methods" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>The numerical calculations in your component contribution must be broken
+down into the three phases initialise, run, and finalise. This means that
+your Python class must feature three methods named <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>,
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code>. Note, <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize</span></code> spellings are not
+supported.</p>
+<p>Since the parameters of the three methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> are going to be passed as keyword arguments, the names of the
+parameters in the signatures of these methods must necessarily be the ones
+found in the component definition attributes (if renaming is required,
+this can be done internally to the methods). In turn, this means that the
+order of the method parameters in the method signatures does not matter.
+Moreover, your method signatures must all feature a final special
+method parameter <code class="xref py py-obj docutils literal notranslate"><span class="pre">**kwargs</span></code> to collect all the remaining available
+arguments given by the framework that the component is not using.</p>
+<p class="rubric">Initialise</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> method should define the initial conditions for the
+component states for its integration start. It can also feature any other
+action that is required to be done only once before the start of the
+integration over the whole simulation period.</p>
+<p>It is called at the beginning of a model simulation period.</p>
+<p>The possible method parameters in the method signature are the component
+states, parameters, and constants.</p>
 <p>This method is not expected to return anything.</p>
 <p class="rubric">Run</p>
 <p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code> method contains the computations required to integrate from
@@ -622,20 +663,28 @@ one time step to the next.</p>
 <p>It is called iteratively to move through the model simulation period.
 Between each call, the component states are automatically incremented in
 time by the framework.</p>
-<p>The available arguments for this method are the component inwards,
-inputs, states, parameters, and constants.</p>
-<p>This method is expected to return a tuple of two dictionaries: the first
-dictionary must contain the component outward transfers (keys are the
-outwards names, values are the outwards arrays), the second dictionary
-must contain the component outputs (keys are the outputs names, values
-are the outputs arrays). Note, the second dictionary may be empty if the
-component does not feature any outputs.</p>
+<p>The possible method parameters in the method signature are the component
+inwards, inputs, states, parameters, and constants.</p>
+<p>This method is expected to return a tuple of two dictionaries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>the first dictionary must contain the component outward transfers
+(keys are the outwards names, values are the outwards arrays),</p></li>
+<li><p>the second dictionary must contain the component outputs
+(keys are the outputs names, values are the outputs arrays).</p></li>
+</ul>
+</div></blockquote>
+<p>Note, the second dictionary may be empty if the component does not
+feature any outputs in its definition.</p>
 <p class="rubric">Finalise</p>
-<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> method contains any action required to guarantee that the
-simulation can be restarted after the last simulation time step.</p>
-<p>It is called once at the end of a model simulation.</p>
-<p>The available arguments for this method are the component states,
-parameters, and constants.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> method should contain any action required to guarantee
+that the simulation completes “elegantly” and can be restarted after
+the last simulation time step. It can also feature any other action
+that is required to be done only once after the end of the integration
+over the whole simulation period.</p>
+<p>It is called once at the end of a model simulation period.</p>
+<p>The possible method parameters in the method signature are the component
+states, parameters, and constants.</p>
 <p>This method is not expected to return anything.</p>
 <p class="rubric">Example</p>
 <p>See a detailed example of a mock component implementation below.</p>
@@ -725,7 +774,7 @@ step is to <a class="reference internal" href="packaging.html"><span class="doc"
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Nov 17, 2021.<br>
+        Last updated on Nov 18, 2021.<br>
       </p>
     </div>
   </div>
