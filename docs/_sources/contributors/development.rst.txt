@@ -329,55 +329,53 @@ See a detailed example of a mock component definition below.
            'input_1': {
                'kind': 'dynamic',
                'units': 'kg m-2 s-1',
-               'description': 'plain english'
+               'description': 'brief input description here'
            },
            'input_2': {
                'kind': 'climatologic',
                'frequency': 'monthly',
                'units': 'kg m-2 s-1',
-               'description': 'plain english'
+               'description': 'brief input description here'
            },
            'input_3': {
                'kind': 'static',
                'units': 'm',
-               'description': 'plain english'
+               'description': 'brief input description here'
            }
        }
        _outputs_info = {
            'output_1': {
                'units': 'kg m-2 s-1',
-               'description': 'plain english'
+               'description': 'brief output description here'
            },
            'output_2': {
                'units': 'kg m-3 s-1',
-               'description': 'plain english'
+               'description': 'brief output description here'
            }
        }
        _states_info = {
            'state_1': {
                'units': 'kg m-2',
-               'description': 'plain english'
+               'description': 'brief state description here'
            },
            'state_2': {
                'divisions': 4,
                'units': 'kg m-2',
-               'description': 'plain english'
+               'description': 'brief state description here'
            }
        }
        _parameters_info = {
            'parameter_1': {
-               'description': 'brief parameter description here',
                'units': '1',
                'valid_range': [0, 1],
-               'description': 'plain english'
+               'description': 'brief parameter description here'
            }
        }
        _constants_info = {
            'constant_1': {
-               'description': 'brief constant description here',
                'units': '1',
                'default_value': 0.5,
-               'description': 'plain english'
+               'description': 'brief constant description here'
            }
        }
        _requires_land_sea_mask = False
