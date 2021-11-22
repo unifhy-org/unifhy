@@ -770,8 +770,8 @@ class Grid(SpaceDomain):
 
             values_out: `numpy.ndarray`
                 The values that routed following the flow direction would
-                have left the domain (a variable is considered to leave
-                the domain if it is directed towards beyond the bounds of
+                have left the domain (a value is considered to leave the
+                domain if it is directed towards beyond the bounds of
                 of the domain, or towards a masked location within the
                 domain, if the *flow_direction* is masked), e.g. how
                 much river discharge has not been routed towards the
