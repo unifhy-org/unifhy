@@ -748,37 +748,49 @@ class Grid(SpaceDomain):
         # (i.e. towards outside domain or towards masked location)
         self._routing_out_mask = to_out | to_msk
 
-    def route(self, variable_to_route):
-        """Perform the movement of the given variable values from
-        their current location to the next nearest receiving neighbour
-        according to the *flow_direction* property of the `Grid`.
+    def route(self, values_to_route):
+        """Move the given values from their current location in the
+        `Grid` to their downstream/downslope location according to the
+        *flow_direction* property of `Grid`.
 
         :Parameters:
 
-            variable_to_route: `numpy.ndarray`
-                The array containing the values for the variable to
-                route according to the *flow_direction* property of the
-                Grid. The shape of this array must comply with the Grid.
+            values_to_route: `numpy.ndarray`
+                The values to route following the flow direction, e.g.
+                how river discharge to route. The shape of this array
+                must be the same as of the grid.
 
         :Returns:
 
-            variable_routed: `numpy.ndarray`
-                The array containing the values routed according to the
-                *flow_direction* property of the Grid for the
-                *variable_to_route*. The shape of this array is the same
-                as of the Grid.
+            values_routed: `numpy.ndarray`
+                The values routed following the flow direction, e.g. how
+                much river discharge is coming into each grid element
+                from their upstream grid elements. The shape of this
+                array is the same as of the grid.
 
-            variable_out: `numpy.ndarray`
-                The array containing the values routed according to the
-                *flow_direction* property of the Grid which left the
-                domain for the *variable_to_route* (a variable is
-                considered to leave the domain if it is directed
-                towards beyond the bounds of the domain, or towards
-                a masked location within the domain, if the
-                *flow_direction* is masked). The shape this array is the
-                same as of the Grid.
+            values_out: `numpy.ndarray`
+                The values that routed following the flow direction would
+                have left the domain (a variable is considered to leave
+                the domain if it is directed towards beyond the bounds of
+                of the domain, or towards a masked location within the
+                domain, if the *flow_direction* is masked), e.g. how
+                much river discharge has not been routed towards the
+                downstream grid element because this one is not defined
+                (i.e. outside the grid) or masked (i.e. outside the
+                drainage area or into the sea). The shape of this array
+                is the same as of the grid.
 
         **Examples**
+
+        .. warning ::
+
+           Given that Y and X `Grid` coordinates are ordered increasingly
+           northwards and eastwards, respectively, and given that a 2D
+           `numpy.ndarray` origin (i.e. [0, 0]) is in the upper-left
+           corner when visualising the content of an array (i.e. using
+           `print`), routing a value northwards will result in visualising
+           it "moving down" the array (and not up), and routing a value
+           eastwards will result in visualising it "moving right".
 
         Using grid routing functionality with basic domain and flow direction:
 
@@ -789,8 +801,8 @@ class Grid(SpaceDomain):
         ...     longitude_extent=(-2, 1),
         ...     longitude_resolution=1
         ... )
-        >>> variable = numpy.arange(12).reshape(4, 3) + 1
-        >>> print(variable)
+        >>> values = numpy.arange(12).reshape(4, 3) + 1
+        >>> print(values)
         [[ 1  2  3]
          [ 4  5  6]
          [ 7  8  9]
@@ -801,13 +813,13 @@ class Grid(SpaceDomain):
         ...                                  ['N', 'N', 'W'],
         ...                                  ['SW', 'E', 'NW']]))
         >>> grid.flow_direction = directions
-        >>> moved, outed = grid.route(variable)
+        >>> moved, out = grid.route(values)
         >>> print(moved)
         [[ 0  4  6]
          [ 0  3  5]
          [ 0  9  0]
          [ 7  8 11]]
-        >>> print(outed)
+        >>> print(out)
         [[ 0  0  3]
          [ 0  0  0]
          [ 0  0  0]
@@ -828,13 +840,13 @@ class Grid(SpaceDomain):
         ...     )
         ... )
         >>> grid.flow_direction = directions
-        >>> moved, outed = grid.route(variable)
+        >>> moved, out = grid.route(values)
         >>> print(moved)
         [[-- 0 6]
          [-- 2 5]
          [-- -- 0]
          [0 0 11]]
-        >>> print(outed)
+        >>> print(out)
         [[-- 0 3]
          [-- 0 0]
          [-- -- 9]
@@ -848,8 +860,8 @@ class Grid(SpaceDomain):
         ...     longitude_extent=(-180, 180),
         ...     longitude_resolution=120
         ... )
-        >>> variable = numpy.arange(12).reshape(4, 3) + 1
-        >>> print(variable)
+        >>> values = numpy.arange(12).reshape(4, 3) + 1
+        >>> print(values)
         [[ 1  2  3]
          [ 4  5  6]
          [ 7  8  9]
@@ -860,13 +872,13 @@ class Grid(SpaceDomain):
         ...                                  ['N', 'N', 'W'],
         ...                                  ['SW', 'E', 'NW']]))
         >>> grid.flow_direction = directions
-        >>> moved, outed = grid.route(variable)
+        >>> moved, out = grid.route(values)
         >>> print(moved)
         [[ 3 16  6]
          [ 0  3  5]
          [ 0  9 10]
          [ 7  8 11]]
-        >>> print(outed)
+        >>> print(out)
         [[0 0 0]
          [0 0 0]
          [0 0 0]
@@ -880,20 +892,20 @@ class Grid(SpaceDomain):
         ...     projection_x_coordinate_extent=(0, 700000),
         ...     projection_x_coordinate_resolution=700000/3
         ... )
-        >>> variable = numpy.arange(12).reshape(4, 3) + 1
+        >>> values = numpy.arange(12).reshape(4, 3) + 1
         >>> directions = grid.to_field()
         >>> directions.set_data(numpy.array([['NE', 'N', 'E'],
         ...                                  ['SE', 'E', 'S'],
         ...                                  ['N', 'N', 'W'],
         ...                                  ['SW', 'E', 'NW']]))
         >>> grid.flow_direction = directions
-        >>> moved, outed = grid.route(variable)
+        >>> moved, out = grid.route(values)
         >>> print(moved)
         [[ 0  4  6]
          [ 0  3  5]
          [ 0  9  0]
          [ 7  8 11]]
-        >>> print(outed)
+        >>> print(out)
         [[ 0  0  3]
          [ 0  0  0]
          [ 0  0  0]
@@ -904,37 +916,37 @@ class Grid(SpaceDomain):
             raise RuntimeError("method 'route' requires setting "
                                "property 'flow_direction'")
 
-        # check that variable to route has the same shape as flow_direction
-        if not self.flow_direction.shape[:-1] == variable_to_route.shape:
-            raise RuntimeError("shape mismatch between 'variable_to_route' "
+        # check that values_to_route has the same shape as flow_direction
+        if not self.flow_direction.shape[:-1] == values_to_route.shape:
+            raise RuntimeError("shape mismatch between 'values_to_route' "
                                "and 'flow_direction' in 'route' method")
 
         # initialise routed and out arrays depending on mask/no-mask
         if np.ma.is_masked(self.flow_direction):
             mask = self.flow_direction.mask[..., 0]
-            variable_routed = np.ma.array(
-                np.zeros(variable_to_route.shape, variable_to_route.dtype),
+            values_routed = np.ma.array(
+                np.zeros(values_to_route.shape, values_to_route.dtype),
                 mask=mask
             )
-            variable_out = np.ma.array(
-                np.zeros(variable_to_route.shape, variable_to_route.dtype),
+            values_out = np.ma.array(
+                np.zeros(values_to_route.shape, values_to_route.dtype),
                 mask=mask
             )
         else:
             mask = None
-            variable_routed = np.zeros(variable_to_route.shape,
-                                       variable_to_route.dtype)
-            variable_out = np.zeros(variable_to_route.shape,
-                                    variable_to_route.dtype)
+            values_routed = np.zeros(values_to_route.shape,
+                                     values_to_route.dtype)
+            values_out = np.zeros(values_to_route.shape,
+                                  values_to_route.dtype)
         # if no mask, keep as is, if not, take logical negation of it
         mask = None if mask is None else ~mask
 
         # collect the values routed towards outside the domain
         out_mask = self._routing_out_mask
         if np.ma.is_masked(self.flow_direction):
-            variable_out[out_mask & mask] = variable_to_route[out_mask & mask]
+            values_out[out_mask & mask] = values_to_route[out_mask & mask]
         else:
-            variable_out[out_mask] = variable_to_route[out_mask]
+            values_out[out_mask] = values_to_route[out_mask]
 
         # perform the routing using the routing mask
         # Y-wards movement
@@ -942,12 +954,12 @@ class Grid(SpaceDomain):
             # X-wards movement
             for i in [-1, 0, 1]:
                 routing_mask = self._routing_masks[(j, i)]
-                variable_routed[mask] += np.roll(variable_to_route
-                                                 * routing_mask,
-                                                 shift=(j, i),
-                                                 axis=(-2, -1))[mask]
+                values_routed[mask] += np.roll(
+                    values_to_route * routing_mask,
+                    shift=(j, i), axis=(-2, -1)
+                )[mask]
 
-        return variable_routed, variable_out
+        return values_routed, values_out
 
     @property
     def cell_area(self):
