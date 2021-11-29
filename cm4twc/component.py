@@ -503,6 +503,12 @@ class Component(metaclass=MetaComponent):
                     self._record_objects[name], methods
                 )
 
+    @property
+    def initialised_states(self):
+        """Return whether initial conditions for component states have
+        already been set as a `bool`."""
+        return self._initialised_states
+
     def _check_definition(self):
         # check for units
         for lead in ['inputs', 'parameters', 'constants',
