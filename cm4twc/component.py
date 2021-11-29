@@ -362,6 +362,10 @@ class Component(metaclass=MetaComponent):
         self.saving_directory = saving_directory
         self.dump_file = None
 
+        # special attribute to store information that can be communicated
+        # between component methods (typically between `initialise` and `run`)
+        self.shelf = {}
+
         # flag to check whether states / streams have been initialised
         self._initialised_states = False
         self._revived_streams = False
