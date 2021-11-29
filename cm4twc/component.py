@@ -27,6 +27,7 @@ class MetaComponent(abc.ABCMeta):
     """MetaComponent is a metaclass for `Component`."""
     # intrinsic attributes
     _category = None
+
     _inwards_info = None
     _outwards_info = None
 
@@ -36,7 +37,9 @@ class MetaComponent(abc.ABCMeta):
     _constants_info = None
     _states_info = None
     _outputs_info = None
+
     _solver_history = None
+
     _requires_land_sea_mask = None
     _requires_flow_direction = None
     _requires_cell_area = None
@@ -160,6 +163,7 @@ class MetaComponent(abc.ABCMeta):
 class Component(metaclass=MetaComponent):
     # intrinsic attributes (set to default)
     _category = ''
+
     _inwards_info = {}
     _outwards_info = {}
 
@@ -169,7 +173,9 @@ class Component(metaclass=MetaComponent):
     _constants_info = {}
     _states_info = {}
     _outputs_info = {}
+
     _solver_history = 1
+
     _requires_land_sea_mask = False
     _requires_flow_direction = False
     _requires_cell_area = False
@@ -1086,8 +1092,9 @@ class Component(metaclass=MetaComponent):
             data[d] = exchanger.get_transfer(d, self._category)
 
         # run simulation for the component
-        to_exchanger, outputs = self.run(**self.parameters, **self.constants,
-                                         **self.states, **data)
+        to_exchanger, outputs = self.run(
+            **self.parameters, **self.constants, **self.states, **data
+        )
 
         # store variables to record
         for name in self._records:
