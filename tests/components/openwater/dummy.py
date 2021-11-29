@@ -92,7 +92,8 @@ class Dummy(OpenWaterComponent):
                    constant_c,
                    **kwargs):
 
-        state_a.set_timestep(-1, 0)
+        if not self.initialised_states:
+            state_a.set_timestep(-1, 0)
 
     def run(self,
             # from exchanger
@@ -156,9 +157,10 @@ class DummyFortran(Dummy):
                    constant_c,
                    **kwargs):
 
-        dummyfortran.initialise(
-            state_a.get_timestep(-1), constant_c=constant_c
-        )
+        if not self.initialised_states:
+            dummyfortran.initialise(
+                state_a.get_timestep(-1), constant_c=constant_c
+            )
 
     def run(self,
             # from exchanger
@@ -213,9 +215,10 @@ class DummyC(Dummy):
                    constant_c,
                    **kwargs):
 
-        dummyc.initialise(
-            constant_c, state_a.get_timestep(-1)
-        )
+        if not self.initialised_states:
+            dummyc.initialise(
+                constant_c, state_a.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger
