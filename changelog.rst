@@ -31,6 +31,8 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * replace `State` dunder methods `__getitem__` and `__setitem__` with
   `get_timestep` and `set_timestep` methods
   (`#71 <https://github.com/cm4twc-org/cm4twc/pull/71>`_)
+* include component inputs as arguments given to `initialise` method
+  (`#75 <https://github.com/cm4twc-org/cm4twc/pull/75>`_)
 
 .. rubric:: Bug fixes
 
@@ -60,6 +62,12 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * add `cell_area` property to `SpaceDomain` that can be provided by the
   user or else automatically computed for `Grid`
   (`#61 <https://github.com/cm4twc-org/cm4twc/issues/61>`_)
+* add `initialised_states` property to `Component` to allow component
+  contributors not to overwrite user-defined initial conditions
+  (`#75 <https://github.com/cm4twc-org/cm4twc/pull/75>`_)
+* add `shelf` attribute to `Component` to allow the communication of
+  data between component methods
+  (`#75 <https://github.com/cm4twc-org/cm4twc/pull/75>`_)
 
 .. rubric:: Dependencies
 

@@ -92,8 +92,9 @@ class Dummy(SurfaceLayerComponent):
                    state_a, state_b,
                    **kwargs):
 
-        state_a.set_timestep(-1, 0)
-        state_b.set_timestep(-1, 0)
+        if not self.initialised_states:
+            state_a.set_timestep(-1, 0)
+            state_b.set_timestep(-1, 0)
 
     def run(self,
             # from exchanger
@@ -160,9 +161,11 @@ class DummyFortran(Dummy):
                    # component states
                    state_a, state_b,
                    **kwargs):
-        dummyfortran.initialise(
-            state_a.get_timestep(-1), state_b.get_timestep(-1)
-        )
+
+        if not self.initialised_states:
+            dummyfortran.initialise(
+                state_a.get_timestep(-1), state_b.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger
@@ -214,9 +217,10 @@ class DummyC(Dummy):
                    state_a, state_b,
                    **kwargs):
 
-        dummyc.initialise(
-            state_a.get_timestep(-1), state_b.get_timestep(-1)
-        )
+        if not self.initialised_states:
+            dummyc.initialise(
+                state_a.get_timestep(-1), state_b.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger

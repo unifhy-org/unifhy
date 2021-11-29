@@ -27,6 +27,7 @@ class MetaComponent(abc.ABCMeta):
     """MetaComponent is a metaclass for `Component`."""
     # intrinsic attributes
     _category = None
+
     _inwards_info = None
     _outwards_info = None
 
@@ -36,7 +37,9 @@ class MetaComponent(abc.ABCMeta):
     _constants_info = None
     _states_info = None
     _outputs_info = None
+
     _solver_history = None
+
     _requires_land_sea_mask = None
     _requires_flow_direction = None
     _requires_cell_area = None
@@ -160,6 +163,7 @@ class MetaComponent(abc.ABCMeta):
 class Component(metaclass=MetaComponent):
     # intrinsic attributes (set to default)
     _category = ''
+
     _inwards_info = {}
     _outwards_info = {}
 
@@ -169,7 +173,9 @@ class Component(metaclass=MetaComponent):
     _constants_info = {}
     _states_info = {}
     _outputs_info = {}
+
     _solver_history = 1
+
     _requires_land_sea_mask = False
     _requires_flow_direction = False
     _requires_cell_area = False
@@ -356,9 +362,13 @@ class Component(metaclass=MetaComponent):
         self.saving_directory = saving_directory
         self.dump_file = None
 
+        # special attribute to store information that can be communicated
+        # between component methods (typically between `initialise` and `run`)
+        self.shelf = {}
+
         # flag to check whether states / streams have been initialised
-        self.initialised_states = False
-        self.revived_streams = False
+        self._initialised_states = False
+        self._revived_streams = False
 
     @property
     def timedomain(self):
@@ -502,6 +512,12 @@ class Component(metaclass=MetaComponent):
                 self._record_streams[delta].add_record(
                     self._record_objects[name], methods
                 )
+
+    @property
+    def initialised_states(self):
+        """Return whether initial conditions for component states have
+        already been set as a `bool`."""
+        return self._initialised_states
 
     def _check_definition(self):
         # check for units
@@ -1043,26 +1059,44 @@ class Component(metaclass=MetaComponent):
         )
 
     def initialise_(self, tag, overwrite):
-        # if not already initialised, get default state values
-        if not self.initialised_states:
+        # if states not already initialised, instantiate them
+        if not self._initialised_states:
             self._instantiate_states()
-            self.initialise(**self.parameters, **self.constants, **self.states)
-            self.initialised_states = True
-        # create dump file for given run
-        self._initialise_states_dump(tag, overwrite)
 
         # reset time for data slices
+        # (because component may have already be run, the slices in
+        #  the data would not point to the beginning of the array, and
+        #  they need to for this new run)
         for d in self._inputs_info:
             self.datasubset[d].reset_time()
 
+        # collect inputs for first time step (i.e. time index 0)
+        inputs = {d: self.datasubset[d][0] for d in self._inputs_info}
+
+        # reset time for data slices
+        # (because of the input collection just above, the slices
+        #  iterator in the data has been triggered, so it needs to be
+        #  reset for the actual run to follow)
+        for d in self._inputs_info:
+            self.datasubset[d].reset_time()
+
+        # initialise component
+        self.initialise(
+            **inputs, **self.parameters, **self.constants, **self.states
+        )
+        self._initialised_states = True
+
+        # create dump file for given run
+        self._initialise_states_dump(tag, overwrite)
+
         if self.records:
-            if not self.revived_streams:
+            if not self._revived_streams:
                 self._initialise_record_streams()
             # need to reset flag to False because Component may be
             # re-used for another spin cycle / simulation run and
             # it needs for its streams to be properly re-initialised
             # (its trackers in particular)
-            self.revived_streams = False
+            self._revived_streams = False
             # optionally create files and dump files
             self._create_stream_files_and_dumps(tag, overwrite)
 
@@ -1080,8 +1114,9 @@ class Component(metaclass=MetaComponent):
             data[d] = exchanger.get_transfer(d, self._category)
 
         # run simulation for the component
-        to_exchanger, outputs = self.run(**self.parameters, **self.constants,
-                                         **self.states, **data)
+        to_exchanger, outputs = self.run(
+            **self.parameters, **self.constants, **self.states, **data
+        )
 
         # store variables to record
         for name in self._records:
@@ -1159,7 +1194,7 @@ class Component(metaclass=MetaComponent):
             else:
                 raise KeyError(f"initial conditions for {self._category} "
                                f"component state '{s}' not in dump")
-        self.initialised_states = True
+        self._initialised_states = True
 
         return at
 
@@ -1252,7 +1287,7 @@ class Component(metaclass=MetaComponent):
                 ats.append(stream.load_record_stream_dump(
                     file_, at, timedomain or self.timedomain, self.spacedomain
                 ))
-        self.revived_streams = True
+        self._revived_streams = True
 
         return ats
 
