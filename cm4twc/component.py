@@ -357,8 +357,8 @@ class Component(metaclass=MetaComponent):
         self.dump_file = None
 
         # flag to check whether states / streams have been initialised
-        self.initialised_states = False
-        self.revived_streams = False
+        self._initialised_states = False
+        self._revived_streams = False
 
     @property
     def timedomain(self):
@@ -1044,7 +1044,7 @@ class Component(metaclass=MetaComponent):
 
     def initialise_(self, tag, overwrite):
         # if not already initialised, get default state values
-        if not self.initialised_states:
+        if not self._initialised_states:
             self._instantiate_states()
             self.initialise(**self.parameters, **self.constants, **self.states)
             self.initialised_states = True
@@ -1056,13 +1056,13 @@ class Component(metaclass=MetaComponent):
             self.datasubset[d].reset_time()
 
         if self.records:
-            if not self.revived_streams:
+            if not self._revived_streams:
                 self._initialise_record_streams()
             # need to reset flag to False because Component may be
             # re-used for another spin cycle / simulation run and
             # it needs for its streams to be properly re-initialised
             # (its trackers in particular)
-            self.revived_streams = False
+            self._revived_streams = False
             # optionally create files and dump files
             self._create_stream_files_and_dumps(tag, overwrite)
 
@@ -1159,7 +1159,7 @@ class Component(metaclass=MetaComponent):
             else:
                 raise KeyError(f"initial conditions for {self._category} "
                                f"component state '{s}' not in dump")
-        self.initialised_states = True
+        self._initialised_states = True
 
         return at
 
@@ -1252,7 +1252,7 @@ class Component(metaclass=MetaComponent):
                 ats.append(stream.load_record_stream_dump(
                     file_, at, timedomain or self.timedomain, self.spacedomain
                 ))
-        self.revived_streams = True
+        self._revived_streams = True
 
         return ats
 
