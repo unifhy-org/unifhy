@@ -404,15 +404,22 @@ arguments given by the framework that the component is not using.
 
 .. rubric:: Initialise
 
-The `initialise` method should define the initial conditions for the
-component states for its integration start. It can also feature any other
-action that is required to be done only once before the start of the
-integration over the whole simulation period.
+The `initialise` method must define the initial conditions for the
+component states so that its integration can be started. However, the
+component user may have already set initial component state values that
+should not be overwritten. This is why state initial conditions must be
+set only if the component property `initialised_states` evaluates as `False`.
+
+This method can also feature any other action that is required to be
+done only once before the start of the integration, i.e. pre-processing.
+In such a situation, a special component attribute `shelf` exists. It is
+a dictionary that can be used e.g. to store anything that needs computing
+once in `initialise` and to be used repeatedly in `run`.
 
 It is called at the beginning of a model simulation period.
 
 The possible method parameters in the method signature are the component
-states, parameters, and constants.
+inputs, states, parameters, and constants.
 
 This method is not expected to return anything.
 
@@ -469,9 +476,10 @@ See a detailed example of a mock component implementation below.
        # component definition here
 
        def initialise(self, state_1, state_2, parameter_1, constant_1, **kwargs):
-           # set here initial condition values for component states
-           state_1.set_timestep(-1, 0.)
-           state_2.set_timestep(-1, 0.)
+           if not self.initialised_states:
+               # set here initial condition values for component states
+               state_1.set_timestep(-1, 0.)
+               state_2.set_timestep(-1, 0.)
 
        def run(self, inwards_1, inwards_2, inwards_3, input_1, input_2, input_3,
                state_1, state_2, parameter_1, constant_1, **kwargs):
