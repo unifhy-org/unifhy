@@ -1055,17 +1055,35 @@ class Component(metaclass=MetaComponent):
         )
 
     def initialise_(self, tag, overwrite):
-        # if not already initialised, get default state values
+        # if states not already initialised, instantiate them
         if not self._initialised_states:
             self._instantiate_states()
-            self.initialise(**self.parameters, **self.constants, **self.states)
-            self.initialised_states = True
-        # create dump file for given run
-        self._initialise_states_dump(tag, overwrite)
 
         # reset time for data slices
+        # (because component may have already be run, the slices in
+        #  the data would not point to the beginning of the array, and
+        #  they need to for this new run)
         for d in self._inputs_info:
             self.datasubset[d].reset_time()
+
+        # collect inputs for first time step (i.e. time index 0)
+        inputs = {d: self.datasubset[d][0] for d in self._inputs_info}
+
+        # reset time for data slices
+        # (because of the input collection just above, the slices
+        #  iterator in the data has been triggered, so it needs to be
+        #  reset for the actual run to follow)
+        for d in self._inputs_info:
+            self.datasubset[d].reset_time()
+
+        # initialise component
+        self.initialise(
+            **inputs, **self.parameters, **self.constants, **self.states
+        )
+        self._initialised_states = True
+
+        # create dump file for given run
+        self._initialise_states_dump(tag, overwrite)
 
         if self.records:
             if not self._revived_streams:
