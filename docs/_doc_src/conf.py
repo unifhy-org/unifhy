@@ -47,13 +47,11 @@ else:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx_rtd_theme',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.doctest',
     'sphinx.ext.githubpages',
-    'nbsphinx',
     'sphinx.ext.mathjax',
     # internal extensions
     'autocomponent'
