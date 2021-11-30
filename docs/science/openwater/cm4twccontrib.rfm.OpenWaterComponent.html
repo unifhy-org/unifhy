@@ -32,7 +32,6 @@
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/science/openwater/cm4twccontrib.rfm.OpenWaterComponent.html" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -74,8 +73,6 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
               
                 <a class="dropdown-item" href="https://cm4twc-org.github.io/cm4twc">latest</a>
-              
-                <a class="dropdown-item" href="https://cm4twc-org.github.io/cm4twc/0.1.0-beta">v0.1.0-beta</a>
               
             </div>
           </li>
@@ -313,7 +310,7 @@ sub-surface pathways in each domain.</p>
 <p><p class="rubric">Inputs</p>
 <dl class="field-list simple">
 <dt class="field-odd">name</dt>
-<dd class="field-odd"><p>flow_accumulation</p>
+<dd class="field-odd"><p>i_area</p>
 </dd>
 <dt class="field-even">units</dt>
 <dd class="field-even"><p>1</p>
@@ -468,13 +465,13 @@ sub-surface pathways in each domain.</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">name</dt>
-<dd class="field-odd"><p>routing_length</p>
+<dd class="field-odd"><p>river_length</p>
 </dd>
 <dt class="field-even">units</dt>
 <dd class="field-even"><p>m</p>
 </dd>
 <dt class="field-odd">description</dt>
-<dd class="field-odd"><p>length of the routing path</p>
+<dd class="field-odd"><p>length of river reach</p>
 </dd>
 </dl>
 </p>
@@ -514,7 +511,7 @@ sub-surface pathways in each domain.</p>
 <dd class="field-odd"><p>flow_in</p>
 </dd>
 <dt class="field-even">units</dt>
-<dd class="field-even"><p>m<sup>3</sup></p>
+<dd class="field-even"><p>m</p>
 </dd>
 <dt class="field-odd">description</dt>
 <dd class="field-odd"><p>surface flow from neighbouring cells</p>
@@ -525,7 +522,7 @@ sub-surface pathways in each domain.</p>
 <dd class="field-odd"><p>b_flow_in</p>
 </dd>
 <dt class="field-even">units</dt>
-<dd class="field-even"><p>m<sup>3</sup></p>
+<dd class="field-even"><p>m</p>
 </dd>
 <dt class="field-odd">description</dt>
 <dd class="field-odd"><p>sub-surface flow from neighbouring cells</p>
@@ -536,7 +533,7 @@ sub-surface pathways in each domain.</p>
 <dd class="field-odd"><p>surf_store</p>
 </dd>
 <dt class="field-even">units</dt>
-<dd class="field-even"><p>m<sup>3</sup></p>
+<dd class="field-even"><p>m</p>
 </dd>
 <dt class="field-odd">description</dt>
 <dd class="field-odd"><p>surface water store</p>
@@ -547,7 +544,7 @@ sub-surface pathways in each domain.</p>
 <dd class="field-odd"><p>sub_store</p>
 </dd>
 <dt class="field-even">units</dt>
-<dd class="field-even"><p>m<sup>3</sup></p>
+<dd class="field-even"><p>m</p>
 </dd>
 <dt class="field-odd">description</dt>
 <dd class="field-odd"><p>sub-surface water store</p>
@@ -604,7 +601,7 @@ sub-surface pathways in each domain.</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Nov 29, 2021.<br>
+        Last updated on Nov 30, 2021.<br>
       </p>
     </div>
   </div>
