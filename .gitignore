@@ -6,6 +6,9 @@ __pycache__/
 # ignore documentation built because copied in docs/ root already
 docs/_doc_build
 
+# ignore component contributions added during documentation built on GitHub
+cm4twccontrib
+
 # =========================
 # Operating System Files
 # =========================
