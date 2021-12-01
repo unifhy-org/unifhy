@@ -60,6 +60,8 @@ class Model(object):
         self.openwater = self._process_component_type(
             openwater, OpenWaterComponent)
 
+        self._check_components_plugging()
+
         # assign identifier
         self.identifier = identifier
 
@@ -92,8 +94,6 @@ class Model(object):
     @staticmethod
     def _process_component_type(component, expected_type):
         if isinstance(component, expected_type):
-            # check inwards exchanger
-            # check outwards exchanger
             return component
         elif isinstance(component, (DataComponent, NullComponent)):
             if component.category != expected_type.category:
@@ -109,6 +109,20 @@ class Model(object):
                 f"of type {expected_type.__name__}, {DataComponent.__name__}, "
                 f"or {NullComponent.__name__}"
             )
+
+    def _check_components_plugging(self):
+        # check that each component inward is available as an outward
+        # from the expected component
+        for cat in ['surfacelayer', 'subsurface', 'openwater']:
+            dst = getattr(self, cat)
+            for trf, info in dst.inwards_info.items():
+                src = getattr(self, info['from'])
+                if (trf not in src.outwards_info
+                        or cat not in src.outwards_info[trf]['to']):
+                    raise RuntimeError(
+                        f"{cat} component inward transfer '{trf}' "
+                        f"not available from {src.category} component"
+                    )
 
     def __str__(self):
         return "\n".join(
