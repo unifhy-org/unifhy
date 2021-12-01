@@ -36,9 +36,9 @@ component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`.
 
    Fig. 2: Transfers of Information between Components.
 
-For component contributions to be `cm4twc`-compliant, they need to comply
-with this fixed interface. If your science component contribution is
-overlapping several components, it requires to be refactored into the
+For component contributions to be fully `cm4twc`-compliant, they need to
+comply with this fixed interface. If your science component contribution
+is overlapping several components, it requires to be refactored into the
 relevant number of components.
 
 Contributions must be implemented as Python classes, and more specifically
@@ -117,6 +117,20 @@ See an example of a mock component description below.
 
 Define your science component using its class attributes
 --------------------------------------------------------
+
+The component interface definition is used by the framework to make sure
+that your component can be coupled with other components to form a model.
+Indeed, while a standard interface exists for the framework component
+(see :ref:`Fig. 2<fig_transfers>`), the science component may fall short
+to use or produce some of them. So long as the other components it is
+coupled with are not needing the ones not produced, the framework does
+not enforce a full compliance with its standard interface. However,
+transfers not present in the standard interface cannot be used.
+
+The definition of the component interface is specified by assigning
+sets to the class attributes `_inwards` and `_outwards`. In such a set,
+the items must be part or all of the transfers in the fixed interface
+for this component (see :ref:`Fig. 2<fig_transfers>`).
 
 The component definition is used by the framework to make sure that all
 the information required by the component to run is provided by the
@@ -324,7 +338,14 @@ See a detailed example of a mock component definition below.
 
    class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
        """component description here"""
-
+       _inwards = {
+           'inwards_1',
+           'inwards_2',
+           'inwards_3'
+       }
+       _outwards = {
+           'outwards_1'
+       }
        _inputs_info = {
            'input_1': {
                'kind': 'dynamic',
@@ -522,6 +543,9 @@ See a detailed example of a mock component implementation below.
            # cleanly wrap up simulation here
            # to be able to restart from where simulation stopped
            pass
+
+Real component implementations are available in the
+:doc:`science library <../science_library>` section.
 
 This concludes the preparation of your component contribution, the next
 step is to :doc:`package <packaging>` your component(s).
