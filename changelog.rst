@@ -70,7 +70,7 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * add `shelf` attribute to `Component` to allow the communication of
   data between component methods
   (`#75 <https://github.com/cm4twc-org/cm4twc/pull/75>`_)
-* add `_inwards` and `_outwards` component attributes to allow
+* add `_inwards` and `_outwards` component class attributes to allow
   contributors to declare what interface transfers their component
   use and produce, respectively
   (`#76 <https://github.com/cm4twc-org/cm4twc/pull/76>`_)
