@@ -1353,44 +1353,59 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'surfacelayer'
     _inwards_info = {
-        'soil_water_stress': {
+        'soil_water_stress_for_transpiration': {
             'units': '1',
             'from': 'subsurface',
             'method': 'mean'
         },
-        'water_level': {
-            'units': 'kg m-2',
-            'from': 'openwater',
+        'soil_water_stress_for_direct_soil_evaporation': {
+            'units': '1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'standing_water_area_fraction': {
+            'units': '1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'total_water_area_fraction': {
+            'units': '1',
+            'from': 'subsurface',
             'method': 'mean'
         }
     }
     _outwards_info = {
-        'throughfall': {
+        'canopy_throughfall_flux': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
             'method': 'mean'
         },
-        'snowmelt': {
+        'snow_melt_flux': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
             'method': 'mean'
         },
-        'transpiration': {
+        'transpiration_flux_from_root_uptake': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
             'method': 'mean'
         },
-        'evaporation_soil_surface': {
+        'direct_water_evaporation_flux_from_soil': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
             'method': 'mean'
         },
-        'evaporation_ponded_water': {
+        'water_evaporation_flux_from_standing_water': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
             'method': 'mean'
         },
-        'evaporation_openwater': {
+        'water_evaporation_flux_from_open_water': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'direct_throughfall_flux': {
             'units': 'kg m-2 s-1',
             'to': ['openwater'],
             'method': 'mean'
@@ -1404,51 +1419,71 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'subsurface'
     _inwards_info = {
-        'evaporation_soil_surface': {
+        'canopy_throughfall_flux': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'evaporation_ponded_water': {
+        'snow_melt_flux': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'transpiration': {
+        'transpiration_flux_from_root_uptake': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'throughfall': {
+        'direct_water_evaporation_flux_from_soil': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'snowmelt': {
+        'water_evaporation_flux_from_standing_water': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'water_level': {
-            'units': 'kg m-2',
+        'open_water_area_fraction': {
+            'units': '1',
+            'from': 'openwater',
+            'method': 'mean'
+        },
+        'open_water_surface_height': {
+            'units': 'm',
             'from': 'openwater',
             'method': 'mean'
         }
     }
     _outwards_info = {
-        'surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
-        },
-        'subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
-        },
-        'soil_water_stress': {
+        'soil_water_stress_for_transpiration': {
             'units': '1',
             'to': ['surfacelayer'],
+            'method': 'mean'
+        },
+        'soil_water_stress_for_direct_soil_evaporation': {
+            'units': '1',
+            'to': ['surfacelayer'],
+            'method': 'mean'
+        },
+        'standing_water_area_fraction': {
+            'units': '1',
+            'to': ['surfacelayer'],
+            'method': 'mean'
+        },
+        'total_water_area_fraction': {
+            'units': '1',
+            'to': ['surfacelayer'],
+            'method': 'mean'
+        },
+        'surface_runoff_flux_delivered_to_rivers': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'net_groundwater_flux_to_rivers': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
             'method': 'mean'
         }
     }
@@ -1460,26 +1495,36 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'openwater'
     _inwards_info = {
-        'evaporation_openwater': {
+        'water_evaporation_flux_from_open_water': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'
         },
-        'surface_runoff': {
+        'direct_throughfall_flux': {
+            'units': 'kg m-2 s-1',
+            'from': 'surfacelayer',
+            'method': 'mean'
+        },
+        'surface_runoff_flux_delivered_to_rivers': {
             'units': 'kg m-2 s-1',
             'from': 'subsurface',
             'method': 'mean'
         },
-        'subsurface_runoff': {
+        'net_groundwater_flux_to_rivers': {
             'units': 'kg m-2 s-1',
             'from': 'subsurface',
             'method': 'mean'
         }
     }
     _outwards_info = {
-        'water_level': {
-            'units': 'kg m-2',
-            'to': ['surfacelayer', 'subsurface'],
+        'open_water_area_fraction': {
+            'units': '1',
+            'to': ['subsurface'],
+            'method': 'mean'
+        },
+        'open_water_surface_height': {
+            'units': 'm',
+            'to': ['subsurface'],
             'method': 'mean'
         }
     }
