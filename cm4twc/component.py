@@ -31,6 +31,9 @@ class MetaComponent(abc.ABCMeta):
     _inwards_info = None
     _outwards_info = None
 
+    _inwards = None
+    _outwards = None
+
     # definition attributes
     _inputs_info = None
     _parameters_info = None
@@ -50,23 +53,29 @@ class MetaComponent(abc.ABCMeta):
 
     @property
     def inwards_info(cls):
-        return deepcopy(cls._inwards_info)
+        return {
+            k: deepcopy(v) for k, v in cls._inwards_info.items()
+            if k in cls._inwards
+        }
 
     @property
     def outwards_info(cls):
-        return deepcopy(cls._outwards_info)
+        return {
+            k: deepcopy(v) for k, v in cls._outwards_info.items()
+            if k in cls._outwards
+        }
 
     @property
     def inwards_metadata(cls):
         """Return details on the component inward transfers as a `str`."""
-        if cls._inwards_info:
-            return yaml.dump(cls._inwards_info)
+        if cls.inwards_info:
+            return yaml.dump(cls.inwards_info)
 
     @property
     def outwards_metadata(cls):
         """Return details on the component outward transfers as a `str`."""
-        if cls._outwards_info:
-            return yaml.dump(cls._outwards_info)
+        if cls.outwards_info:
+            return yaml.dump(cls.outwards_info)
 
     @property
     def inputs_metadata(cls):
@@ -166,6 +175,9 @@ class Component(metaclass=MetaComponent):
 
     _inwards_info = {}
     _outwards_info = {}
+
+    _inwards = {}
+    _outwards = {}
 
     # definition attributes (set to default)
     _inputs_info = {}
@@ -1509,6 +1521,7 @@ class DataComponent(Component):
         self._category = substituting_class.category
 
         # override outwards with the ones of component being substituted
+        self._outwards = set(substituting_class.outwards_info.keys())
         self._outwards_info = substituting_class.outwards_info
 
         # override inputs info with the outwards of component being
@@ -1624,6 +1637,7 @@ class NullComponent(Component):
 
         # override inwards and outwards with the ones of component
         # being substituted
+        self._outwards = set(substituting_class.outwards_info.keys())
         self._outwards_info = substituting_class.outwards_info
 
         # initialise as a Component
