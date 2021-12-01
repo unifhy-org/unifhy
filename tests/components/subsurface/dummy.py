@@ -42,6 +42,14 @@ class Dummy(SubSurfaceComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
+    _inwards = {
+        'transfer_i',
+        'transfer_n'
+    }
+    _outwards = {
+        'transfer_k',
+        'transfer_m'
+    }
     _inputs_info = {
         'driving_a': {
             'units': '1',
