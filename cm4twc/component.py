@@ -532,6 +532,21 @@ class Component(metaclass=MetaComponent):
         return self._initialised_states
 
     def _check_definition(self):
+        # check inwards/outwards are relevant for the component category
+        for lead in ['inwards', 'outwards']:
+            info = {}
+            def_attr = getattr(self, f'_{lead}')
+            cls_attr = getattr(self, f'_{lead}_info')
+            for name in def_attr:
+                if name in cls_attr:
+                    info[name] = cls_attr[name]
+                else:
+                    raise RuntimeError(
+                        f"{lead[:-1]} {name} in component definition is "
+                        f"not compatible with component category"
+                    )
+            setattr(self, f'_{lead}_info', info)
+
         # check for units
         for lead in ['inputs', 'parameters', 'constants',
                      'outputs', 'states']:
