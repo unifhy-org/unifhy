@@ -215,7 +215,7 @@ class Component(metaclass=MetaComponent):
                 The input data must always be compatible in space with
                 *spacedomain*, and compatible in time with *timedomain*
                 for the 'dynamic' kind, and with the 'frequency' for
-                the 'climatologic' kind (see :ref:`Tab. 1<tab_frequencies>`
+                the 'climatologic' kind (see :ref:`Tab. 2<tab_frequencies>`
                 for details).
 
             parameters: `dict`, optional

@@ -26,15 +26,42 @@ Each component features a fixed interface (i.e. a pre-defined set of
 transfers of information with the other components of the framework):
 inward information (variables that are given to the component, i.e.
 "inwards"), and outward information (variables that are computed by the
-component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`.
+component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
+:ref:`Tab. 1<tab_transfers>`.
 
 .. _fig_transfers:
-.. figure:: ../../_doc_img/framework_detailed_transfers.png
-   :scale: 60 %
+.. figure:: ../../_doc_img/framework_detailed_transfers.svg
    :align: center
    :alt: component transfers
 
-   Fig. 2: Transfers of Information between Components.
+   Fig. 2: Transfers of Information between Components (see
+   :ref:`Tab. 1<tab_transfers>` for the numbers meanings).
+
+.. _tab_transfers:
+.. table:: Tab. 1: Transfers of Information between Components (see
+           :ref:`Fig. 2<fig_transfers>` for the numbers context)
+
+   ==  ==============================================  ========================
+   #   Name                                            Unit
+   ==  ==============================================  ========================
+   1   canopy_throughfall_flux                         |kg m-2 s-1|
+   2   snow_melt_flux                                  |kg m-2 s-1|
+   3   transpiration_flux_from_root_uptake             |kg m-2 s-1|
+   4   soil_water_stress_for_transpiration             1
+   5   direct_water_evaporation_flux_from_soil         |kg m-2 s-1|
+   6   soil_water_stress_for_direct_soil_evaporation   1
+   7   water_evaporation_flux_from_standing_water      |kg m-2 s-1|
+   8   standing_water_area_fraction                    1
+   9   total_water_area_fraction                       1
+   10  water_evaporation_flux_from_open_water          |kg m-2 s-1|
+   11  direct_throughfall_flux                         |kg m-2 s-1|
+   12  surface_runoff_flux_delivered_to_rivers         |kg m-2 s-1|
+   13  net_groundwater_flux_to_rivers                  |kg m-2 s-1|
+   14  open_water_area_fraction                        1
+   15  open_water_surface_height                       m
+   ==  ==============================================  ========================
+
+.. |kg m-2 s-1| replace:: kg m\ :sup:`-2` s\ :sup:`-1`
 
 For component contributions to be fully `cm4twc`-compliant, they need to
 comply with this fixed interface. If your science component contribution
@@ -181,7 +208,7 @@ can take one of the supported values described in :ref:`Tab. 1<tab_frequencies>`
 below.
 
 .. _tab_frequencies:
-.. table:: Tab. 1: Supported frequencies for climatologic inputs
+.. table:: Tab. 2: Supported frequencies for climatologic inputs
 
    ======================  ====================================================
    climatologic frequency  length of time dimension in data
