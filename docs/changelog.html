@@ -215,6 +215,9 @@ model to be integer multiples of one another
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/67">#67</a>)</p></li>
 <li><p>enforce two-dimensional spatial domains for components
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/69">#69</a>)</p></li>
+<li><p>allow components to use/produce only parts of the standardised transfers
+through the framework interfaces
+(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/76">#76</a>)</p></li>
 </ul>
 <p class="rubric">API changes</p>
 <ul class="simple">
@@ -236,6 +239,8 @@ respectively
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/71">#71</a>)</p></li>
 <li><p>include component inputs as arguments given to <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> method
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/75">#75</a>)</p></li>
+<li><p>revise/refine component inward and outward transfers
+(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/76">#76</a>)</p></li>
 </ul>
 <p class="rubric">Bug fixes</p>
 <ul class="simple">
@@ -271,6 +276,10 @@ contributors not to overwrite user-defined initial conditions
 <li><p>add <code class="xref py py-obj docutils literal notranslate"><span class="pre">shelf</span></code> attribute to <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> to allow the communication of
 data between component methods
 (<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/75">#75</a>)</p></li>
+<li><p>add <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inwards</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards</span></code> component class attributes to allow
+contributors to declare what interface transfers their component
+use and produce, respectively
+(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/76">#76</a>)</p></li>
 </ul>
 <p class="rubric">Dependencies</p>
 <ul class="simple">
@@ -319,7 +328,7 @@ data between component methods
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Nov 30, 2021.<br>
+        Last updated on Dec 02, 2021.<br>
       </p>
     </div>
   </div>

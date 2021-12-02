@@ -237,10 +237,10 @@ that is compliant with the framework.</p>
 <p>You can follow the steps below to develop your component(s):</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#create-your-science-component-by-subclassing-a-generic-framework-component" id="id7">Create your science component by subclassing a generic framework component</a></p></li>
-<li><p><a class="reference internal" href="#document-your-science-component-using-its-class-docstring" id="id8">Document your science component using its class docstring</a></p></li>
-<li><p><a class="reference internal" href="#define-your-science-component-using-its-class-attributes" id="id9">Define your science component using its class attributes</a></p></li>
-<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id10">Implement the initialise-run-finalise component class methods</a></p></li>
+<li><p><a class="reference internal" href="#create-your-science-component-by-subclassing-a-generic-framework-component" id="id8">Create your science component by subclassing a generic framework component</a></p></li>
+<li><p><a class="reference internal" href="#document-your-science-component-using-its-class-docstring" id="id9">Document your science component using its class docstring</a></p></li>
+<li><p><a class="reference internal" href="#define-your-science-component-using-its-class-attributes" id="id10">Define your science component using its class attributes</a></p></li>
+<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id11">Implement the initialise-run-finalise component class methods</a></p></li>
 </ul>
 </div>
 <div class="section" id="create-your-science-component-by-subclassing-a-generic-framework-component">
@@ -254,14 +254,92 @@ science component.</p>
 transfers of information with the other components of the framework):
 inward information (variables that are given to the component, i.e.
 “inwards”), and outward information (variables that are computed by the
-component, i.e. “outwards”), see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>.</p>
+component, i.e. “outwards”), see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>, and
+<a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a>.</p>
 <div class="figure align-center" id="id1">
-<span id="fig-transfers"></span><a class="reference internal image-reference" href="../_images/framework_detailed_transfers.png"><img alt="component transfers" src="../_images/framework_detailed_transfers.png" style="width: 634.8px; height: 458.4px;" /></a>
-<p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components.</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
+<span id="fig-transfers"></span><img alt="component transfers" src="../_images/framework_detailed_transfers.svg" /><p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components (see
+<a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a> for the numbers meanings).</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
 </div>
-<p>For component contributions to be <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>-compliant, they need to comply
-with this fixed interface. If your science component contribution is
-overlapping several components, it requires to be refactored into the
+<span id="tab-transfers"></span><table class="table" id="id2">
+<caption><span class="caption-text">Tab. 1: Transfers of Information between Components (see
+        <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a> for the numbers context)</span><a class="headerlink" href="#id2" title="Permalink to this table"><span class="fa fa-link"></a></caption>
+<colgroup>
+<col style="width: 3%" />
+<col style="width: 64%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>canopy_throughfall_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>snow_melt_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>transpiration_flux_from_root_uptake</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>soil_water_stress_for_transpiration</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>direct_water_evaporation_flux_from_soil</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>soil_water_stress_for_direct_soil_evaporation</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>water_evaporation_flux_from_standing_water</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>standing_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>total_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>water_evaporation_flux_from_open_water</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>direct_throughfall_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>surface_runoff_flux_delivered_to_rivers</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>net_groundwater_flux_to_rivers</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>open_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>open_water_surface_height</p></td>
+<td><p>m</p></td>
+</tr>
+</tbody>
+</table>
+<p>For component contributions to be fully <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>-compliant, they need to
+comply with this fixed interface. If your science component contribution
+is overlapping several components, it requires to be refactored into the
 relevant number of components.</p>
 <p>Contributions must be implemented as Python classes, and more specifically
 as subclasses of one of the three framework components. This way, the
@@ -273,8 +351,8 @@ the data and science elements of your component(s).</p>
 subclassing from the relevant framework component.</p>
 <p class="rubric">Example</p>
 <p>See an example of a mock surface layer component creation below.</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
 
 
@@ -306,8 +384,8 @@ followed by a blank line before providing a more elaborate description as per
 The field list should be placed last and preceded by a blank line.</p>
 <p class="rubric">Example</p>
 <p>See an example of a mock component description below.</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
 
 
@@ -330,6 +408,18 @@ The field list should be placed last and preceded by a blank line.</p>
 </div>
 <div class="section" id="define-your-science-component-using-its-class-attributes">
 <h2>Define your science component using its class attributes<a class="headerlink" href="#define-your-science-component-using-its-class-attributes" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>The component interface definition is used by the framework to make sure
+that your component can be coupled with other components to form a model.
+Indeed, while a standard interface exists for the framework component
+(see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>), the science component may fall short
+to use or produce some of them. So long as the other components it is
+coupled with are not needing the ones not produced, the framework does
+not enforce a full compliance with its standard interface. However,
+transfers not present in the standard interface cannot be used.</p>
+<p>The definition of the component interface is specified by assigning
+sets to the class attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inwards</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards</span></code>. In such a set,
+the items must be part or all of the transfers in the fixed interface
+for this component (see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>).</p>
 <p>The component definition is used by the framework to make sure that all
 the information required by the component to run is provided by the
 user. The definition of a component is made of the information about its
@@ -369,8 +459,8 @@ frequency within a climatology year.</p></li>
 <p>If the input is of climatologic kind, <em>frequency</em> must also be given and it
 can take one of the supported values described in <a class="reference internal" href="#tab-frequencies"><span class="std std-ref">Tab. 1</span></a>
 below.</p>
-<span id="tab-frequencies"></span><table class="table" id="id4">
-<caption><span class="caption-text">Tab. 1: Supported frequencies for climatologic inputs</span><a class="headerlink" href="#id4" title="Permalink to this table"><span class="fa fa-link"></a></caption>
+<span id="tab-frequencies"></span><table class="table" id="id5">
+<caption><span class="caption-text">Tab. 2: Supported frequencies for climatologic inputs</span><a class="headerlink" href="#id5" title="Permalink to this table"><span class="fa fa-link"></a></caption>
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 70%" />
@@ -559,14 +649,21 @@ details).</p>
 as the space domain (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.cell_area.html#cm4twc.LatLonGrid.cell_area" title="cm4twc.LatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.cell_area</span></code></a> for details).</p>
 <p class="rubric">Example</p>
 <p>See a detailed example of a mock component definition below.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
 
 
 <span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
-
+    <span class="n">_inwards</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;inwards_1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;inwards_2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;inwards_3&#39;</span>
+    <span class="p">}</span>
+    <span class="n">_outwards</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;outwards_1&#39;</span>
+    <span class="p">}</span>
     <span class="n">_inputs_info</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;input_1&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">,</span>
@@ -689,8 +786,8 @@ states, parameters, and constants.</p>
 <p>This method is not expected to return anything.</p>
 <p class="rubric">Example</p>
 <p>See a detailed example of a mock component implementation below.</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
 
 
@@ -749,6 +846,8 @@ states, parameters, and constants.</p>
 </pre></div>
 </div>
 </div>
+<p>Real component implementations are available in the
+<a class="reference internal" href="../science_library.html"><span class="doc">science library</span></a> section.</p>
 <p>This concludes the preparation of your component contribution, the next
 step is to <a class="reference internal" href="packaging.html"><span class="doc">package</span></a> your component(s).</p>
 </div>
@@ -776,7 +875,7 @@ step is to <a class="reference internal" href="packaging.html"><span class="doc"
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Nov 30, 2021.<br>
+        Last updated on Dec 02, 2021.<br>
       </p>
     </div>
   </div>
