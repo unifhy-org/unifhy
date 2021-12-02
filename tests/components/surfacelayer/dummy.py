@@ -47,6 +47,15 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
+    _inwards = {
+        'transfer_k',
+        'transfer_l',
+        'transfer_n'
+    }
+    _outwards = {
+        'transfer_i',
+        'transfer_j'
+    }
     _inputs_info = {
         'driving_a': {
             'units': '1',

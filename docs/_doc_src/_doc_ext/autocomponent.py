@@ -31,10 +31,10 @@ class AutoComponentDirective(SphinxDirective):
         document.extend(sect.children)
 
         # parse class attributes
-        for definition in ['inputs', 'inwards', 'outputs', 'outwards',
-                           'parameters', 'constants', 'states']:
-            if getattr(cls_, '_{}_info'.format(definition)):
-                attribute = getattr(cls_, '_{}_info'.format(definition))
+        for definition in ['_inputs', 'inwards', '_outputs', 'outwards',
+                           '_parameters', '_constants', '_states']:
+            if getattr(cls_, '{}_info'.format(definition)):
+                attribute = getattr(cls_, '{}_info'.format(definition))
                 para = nodes.paragraph()
                 if definition[0] == '_':
                     definition = definition[1:]

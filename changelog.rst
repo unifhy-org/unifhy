@@ -12,6 +12,9 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#67 <https://github.com/cm4twc-org/cm4twc/pull/67>`_)
 * enforce two-dimensional spatial domains for components
   (`#69 <https://github.com/cm4twc-org/cm4twc/pull/69>`_)
+* allow components to use/produce only parts of the standardised transfers
+  through the framework interfaces
+  (`#76 <https://github.com/cm4twc-org/cm4twc/pull/76>`_)
 
 .. rubric:: API changes
 
@@ -33,6 +36,8 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#71 <https://github.com/cm4twc-org/cm4twc/pull/71>`_)
 * include component inputs as arguments given to `initialise` method
   (`#75 <https://github.com/cm4twc-org/cm4twc/pull/75>`_)
+* revise/refine component inward and outward transfers
+  (`#76 <https://github.com/cm4twc-org/cm4twc/pull/76>`_)
 
 .. rubric:: Bug fixes
 
@@ -68,6 +73,10 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 * add `shelf` attribute to `Component` to allow the communication of
   data between component methods
   (`#75 <https://github.com/cm4twc-org/cm4twc/pull/75>`_)
+* add `_inwards` and `_outwards` component class attributes to allow
+  contributors to declare what interface transfers their component
+  use and produce, respectively
+  (`#76 <https://github.com/cm4twc-org/cm4twc/pull/76>`_)
 
 .. rubric:: Dependencies
 

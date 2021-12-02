@@ -47,6 +47,15 @@ class Dummy(OpenWaterComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
+    _inwards = {
+        'transfer_j',
+        'transfer_m'
+    }
+    _outwards = {
+        'transfer_l',
+        'transfer_n',
+        'transfer_o'
+    }
     _inputs_info = {
         'ancillary_b': {
             'units': '1',
