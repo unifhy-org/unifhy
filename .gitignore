@@ -7,7 +7,7 @@ __pycache__/
 docs/_doc_build
 
 # ignore component contributions added during documentation built on GitHub
-cm4twccontrib
+unifhycontrib
 
 # =========================
 # Operating System Files

@@ -3,7 +3,7 @@ PKGS := artemis rfm gr4 smart
 ROOT := ../../..
 SPACE :=
 SPACE +=
-PKGS := $(foreach pkg,$(PKGS),$(ROOT)/cm4twccontrib-$(pkg)/cm4twccontrib-$(pkg))
+PKGS := $(foreach pkg,$(PKGS),$(ROOT)/unifhycontrib-$(pkg)/unifhycontrib-$(pkg))
 PKGS := $(subst $(SPACE),:,$(strip $(PKGS)))
 
 # Minimal makefile for Sphinx documentation

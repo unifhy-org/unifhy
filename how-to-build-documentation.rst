@@ -1,4 +1,4 @@
-How to build the documentation for `cm4twc`
+How to build the documentation for `unifhy`
 ===========================================
 
 Using GitHub Actions workflow and GitHub CLI

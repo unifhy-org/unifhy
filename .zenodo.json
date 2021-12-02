@@ -8,34 +8,10 @@
         {
             "name": "Richard J. Ellis",
             "affiliation": "UK Centre for Ecology and Hydrology, UK"
-        },
-        {
-            "name": "Bryan N. Lawrence",
-            "affiliation": "National Centre for Atmospheric Science, UK"
-        },
-        {
-            "name": "Grenville M. S. Lister",
-            "affiliation": "National Centre for Atmospheric Science, UK"
-        },
-        {
-            "name": "Douglas B. Clark",
-            "affiliation": "UK Centre for Ecology and Hydrology, UK"
-        },
-        {
-            "name": "Andrew G. Hughes",
-            "affiliation": "British Geological Survey, UK"
-        },
-        {
-            "name": "Jan Polcher",
-            "affiliation": "Laboratoire de Météorologie Dynamique, France"
-        },
-        {
-            "name": "Simon J. Dadson",
-            "affiliation": "UK Centre for Ecology and Hydrology, UK"
         }
     ],
-    "title": "cm4twc",
-    "description": "A Community Model for the Terrestrial Water Cycle.",
+    "title": "unifhy",
+    "description": "A Unified Framework for Hydrology.",
     "notes": "Funded by the Natual Environment Research Council (NERC) Hydro-JULES programme (NE/S017380/1).",
     "license": {
         "id": "BSD-3-Clause"
