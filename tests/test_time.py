@@ -5,25 +5,25 @@ import numpy as np
 import cf
 import cftime
 
-import cm4twc
+import unifhy
 
 
 def get_dummy_timedomain(resolution):
     if resolution == 'daily':
-        return cm4twc.TimeDomain(
+        return unifhy.TimeDomain(
             timestamps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                         10, 11, 12, 13, 14, 15, 16],
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
         )
     elif resolution == '2daily':
-        return cm4twc.TimeDomain(
+        return unifhy.TimeDomain(
             timestamps=[0, 2, 4, 6, 8, 10, 12, 14, 16],
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
         )
     elif resolution == '4daily':
-        return cm4twc.TimeDomain(
+        return unifhy.TimeDomain(
             timestamps=[0, 4, 8, 12, 16],
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
@@ -35,7 +35,7 @@ def get_dummy_timedomain(resolution):
 
 
 def get_dummy_timedomain_different_start(resolution):
-    return cm4twc.TimeDomain.from_datetime_sequence(
+    return unifhy.TimeDomain.from_datetime_sequence(
         get_dummy_timedomain(resolution).bounds.datetime_array[1, :]
     )
 
@@ -54,7 +54,7 @@ def get_dummy_dumping_frequency(tag):
 
 def get_dummy_output_time_and_bounds(resolution, delta):
     timedomain = get_dummy_timedomain(resolution)
-    timedomain = cm4twc.TimeDomain.from_start_end_step(
+    timedomain = unifhy.TimeDomain.from_start_end_step(
         start=timedomain.bounds.datetime_array[0, 0],
         end=timedomain.bounds.datetime_array[-1, -1] + delta,
         step=delta,
@@ -68,19 +68,19 @@ class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_standard_on_leap_year(self):
         # create a spacedomain using default instantiation
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='standard'
         )
 
-        td2 = cm4twc.TimeDomain.from_start_end_step(
+        td2 = unifhy.TimeDomain.from_start_end_step(
             start=datetime(2020, 2, 28, 9, 0, 0),
             end=datetime(2020, 3, 2, 9, 0, 0),
             step=timedelta(days=1)
         )
 
-        td3 = cm4twc.TimeDomain.from_datetime_sequence(
+        td3 = unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(datetime(2020, 2, 28, 9, 0, 0),
                        datetime(2020, 2, 29, 9, 0, 0),
                        datetime(2020, 3, 1, 9, 0, 0),
@@ -99,26 +99,26 @@ class TestTimeDomainAPI(unittest.TestCase):
             ),
             axes=f.set_construct(cf.DomainAxis(size=3))
         )
-        td4 = cm4twc.TimeDomain.from_field(f)
+        td4 = unifhy.TimeDomain.from_field(f)
 
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
         self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_gregorian_cal_on_leap_year(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='gregorian'
         )
 
-        td2 = cm4twc.TimeDomain.from_start_end_step(
+        td2 = unifhy.TimeDomain.from_start_end_step(
             start=cftime.DatetimeGregorian(2020, 2, 28, 9, 0, 0),
             end=cftime.DatetimeGregorian(2020, 3, 2, 9, 0, 0),
             step=timedelta(days=1)
         )
 
-        td3 = cm4twc.TimeDomain.from_datetime_sequence(
+        td3 = unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(cftime.DatetimeGregorian(2020, 2, 28, 9, 0, 0),
                        cftime.DatetimeGregorian(2020, 2, 29, 9, 0, 0),
                        cftime.DatetimeGregorian(2020, 3, 1, 9, 0, 0),
@@ -137,26 +137,26 @@ class TestTimeDomainAPI(unittest.TestCase):
             ),
             axes=f.set_construct(cf.DomainAxis(size=3))
         )
-        td4 = cm4twc.TimeDomain.from_field(f)
+        td4 = unifhy.TimeDomain.from_field(f)
 
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
         self.assertEqual(td1, td4)
 
     def test_timedomain_init_variants_julian_cal_on_leap_year(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='julian'
         )
 
-        td2 = cm4twc.TimeDomain.from_start_end_step(
+        td2 = unifhy.TimeDomain.from_start_end_step(
             start=cftime.DatetimeJulian(2020, 2, 28, 9, 0, 0),
             end=cftime.DatetimeJulian(2020, 3, 2, 9, 0, 0),
             step=timedelta(days=1)
         )
 
-        td3 = cm4twc.TimeDomain.from_datetime_sequence(
+        td3 = unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(cftime.DatetimeJulian(2020, 2, 28, 9, 0, 0),
                        cftime.DatetimeJulian(2020, 2, 29, 9, 0, 0),
                        cftime.DatetimeJulian(2020, 3, 1, 9, 0, 0),
@@ -175,7 +175,7 @@ class TestTimeDomainAPI(unittest.TestCase):
             ),
             axes=f.set_construct(cf.DomainAxis(size=3))
         )
-        td4 = cm4twc.TimeDomain.from_field(f)
+        td4 = unifhy.TimeDomain.from_field(f)
 
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
@@ -183,19 +183,19 @@ class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_noleap_cal_on_leap_year(self):
         # test on a leap year (e.g. 2020)
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='noleap'
         )
 
-        td2 = cm4twc.TimeDomain.from_start_end_step(
+        td2 = unifhy.TimeDomain.from_start_end_step(
             start=cftime.DatetimeNoLeap(2020, 2, 28, 9, 0, 0),
             end=cftime.DatetimeNoLeap(2020, 3, 3, 9, 0, 0),
             step=timedelta(days=1)
         )
 
-        td3 = cm4twc.TimeDomain.from_datetime_sequence(
+        td3 = unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(cftime.DatetimeNoLeap(2020, 2, 28, 9, 0, 0),
                        cftime.DatetimeNoLeap(2020, 3, 1, 9, 0, 0),
                        cftime.DatetimeNoLeap(2020, 3, 2, 9, 0, 0),
@@ -214,7 +214,7 @@ class TestTimeDomainAPI(unittest.TestCase):
             ),
             axes=f.set_construct(cf.DomainAxis(size=3))
         )
-        td4 = cm4twc.TimeDomain.from_field(f)
+        td4 = unifhy.TimeDomain.from_field(f)
 
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
@@ -222,19 +222,19 @@ class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_all_leap_cal_on_leap_year(self):
         # test on a leap year (e.g. 2020)
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='all_leap'
         )
 
-        td2 = cm4twc.TimeDomain.from_start_end_step(
+        td2 = unifhy.TimeDomain.from_start_end_step(
             start=cftime.DatetimeAllLeap(2020, 2, 28, 9, 0, 0),
             end=cftime.DatetimeAllLeap(2020, 3, 2, 9, 0, 0),
             step=timedelta(days=1)
         )
 
-        td3 = cm4twc.TimeDomain.from_datetime_sequence(
+        td3 = unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(cftime.DatetimeAllLeap(2020, 2, 28, 9, 0, 0),
                        cftime.DatetimeAllLeap(2020, 2, 29, 9, 0, 0),
                        cftime.DatetimeAllLeap(2020, 3, 1, 9, 0, 0),
@@ -253,7 +253,7 @@ class TestTimeDomainAPI(unittest.TestCase):
             ),
             axes=f.set_construct(cf.DomainAxis(size=3))
         )
-        td4 = cm4twc.TimeDomain.from_field(f)
+        td4 = unifhy.TimeDomain.from_field(f)
 
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
@@ -261,19 +261,19 @@ class TestTimeDomainAPI(unittest.TestCase):
 
     def test_timedomain_init_variants_360_day_cal_on_leap_year(self):
         # test on a leap year (e.g. 2020)
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='360_day'
         )
 
-        td2 = cm4twc.TimeDomain.from_start_end_step(
+        td2 = unifhy.TimeDomain.from_start_end_step(
             start=cftime.Datetime360Day(2020, 2, 28, 9, 0, 0),
             end=cftime.Datetime360Day(2020, 3, 1, 9, 0, 0),
             step=timedelta(days=1)
         )
 
-        td3 = cm4twc.TimeDomain.from_datetime_sequence(
+        td3 = unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(cftime.Datetime360Day(2020, 2, 28, 9, 0, 0),
                        cftime.Datetime360Day(2020, 2, 29, 9, 0, 0),
                        cftime.Datetime360Day(2020, 2, 30, 9, 0, 0),
@@ -292,7 +292,7 @@ class TestTimeDomainAPI(unittest.TestCase):
             ),
             axes=f.set_construct(cf.DomainAxis(size=3))
         )
-        td4 = cm4twc.TimeDomain.from_field(f)
+        td4 = unifhy.TimeDomain.from_field(f)
 
         self.assertEqual(td1, td2)
         self.assertEqual(td1, td3)
@@ -301,7 +301,7 @@ class TestTimeDomainAPI(unittest.TestCase):
     @unittest.expectedFailure
     def test_timedomain_init_irregular_timestep_in_timestamp_sequence(self):
         # should fail because last timestep is shorter
-        cm4twc.TimeDomain(
+        unifhy.TimeDomain(
             timestamps=np.array([0, 2, 4, 5]),
             units='days since 2020-02-28 09:00:00Z',
             calendar='standard'
@@ -310,7 +310,7 @@ class TestTimeDomainAPI(unittest.TestCase):
     @unittest.expectedFailure
     def test_timedomain_init_irregular_timestep_in_datetime_sequence(self):
         # should fail because first timestep is longer
-        cm4twc.TimeDomain.from_datetime_sequence(
+        unifhy.TimeDomain.from_datetime_sequence(
             datetimes=(datetime(2020, 1, 1, 9, 0, 0),
                        datetime(2020, 1, 3, 9, 0, 0),
                        datetime(2020, 1, 4, 9, 0, 0),
@@ -321,13 +321,13 @@ class TestTimeDomainAPI(unittest.TestCase):
 class TestTimeDomainComparison(unittest.TestCase):
 
     def test_timedomain_with_different_reference_dates(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([1, 2, 3, 4]),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
         )
 
-        td2 = cm4twc.TimeDomain(
+        td2 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2019-01-02 09:00:00Z',
             calendar='standard'
@@ -335,7 +335,7 @@ class TestTimeDomainComparison(unittest.TestCase):
 
         self.assertEqual(td1, td2)
 
-        td3 = cm4twc.TimeDomain(
+        td3 = unifhy.TimeDomain(
             timestamps=np.array([1, 2, 3, 4]),
             units='days since 2019-01-02 09:00:00Z',
             calendar='standard'
@@ -344,19 +344,19 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertNotEqual(td1, td3)
 
     def test_timedomain_with_different_units_of_time(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]) * 86400,
             units='seconds since 2019-01-01 09:00:00Z',
             calendar='standard'
         )
 
-        td2 = cm4twc.TimeDomain(
+        td2 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]) * 24,
             units='hours since 2019-01-01 09:00:00Z',
             calendar='standard'
         )
 
-        td3 = cm4twc.TimeDomain(
+        td3 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
@@ -367,16 +367,16 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td2, td3)
 
     def test_timedomain_with_different_alias_calendars(self):
-        for cal, alias in cm4twc.time._supported_calendar_mapping.items():
+        for cal, alias in unifhy.time._supported_calendar_mapping.items():
             if not cal == alias:
 
-                td1 = cm4twc.TimeDomain(
+                td1 = unifhy.TimeDomain(
                     timestamps=np.array([0, 1, 2, 3]),
                     units='days since 2019-01-01 09:00:00Z',
                     calendar=cal
                 )
 
-                td2 = cm4twc.TimeDomain(
+                td2 = unifhy.TimeDomain(
                     timestamps=np.array([0, 1, 2, 3]),
                     units='days since 2019-01-01 09:00:00Z',
                     calendar=alias
@@ -390,19 +390,19 @@ class TestTimeDomainComparison(unittest.TestCase):
                         "found equal.".format(cal, alias)) from e
 
     def test_timedomain_with_different_dtypes(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3], dtype=np.float32),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
         )
 
-        td2 = cm4twc.TimeDomain(
+        td2 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3], dtype=np.float64),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
         )
 
-        td3 = cm4twc.TimeDomain(
+        td3 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3], dtype=np.int),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
@@ -413,13 +413,13 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td2, td3)
 
     def test_timedomain_with_different_lengths(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3, 4]),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
         )
 
-        td2 = cm4twc.TimeDomain(
+        td2 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2019-01-01 09:00:00Z',
             calendar='standard'
@@ -430,13 +430,13 @@ class TestTimeDomainComparison(unittest.TestCase):
     @unittest.expectedFailure
     def test_timedomain_with_different_non_alias_calendars(self):
         # should fail because it cannot compare across different calendars
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2019-01-01 09:00:00Z',
             calendar='gregorian'
         )
 
-        td2 = cm4twc.TimeDomain(
+        td2 = unifhy.TimeDomain(
             timestamps=np.array([0, 1, 2, 3]),
             units='days since 2019-01-01 09:00:00Z',
             calendar='julian'
@@ -445,25 +445,25 @@ class TestTimeDomainComparison(unittest.TestCase):
         self.assertEqual(td1, td2)
 
     def test_timedomain_spanned_periods(self):
-        td1 = cm4twc.TimeDomain(
+        td1 = unifhy.TimeDomain(
             timestamps=np.array([1, 2, 3, 4, 5]),
             units='days since 1970-01-01 00:00:00',
             calendar='gregorian'
         )
 
-        td2 = cm4twc.TimeDomain(
+        td2 = unifhy.TimeDomain(
             timestamps=np.array([1, 3, 5]),
             units='days since 1970-01-01 00:00:00',
             calendar='gregorian'
         )
 
-        td3 = cm4twc.TimeDomain(
+        td3 = unifhy.TimeDomain(
             timestamps=np.array([1, 2, 3, 4]),
             units='days since 1970-01-01 00:00:00',
             calendar='gregorian'
         )
 
-        td4 = cm4twc.TimeDomain(
+        td4 = unifhy.TimeDomain(
             timestamps=np.array([2, 3, 4, 5]),
             units='days since 1970-01-01 00:00:00',
             calendar='gregorian'
@@ -483,7 +483,7 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainAPI))
     test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainComparison))
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.time))
+    test_suite.addTests(doctest.DocTestSuite(unifhy.time))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

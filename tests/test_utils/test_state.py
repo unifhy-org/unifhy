@@ -1,10 +1,10 @@
 import numpy as np
 
-import cm4twc
+import unifhy
 
 
 def compare_states(some_states, some_other_states):
-    rtol, atol = cm4twc.rtol(), cm4twc.atol()
+    rtol, atol = unifhy.rtol(), unifhy.atol()
 
     comparison = []
     if some_states is not None:

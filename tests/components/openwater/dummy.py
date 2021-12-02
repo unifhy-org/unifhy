@@ -1,4 +1,4 @@
-from cm4twc.component import OpenWaterComponent
+from unifhy.component import OpenWaterComponent
 try:
     from .dummyfortran import dummyfortran
 except ImportError:

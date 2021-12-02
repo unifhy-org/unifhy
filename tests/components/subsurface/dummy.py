@@ -1,4 +1,4 @@
-from cm4twc.component import SubSurfaceComponent
+from unifhy.component import SubSurfaceComponent
 try:
     from .dummyfortran import dummyfortran
 except ImportError:

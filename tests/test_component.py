@@ -2,7 +2,7 @@ from importlib import import_module
 from datetime import timedelta
 import cf
 
-import cm4twc
+import unifhy
 
 from tests.test_time import get_dummy_timedomain
 from tests.test_space import (get_dummy_spacedomain,
@@ -185,7 +185,7 @@ def get_dummy_component(category, kind, time_, space_, source):
             io_slice=10
         )
     elif kind == 'd':
-        return cm4twc.DataComponent(
+        return unifhy.DataComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset(
@@ -196,7 +196,7 @@ def get_dummy_component(category, kind, time_, space_, source):
             io_slice=10
         )
     else:  # kind == 'n'
-        return cm4twc.NullComponent(
+        return unifhy.NullComponent(
             timedomain=timedomain,
             spacedomain=spacedomain,
             substituting_class=component_class

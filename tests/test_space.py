@@ -4,27 +4,27 @@ import unittest
 import doctest
 import cf
 
-import cm4twc
+import unifhy
 from tests.test_data import get_dummy_dataset
 
 
 def get_dummy_spacedomain(resolution):
     if resolution == '1deg':
-        return cm4twc.LatLonGrid.from_extent_and_resolution(
+        return unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=1,
             longitude_extent=(-2, 1),
             longitude_resolution=1
         )
     elif resolution == 'pt5deg':
-        return cm4twc.LatLonGrid.from_extent_and_resolution(
+        return unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=0.5,
             longitude_extent=(-2, 1),
             longitude_resolution=0.5
         )
     elif resolution == 'pt25deg':
-        return cm4twc.LatLonGrid.from_extent_and_resolution(
+        return unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=0.25,
             longitude_extent=(-2, 1),
@@ -48,7 +48,7 @@ class TestLatLonGridAPI(unittest.TestCase):
 
     def test_init_variants(self):
         # create a spacedomain using default instantiation
-        sd1 = cm4twc.LatLonGrid(
+        sd1 = unifhy.LatLonGrid(
             latitude=[51.5, 52.5, 53.5, 54.5],
             longitude=np.array([-1.5, -0.5, 0.5]),
             latitude_bounds=np.array([[51, 52], [52, 53], [53, 54], [54, 55]]),
@@ -58,7 +58,7 @@ class TestLatLonGridAPI(unittest.TestCase):
         )
 
         # create a spacedomain using constructor method based on parameters
-        sd2 = cm4twc.LatLonGrid.from_extent_and_resolution(
+        sd2 = unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=1,
             longitude_extent=(-2, 1),
@@ -72,7 +72,7 @@ class TestLatLonGridAPI(unittest.TestCase):
         # # create a spacedomain using constructor method based on field
         # dataset = get_dummy_dataset('surfacelayer', 'daily', '1deg')
         # field = dataset[list(dataset.keys())[0]].field
-        # sd3 = cm4twc.LatLonGrid.from_field(field)
+        # sd3 = unifhy.LatLonGrid.from_field(field)
         #
         # # check that they are not equal
         # # (because field from dummy data has no Z coordinate)
@@ -84,9 +84,9 @@ class TestLatLonGridAPI(unittest.TestCase):
 class TestGridComparison(unittest.TestCase):
 
     grids = [
-        cm4twc.LatLonGrid,
-        cm4twc.RotatedLatLonGrid,
-        cm4twc.BritishNationalGrid
+        unifhy.LatLonGrid,
+        unifhy.RotatedLatLonGrid,
+        unifhy.BritishNationalGrid
     ]
 
     axis_name = {
@@ -211,7 +211,7 @@ if __name__ == '__main__':
         test_loader.loadTestsFromTestCase(TestGridComparison)
     )
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.space))
+    test_suite.addTests(doctest.DocTestSuite(unifhy.space))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)
