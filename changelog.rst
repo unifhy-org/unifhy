@@ -12,6 +12,9 @@ Yet to be versioned and released. Only available from *dev* branch until then.
   (`#67 <https://github.com/cm4twc-org/cm4twc/pull/67>`_)
 * enforce two-dimensional spatial domains for components
   (`#69 <https://github.com/cm4twc-org/cm4twc/pull/69>`_)
+* allow components to use/produce only parts of the standardised transfers
+  through the framework interfaces
+  (`#76 <https://github.com/cm4twc-org/cm4twc/pull/76>`_)
 
 .. rubric:: API changes
 
