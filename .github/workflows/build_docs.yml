@@ -18,17 +18,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout ${{ matrix.components }} component for cm4twc
+      - name: checkout ${{ matrix.components }} component for unifhy
         uses: actions/checkout@v2
         with:
-          repository: cm4twc-org/cm4twccontrib-${{ matrix.components }}
+          repository: unifhy-org/unifhycontrib-${{ matrix.components }}
           ref: dev
 
       - name: store ${{ matrix.components }} as artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.components }}
-          path: cm4twccontrib/${{ matrix.components }}
+          path: unifhycontrib/${{ matrix.components }}
 
   build-docs:
 
@@ -50,7 +50,7 @@ jobs:
     - name: bring back all component artifacts
       uses: actions/download-artifact@v2
       with:
-        path: cm4twccontrib
+        path: unifhycontrib
 
     - name: set up miniconda environment
       uses: conda-incubator/setup-miniconda@v2
