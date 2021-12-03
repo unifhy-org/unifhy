@@ -1375,12 +1375,7 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
         }
     }
     _outwards_info = {
-        'canopy_throughfall_flux': {
-            'units': 'kg m-2 s-1',
-            'to': ['subsurface'],
-            'method': 'mean'
-        },
-        'snow_melt_flux': {
+        'canopy_liquid_throughfall_and_snow_melt_flux': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
             'method': 'mean'
@@ -1419,12 +1414,7 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'subsurface'
     _inwards_info = {
-        'canopy_throughfall_flux': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
-        },
-        'snow_melt_flux': {
+        'canopy_liquid_throughfall_and_snow_melt_flux': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
             'method': 'mean'

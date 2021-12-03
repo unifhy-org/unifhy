@@ -44,21 +44,20 @@ component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
    ==  ==============================================  ========================
    #   Name                                            Unit
    ==  ==============================================  ========================
-   1   canopy_throughfall_flux                         |kg m-2 s-1|
-   2   snow_melt_flux                                  |kg m-2 s-1|
-   3   transpiration_flux_from_root_uptake             |kg m-2 s-1|
-   4   soil_water_stress_for_transpiration             1
-   5   direct_water_evaporation_flux_from_soil         |kg m-2 s-1|
-   6   soil_water_stress_for_direct_soil_evaporation   1
-   7   water_evaporation_flux_from_standing_water      |kg m-2 s-1|
-   8   standing_water_area_fraction                    1
-   9   total_water_area_fraction                       1
-   10  water_evaporation_flux_from_open_water          |kg m-2 s-1|
-   11  direct_throughfall_flux                         |kg m-2 s-1|
-   12  surface_runoff_flux_delivered_to_rivers         |kg m-2 s-1|
-   13  net_groundwater_flux_to_rivers                  |kg m-2 s-1|
-   14  open_water_area_fraction                        1
-   15  open_water_surface_height                       m
+   1   canopy_liquid_throughfall_and_snow_melt_flux    |kg m-2 s-1|
+   2   transpiration_flux_from_root_uptake             |kg m-2 s-1|
+   3   soil_water_stress_for_transpiration             1
+   4   direct_water_evaporation_flux_from_soil         |kg m-2 s-1|
+   5   soil_water_stress_for_direct_soil_evaporation   1
+   6   water_evaporation_flux_from_standing_water      |kg m-2 s-1|
+   7   standing_water_area_fraction                    1
+   8   total_water_area_fraction                       1
+   9   water_evaporation_flux_from_open_water          |kg m-2 s-1|
+   10  direct_throughfall_flux                         |kg m-2 s-1|
+   11  surface_runoff_flux_delivered_to_rivers         |kg m-2 s-1|
+   12  net_groundwater_flux_to_rivers                  |kg m-2 s-1|
+   13  open_water_area_fraction                        1
+   14  open_water_surface_height                       m
    ==  ==============================================  ========================
 
 .. |kg m-2 s-1| replace:: kg m\ :sup:`-2` s\ :sup:`-1`
