@@ -1,7 +1,7 @@
 import unittest
 import doctest
 
-import cm4twc._utils
+import unifhy._utils
 from tests.test_time import (
     get_dummy_timedomain, get_dummy_dumping_frequency,
     get_dummy_timedomain_different_start
@@ -36,7 +36,7 @@ class TestClock(unittest.TestCase):
                   True, False, False, False, False, False, False, False]
 
     def test_clock_init(self):
-        clock = cm4twc._utils.Clock(
+        clock = unifhy._utils.Clock(
             {'surfacelayer': self.td_a,
              'subsurface': self.td_b,
              'openwater': self.td_c},
@@ -57,7 +57,7 @@ class TestClock(unittest.TestCase):
         )
 
     def test_clock_iteration(self):
-        clock = cm4twc._utils.Clock(
+        clock = unifhy._utils.Clock(
             {'surfacelayer': self.td_a,
              'subsurface': self.td_b,
              'openwater': self.td_c}
@@ -87,7 +87,7 @@ class TestClock(unittest.TestCase):
 
     @unittest.expectedFailure
     def test_clock_incompatible_timedomains(self):
-        clock = cm4twc._utils.Clock(
+        clock = unifhy._utils.Clock(
             {
                 'surfacelayer': get_dummy_timedomain_different_start('daily'),
                 'subsurface': self.td_b,
@@ -97,7 +97,7 @@ class TestClock(unittest.TestCase):
 
     @unittest.expectedFailure
     def test_clock_incompatible_dumping_frequency(self):
-        clock = cm4twc._utils.Clock(
+        clock = unifhy._utils.Clock(
             {
                 'surfacelayer': self.td_a,
                 'subsurface': self.td_b,
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     )
 
     test_suite.addTests(
-        doctest.DocTestSuite(cm4twc._utils.clock)
+        doctest.DocTestSuite(unifhy._utils.clock)
     )
 
     runner = unittest.TextTestRunner(verbosity=2)

@@ -1,4 +1,4 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 API Reference
@@ -10,7 +10,7 @@ API Reference
    :align: center
    :alt: UML class diagram
 
-   Fig. 3: UML Class Diagram of `cm4twc`.
+   Fig. 3: UML Class Diagram of `unifhy`.
 
 Model
 -----
@@ -18,7 +18,7 @@ Model
 .. toctree::
    :maxdepth: 1
 
-   api/classes/cm4twc.Model.rst
+   api/classes/unifhy.Model.rst
 
 Components
 ----------
@@ -26,11 +26,11 @@ Components
 .. toctree::
    :maxdepth: 1
 
-   api/classes/cm4twc.SurfaceLayerComponent.rst
-   api/classes/cm4twc.SubSurfaceComponent.rst
-   api/classes/cm4twc.OpenWaterComponent.rst
-   api/classes/cm4twc.DataComponent.rst
-   api/classes/cm4twc.NullComponent.rst
+   api/classes/unifhy.SurfaceLayerComponent.rst
+   api/classes/unifhy.SubSurfaceComponent.rst
+   api/classes/unifhy.OpenWaterComponent.rst
+   api/classes/unifhy.DataComponent.rst
+   api/classes/unifhy.NullComponent.rst
 
 Time
 ----
@@ -38,7 +38,7 @@ Time
 .. toctree::
    :maxdepth: 1
 
-   api/classes/cm4twc.TimeDomain.rst
+   api/classes/unifhy.TimeDomain.rst
 
 
 Space
@@ -47,9 +47,9 @@ Space
 .. toctree::
    :maxdepth: 1
 
-   api/classes/cm4twc.LatLonGrid.rst
-   api/classes/cm4twc.RotatedLatLonGrid.rst
-   api/classes/cm4twc.BritishNationalGrid.rst
+   api/classes/unifhy.LatLonGrid.rst
+   api/classes/unifhy.RotatedLatLonGrid.rst
+   api/classes/unifhy.BritishNationalGrid.rst
 
 Data
 ----
@@ -57,4 +57,4 @@ Data
 .. toctree::
    :maxdepth: 1
 
-   api/classes/cm4twc.DataSet.rst
+   api/classes/unifhy.DataSet.rst

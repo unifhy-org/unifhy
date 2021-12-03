@@ -6,7 +6,7 @@ import json
 with open("README.rst", 'r') as fh:
     long_desc = fh.read()
 
-with open("cm4twc/version.py", 'r') as fv:
+with open("unifhy/version.py", 'r') as fv:
     exec(fv.read())
 
 
@@ -33,17 +33,17 @@ def read_authors(filename):
 
 
 setup(
-    name='cm4twc',
+    name='unifhy',
     version=__version__,
-    description='Community Model for the Terrestrial Water Cycle',
+    description='Unified Framework for Hydrology',
     long_description=long_desc,
     long_description_content_type="text/x-rst",
-    download_url="https://pypi.python.org/pypi/cm4twc",
+    download_url="https://pypi.python.org/pypi/unifhy",
     project_urls={
-        'Bug Tracker': 'https://github.com/cm4twc-org/cm4twc/issues',
-        'User Support': 'https://github.com/cm4twc-org/cm4twc/discussions',
-        'Documentation': 'https://cm4twc-org.github.io/cm4twc',
-        'Source Code': 'https://github.com/cm4twc-org/cm4twc',
+        'Bug Tracker': 'https://github.com/unifhy-org/unifhy/issues',
+        'User Support': 'https://github.com/unifhy-org/unifhy/discussions',
+        'Documentation': 'https://unifhy-org.github.io/unifhy',
+        'Source Code': 'https://github.com/unifhy-org/unifhy',
     },
     author=read_authors('.zenodo.json'),
     license='BSD-3',

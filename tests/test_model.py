@@ -5,7 +5,7 @@ import numpy as np
 from copy import deepcopy
 from glob import glob
 
-import cm4twc
+import unifhy
 from tests.test_time import (get_dummy_timedomain,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
@@ -38,7 +38,7 @@ class Simulator(object):
     def from_yaml(cls, time_, space_):
         return cls(
             time_, space_,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 'configurations/dummy_{}_{}.yml'.format(time_, space_)
             )
         )
@@ -66,7 +66,7 @@ class Simulator(object):
         )
 
         # try to get an instance of model with the given combination
-        model = cm4twc.Model(
+        model = unifhy.Model(
             identifier='test-{}-{}-{}{}{}{}'.format(
                 time_, space_,
                 surfacelayer_kind, subsurface_kind, openwater_kind,
@@ -334,7 +334,7 @@ class BasicTestModel(object):
         # set up another model using YAML of first model
         simulator_2 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
@@ -349,7 +349,7 @@ class BasicTestModel(object):
         # set up yet another model using YAML of first model
         simulator_3 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
@@ -384,7 +384,7 @@ class BasicTestModel(object):
         # set up another model using YAML of first model
         simulator_2 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
@@ -440,7 +440,7 @@ class BasicTestModel(object):
         # set up another model using YAML of first model
         simulator_2 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
@@ -490,7 +490,7 @@ class BasicTestModel(object):
         """
         cat = component.category
         # if component is "real", otherwise no states
-        if not isinstance(component, cm4twc.DataComponent):
+        if not isinstance(component, unifhy.DataComponent):
             for state in ['state_a', 'state_b']:
                 if exp_records_raw[self.t][cat].get(state) is None:
                     # some components feature only one state
@@ -535,11 +535,11 @@ class BasicTestModel(object):
         for component in [model.surfacelayer,
                           model.subsurface,
                           model.openwater]:
-            rtol, atol = cm4twc.rtol(), cm4twc.atol()
+            rtol, atol = unifhy.rtol(), unifhy.atol()
 
             # if component is "real", otherwise no records requested
             cat = component.category
-            if not isinstance(component, cm4twc.DataComponent):
+            if not isinstance(component, unifhy.DataComponent):
                 for name, frequencies in component.records.items():
                     for delta, methods in frequencies.items():
                         for method in methods:
@@ -630,7 +630,7 @@ class AdvancedTestModel(BasicTestModel):
                 # set up another model using YAML of first model
                 simulator_2 = Simulator(
                     self.t, self.s,
-                    cm4twc.Model.from_yaml(
+                    unifhy.Model.from_yaml(
                         os.sep.join([simulator_1.model.saving_directory,
                                      '{}.yml'.format(simulator_1.model.identifier)])
                     )
@@ -795,7 +795,7 @@ if __name__ == '__main__':
         test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace)
     )
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
+    test_suite.addTests(doctest.DocTestSuite(unifhy.model))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

@@ -1,4 +1,4 @@
-How to release a new version for `cm4twc`
+How to release a new version for `unifhy`
 =========================================
 
 Between releases, changes are made on the 'dev' branch and recorded in
@@ -19,7 +19,7 @@ justified or required, the following steps must be followed.
 
    git checkout -b release-v#.#.# dev
 
-2. update the version in `<cm4twc/version.py>`_:
+2. update the version in `<unifhy/version.py>`_:
 
 .. code-block:: python
 

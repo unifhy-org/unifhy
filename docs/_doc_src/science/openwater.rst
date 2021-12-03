@@ -8,6 +8,6 @@ Open Water Components
    :toctree: openwater/
    :template: component.rst
 
-   cm4twccontrib.gr4.OpenWaterComponent
-   cm4twccontrib.smart.OpenWaterComponent
-   cm4twccontrib.rfm.OpenWaterComponent
+   unifhycontrib.gr4.OpenWaterComponent
+   unifhycontrib.smart.OpenWaterComponent
+   unifhycontrib.rfm.OpenWaterComponent

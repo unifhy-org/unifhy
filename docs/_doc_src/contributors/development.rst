@@ -1,4 +1,4 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 Development
@@ -63,7 +63,7 @@ component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
 
 .. |kg m-2 s-1| replace:: kg m\ :sup:`-2` s\ :sup:`-1`
 
-For component contributions to be fully `cm4twc`-compliant, they need to
+For component contributions to be fully `unifhy`-compliant, they need to
 comply with this fixed interface. If your science component contribution
 is overlapping several components, it requires to be refactored into the
 relevant number of components.
@@ -85,10 +85,10 @@ See an example of a mock surface layer component creation below.
 .. code-block:: python
    :caption: Subclassing from `SurfaceLayerComponent` class.
 
-   import cm4twc
+   import unifhy
 
 
-   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
+   class SurfaceLayerComponent(unifhy.component.SurfaceLayerComponent):
        pass
 
 
@@ -123,10 +123,10 @@ See an example of a mock component description below.
 .. code-block:: python
    :caption: Using the component class docstring for description and acknowledgment.
 
-   import cm4twc
+   import unifhy
 
 
-   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
+   class SurfaceLayerComponent(unifhy.component.SurfaceLayerComponent):
        """Summary line describing the component.
 
        More elaborate description for the component.
@@ -286,8 +286,8 @@ The framework gives the states as keyword arguments to the component
 
    .. list-table::
 
-      * - .. automethod:: cm4twc._utils.state.State.get_timestep
-      * - .. automethod:: cm4twc._utils.state.State.set_timestep
+      * - .. automethod:: unifhy._utils.state.State.get_timestep
+      * - .. automethod:: unifhy._utils.state.State.set_timestep
 
 The retrieved state arrays are of the same size as the component space
 domain plus (an) additional trailing axis (axes) if the given component
@@ -360,10 +360,10 @@ See a detailed example of a mock component definition below.
 .. code-block:: python
    :caption: Completing the component class definition in the class attributes.
 
-   import cm4twc
+   import unifhy
 
 
-   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
+   class SurfaceLayerComponent(unifhy.component.SurfaceLayerComponent):
        """component description here"""
        _inwards = {
            'inwards_1',
@@ -515,10 +515,10 @@ See a detailed example of a mock component implementation below.
 .. code-block:: python
    :caption: Implementing the three mandatory methods initialise, run, and finalise.
 
-   import cm4twc
+   import unifhy
 
 
-   class SurfaceLayerComponent(cm4twc.component.SurfaceLayerComponent):
+   class SurfaceLayerComponent(unifhy.component.SurfaceLayerComponent):
        """component description here"""
 
        # component definition here

@@ -19,11 +19,11 @@ sys.path.insert(0, os.path.abspath('../..'))
 sys.path.append(os.path.abspath("./_doc_ext"))
 
 
-with open('../../cm4twc/version.py') as fv:
+with open('../../unifhy/version.py') as fv:
     exec(fv.read())
 
 # -- Project information -----------------------------------------------------
-project = 'cm4twc'
+project = 'unifhy'
 copyright = '2020-{}, UK Centre for Ecology & Hydrology'.format(
     datetime.now().year
 )
@@ -128,7 +128,7 @@ html_theme = 'pydata_sphinx_theme'
 html_static_path = ['../_doc_static']
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'cm4twcdoc'
+htmlhelp_basename = 'unifhydoc'
 
 # Paths (filenames) here must be relative to (under) html_static_path as above:
 html_css_files = [
@@ -142,7 +142,7 @@ html_sidebars = {
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
-html_baseurl = 'https://cm4twc-org.github.io/cm4twc'
+html_baseurl = 'https://unifhy-org.github.io/unifhy'
 
 html_logo = '../_doc_img/logo_colours.svg'
 
@@ -154,7 +154,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://github.com/cm4twc-org/cm4twc",
+            "url": "https://github.com/unifhy-org/unifhy",
             "icon": "fab fa-github",
         }
     ],

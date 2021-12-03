@@ -1,17 +1,17 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 Tutorial
 ========
 
-This section showcases the basic usage of modelling framework `cm4twc`
+This section showcases the basic usage of modelling framework `unifhy`
 (Community Model for the Terrestrial Water Cycle).
 
 .. code-block:: python
    :caption: Importing the package and checking its version.
 
-   >>> import cm4twc
-   >>> print(cm4twc.__version__)
+   >>> import unifhy
+   >>> print(unifhy.__version__)
    0.1.0-beta
 
 The central object in the framework is the `Model`, which requires three
@@ -35,7 +35,7 @@ Time
    :caption: Instantiating a `TimeDomain` by specifying its start, end, and step.
 
    >>> from datetime import datetime, timedelta
-   >>> timedomain = cm4twc.TimeDomain.from_start_end_step(
+   >>> timedomain = unifhy.TimeDomain.from_start_end_step(
    ...    start=datetime(2017, 1, 1, 0, 0, 0),
    ...    end=datetime(2018, 1, 1, 0, 0, 0),
    ...    step=timedelta(hours=1),
@@ -63,7 +63,7 @@ The current supported spatial configurations can be found in the
 .. code-block:: python
    :caption: Instantiating a `LatLonGrid` from its dimensions' extents and resolutions.
 
-   >>> spacedomain = cm4twc.LatLonGrid.from_extent_and_resolution(
+   >>> spacedomain = unifhy.LatLonGrid.from_extent_and_resolution(
    ...    latitude_extent=(51, 55),
    ...    latitude_resolution=0.5,
    ...    longitude_extent=(-2, 1),
@@ -123,7 +123,7 @@ instances.
 .. code-block:: python
    :caption: Instantiating `DataSet` from a CF-compliant netCDF file.
 
-   >>> dataset_surfacelayer = cm4twc.DataSet(
+   >>> dataset_surfacelayer = unifhy.DataSet(
    ...     files=['in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc',
    ...            'in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc',
    ...            'in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc',
@@ -149,7 +149,7 @@ instances.
        vegetation_height(latitude(360), longitude(720)) m
        wind_speed(time(8760), latitude(20), longitude(28)) m s-1
    }
-   >>> dataset_subsurface = cm4twc.DataSet(
+   >>> dataset_subsurface = unifhy.DataSet(
    ...     files=['in/ancillary/saturated_hydraulic_conductivity.nc',
    ...            'in/ancillary/topmodel_saturation_capacity.nc',
    ...            'in/ancillary/topographic_index.nc'],
@@ -157,7 +157,7 @@ instances.
    ...                   'topmodel saturation capacity': 'topmodel_saturation_capacity',
    ...                   'topographic index': 'topographic_index'}
    ... )
-   >>> dataset_openwater = cm4twc.DataSet(
+   >>> dataset_openwater = unifhy.DataSet(
    ...     files='in/ancillary/rfm_iarea.nc',
    ...     name_mapping={'RFM drainage area in cell counts (WFDEI)': 'i_area'}
    ... )
@@ -175,8 +175,8 @@ and data needs differ.
 .. code-block:: python
    :caption: Exploring the signature of 'Artemis' `SubSurfaceComponent`.
 
-   >>> import cm4twccontrib.artemis
-   >>> print(cm4twccontrib.artemis.SubSurfaceComponent)
+   >>> import unifhycontrib.artemis
+   >>> print(unifhycontrib.artemis.SubSurfaceComponent)
    SubSurfaceComponent(
        category: subsurface
        inwards info:
@@ -208,14 +208,14 @@ and data needs differ.
 .. note::
 
    This information is also available on the online documentation, e.g.
-   see :doc:`Artemis <../science/subsurface/cm4twccontrib.artemis.SubSurfaceComponent>`
+   see :doc:`Artemis <../science/subsurface/unifhycontrib.artemis.SubSurfaceComponent>`
    subsurface component page.
 
 
 .. code-block:: python
    :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
 
-   >>> component = cm4twccontrib.artemis.SubSurfaceComponent(
+   >>> component = unifhycontrib.artemis.SubSurfaceComponent(
    ...     saving_directory='outputs',
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
@@ -249,20 +249,20 @@ three parts of the terrestrial water cycle.
 .. code-block:: python
    :caption: Instantiating a `Model`.
 
-   >>> import cm4twccontrib.rfm
-   >>> model = cm4twc.Model(
+   >>> import unifhycontrib.rfm
+   >>> model = unifhy.Model(
    ...     identifier='tutorial',
    ...     config_directory='configurations',
    ...     saving_directory='outputs',
-   ...     surfacelayer=cm4twc.surfacelayer.Artemis(
+   ...     surfacelayer=unifhy.surfacelayer.Artemis(
    ...         'outputs', timedomain, spacedomain, dataset_surfacelayer,
    ...         parameters={}
    ...     ),
-   ...     subsurface=cm4twccontrib.artemis.SubSurfaceComponent(
+   ...     subsurface=unifhycontrib.artemis.SubSurfaceComponent(
    ...         'outputs', timedomain, spacedomain, dataset_subsurface,
    ...         parameters={}
    ...     ),
-   ...     openwater=cm4twccontrib.rfm.OpenWaterComponent(
+   ...     openwater=unifhycontrib.rfm.OpenWaterComponent(
    ...         'outputs', timedomain, spacedomain, dataset_openwater,
    ...         parameters={'c_land': (0.20, 'm s-1'),
    ...                     'cb_land': (0.10, 'm s-1'),
@@ -283,9 +283,9 @@ three parts of the terrestrial water cycle.
        identifier: tutorial
        config directory: configurations
        saving directory: outputs
-       surfacelayer: cm4twccontrib.artemis.surfacelayer
-       subsurface: cm4twccontrib.artemis.subsurface
-       openwater: cm4twccontrib.rfm.openwater
+       surfacelayer: unifhycontrib.artemis.surfacelayer
+       subsurface: unifhycontrib.artemis.subsurface
+       openwater: unifhycontrib.rfm.openwater
    )
 
 .. warning::

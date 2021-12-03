@@ -1,4 +1,4 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 Files
@@ -12,4 +12,4 @@ save the configuration of a `Model`.
 
 .. literalinclude:: ../../../tests/configurations/dummy_same_t_same_s.yml
    :language: yaml
-   :caption: Content of a `cm4twc` configuration YAML file for `Model`.
+   :caption: Content of a `unifhy` configuration YAML file for `Model`.

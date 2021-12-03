@@ -1,4 +1,4 @@
-from cm4twc.component import SurfaceLayerComponent
+from unifhy.component import SurfaceLayerComponent
 try:
     from .dummyfortran import dummyfortran
 except ImportError:

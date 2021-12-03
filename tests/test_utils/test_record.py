@@ -1,7 +1,7 @@
 import numpy as np
 from netCDF4 import Dataset
 
-import cm4twc
+import unifhy
 from tests.test_time import get_dummy_output_time_and_bounds
 from tests.test_component import time_resolutions
 
@@ -85,7 +85,7 @@ def get_expected_record(time_, component, name, delta, method):
     category = component.category
 
     # map to default for alias methods
-    method = cm4twc._utils.record._methods_map[method]
+    method = unifhy._utils.record._methods_map[method]
 
     # aggregate raw record using method and relevant slices
     expected_record = aggregate_raw_record(
@@ -103,10 +103,10 @@ def get_expected_record(time_, component, name, delta, method):
 
 
 def get_produced_record(component, name, delta, method):
-    rtol, atol = cm4twc.rtol(), cm4twc.atol()
+    rtol, atol = unifhy.rtol(), unifhy.atol()
 
     # map to default for alias methods
-    method = cm4twc._utils.record._methods_map[method]
+    method = unifhy._utils.record._methods_map[method]
 
     # load record from stream file
     with Dataset(component._record_streams[delta].file, 'r') as f:
