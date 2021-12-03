@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Development &#8212; cm4twc latest documentation</title>
+    <title>Development &#8212; unifhy latest documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -32,7 +32,7 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/contributors/development.html" />
+    <link rel="canonical" href="https://unifhy-org.github.io/unifhy/contributors/development.html" />
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -72,7 +72,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
               
-                <a class="dropdown-item" href="https://cm4twc-org.github.io/cm4twc">latest</a>
+                <a class="dropdown-item" href="https://unifhy-org.github.io/unifhy">latest</a>
               
             </div>
           </li>
@@ -132,7 +132,7 @@
 
       <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cm4twc-org/cm4twc" rel="noopener" target="_blank" title="GitHub">
+          <a class="nav-link" href="https://github.com/unifhy-org/unifhy" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github"></i></span>
             <label class="sr-only">GitHub</label>
           </a>
@@ -246,8 +246,8 @@ that is compliant with the framework.</p>
 <div class="section" id="create-your-science-component-by-subclassing-a-generic-framework-component">
 <h2>Create your science component by subclassing a generic framework component<a class="headerlink" href="#create-your-science-component-by-subclassing-a-generic-framework-component" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>In the modelling framework, the terrestrial water cycle is divided into
-three components, i.e. <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>,
-and <a class="reference internal" href="../api/classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> (see <a class="reference internal" href="../index.html#fig-diagram"><span class="std std-ref">Fig. 1</span></a>). These are the
+three components, i.e. <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>,
+and <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> (see <a class="reference internal" href="../index.html#fig-diagram"><span class="std std-ref">Fig. 1</span></a>). These are the
 three framework components to create subclasses from to start your
 science component.</p>
 <p>Each component features a fixed interface (i.e. a pre-defined set of
@@ -276,68 +276,64 @@ component, i.e. “outwards”), see <a class="reference internal" href="#fig-tr
 </thead>
 <tbody>
 <tr class="row-even"><td><p>1</p></td>
-<td><p>canopy_throughfall_flux</p></td>
+<td><p>canopy_liquid_throughfall_and_snow_melt_flux</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
 <tr class="row-odd"><td><p>2</p></td>
-<td><p>snow_melt_flux</p></td>
-<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
-</tr>
-<tr class="row-even"><td><p>3</p></td>
 <td><p>transpiration_flux_from_root_uptake</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-odd"><td><p>4</p></td>
+<tr class="row-even"><td><p>3</p></td>
 <td><p>soil_water_stress_for_transpiration</p></td>
 <td><p>1</p></td>
 </tr>
-<tr class="row-even"><td><p>5</p></td>
+<tr class="row-odd"><td><p>4</p></td>
 <td><p>direct_water_evaporation_flux_from_soil</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-odd"><td><p>6</p></td>
+<tr class="row-even"><td><p>5</p></td>
 <td><p>soil_water_stress_for_direct_soil_evaporation</p></td>
 <td><p>1</p></td>
 </tr>
-<tr class="row-even"><td><p>7</p></td>
+<tr class="row-odd"><td><p>6</p></td>
 <td><p>water_evaporation_flux_from_standing_water</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-odd"><td><p>8</p></td>
+<tr class="row-even"><td><p>7</p></td>
 <td><p>standing_water_area_fraction</p></td>
 <td><p>1</p></td>
 </tr>
-<tr class="row-even"><td><p>9</p></td>
+<tr class="row-odd"><td><p>8</p></td>
 <td><p>total_water_area_fraction</p></td>
 <td><p>1</p></td>
 </tr>
-<tr class="row-odd"><td><p>10</p></td>
+<tr class="row-even"><td><p>9</p></td>
 <td><p>water_evaporation_flux_from_open_water</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-even"><td><p>11</p></td>
+<tr class="row-odd"><td><p>10</p></td>
 <td><p>direct_throughfall_flux</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-odd"><td><p>12</p></td>
+<tr class="row-even"><td><p>11</p></td>
 <td><p>surface_runoff_flux_delivered_to_rivers</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-even"><td><p>13</p></td>
+<tr class="row-odd"><td><p>12</p></td>
 <td><p>net_groundwater_flux_to_rivers</p></td>
 <td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
 </tr>
-<tr class="row-odd"><td><p>14</p></td>
+<tr class="row-even"><td><p>13</p></td>
 <td><p>open_water_area_fraction</p></td>
 <td><p>1</p></td>
 </tr>
-<tr class="row-even"><td><p>15</p></td>
+<tr class="row-odd"><td><p>14</p></td>
 <td><p>open_water_surface_height</p></td>
 <td><p>m</p></td>
 </tr>
 </tbody>
 </table>
-<p>For component contributions to be fully <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code>-compliant, they need to
+<p>For component contributions to be fully <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>-compliant, they need to
 comply with this fixed interface. If your science component contribution
 is overlapping several components, it requires to be refactored into the
 relevant number of components.</p>
@@ -352,11 +348,11 @@ subclassing from the relevant framework component.</p>
 <p class="rubric">Example</p>
 <p>See an example of a mock surface layer component creation below.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
+<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
-<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
     <span class="k">pass</span>
 </pre></div>
 </div>
@@ -386,10 +382,10 @@ The field list should be placed last and preceded by a blank line.</p>
 <p>See an example of a mock component description below.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
-<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Summary line describing the component.</span>
 
 <span class="sd">    More elaborate description for the component.</span>
@@ -544,8 +540,8 @@ state. To retrieve or assign values for a given timestep, the methods
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><dl class="py method">
-<dt class="sig sig-object py" id="cm4twc._utils.state.State.get_timestep">
-<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">get_timestep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeindex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc._utils.state.State.get_timestep" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
+<dt class="sig sig-object py" id="unifhy._utils.state.State.get_timestep">
+<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">get_timestep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeindex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unifhy._utils.state.State.get_timestep" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Return the state value(s) for the given time index (indices).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -571,8 +567,8 @@ time index (indices).</p>
 </td>
 </tr>
 <tr class="row-even"><td><dl class="py method">
-<dt class="sig sig-object py" id="cm4twc._utils.state.State.set_timestep">
-<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">set_timestep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeindex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cm4twc._utils.state.State.set_timestep" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
+<dt class="sig sig-object py" id="unifhy._utils.state.State.set_timestep">
+<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">set_timestep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeindex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unifhy._utils.state.State.set_timestep" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
 <dd><p>Assign the state value(s) at the given time index (indices).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -634,27 +630,27 @@ provides the information so that the component can run successfully.</p>
 <p>If you need land sea mask information for your computations, set
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code> to True and access it in your class methods
 using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>. This will return an array of the
-same size as the space domain (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.land_sea_mask.html#cm4twc.LatLonGrid.land_sea_mask" title="cm4twc.LatLonGrid.land_sea_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.land_sea_mask</span></code></a> for
+same size as the space domain (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.land_sea_mask.html#unifhy.LatLonGrid.land_sea_mask" title="unifhy.LatLonGrid.land_sea_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.land_sea_mask</span></code></a> for
 details).</p>
 <p>If you need flow direction information or want to use the flow routing
 functionality of the component (accessible through <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.route(...)</span></code>),
 set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> to True, and access it in your class methods
 using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>. This will return an array of the
 same size as the space domain plus an additional trailing axis of size 2
-for gridded space domains (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.flow_direction.html#cm4twc.LatLonGrid.flow_direction" title="cm4twc.LatLonGrid.flow_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.flow_direction</span></code></a> for
+for gridded space domains (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.flow_direction.html#unifhy.LatLonGrid.flow_direction" title="unifhy.LatLonGrid.flow_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.flow_direction</span></code></a> for
 details).</p>
 <p>If you need the horizontal cell area of the space domain elements, set
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code> to True and access it in your class methods using
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.cell_area</span></code>. This will return an array of the same size
-as the space domain (see e.g. <a class="reference internal" href="../api/attributes/cm4twc.LatLonGrid.cell_area.html#cm4twc.LatLonGrid.cell_area" title="cm4twc.LatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.cell_area</span></code></a> for details).</p>
+as the space domain (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.cell_area.html#unifhy.LatLonGrid.cell_area" title="unifhy.LatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.cell_area</span></code></a> for details).</p>
 <p class="rubric">Example</p>
 <p>See a detailed example of a mock component definition below.</p>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
-<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
     <span class="n">_inwards</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;inwards_1&#39;</span><span class="p">,</span>
@@ -788,10 +784,10 @@ states, parameters, and constants.</p>
 <p>See a detailed example of a mock component implementation below.</p>
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cm4twc</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
-<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">cm4twc</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
 
     <span class="c1"># component definition here</span>
@@ -875,7 +871,7 @@ step is to <a class="reference internal" href="packaging.html"><span class="doc"
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Dec 02, 2021.<br>
+        Last updated on Dec 03, 2021.<br>
       </p>
     </div>
   </div>

@@ -8,6 +8,6 @@ Sub-Surface Components
    :toctree: subsurface/
    :template: component.rst
 
-   cm4twccontrib.artemis.SubSurfaceComponent
-   cm4twccontrib.gr4.SubSurfaceComponent
-   cm4twccontrib.smart.SubSurfaceComponent
+   unifhycontrib.artemis.SubSurfaceComponent
+   unifhycontrib.gr4.SubSurfaceComponent
+   unifhycontrib.smart.SubSurfaceComponent

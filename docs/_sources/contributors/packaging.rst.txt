@@ -1,4 +1,4 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 Packaging
@@ -22,39 +22,39 @@ following `PEP 8 naming convention <https://www.python.org/dev/peps/pep-0008/#pa
 i.e. all-lowercase names with underscores if this improves readability only.
 
 Then, create a new directory using your model name and appending the
-prefix *cm4twccontrib-* to it:
+prefix *unifhycontrib-* to it:
 
 .. code-block:: bash
 
-   mkdir cm4twccontrib-<model_name>
+   mkdir unifhycontrib-<model_name>
 
 where *<model_name>* should be replaced with your chosen model name.
 
 Retrieve the component package template
 ---------------------------------------
 
-Download the `template source <https://github.com/cm4twc-org/cm4twccontrib-template>`_
+Download the `template source <https://github.com/unifhy-org/unifhycontrib-template>`_
 and copy the unzipped source in the newly created directory.
 
 .. code-block:: bash
 
-   wget https://github.com/cm4twc-org/cm4twccontrib-template/archive/main.zip
-   unzip cm4twccontrib-template-main.zip
-   mv cm4twccontrib-template-main/* cm4twccontrib-<model_name>
-   cd cm4twccontrib-<model_name>
+   wget https://github.com/unifhy-org/unifhycontrib-template/archive/main.zip
+   unzip unifhycontrib-template-main.zip
+   mv unifhycontrib-template-main/* unifhycontrib-<model_name>
+   cd unifhycontrib-<model_name>
 
 .. note::
 
    You can also download the template source manually: go to
-   https://github.com/cm4twc-org/cm4twccontrib-template, click 'Code',
+   https://github.com/unifhy-org/unifhycontrib-template, click 'Code',
    then 'Download ZIP'.
 
 The template source directory is structured as follows:
 
 .. code-block:: text
 
-   cm4twccontrib-template
-   ├── cm4twccontrib
+   unifhycontrib-template
+   ├── unifhycontrib
    │   └── template
    │       ├── __init__.py
    │       ├── surfacelayer.py
@@ -69,7 +69,7 @@ Rename the existing Python package using your model name:
 
 .. code-block:: bash
 
-   mv cm4twccontrib/template cm4twccontrib/<model_name>
+   mv unifhycontrib/template unifhycontrib/<model_name>
 
 Add and commit those files to the repository:
 
@@ -108,7 +108,7 @@ Then, bring in your own components:
 
    .. code-block:: text
 
-      cm4twc
+      unifhy
       numpy
       pandas
 
@@ -129,9 +129,9 @@ Populate the package metadata
 -----------------------------
 
 Modify the first section in the `setup.py
-<https://github.com/cm4twc-org/cm4twccontrib-template/blob/main/setup.py#L4-L20>`_
+<https://github.com/unifhy-org/unifhycontrib-template/blob/main/setup.py#L4-L20>`_
 module with the relevant metadata for your package. This will be used when
 your package is uploaded to the `Python Package Index (PyPI) <https://pypi.org/>`_.
 
 Now that your component(s) has (have) been turned into a Python package,
-please consider :doc:`sharing <sharing>` it (them) with the `cm4twc` community.
+please consider :doc:`sharing <sharing>` it (them) with the `unifhy` community.

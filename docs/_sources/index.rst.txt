@@ -1,4 +1,4 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 .. include:: ../../README.rst
@@ -8,7 +8,7 @@
    :align: center
    :alt: modelling framework diagram
 
-   Fig. 1: Diagram of the Modelling Framework Blueprint for `cm4twc`.
+   Fig. 1: Diagram of the Modelling Framework Blueprint for `unifhy`.
 
 .. add guides to sidebar
 

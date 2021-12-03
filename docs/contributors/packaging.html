@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Packaging &#8212; cm4twc latest documentation</title>
+    <title>Packaging &#8212; unifhy latest documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -32,7 +32,7 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/contributors/packaging.html" />
+    <link rel="canonical" href="https://unifhy-org.github.io/unifhy/contributors/packaging.html" />
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -72,7 +72,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
               
-                <a class="dropdown-item" href="https://cm4twc-org.github.io/cm4twc">latest</a>
+                <a class="dropdown-item" href="https://unifhy-org.github.io/unifhy">latest</a>
               
             </div>
           </li>
@@ -132,7 +132,7 @@
 
       <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cm4twc-org/cm4twc" rel="noopener" target="_blank" title="GitHub">
+          <a class="nav-link" href="https://github.com/unifhy-org/unifhy" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github"></i></span>
             <label class="sr-only">GitHub</label>
           </a>
@@ -249,31 +249,31 @@ contribution(s) into a Python package.</p>
 following <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#package-and-module-names">PEP 8 naming convention</a>,
 i.e. all-lowercase names with underscores if this improves readability only.</p>
 <p>Then, create a new directory using your model name and appending the
-prefix <em>cm4twccontrib-</em> to it:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir cm4twccontrib-&lt;model_name&gt;
+prefix <em>unifhycontrib-</em> to it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir unifhycontrib-&lt;model_name&gt;
 </pre></div>
 </div>
 <p>where <em>&lt;model_name&gt;</em> should be replaced with your chosen model name.</p>
 </div>
 <div class="section" id="retrieve-the-component-package-template">
 <h2>Retrieve the component package template<a class="headerlink" href="#retrieve-the-component-package-template" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<p>Download the <a class="reference external" href="https://github.com/cm4twc-org/cm4twccontrib-template">template source</a>
+<p>Download the <a class="reference external" href="https://github.com/unifhy-org/unifhycontrib-template">template source</a>
 and copy the unzipped source in the newly created directory.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/cm4twc-org/cm4twccontrib-template/archive/main.zip
-unzip cm4twccontrib-template-main.zip
-mv cm4twccontrib-template-main/* cm4twccontrib-&lt;model_name&gt;
-<span class="nb">cd</span> cm4twccontrib-&lt;model_name&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/unifhy-org/unifhycontrib-template/archive/main.zip
+unzip unifhycontrib-template-main.zip
+mv unifhycontrib-template-main/* unifhycontrib-&lt;model_name&gt;
+<span class="nb">cd</span> unifhycontrib-&lt;model_name&gt;
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can also download the template source manually: go to
-<a class="reference external" href="https://github.com/cm4twc-org/cm4twccontrib-template">https://github.com/cm4twc-org/cm4twccontrib-template</a>, click ‘Code’,
+<a class="reference external" href="https://github.com/unifhy-org/unifhycontrib-template">https://github.com/unifhy-org/unifhycontrib-template</a>, click ‘Code’,
 then ‘Download ZIP’.</p>
 </div>
 <p>The template source directory is structured as follows:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cm4twccontrib-template
-├── cm4twccontrib
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>unifhycontrib-template
+├── unifhycontrib
 │   └── template
 │       ├── __init__.py
 │       ├── surfacelayer.py
@@ -286,7 +286,7 @@ then ‘Download ZIP’.</p>
 </pre></div>
 </div>
 <p>Rename the existing Python package using your model name:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mv cm4twccontrib/template cm4twccontrib/&lt;model_name&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mv unifhycontrib/template unifhycontrib/&lt;model_name&gt;
 </pre></div>
 </div>
 <p>Add and commit those files to the repository:</p>
@@ -296,8 +296,8 @@ then ‘Download ZIP’.</p>
 </div>
 <div class="section" id="bring-in-your-component-contribution-s">
 <h2>Bring in your component contribution(s)<a class="headerlink" href="#bring-in-your-component-contribution-s" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<p>The template features three trivial components <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>,
-<a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="../api/classes/cm4twc.OpenWaterComponent.html#cm4twc.OpenWaterComponent" title="cm4twc.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a>.</p>
+<p>The template features three trivial components <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>,
+<a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a>.</p>
 <p>Depending on the number of components your contribution overlaps with,
 keep only the relevant ones and delete the other ones.</p>
 <p>For example, if your contribution simulates the surface layer and the
@@ -308,8 +308,8 @@ subsurface parts of the terrestrial water cycle:</p>
 </ul>
 <p>Then, bring in your own components:</p>
 <ul class="simple">
-<li><p>replace the trivial template components <a class="reference internal" href="../api/classes/cm4twc.SurfaceLayerComponent.html#cm4twc.SurfaceLayerComponent" title="cm4twc.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> and
-<a class="reference internal" href="../api/classes/cm4twc.SubSurfaceComponent.html#cm4twc.SubSurfaceComponent" title="cm4twc.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, in the modules <em>surfacelayer.py</em> and
+<li><p>replace the trivial template components <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> and
+<a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, in the modules <em>surfacelayer.py</em> and
 <em>subsurface.py</em>, respectively, with your own classes developed as
 per the <a class="reference internal" href="development.html"><span class="doc">Development</span></a> section.</p></li>
 </ul>
@@ -319,7 +319,7 @@ per the <a class="reference internal" href="development.html"><span class="doc">
 in the <a class="reference external" href="https://docs.python.org/3/library/index.html">Python Standard Library</a>,
 you need to list these in <em>requirements.txt</em> (one package per line only),
 e.g.:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cm4twc
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>unifhy
 numpy
 pandas
 </pre></div>
@@ -337,11 +337,11 @@ for your model components.</p>
 </div>
 <div class="section" id="populate-the-package-metadata">
 <h2>Populate the package metadata<a class="headerlink" href="#populate-the-package-metadata" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<p>Modify the first section in the <a class="reference external" href="https://github.com/cm4twc-org/cm4twccontrib-template/blob/main/setup.py#L4-L20">setup.py</a>
+<p>Modify the first section in the <a class="reference external" href="https://github.com/unifhy-org/unifhycontrib-template/blob/main/setup.py#L4-L20">setup.py</a>
 module with the relevant metadata for your package. This will be used when
 your package is uploaded to the <a class="reference external" href="https://pypi.org/">Python Package Index (PyPI)</a>.</p>
 <p>Now that your component(s) has (have) been turned into a Python package,
-please consider <a class="reference internal" href="sharing.html"><span class="doc">sharing</span></a> it (them) with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cm4twc</span></code> community.</p>
+please consider <a class="reference internal" href="sharing.html"><span class="doc">sharing</span></a> it (them) with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code> community.</p>
 </div>
 </div>
 
@@ -367,7 +367,7 @@ please consider <a class="reference internal" href="sharing.html"><span class="d
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Dec 02, 2021.<br>
+        Last updated on Dec 03, 2021.<br>
       </p>
     </div>
   </div>

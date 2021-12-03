@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Change Log &#8212; cm4twc latest documentation</title>
+    <title>Change Log &#8212; unifhy latest documentation</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
   <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -32,12 +32,12 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <link rel="canonical" href="https://cm4twc-org.github.io/cm4twc/changelog.html" />
+    <link rel="canonical" href="https://unifhy-org.github.io/unifhy/changelog.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Licence" href="licence.html" />
-    <link rel="prev" title="cm4twc.DataSet.load_from_file" href="api/methods/cm4twc.DataSet.load_from_file.html" />
+    <link rel="prev" title="unifhy.DataSet.load_from_file" href="api/methods/unifhy.DataSet.load_from_file.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -72,7 +72,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
               
-                <a class="dropdown-item" href="https://cm4twc-org.github.io/cm4twc">latest</a>
+                <a class="dropdown-item" href="https://unifhy-org.github.io/unifhy">latest</a>
               
             </div>
           </li>
@@ -132,7 +132,7 @@
 
       <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cm4twc-org/cm4twc" rel="noopener" target="_blank" title="GitHub">
+          <a class="nav-link" href="https://github.com/unifhy-org/unifhy" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github"></i></span>
             <label class="sr-only">GitHub</label>
           </a>
@@ -212,74 +212,74 @@
 <ul class="simple">
 <li><p>constrain temporal and spatial resolutions of components forming a
 model to be integer multiples of one another
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/67">#67</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/67">#67</a>)</p></li>
 <li><p>enforce two-dimensional spatial domains for components
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/69">#69</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/69">#69</a>)</p></li>
 <li><p>allow components to use/produce only parts of the standardised transfers
 through the framework interfaces
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/76">#76</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/76">#76</a>)</p></li>
 </ul>
 <p class="rubric">API changes</p>
 <ul class="simple">
 <li><p>add units requirement for component parameters and constants
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/21">#21</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/21">#21</a>)</p></li>
 <li><p>move <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> and its subclasses from subpackage <code class="xref py py-obj docutils literal notranslate"><span class="pre">components</span></code> to package root
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/46">#46</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/46">#46</a>)</p></li>
 <li><p>rename component class attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_flow_direction</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_land_sea_mask</span></code> in
 component definition to <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code>,
 respectively
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/46">#46</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/46">#46</a>)</p></li>
 <li><p>remove science components (Artemis and RFM) from framework
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/45">#45</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/45">#45</a>)</p></li>
 <li><p>remove vertical dimension (i.e. altitude) in <code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">RotatedLatLonGrid</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">BritishNationalGrid</span></code>
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/69">#69</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/69">#69</a>)</p></li>
 <li><p>replace <code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code> dunder methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code> with
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timestep</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_timestep</span></code> methods
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/71">#71</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/71">#71</a>)</p></li>
 <li><p>include component inputs as arguments given to <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> method
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/75">#75</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/75">#75</a>)</p></li>
 <li><p>revise/refine component inward and outward transfers
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/76">#76</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/76">#76</a>)</p></li>
 </ul>
 <p class="rubric">Bug fixes</p>
 <ul class="simple">
 <li><p>fix dump file update bug due to missing ‘divisions’ dimension
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/32">#32</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/32">#32</a>)</p></li>
 <li><p>fix model identifier renaming not propagating to its components’ identifiers
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/48">#48</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/48">#48</a>)</p></li>
 <li><p>fix impossibility to run <code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code> using a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> on the <code class="xref py py-obj docutils literal notranslate"><span class="pre">BritishNationalGrid</span></code>
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/51">#51</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/51">#51</a>)</p></li>
 <li><p>fix failed aggregation of fields with no standard name in <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code>
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/52">#52</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/52">#52</a>)</p></li>
 <li><p>apply <code class="xref py py-obj docutils literal notranslate"><span class="pre">land_sea_mask</span></code> to underlying field of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> to be used in remapping
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/59">#59</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/59">#59</a>)</p></li>
 </ul>
 <p class="rubric">Enhancements</p>
 <ul class="simple">
 <li><p>add support for arrays for component parameters
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/21">#21</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/21">#21</a>)</p></li>
 <li><p>add support for multiple divisions for component states
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/39">#39</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/39">#39</a>)</p></li>
 <li><p>add support for customisable divisions for component states
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/31">#31</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/31">#31</a>)</p></li>
 <li><p>add time slice for I/O operations (user customisable)
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/42">#42</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/42">#42</a>)</p></li>
 <li><p>cache remapping weights at initialisation
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/44">#44</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/44">#44</a>)</p></li>
 <li><p>add <code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code> property to <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> that can be provided by the
 user or else automatically computed for <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code>
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/61">#61</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/61">#61</a>)</p></li>
 <li><p>add <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialised_states</span></code> property to <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> to allow component
 contributors not to overwrite user-defined initial conditions
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/75">#75</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/75">#75</a>)</p></li>
 <li><p>add <code class="xref py py-obj docutils literal notranslate"><span class="pre">shelf</span></code> attribute to <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> to allow the communication of
 data between component methods
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/75">#75</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/75">#75</a>)</p></li>
 <li><p>add <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inwards</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards</span></code> component class attributes to allow
 contributors to declare what interface transfers their component
 use and produce, respectively
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/pull/76">#76</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/pull/76">#76</a>)</p></li>
 </ul>
 <p class="rubric">Dependencies</p>
 <ul class="simple">
@@ -289,7 +289,7 @@ use and produce, respectively
 <p class="rubric">Documentation</p>
 <ul class="simple">
 <li><p>document ‘divisions’ for component states in preparation page
-(<a class="reference external" href="https://github.com/cm4twc-org/cm4twc/issues/35">#35</a>)</p></li>
+(<a class="reference external" href="https://github.com/unifhy-org/unifhy/issues/35">#35</a>)</p></li>
 <li><p>move API reference page to doc tree root</p></li>
 <li><p>move science library page to doc tree root</p></li>
 <li><p>add support page</p></li>
@@ -328,7 +328,7 @@ use and produce, respectively
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Dec 02, 2021.<br>
+        Last updated on Dec 03, 2021.<br>
       </p>
     </div>
   </div>

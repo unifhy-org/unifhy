@@ -8,6 +8,6 @@ Surface Layer Components
    :toctree: surfacelayer/
    :template: component.rst
 
-   cm4twccontrib.artemis.SurfaceLayerComponent
-   cm4twccontrib.gr4.SurfaceLayerComponent
-   cm4twccontrib.smart.SurfaceLayerComponent
+   unifhycontrib.artemis.SurfaceLayerComponent
+   unifhycontrib.gr4.SurfaceLayerComponent
+   unifhycontrib.smart.SurfaceLayerComponent

@@ -1,4 +1,4 @@
-.. currentmodule:: cm4twc
+.. currentmodule:: unifhy
 .. default-role:: obj
 
 Sharing
@@ -6,9 +6,9 @@ Sharing
 
 This section details the procedure to follow to share successfully
 :doc:`developed <development>` and :doc:`packaged <packaging>`
-component contribution(s) with the `cm4twc` community.
+component contribution(s) with the `unifhy` community.
 
-A GitHub organisation for `cm4twc` has been created to gather all repositories
+A GitHub organisation for `unifhy` has been created to gather all repositories
 relevant to the community of users of the framework, hence it is encouraged
 to :ref:`push your contribution(s) to repositories under this GitHub
 organisation <push_github_org>`. In addition, it is recommended that you
@@ -18,15 +18,15 @@ However, you can host your source code under a different GitHub
 organisation/user, or you can host it elsewhere, e.g. on GitLab or BitBucket.
 If this is the case, we still recommend that you :ref:`upload your
 contribution(s) to PyPI <upload_pypi>` as a way to allow users of the
-`cm4twc` community to find it (them) easily.
+`unifhy` community to find it (them) easily.
 
 .. _push_github_org:
 
-Push your contribution to the cm4twc GitHub organisation
+Push your contribution to the unifhy GitHub organisation
 --------------------------------------------------------
 
 If you would like to get a remote git repository hosted under the
-`cm4twc GiHub organisation <https://github.com/cm4twc-org>`_ to
+`unifhy GiHub organisation <https://github.com/unifhy-org>`_ to
 share your component contribution(s), please get in touch via email
 (hydrojules(at)ceh.ac.uk) so that we can create a repository for you and
 give you full admin rights on it.
@@ -36,7 +36,7 @@ git remote, and push your commits to this remote repository:
 
 .. code-block:: bash
 
-   git remote add community https://github.com/cm4twc-org/cm4twccontrib-<model_name>.git
+   git remote add community https://github.com/unifhy-org/unifhycontrib-<model_name>.git
    git push -u community main
 
 .. _upload_pypi:
