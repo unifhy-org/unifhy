@@ -2,7 +2,9 @@ How to release a new version for `unifhy`
 =========================================
 
 Between releases, changes are made on the 'dev' branch and recorded in
-the `<changelog.rst>`_ in the *latest* section.
+the `<changelog.rst>`_ in the *latest* section. This follows the
+`successful Git branching model by Vincent Driessen
+<https://nvie.com/posts/a-successful-git-branching-model/>`_.
 
 Once the 'dev' branch has reached a stage where a new release is
 justified or required, the following steps must be followed.
@@ -37,50 +39,43 @@ justified or required, the following steps must be followed.
 
       Released on YYYY-MM-DD.
 
-4. build the documentation for this version:
-
-   a. set the environment variable `VERSION_RELEASE` to '#.#.#':
-
-      .. code-block:: bash
-
-         export VERSION_RELEASE='#.#.#'
-
-   b. make sure all dependencies in `<requirements-docs.txt>`_ are satisfied
-
-   c. use the makefile to build the documentation with sphinx locally:
-
-      .. code-block:: bash
-
-         cd ./docs && make local_html
-
-   d. browse the documentation generated in *docs/_doc_build/html* to
-      check that everything is in order
-
-   e. if the documentation built is in order, build the documentation
-      with sphinx again to create the files where GitHub Pages will
-      look for them:
-
-      .. code-block:: bash
-
-         cd ./docs && make github_html
-
-5. commit these changes to the release branch and push to remote, e.g. 'origin':
+4. commit these changes to the release branch and push to remote, e.g. 'origin':
 
    .. code-block:: bash
 
-      git commit -am "prepare docs for release"
+      git commit -am "update version for release"
       git push -u origin release-v#.#.#
+
+5. build the documentation for this version by running Actions workflow
+   using GitHub CLI (see `<how-to-build-documentation.rst>`_ for details):
+
+  .. code-block:: bash
+
+     gh workflow run build-docs.yml --ref release-v#.#.# -f branch=release-v#.#.# -f release=#.#.#
 
 6. create a draft pull request on GitHub to merge the release branch
    in 'main' branch
 
-7. in the pull request, click "Ready for review" to trigger a testing
-   workflow in GitHub Actions
+7. in the pull request, click "Ready for review" to trigger the advanced
+   testing workflow in GitHub Actions
 
 8. if tests have failed, fix accordingly, and re-run the GitHub Actions workflow
 
-9. once tests have passed, merge pull request into 'main' branch
+9. once tests have passed, merge pull request into 'main' branch by
+   choosing the option "Create a merge commit"
 
 10. draft a release on GitHub using 'v#.#.#' for both the tag version
     and the release title, and use 'v#.#.# release' for the release
     description and click "Publish release"
+
+11. merge 'main' branch into 'dev' branch to update live documentation
+    living on 'dev' branch
+
+  .. code-block:: bash
+
+     git fetch origin main
+     git merge origin/main
+     git checkout dev
+     git merge main
+     git fetch origin dev
+     git push origin dev

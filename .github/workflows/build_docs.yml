@@ -7,6 +7,10 @@ on:
         description: 'branch where to source and build documentation'
         required: false
         default: 'dev'
+      release:
+        description: 'release version tag (#.#.#)'
+        required: false
+        default: ''
 
 jobs:
 
@@ -83,6 +87,7 @@ jobs:
 
     - name: build docs
       run: |
+        if [[ ! -z ${{ github.event.inputs.release }} ]]; then export VERSION_RELEASE=${{ github.event.inputs.release }}; fi
         cd ${{ github.workspace }}/docs
         make github_html
 
