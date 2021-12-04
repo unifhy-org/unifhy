@@ -17,15 +17,15 @@ justified or required, the following steps must be followed.
 
 1. create and checkout a 'release-v#.#.#' branch from the 'dev' branch:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   git checkout -b release-v#.#.# dev
+      git checkout -b release-v#.#.# dev
 
 2. update the version in `<unifhy/version.py>`_:
 
-.. code-block:: python
+   .. code-block:: python
 
-   __version__ = '#.#.#'
+      __version__ = '#.#.#'
 
 3. make sure that the `<changelog.rst>`_ file contains all the noteworthy
    changes since the last release, change 'latest' to 'v#.#.#' and add
@@ -49,9 +49,9 @@ justified or required, the following steps must be followed.
 5. build the documentation for this version by running Actions workflow
    using GitHub CLI (see `<how-to-build-documentation.rst>`_ for details):
 
-  .. code-block:: bash
+   .. code-block:: bash
 
-     gh workflow run build-docs.yml --ref release-v#.#.# -f branch=release-v#.#.# -f release=#.#.#
+      gh workflow run build-docs.yml --ref release-v#.#.# -f branch=release-v#.#.# -f release=#.#.#
 
 6. create a draft pull request on GitHub to merge the release branch
    in 'main' branch
@@ -69,13 +69,13 @@ justified or required, the following steps must be followed.
     description and click "Publish release"
 
 11. merge 'main' branch into 'dev' branch to update live documentation
-    living on 'dev' branch
+    living on 'dev' branch:
 
-  .. code-block:: bash
+    .. code-block:: bash
 
-     git fetch origin main
-     git merge origin/main
-     git checkout dev
-     git merge main
-     git fetch origin dev
-     git push origin dev
+       git fetch origin main
+       git merge origin/main
+       git checkout dev
+       git merge main
+       git fetch origin dev
+       git push origin dev

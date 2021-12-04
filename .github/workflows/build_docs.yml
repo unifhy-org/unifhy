@@ -51,49 +51,49 @@ jobs:
 
     steps:
 
-    - name: checkout framework repository
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.event.inputs.branch }}
+      - name: checkout framework repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
 
-    - name: bring back all component artifacts
-      uses: actions/download-artifact@v2
-      with:
-        path: unifhycontrib
+      - name: bring back all component artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: unifhycontrib
 
-    - name: set up miniconda environment
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        activate-environment: building-docs-env
-        python-version: ${{ matrix.python-version }}
-        auto-update-conda: true
-        mamba-version: "*"
-        channels: conda-forge
-        channel-priority: true
+      - name: set up miniconda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: building-docs-env
+          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
+          mamba-version: "*"
+          channels: conda-forge
+          channel-priority: true
 
-    - name: install dependencies for framework and its documentation
-      run: |
-        mamba install --file=requirements.txt
-        mamba install --file=requirements-docs.txt
+      - name: install dependencies for framework and its documentation
+        run: |
+          mamba install --file=requirements.txt
+          mamba install --file=requirements-docs.txt
 
-    - name: setup git user info
-      run: |
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
+      - name: setup git user info
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
-    - name: fetch remote tags
-      run: |
-        git fetch --tags
+      - name: fetch remote tags
+        run: |
+          git fetch --tags
 
-    - name: build docs
-      run: |
-        if [[ ! -z ${{ github.event.inputs.release }} ]]; then export VERSION_RELEASE=${{ github.event.inputs.release }}; fi
-        cd ${{ github.workspace }}/docs
-        make github_html
+      - name: build docs
+        run: |
+          if [[ ! -z ${{ github.event.inputs.release }} ]]; then export VERSION_RELEASE=${{ github.event.inputs.release }}; fi
+          cd ${{ github.workspace }}/docs
+          make github_html
 
-    - name: commit and push built docs (if changes)
-      run: |
-        cd ${{ github.workspace }}/docs
-        added=$(git add --all --verbose)
-        if [[ ! -z $added ]]; then git commit -m "update html documentation"; fi
-        if [[ ! -z $added ]]; then git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.branch }}; fi
+      - name: commit and push built docs (if changes)
+        run: |
+          cd ${{ github.workspace }}/docs
+          added=$(git add --all --verbose)
+          if [[ ! -z $added ]]; then git commit -m "update html documentation"; fi
+          if [[ ! -z $added ]]; then git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.branch }}; fi
