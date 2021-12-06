@@ -28,10 +28,11 @@ class State(object):
     `__setitem__`).
     """
     def __init__(self, array, order='C'):
-        if order == 'F':
-            array = np.asfortranarray(array)
-        self._array = array
-        self._slices = [array[i, ...] for i in range(array.shape[0])]
+        self._slices = [
+            np.asfortranarray(array[i, ...]) if order == 'F'
+            else array[i, ...]
+            for i in range(array.shape[0])
+        ]
 
     def get_timestep(self, timeindex):
         """Return the state value(s) for the given time index (indices).
