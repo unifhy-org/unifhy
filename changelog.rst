@@ -5,6 +5,11 @@ latest
 
 Yet to be versioned and released. Only available from *dev* branch until then.
 
+v0.1.0
+------
+
+Released on 2021-12-??.
+
 .. rubric:: Functional changes
 
 * constrain temporal and spatial resolutions of components forming a
