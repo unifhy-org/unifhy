@@ -1,8 +1,0 @@
-﻿cm4twc.components.openwater
-===============================
-
-.. default-role:: obj
-
-.. autocomponent::
-
-   cm4twc.components.openwater.RFM

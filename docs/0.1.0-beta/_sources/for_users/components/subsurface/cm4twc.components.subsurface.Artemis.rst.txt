@@ -1,8 +1,0 @@
-﻿cm4twc.components.subsurface
-====================================
-
-.. default-role:: obj
-
-.. autocomponent::
-
-   cm4twc.components.subsurface.Artemis
