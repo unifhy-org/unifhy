@@ -5,14 +5,14 @@ Tutorial
 ========
 
 This section showcases the basic usage of modelling framework `unifhy`
-(Community Model for the Terrestrial Water Cycle).
+(Unified Framework for Hydrology).
 
 .. code-block:: python
    :caption: Importing the package and checking its version.
 
    >>> import unifhy
    >>> print(unifhy.__version__)
-   0.1.0-beta
+   0.1.0
 
 The central object in the framework is the `Model`, which requires three
 `Component`\s for the three compartments of the terrestrial water cycle.
@@ -29,7 +29,8 @@ Configuring a Model
 Time
 ~~~~
 
-`TimeDomain` characterises the time dimension of a `Component`.
+`TimeDomain` characterises the time dimension of a `Component`, i.e.
+the period and the temporal resolution.
 
 .. code-block:: python
    :caption: Instantiating a `TimeDomain` by specifying its start, end, and step.
@@ -56,9 +57,10 @@ Space
 ~~~~~
 
 All spatial configurations supported by the framework are subclasses of
-`SpaceDomain`, they characterise the spatial dimensions of a `Component`.
-The current supported spatial configurations can be found in the
-:doc:`API Reference<../api_reference>`'s Space section. `LatLonGrid` is one example.
+`SpaceDomain`, they characterise the spatial dimensions of a `Component`,
+i.e. the region and the spatial resolution. The spatial configurations
+currently supported can be found in the :doc:`API Reference<../api_reference>`'s
+Space section. `LatLonGrid` is one example.
 
 .. code-block:: python
    :caption: Instantiating a `LatLonGrid` from its dimensions' extents and resolutions.
@@ -80,22 +82,26 @@ The current supported spatial configurations can be found in the
 
 Three additional properties of `SpaceDomain` may require to be set
 depending on the component's requirements: *land_sea_mask*,
-*flow_direction*, and *cell_area*. *land_sea_mask* may be used by a
-component to be aware of where there is land and where there is sea,
-but if set, it is also used to mask the component records. *flow_direction*
-may be used by a component to determine where to move flow downstream,
-it is namely compulsory if the component is using the `SpaceDomain`'s
-*route* method. *cell_area* may be used by a component to determine the
-surface area of each spatial element in the component spacedomain. For
-some spacedomains (e.g. `LatLonGrid`, `RotatedLatLonGrid`,
-`BritishNationalGrid`), the cell_area is calculated automatically by the
-framework if not already set.
+*flow_direction*, and *cell_area*:
+
+   - *land_sea_mask* may be used by a component to be aware of where there
+     is land and where there is sea, but if set, it is also used to mask
+     the component records;
+   - *flow_direction* may be used by a component to determine where to move
+     flow downstream, it is namely compulsory if the component is using the
+     `SpaceDomain`'s *route* method;
+   - *cell_area* may be used by a component to determine the surface area of
+     each spatial element in the component spacedomain. For some spacedomains
+     (e.g. `LatLonGrid`, `RotatedLatLonGrid`, `BritishNationalGrid`), the
+     cell area is calculated automatically by the framework if not already set.
 
 .. code-block:: python
    :caption: Setting land sea mask and flow direction for `LatLonGrid`.
 
    >>> import cf
-   >>> spacedomain.land_sea_mask = cf.read('in/ancillary/land_sea_mask.nc').select_field('land_binary_mask')
+   >>> spacedomain.land_sea_mask = (
+   ...     cf.read('in/ancillary/land_sea_mask.nc').select_field('land_binary_mask')
+   ... )
    >>> print(spacedomain.land_sea_mask)
    [[ True  True  True  True  True  True]
     [ True  True  True  True  True  True]
@@ -105,7 +111,9 @@ framework if not already set.
     [ True  True  True  True  True False]
     [ True  True  True  True False False]
     [ True  True  True False False False]]
-   >>> spacedomain.flow_direction = cf.read('in/ancillary/flow_direction.nc').select_field("long_name=flow direction")
+   >>> spacedomain.flow_direction = (
+   ...     cf.read('in/ancillary/flow_direction.nc').select_field("long_name=flow direction")
+   ... )
 
 
 Data
@@ -153,13 +161,17 @@ instances.
    ...     files=['in/ancillary/saturated_hydraulic_conductivity.nc',
    ...            'in/ancillary/topmodel_saturation_capacity.nc',
    ...            'in/ancillary/topographic_index.nc'],
-   ...     name_mapping={'saturated hydraulic conductivity': 'saturated_hydraulic_conductivity',
-   ...                   'topmodel saturation capacity': 'topmodel_saturation_capacity',
-   ...                   'topographic index': 'topographic_index'}
+   ...     name_mapping={
+   ...         'saturated hydraulic conductivity': 'saturated_hydraulic_conductivity',
+   ...         'topmodel saturation capacity': 'topmodel_saturation_capacity',
+   ...         'topographic index': 'topographic_index'
+   ...      }
    ... )
    >>> dataset_openwater = unifhy.DataSet(
    ...     files='in/ancillary/rfm_iarea.nc',
-   ...     name_mapping={'RFM drainage area in cell counts (WFDEI)': 'i_area'}
+   ...     name_mapping={
+   ...         'RFM drainage area in cell counts (WFDEI)': 'flow_accumulation'
+   ...     }
    ... )
 
 
@@ -179,30 +191,26 @@ and data needs differ.
    >>> print(unifhycontrib.artemis.SubSurfaceComponent)
    SubSurfaceComponent(
        category: subsurface
-       inwards info:
-           evaporation_soil_surface [kg m-2 s-1]
-           evaporation_ponded_water [kg m-2 s-1]
-           transpiration [kg m-2 s-1]
-           throughfall [kg m-2 s-1]
-           snowmelt [kg m-2 s-1]
-           water_level [kg m-2]
-       inputs info:
+       inwards metadata:
+           canopy_liquid_throughfall_and_snow_melt_flux [kg m-2 s-1]
+           transpiration_flux_from_root_uptake [kg m-2 s-1]
+       inputs metadata:
            topmodel_saturation_capacity [mm m-1]
            saturated_hydraulic_conductivity [m s-1]
            topographic_index [1]
        requires land sea mask: False
        requires flow direction: False
        requires cell area: False
-       constants info:
+       constants metadata:
            m [1]
            rho_lw [kg m-3]
            S_top [m]
-       states info:
+       states metadata:
            subsurface_store [m]
-       outwards info:
-           surface_runoff [kg m-2 s-1]
-           subsurface_runoff [kg m-2 s-1]
-           soil_water_stress [1]
+       outwards metadata:
+           soil_water_stress_for_transpiration [1]
+           surface_runoff_flux_delivered_to_rivers [kg m-2 s-1]
+           net_groundwater_flux_to_rivers [kg m-2 s-1]
    )
 
 .. note::
@@ -221,7 +229,9 @@ and data needs differ.
    ...     spacedomain=spacedomain,
    ...     dataset=dataset_subsurface,
    ...     parameters={},
-   ...     records={'surface_runoff': {timedelta(days=1): ['mean']}}
+   ...     records={
+   ...         'surface_runoff_flux_delivered_to_rivers': {timedelta(days=1): ['mean']}
+   ...     }
    ... )
    >>> print(component)
    SubSurfaceComponent(
@@ -230,13 +240,13 @@ and data needs differ.
        timedomain: period: 365 days, 0:00:00
        spacedomain: shape: (Y: 8, X: 6)
        records:
-           surface_runoff: 1 day, 0:00:00 {'mean'}
+           surface_runoff_flux_delivered_to_rivers: 1 day, 0:00:00 {'mean'}
    )
 
 .. note::
 
    The variables that can be recorded using the *records* optional
-   argument are the component's outwards, outputs, and states. By default,
+   parameter are the component's outwards, outputs, and states. By default,
    none are recorded.
 
 Framework
@@ -270,7 +280,7 @@ three parts of the terrestrial water cycle.
    ...                     'cb_river': (0.15, 'm s-1'),
    ...                     'ret_l': (0.0, 'm s-1'),
    ...                     'ret_r': (0.005, 'm s-1'),
-   ...                     'river_length': (50000, 'm')},
+   ...                     'routing_length': (50000, 'm')},
    ...         records={
    ...             'outgoing_water_volume_transport_along_river_channel': {
    ...                 timedelta(days=1): ['mean']
@@ -328,7 +338,7 @@ three parts of the terrestrial water cycle.
 
 At this stage, the `Model` as such is fully configured, and the configuration
 can be saved as a YAML file in the *config_directory* and named using the
-*identifier* (e.g. in this example, the file would be at
+*identifier* (e.g. in this tutorial, the file would be at
 *configurations/tutorial.yml*).
 
 .. code-block:: python
@@ -367,11 +377,13 @@ set in the *spin-up* and/or *simulate* invocations, a series of snapshots
 in time have been stored in dump files in the *saving_directory* of each
 `Component` and of the `Model`. A *resume* method for `Model` allows
 for the given run to be resumed to reach completion of the simulation
-period. The *tag* argument must be used to select which run to resume
-(i.e. any spin-up cycle, or the main run), and the *at* argument can be
+period. The *tag* parameter must be used to select which run to resume
+(i.e. any spin-up cycle, or the main run), and the *at* parameter can be
 used to select the given snapshot in time to restart from.
 
 .. code-block:: python
    :caption: Resuming the `Model` main simulation run.
 
    >>> model.resume(tag='run', at=datetime(2019, 1, 7, 9, 0, 0))
+
+Further training resources are available at `<https://github.com/unifhy-org/unifhy-training>`_.

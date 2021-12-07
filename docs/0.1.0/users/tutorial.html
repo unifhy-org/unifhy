@@ -269,12 +269,12 @@
   <div class="section" id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>This section showcases the basic usage of modelling framework <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>
-(Community Model for the Terrestrial Water Cycle).</p>
+(Unified Framework for Hydrology).</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Importing the package and checking its version.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
-<span class="go">0.1.0-beta</span>
+<span class="go">0.1.0</span>
 </pre></div>
 </div>
 </div>
@@ -289,7 +289,8 @@ and to be given parameter and/or constant values.</p>
 <h2>Configuring a Model<a class="headerlink" href="#configuring-a-model" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <div class="section" id="time">
 <h3>Time<a class="headerlink" href="#time" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
-<p><a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.</p>
+<p><a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>, i.e.
+the period and the temporal resolution.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> by specifying its start, end, and step.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
@@ -315,9 +316,10 @@ and to be given parameter and/or constant values.</p>
 <div class="section" id="space">
 <h3>Space<a class="headerlink" href="#space" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>All spatial configurations supported by the framework are subclasses of
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>, they characterise the spatial dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>.
-The current supported spatial configurations can be found in the
-<a class="reference internal" href="../api_reference.html"><span class="doc">API Reference</span></a>’s Space section. <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> is one example.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>, they characterise the spatial dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>,
+i.e. the region and the spatial resolution. The spatial configurations
+currently supported can be found in the <a class="reference internal" href="../api_reference.html"><span class="doc">API Reference</span></a>’s
+Space section. <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> is one example.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> from its dimensions’ extents and resolutions.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
@@ -339,20 +341,27 @@ The current supported spatial configurations can be found in the
 </div>
 <p>Three additional properties of <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> may require to be set
 depending on the component’s requirements: <em>land_sea_mask</em>,
-<em>flow_direction</em>, and <em>cell_area</em>. <em>land_sea_mask</em> may be used by a
-component to be aware of where there is land and where there is sea,
-but if set, it is also used to mask the component records. <em>flow_direction</em>
-may be used by a component to determine where to move flow downstream,
-it is namely compulsory if the component is using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>’s
-<em>route</em> method. <em>cell_area</em> may be used by a component to determine the
-surface area of each spatial element in the component spacedomain. For
-some spacedomains (e.g. <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.RotatedLatLonGrid.html#unifhy.RotatedLatLonGrid" title="unifhy.RotatedLatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RotatedLatLonGrid</span></code></a>,
-<a class="reference internal" href="../api/classes/unifhy.BritishNationalGrid.html#unifhy.BritishNationalGrid" title="unifhy.BritishNationalGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BritishNationalGrid</span></code></a>), the cell_area is calculated automatically by the
-framework if not already set.</p>
+<em>flow_direction</em>, and <em>cell_area</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>land_sea_mask</em> may be used by a component to be aware of where there
+is land and where there is sea, but if set, it is also used to mask
+the component records;</p></li>
+<li><p><em>flow_direction</em> may be used by a component to determine where to move
+flow downstream, it is namely compulsory if the component is using the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>’s <em>route</em> method;</p></li>
+<li><p><em>cell_area</em> may be used by a component to determine the surface area of
+each spatial element in the component spacedomain. For some spacedomains
+(e.g. <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.RotatedLatLonGrid.html#unifhy.RotatedLatLonGrid" title="unifhy.RotatedLatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RotatedLatLonGrid</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.BritishNationalGrid.html#unifhy.BritishNationalGrid" title="unifhy.BritishNationalGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BritishNationalGrid</span></code></a>), the
+cell area is calculated automatically by the framework if not already set.</p></li>
+</ul>
+</div></blockquote>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/land_sea_mask.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;land_binary_mask&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/land_sea_mask.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;land_binary_mask&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span><span class="p">)</span>
 <span class="go">[[ True  True  True  True  True  True]</span>
 <span class="go"> [ True  True  True  True  True  True]</span>
@@ -362,7 +371,9 @@ framework if not already set.</p>
 <span class="go"> [ True  True  True  True  True False]</span>
 <span class="go"> [ True  True  True  True False False]</span>
 <span class="go"> [ True  True  True False False False]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">flow_direction</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/flow_direction.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s2">&quot;long_name=flow direction&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">flow_direction</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/flow_direction.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s2">&quot;long_name=flow direction&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -409,13 +420,17 @@ instances.</p>
 <span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/ancillary/saturated_hydraulic_conductivity.nc&#39;</span><span class="p">,</span>
 <span class="gp">... </span>           <span class="s1">&#39;in/ancillary/topmodel_saturation_capacity.nc&#39;</span><span class="p">,</span>
 <span class="gp">... </span>           <span class="s1">&#39;in/ancillary/topographic_index.nc&#39;</span><span class="p">],</span>
-<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;saturated hydraulic conductivity&#39;</span><span class="p">:</span> <span class="s1">&#39;saturated_hydraulic_conductivity&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="s1">&#39;topmodel saturation capacity&#39;</span><span class="p">:</span> <span class="s1">&#39;topmodel_saturation_capacity&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="s1">&#39;topographic index&#39;</span><span class="p">:</span> <span class="s1">&#39;topographic_index&#39;</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;saturated hydraulic conductivity&#39;</span><span class="p">:</span> <span class="s1">&#39;saturated_hydraulic_conductivity&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;topmodel saturation capacity&#39;</span><span class="p">:</span> <span class="s1">&#39;topmodel_saturation_capacity&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;topographic index&#39;</span><span class="p">:</span> <span class="s1">&#39;topographic_index&#39;</span>
+<span class="gp">... </span>     <span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_openwater</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;in/ancillary/rfm_iarea.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;RFM drainage area in cell counts (WFDEI)&#39;</span><span class="p">:</span> <span class="s1">&#39;i_area&#39;</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;RFM drainage area in cell counts (WFDEI)&#39;</span><span class="p">:</span> <span class="s1">&#39;flow_accumulation&#39;</span>
+<span class="gp">... </span>    <span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
@@ -434,30 +449,26 @@ and data needs differ.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">unifhycontrib</span><span class="o">.</span><span class="n">artemis</span><span class="o">.</span><span class="n">SubSurfaceComponent</span><span class="p">)</span>
 <span class="go">SubSurfaceComponent(</span>
 <span class="go">    category: subsurface</span>
-<span class="go">    inwards info:</span>
-<span class="go">        evaporation_soil_surface [kg m-2 s-1]</span>
-<span class="go">        evaporation_ponded_water [kg m-2 s-1]</span>
-<span class="go">        transpiration [kg m-2 s-1]</span>
-<span class="go">        throughfall [kg m-2 s-1]</span>
-<span class="go">        snowmelt [kg m-2 s-1]</span>
-<span class="go">        water_level [kg m-2]</span>
-<span class="go">    inputs info:</span>
+<span class="go">    inwards metadata:</span>
+<span class="go">        canopy_liquid_throughfall_and_snow_melt_flux [kg m-2 s-1]</span>
+<span class="go">        transpiration_flux_from_root_uptake [kg m-2 s-1]</span>
+<span class="go">    inputs metadata:</span>
 <span class="go">        topmodel_saturation_capacity [mm m-1]</span>
 <span class="go">        saturated_hydraulic_conductivity [m s-1]</span>
 <span class="go">        topographic_index [1]</span>
 <span class="go">    requires land sea mask: False</span>
 <span class="go">    requires flow direction: False</span>
 <span class="go">    requires cell area: False</span>
-<span class="go">    constants info:</span>
+<span class="go">    constants metadata:</span>
 <span class="go">        m [1]</span>
 <span class="go">        rho_lw [kg m-3]</span>
 <span class="go">        S_top [m]</span>
-<span class="go">    states info:</span>
+<span class="go">    states metadata:</span>
 <span class="go">        subsurface_store [m]</span>
-<span class="go">    outwards info:</span>
-<span class="go">        surface_runoff [kg m-2 s-1]</span>
-<span class="go">        subsurface_runoff [kg m-2 s-1]</span>
-<span class="go">        soil_water_stress [1]</span>
+<span class="go">    outwards metadata:</span>
+<span class="go">        soil_water_stress_for_transpiration [1]</span>
+<span class="go">        surface_runoff_flux_delivered_to_rivers [kg m-2 s-1]</span>
+<span class="go">        net_groundwater_flux_to_rivers [kg m-2 s-1]</span>
 <span class="go">)</span>
 </pre></div>
 </div>
@@ -476,7 +487,9 @@ subsurface component page.</p>
 <span class="gp">... </span>    <span class="n">spacedomain</span><span class="o">=</span><span class="n">spacedomain</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_subsurface</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span>
-<span class="gp">... </span>    <span class="n">records</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;surface_runoff&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]}}</span>
+<span class="gp">... </span>    <span class="n">records</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;surface_runoff_flux_delivered_to_rivers&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]}</span>
+<span class="gp">... </span>    <span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
 <span class="go">SubSurfaceComponent(</span>
@@ -485,7 +498,7 @@ subsurface component page.</p>
 <span class="go">    timedomain: period: 365 days, 0:00:00</span>
 <span class="go">    spacedomain: shape: (Y: 8, X: 6)</span>
 <span class="go">    records:</span>
-<span class="go">        surface_runoff: 1 day, 0:00:00 {&#39;mean&#39;}</span>
+<span class="go">        surface_runoff_flux_delivered_to_rivers: 1 day, 0:00:00 {&#39;mean&#39;}</span>
 <span class="go">)</span>
 </pre></div>
 </div>
@@ -493,7 +506,7 @@ subsurface component page.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The variables that can be recorded using the <em>records</em> optional
-argument are the component’s outwards, outputs, and states. By default,
+parameter are the component’s outwards, outputs, and states. By default,
 none are recorded.</p>
 </div>
 </div>
@@ -525,7 +538,7 @@ three parts of the terrestrial water cycle.</p>
 <span class="gp">... </span>                    <span class="s1">&#39;cb_river&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                    <span class="s1">&#39;ret_l&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                    <span class="s1">&#39;ret_r&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.005</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
-<span class="gp">... </span>                    <span class="s1">&#39;river_length&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">50000</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">)},</span>
+<span class="gp">... </span>                    <span class="s1">&#39;routing_length&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">50000</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">)},</span>
 <span class="gp">... </span>        <span class="n">records</span><span class="o">=</span><span class="p">{</span>
 <span class="gp">... </span>            <span class="s1">&#39;outgoing_water_volume_transport_along_river_channel&#39;</span><span class="p">:</span> <span class="p">{</span>
 <span class="gp">... </span>                <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>
@@ -582,7 +595,7 @@ returning null values for the component’s outwards transfers.</p>
 </div>
 <p>At this stage, the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> as such is fully configured, and the configuration
 can be saved as a YAML file in the <em>config_directory</em> and named using the
-<em>identifier</em> (e.g. in this example, the file would be at
+<em>identifier</em> (e.g. in this tutorial, the file would be at
 <em>configurations/tutorial.yml</em>).</p>
 <div class="literal-block-wrapper docutils container" id="id9">
 <div class="code-block-caption"><span class="caption-text">Saving <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> set up in YAML file.</span><a class="headerlink" href="#id9" title="Permalink to this code"><span class="fa fa-link"></a></div>
@@ -618,8 +631,8 @@ set in the <em>spin-up</em> and/or <em>simulate</em> invocations, a series of sn
 in time have been stored in dump files in the <em>saving_directory</em> of each
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> and of the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>. A <em>resume</em> method for <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> allows
 for the given run to be resumed to reach completion of the simulation
-period. The <em>tag</em> argument must be used to select which run to resume
-(i.e. any spin-up cycle, or the main run), and the <em>at</em> argument can be
+period. The <em>tag</em> parameter must be used to select which run to resume
+(i.e. any spin-up cycle, or the main run), and the <em>at</em> parameter can be
 used to select the given snapshot in time to restart from.</p>
 <div class="literal-block-wrapper docutils container" id="id11">
 <div class="code-block-caption"><span class="caption-text">Resuming the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> main simulation run.</span><a class="headerlink" href="#id11" title="Permalink to this code"><span class="fa fa-link"></a></div>
@@ -627,6 +640,7 @@ used to select the given snapshot in time to restart from.</p>
 </pre></div>
 </div>
 </div>
+<p>Further training resources are available at <a class="reference external" href="https://github.com/unifhy-org/unifhy-training">https://github.com/unifhy-org/unifhy-training</a>.</p>
 </div>
 </div>
 </div>
@@ -653,7 +667,7 @@ used to select the given snapshot in time to restart from.</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Dec 06, 2021.<br>
+        Last updated on Dec 07, 2021.<br>
       </p>
     </div>
   </div>
