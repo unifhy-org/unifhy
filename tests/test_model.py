@@ -5,15 +5,15 @@ import numpy as np
 from copy import deepcopy
 from glob import glob
 
-import cm4twc
+import unifhy
 from tests.test_time import (get_dummy_timedomain,
                              get_dummy_spin_up_start_end,
                              get_dummy_dumping_frequency)
-from tests.test_components.test_component import get_dummy_component
-from tests.test_components.test_utils.test_states import compare_states
-from tests.test_components.test_utils.test_records import (get_expected_record,
-                                                           get_produced_record,
-                                                           exp_records_raw)
+from tests.test_component import get_dummy_component
+from tests.test_utils.test_state import compare_states
+from tests.test_utils.test_record import (get_expected_record,
+                                          get_produced_record,
+                                          exp_records_raw)
 
 
 class Simulator(object):
@@ -38,7 +38,7 @@ class Simulator(object):
     def from_yaml(cls, time_, space_):
         return cls(
             time_, space_,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 'configurations/dummy_{}_{}.yml'.format(time_, space_)
             )
         )
@@ -66,7 +66,7 @@ class Simulator(object):
         )
 
         # try to get an instance of model with the given combination
-        model = cm4twc.Model(
+        model = unifhy.Model(
             identifier='test-{}-{}-{}{}{}{}'.format(
                 time_, space_,
                 surfacelayer_kind, subsurface_kind, openwater_kind,
@@ -96,7 +96,7 @@ class Simulator(object):
         if tag == 'run':
             at = (get_dummy_timedomain('daily').bounds.datetime_array[-1, -1]
                   - get_dummy_dumping_frequency(self.time_))
-        else:  # spinup
+        else:  # tag == 'spinup'
             at = (get_dummy_spin_up_start_end()[-1]
                   - get_dummy_dumping_frequency(self.time_))
 
@@ -192,20 +192,20 @@ class BasicTestModel(object):
         - initialise second model with dumps from first model last snapshot;
         - spin-up second model.
 
-        The test only works with one combination of actual components.
+        The test only works with a combination of actual components.
 
         The functional character of the workflow is tested through:
         - completing with no error;
         - checking the correctness of the final component state values;
         - checking the correctness of the final exchanger transfer values.
 
-        Note, since simulate period is of 12 days, and each spinup cycle
-        is of 6 days, and given that the driving data is constant for
-        the 12-day period, the final conditions with spinup+spinup
+        Note, since simulate period is of 16 days, and each spinup cycle
+        is of 8 days, and given that the driving data is constant for
+        the 16-day period, the final conditions with spinup+spinup
         will be the same as with simulate without spinup, which means
         that correctness of final conditions can be checked, but not
         records because they are scattered across two files of for
-        simulation periods 6 days each.
+        simulation periods 8 days each.
         """
         # set up a model, and spin it up
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
@@ -287,7 +287,7 @@ class BasicTestModel(object):
         # start main run
         simulator.run_model()
 
-        # start main run
+        # resume main run
         simulator.resume_model()
 
         # check final state and transfer values
@@ -314,13 +314,13 @@ class BasicTestModel(object):
         - checking the correctness of the final component state values;
         - checking the correctness of the final exchanger transfer values.
 
-        Note, since simulate period is of 12 days, and each spinup cycle
-        is of 6 days, and given that the driving data is constant for
-        the 12-day period, the final conditions with spinup+spinup
+        Note, since simulate period is of 16 days, and each spinup cycle
+        is of 8 days, and given that the driving data is constant for
+        the 16-day period, the final conditions with spinup+spinup
         will be the same as with simulate without spinup, which means
         that correctness of final conditions can be checked, but not
         records because they are scattered across two files of for
-        simulation periods 6 days each.
+        simulation periods 8 days each.
         """
         # set up a model
         simulator_1 = Simulator.from_scratch(self.t, self.s, 'c', 'c', 'c')
@@ -334,13 +334,13 @@ class BasicTestModel(object):
         # set up another model using YAML of first model
         simulator_2 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
         )
 
-        # start main run
+        # resume first spin-up run
         simulator_2.resume_model(tag='spinup1')
 
         # check final state and transfer values
@@ -349,13 +349,13 @@ class BasicTestModel(object):
         # set up yet another model using YAML of first model
         simulator_3 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
         )
 
-        # start main run
+        # resume second spin-up run
         simulator_3.resume_model(tag='spinup2')
 
         # check final state and transfer values
@@ -384,7 +384,7 @@ class BasicTestModel(object):
         # set up another model using YAML of first model
         simulator_2 = Simulator(
             self.t, self.s,
-            cm4twc.Model.from_yaml(
+            unifhy.Model.from_yaml(
                 os.sep.join([simulator_1.model.saving_directory,
                              '{}.yml'.format(simulator_1.model.identifier)])
             )
@@ -400,6 +400,74 @@ class BasicTestModel(object):
 
         # clean up
         simulator_2.clean_up_files()
+
+    def test_setup_spinup_simulate_resume_run(self):
+        """
+        The purpose of this test is to check that a complete workflow is
+        functional, i.e.:
+        - configure first model;
+        - spin-up first model;
+        - simulate first model main run;
+        - configure second model using YAML configuration file of first model;
+        - resume second model main run at second-to-last snapshot.
+
+        Unlike its "advanced" counterpart, this test considers only one
+        combinations of actual `Component`, `DataComponent`, and
+        `NullComponent`.
+
+        The functional character of the workflow is tested through:
+        - completing with no error;
+        - checking equality of the final component states at the end of
+          simulate and at the end of resume.
+
+        Note, this test does not check for correctness of final
+        states and transfers conditions, nor correctness of final
+        records because when one or more `NullComponent` is used in the
+        combination, the final conditions are not expected to be
+        'correct', and even less so 'consistent' from one combination
+        to the next.
+        """
+        # set up, spinup, and run model
+        simulator_1 = Simulator.from_scratch(self.t, self.s, 'd', 'c', 'n')
+        simulator_1.spinup_model()
+        simulator_1.run_model()
+
+        # store the last component states
+        last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
+        last_states_ss = deepcopy(simulator_1.model.subsurface.states)
+        last_states_ow = deepcopy(simulator_1.model.openwater.states)
+
+        # set up another model using YAML of first model
+        simulator_2 = Simulator(
+            self.t, self.s,
+            unifhy.Model.from_yaml(
+                os.sep.join([simulator_1.model.saving_directory,
+                             '{}.yml'.format(simulator_1.model.identifier)])
+            )
+        )
+
+        # resume model run
+        simulator_2.resume_model()
+
+        # check final state values are coherent
+        self.assertTrue(
+            compare_states(
+                last_states_sl, simulator_2.model.surfacelayer.states
+            )
+        )
+        self.assertTrue(
+            compare_states(
+                last_states_ss, simulator_2.model.subsurface.states
+            )
+        )
+        self.assertTrue(
+            compare_states(
+                last_states_ow, simulator_2.model.openwater.states
+            )
+        )
+
+        # clean up
+        simulator_1.clean_up_files()
 
     def check_final_conditions(self, model):
         """
@@ -422,13 +490,13 @@ class BasicTestModel(object):
         """
         cat = component.category
         # if component is "real", otherwise no states
-        if not isinstance(component, cm4twc.DataComponent):
+        if not isinstance(component, unifhy.DataComponent):
             for state in ['state_a', 'state_b']:
                 if exp_records_raw[self.t][cat].get(state) is None:
                     # some components feature only one state
                     continue
                 # retrieve last state values
-                arr = component.states[state][-1]
+                arr = component.states[state].get_timestep(-1)
                 # compare both min/max, as arrays are homogeneous
                 try:
                     val = exp_records_raw[self.t][cat][state][-1]
@@ -467,11 +535,11 @@ class BasicTestModel(object):
         for component in [model.surfacelayer,
                           model.subsurface,
                           model.openwater]:
-            rtol, atol = cm4twc.rtol(), cm4twc.atol()
+            rtol, atol = unifhy.rtol(), unifhy.atol()
 
             # if component is "real", otherwise no records requested
             cat = component.category
-            if not isinstance(component, cm4twc.DataComponent):
+            if not isinstance(component, unifhy.DataComponent):
                 for name, frequencies in component.records.items():
                     for delta, methods in frequencies.items():
                         for method in methods:
@@ -507,7 +575,7 @@ class BasicTestModel(object):
 
 class AdvancedTestModel(BasicTestModel):
 
-    def test_setup_spinup_simulate_resume(self):
+    def test_setup_spinup_simulate_resume_run(self):
         """
         The purpose of this test is to check that a complete workflow is
         functional, i.e.:
@@ -562,13 +630,13 @@ class AdvancedTestModel(BasicTestModel):
                 # set up another model using YAML of first model
                 simulator_2 = Simulator(
                     self.t, self.s,
-                    cm4twc.Model.from_yaml(
+                    unifhy.Model.from_yaml(
                         os.sep.join([simulator_1.model.saving_directory,
                                      '{}.yml'.format(simulator_1.model.identifier)])
                     )
                 )
 
-                # resume model
+                # resume model run
                 simulator_2.resume_model()
 
                 # check final state values are coherent
@@ -681,32 +749,33 @@ class AdvancedTestModel(BasicTestModel):
                 # clean up
                 simulator.clean_up_files()
 
+
 class TestModelSameTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
-    t = 'sync'
+    t = 'same_t'
     # flag to specify that components are to run at same spatial resolution
-    s = 'match'
+    s = 'same_s'
 
 
 class TestModelDiffTimeSameSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
-    t = 'async'
+    t = 'diff_t'
     # flag to specify that components are to run at same spatial resolution
-    s = 'match'
+    s = 'same_s'
 
 
 class TestModelSameTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at same temporal resolutions
-    t = 'sync'
+    t = 'same_t'
     # flag to specify that components are to run at different spatial resolutions
-    s = 'remap'
+    s = 'diff_s'
 
 
 class TestModelDiffTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
     # flag to specify that components are to run at different temporal resolutions
-    t = 'async'
+    t = 'diff_t'
     # flag to specify that components are to run at different spatial resolutions
-    s = 'remap'
+    s = 'diff_s'
 
 
 if __name__ == '__main__':
@@ -714,15 +783,19 @@ if __name__ == '__main__':
     test_suite = unittest.TestSuite()
 
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
+        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace))
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace))
+        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace)
+    )
     test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace)
+    )
 
-    test_suite.addTests(doctest.DocTestSuite(cm4twc.model))
+    test_suite.addTests(doctest.DocTestSuite(unifhy.model))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

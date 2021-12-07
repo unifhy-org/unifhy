@@ -10,7 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import sphinx_rtd_theme
+import pydata_sphinx_theme
 from datetime import datetime
 import os
 import sys
@@ -19,19 +19,23 @@ sys.path.insert(0, os.path.abspath('../..'))
 sys.path.append(os.path.abspath("./_doc_ext"))
 
 
-with open('../../cm4twc/version.py') as fv:
+with open('../../unifhy/version.py') as fv:
     exec(fv.read())
 
 # -- Project information -----------------------------------------------------
-project = 'cm4twc'
-copyright = '{}, UK Centre for Ecology & Hydrology'.format(
+project = 'unifhy'
+copyright = '2020-{}, UK Centre for Ecology & Hydrology'.format(
     datetime.now().year
 )
 author = 'Thibault Hallouin'
 
 # The full version, including alpha/beta/rc tags
-release = __version__
-version = __version__
+if os.getenv('VERSION_RELEASE'):
+    release = 'v{}'.format(__version__)
+    version = 'v{}'.format(__version__)
+else:
+    release = 'latest'
+    version = 'latest'
 
 # -- General configuration ---------------------------------------------------
 
@@ -43,13 +47,11 @@ version = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx_rtd_theme',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.doctest',
     'sphinx.ext.githubpages',
-    'nbsphinx',
     'sphinx.ext.mathjax',
     # internal extensions
     'autocomponent'
@@ -118,7 +120,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'pydata_sphinx_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -126,30 +128,38 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['../_doc_static']
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'cm4twcdoc'
+htmlhelp_basename = 'unifhydoc'
 
 # Paths (filenames) here must be relative to (under) html_static_path as above:
 html_css_files = [
-    'theme_overrides.css'
+    'custom.css'
 ]
 
 # Custom sidebar templates, maps document names to template names.
 html_sidebars = {
-    '**': ['about.html',
-           'navigation.html',
-           'searchbox.html',
-           'versions.html']
 }
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
-html_baseurl = 'https://hydro-jules.github.io/cm4twc/'
+html_baseurl = 'https://unifhy-org.github.io/unifhy'
+
+html_logo = '../_doc_img/logo_colours.svg'
+
+html_favicon = '../_doc_img/favicon.ico'
+
+html_permalinks_icon = '<span class="fa fa-link">'
 
 html_theme_options = {
-    'prev_next_buttons_location': None,
-    'navigation_depth': 4,
-    'collapse_navigation': False
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/unifhy-org/unifhy",
+            "icon": "fab fa-github",
+        }
+    ],
+    "show_prev_next": False,
+    "navbar_align": "left"
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
@@ -180,15 +190,22 @@ repo = Repo(search_parent_directories=True)
 remote_url = repo.remotes.origin.url
 
 versions = [
-    (tag.tag, os.sep.join([html_baseurl, tag.tag]))
-    for tag in repo.tags
+    (tag.name, '/'.join([html_baseurl, tag.name[1:]])) for tag in repo.tags
 ]
+
+if version != 'latest':
+    if (version, '/'.join([html_baseurl, __version__])) not in versions:
+        versions.insert(0, (version, '/'.join([html_baseurl, __version__])))
+versions.insert(0, ('latest', html_baseurl))
+
 html_context = {
-    'current_version': version,
+    'current_version': version if version == 'latest' else __version__,
     'versions': versions,
     'show_versions': True if versions else False,
     'links': [
-        ('<span class="fa fa-github"> GitHub Repository', remote_url)
+        ('Source Code', remote_url),
+        ('Issue Tracker', '/'.join([remote_url.replace('.git', ''), 'issues'])),
+        ('User Support', '/'.join([remote_url.replace('.git', ''), 'discussions']))
     ]
 }
 

@@ -1,4 +1,4 @@
-from cm4twc.components import SurfaceLayerComponent
+from unifhy.component import SurfaceLayerComponent
 try:
     from .dummyfortran import dummyfortran
 except ImportError:
@@ -47,6 +47,15 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
+    _inwards = {
+        'transfer_k',
+        'transfer_l',
+        'transfer_n'
+    }
+    _outwards = {
+        'transfer_i',
+        'transfer_j'
+    }
     _inputs_info = {
         'driving_a': {
             'units': '1',
@@ -83,16 +92,18 @@ class Dummy(SurfaceLayerComponent):
         }
     }
     _solver_history = 1
-    _land_sea_mask = True
-    _flow_direction = True
+    _requires_land_sea_mask = True
+    _requires_flow_direction = True
+    _requires_cell_area = False
 
     def initialise(self,
                    # component states
                    state_a, state_b,
                    **kwargs):
 
-        state_a[-1][:] = 0
-        state_b[-1][:] = 0
+        if not self.initialised_states:
+            state_a.set_timestep(-1, 0)
+            state_b.set_timestep(-1, 0)
 
     def run(self,
             # from exchanger
@@ -107,19 +118,23 @@ class Dummy(SurfaceLayerComponent):
             # component constants
             **kwargs):
 
-        state_a[0][:] = state_a[-1] + 1
-        state_b[0][:] = state_b[-1] + 2
+        state_a.set_timestep(0, state_a.get_timestep(-1) + 1)
+        state_b.set_timestep(0, state_b.get_timestep(-1) + 2)
 
-        output_x, _ = self.spacedomain.route(driving_a + driving_b + driving_c
-                                             + transfer_n - state_a[0])
+        output_x, _ = self.spacedomain.route(
+            driving_a + driving_b + driving_c + transfer_n
+            - state_a.get_timestep(0)
+        )
 
         return (
             # to exchanger
             {
                 'transfer_i':
-                    driving_a + driving_b + transfer_l + ancillary_c * state_a[0],
+                    driving_a + driving_b + transfer_l
+                    + ancillary_c * state_a.get_timestep(0),
                 'transfer_j':
-                    driving_a + driving_b + driving_c + transfer_k + state_b[0]
+                    driving_a + driving_b + driving_c
+                    + transfer_k + state_b.get_timestep(0)
             },
             # component outputs
             {
@@ -132,6 +147,7 @@ class Dummy(SurfaceLayerComponent):
                  # component states
                  state_a, state_b,
                  **kwargs):
+
         pass
 
 
@@ -154,7 +170,11 @@ class DummyFortran(Dummy):
                    # component states
                    state_a, state_b,
                    **kwargs):
-        dummyfortran.initialise(state_a[-1], state_b[-1])
+
+        if not self.initialised_states:
+            dummyfortran.initialise(
+                state_a.get_timestep(-1), state_b.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger
@@ -173,7 +193,8 @@ class DummyFortran(Dummy):
             transfer_k, transfer_l, transfer_n,
             driving_a, driving_b, driving_c,
             ancillary_c,
-            state_a[-1], state_a[0], state_b[-1], state_b[0]
+            state_a.get_timestep(-1), state_a.get_timestep(0),
+            state_b.get_timestep(-1), state_b.get_timestep(0)
         )
 
         output_x, _ = self.spacedomain.route(output_x)
@@ -194,6 +215,7 @@ class DummyFortran(Dummy):
                  # component states
                  state_a, state_b,
                  **kwargs):
+
         dummyfortran.finalise()
 
 
@@ -203,7 +225,11 @@ class DummyC(Dummy):
                    # component states
                    state_a, state_b,
                    **kwargs):
-        dummyc.initialise(state_a[-1], state_b[-1])
+
+        if not self.initialised_states:
+            dummyc.initialise(
+                state_a.get_timestep(-1), state_b.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger
@@ -222,7 +248,8 @@ class DummyC(Dummy):
             transfer_k, transfer_l, transfer_n,
             driving_a, driving_b, driving_c,
             ancillary_c,
-            state_a[-1], state_a[0], state_b[-1], state_b[0]
+            state_a.get_timestep(-1), state_a.get_timestep(0),
+            state_b.get_timestep(-1), state_b.get_timestep(0)
         )
 
         output_x, _ = self.spacedomain.route(output_x)
@@ -243,4 +270,5 @@ class DummyC(Dummy):
                  # component states
                  state_a, state_b,
                  **kwargs):
+
         dummyc.finalise()

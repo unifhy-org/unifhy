@@ -1,4 +1,4 @@
-from cm4twc.components import SubSurfaceComponent
+from unifhy.component import SubSurfaceComponent
 try:
     from .dummyfortran import dummyfortran
 except ImportError:
@@ -42,6 +42,14 @@ class Dummy(SubSurfaceComponent):
         }
     }
     # define some dummy inputs/parameters/constants/states/outputs
+    _inwards = {
+        'transfer_i',
+        'transfer_n'
+    }
+    _outwards = {
+        'transfer_k',
+        'transfer_m'
+    }
     _inputs_info = {
         'driving_a': {
             'units': '1',
@@ -70,14 +78,18 @@ class Dummy(SubSurfaceComponent):
         }
     }
     _solver_history = 1
+    _requires_land_sea_mask = False
+    _requires_flow_direction = False
+    _requires_cell_area = False
 
     def initialise(self,
                    # component states
                    state_a, state_b,
                    **kwargs):
 
-        state_a[-1][:] = 0
-        state_b[-1][:] = 0
+        if not self.initialised_states:
+            state_a.set_timestep(-1, 0)
+            state_b.set_timestep(-1, 0)
 
     def run(self,
             # from exchanger
@@ -92,18 +104,24 @@ class Dummy(SubSurfaceComponent):
             # component constants
             **kwargs):
 
-        state_a[0][:] = state_a[-1] + 1
-        state_b[0][:] = state_b[-1] + 2
+        state_a.set_timestep(0, state_a.get_timestep(-1) + 1)
+        state_b.set_timestep(0, state_b.get_timestep(-1) + 2)
 
         return (
             # to exchanger
             {
-                'transfer_k': driving_a * parameter_a + transfer_n + state_a[0],
-                'transfer_m': driving_a * parameter_a + transfer_i + state_b[0]
+                'transfer_k':
+                    driving_a * parameter_a + transfer_n
+                    + state_a.get_timestep(0),
+                'transfer_m':
+                    driving_a * parameter_a + transfer_i
+                    + state_b.get_timestep(0)
             },
             # component outputs
             {
-                'output_x': driving_a * parameter_a + transfer_n - state_a[0]
+                'output_x':
+                    driving_a * parameter_a + transfer_n
+                    - state_a.get_timestep(0)
             }
         )
 
@@ -111,6 +129,7 @@ class Dummy(SubSurfaceComponent):
                  # to exchanger
                  state_a, state_b,
                  **kwargs):
+
         pass
 
 
@@ -133,7 +152,11 @@ class DummyFortran(Dummy):
                    # component states
                    state_a, state_b,
                    **kwargs):
-        dummyfortran.initialise(state_a[-1], state_b[-1])
+
+        if not self.initialised_states:
+            dummyfortran.initialise(
+                state_a.get_timestep(-1), state_b.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger
@@ -151,7 +174,8 @@ class DummyFortran(Dummy):
         transfer_k, transfer_m, output_x = dummyfortran.run(
             transfer_i, transfer_n,
             driving_a, parameter_a,
-            state_a[-1], state_a[0], state_b[-1], state_b[0]
+            state_a.get_timestep(-1), state_a.get_timestep(0),
+            state_b.get_timestep(-1), state_b.get_timestep(0)
         )
 
         return (
@@ -170,6 +194,7 @@ class DummyFortran(Dummy):
                  # component states
                  state_a, state_b,
                  **kwargs):
+
         dummyfortran.finalise()
 
 
@@ -179,7 +204,11 @@ class DummyC(Dummy):
                    # component states
                    state_a, state_b,
                    **kwargs):
-        dummyc.initialise(state_a[-1], state_b[-1])
+
+        if not self.initialised_states:
+            dummyc.initialise(
+                state_a.get_timestep(-1), state_b.get_timestep(-1)
+            )
 
     def run(self,
             # from exchanger
@@ -197,7 +226,8 @@ class DummyC(Dummy):
         transfer_k, transfer_m, output_x = dummyc.run(
             transfer_i, transfer_n,
             driving_a, parameter_a,
-            state_a[-1], state_a[0], state_b[-1], state_b[0]
+            state_a.get_timestep(-1), state_a.get_timestep(0),
+            state_b.get_timestep(-1), state_b.get_timestep(0)
         )
 
         return (
@@ -216,4 +246,5 @@ class DummyC(Dummy):
                  # component states
                  state_a, state_b,
                  **kwargs):
+
         dummyc.finalise()

@@ -1,0 +1,57 @@
+name: Basic tests
+
+on:
+  pull_request:
+    types: [ready_for_review]
+    branches: [dev]
+
+jobs:
+
+  run-basic-tests:
+  
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.7, 3.8, 3.9]
+      fail-fast: false
+        
+    runs-on: ${{ matrix.os }}
+    
+    defaults:
+      run:
+        shell: bash -l {0}
+    
+    steps:
+    
+      # check out PR HEAD commit
+      - name: check out PR HEAD commit
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          
+      # set up a conda environment
+      - name: set up miniconda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: testing-env
+          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
+          mamba-version: "*"
+          channels: conda-forge
+          channel-priority: true
+          
+      # install dependencies on conda environment
+      - name: install package dependencies
+        run: |
+          mamba install udunits2=2.2.25
+          mamba install --file=requirements.txt
+          
+      # install package
+      - name: install package
+        run: |
+          pip install -e .
+          
+      # run tests
+      - name: run basic test suite
+        run: |
+          (cd ./tests && python run_basic_tests.py)

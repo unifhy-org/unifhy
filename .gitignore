@@ -1,9 +1,13 @@
 __pycache__/
 *.pyc
+*.pyf
 *.so
 
 # ignore documentation built because copied in docs/ root already
 docs/_doc_build
+
+# ignore component contributions added during documentation built on GitHub
+unifhycontrib
 
 # =========================
 # Operating System Files

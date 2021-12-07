@@ -1,17 +1,17 @@
-subroutine initialise(z, y, x, state_a_m1, state_b_m1)
+subroutine initialise(y, x, state_a_m1, state_b_m1)
     implicit none
 
     ! spaceshape
-    integer, intent(in) :: z, y, x
+    integer, intent(in) :: y, x
     ! component states
-    real(kind=8), intent(inout), dimension(z, y, x) :: state_a_m1, state_b_m1
+    real(kind=8), intent(inout), dimension(y, x) :: state_a_m1, state_b_m1
 
     state_a_m1 = 0
     state_b_m1 = 0
 
 end subroutine initialise
 
-subroutine run(z, y, x, &
+subroutine run(y, x, &
                transfer_k, transfer_l, transfer_n, &
                driving_a, driving_b, driving_c, &
                ancillary_c, &
@@ -22,22 +22,22 @@ subroutine run(z, y, x, &
     implicit none
 
     ! spaceshape
-    integer, intent(in) :: z, y, x
+    integer, intent(in) :: y, x
     ! from exchanger
-    real(kind=8), intent(in), dimension(z, y, x) :: &
+    real(kind=8), intent(in), dimension(y, x) :: &
         transfer_k, transfer_l, transfer_n
     ! component driving data
-    real(kind=8), intent(in), dimension(z, y, x) :: &
+    real(kind=8), intent(in), dimension(y, x) :: &
         driving_a, driving_b, driving_c
     ! component ancillary data
-    real(kind=8), intent(in), dimension(z, y, x) :: ancillary_c
+    real(kind=8), intent(in), dimension(y, x) :: ancillary_c
     ! component states
-    real(kind=8), intent(in), dimension(z, y, x) :: state_a_m1, state_b_m1
-    real(kind=8), intent(inout), dimension(z, y, x) :: state_a_0, state_b_0
+    real(kind=8), intent(in), dimension(y, x) :: state_a_m1, state_b_m1
+    real(kind=8), intent(inout), dimension(y, x) :: state_a_0, state_b_0
     ! to exchanger
-    real(kind=8), intent(out), dimension(z, y, x) :: transfer_i, transfer_j
+    real(kind=8), intent(out), dimension(y, x) :: transfer_i, transfer_j
     ! component outputs
-    real(kind=8), intent(out), dimension(z, y, x) :: output_x
+    real(kind=8), intent(out), dimension(y, x) :: output_x
 
     state_a_0 = state_a_m1 + 1
     state_b_0 = state_b_m1 + 2

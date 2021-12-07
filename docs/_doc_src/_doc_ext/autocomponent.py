@@ -3,7 +3,6 @@ from docutils.statemachine import StringList
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util import nested_parse_with_titles
 from importlib import import_module
-import inspect
 import re
 import numpy as np
 
@@ -23,21 +22,19 @@ class AutoComponentDirective(SphinxDirective):
         # parse class docstring
         sig = ".. class:: {}\n".format(content)
         sect = nodes.section()
-        sl = StringList(sig.split('\n') + cls_.__doc__.split('\n'), self.content.parent)
+        sl = StringList(
+            sig.split('\n') + ("\n    " + cls_.__doc__).split('\n'),
+            self.content.parent
+        )
         sect.document = self.state.document
         nested_parse_with_titles(self.state, sl, sect)
         document.extend(sect.children)
 
         # parse class attributes
-        defaults = {
-            k: v.default
-            for k, v in inspect.signature(cls_.run).parameters.items()
-            if v.default is not inspect.Parameter.empty
-        }
-        for definition in ['inputs', 'inwards', 'outputs', 'outwards',
-                           'parameters', 'constants', 'states']:
-            if getattr(cls_, definition + '_info'):
-                attribute = getattr(cls_, definition + '_info')
+        for definition in ['_inputs', 'inwards', '_outputs', 'outwards',
+                           '_parameters', '_constants', '_states']:
+            if getattr(cls_, '{}_info'.format(definition)):
+                attribute = getattr(cls_, '{}_info'.format(definition))
                 para = nodes.paragraph()
                 if definition[0] == '_':
                     definition = definition[1:]
@@ -66,19 +63,16 @@ class AutoComponentDirective(SphinxDirective):
                                 field
                             )
                             self.state.nested_parse(sl, 0, field_body)
+                        elif key == 'default_value':
+                            field_body += nodes.paragraph(
+                                text=np.format_float_scientific(
+                                    value, trim='0'
+                                )
+                            )
+                        elif key == 'to':
+                            field_body += nodes.paragraph(text=', '.join(value))
                         else:
                             field_body += nodes.paragraph(text=value)
-                        field += field_body
-                        field_list += field
-                    # add default values for constants
-                    if definition == 'constants':
-                        field = nodes.field()
-                        field += nodes.field_name(text='default value')
-                        field_body = nodes.field_body()
-                        field_body += nodes.paragraph(
-                            text=np.format_float_scientific(defaults[name],
-                                                            trim='0')
-                        )
                         field += field_body
                         field_list += field
 
@@ -92,9 +86,9 @@ class AutoComponentDirective(SphinxDirective):
                                   nodes.Text('SpaceDomain Properties'))
             para += rubric
 
-        for name in ['land_sea_mask', 'flow_direction']:
+        for name in ['land_sea_mask', 'flow_direction', 'cell_area']:
             field_list = nodes.field_list()
-            attribute = getattr(cls_, name)
+            attribute = getattr(cls_, '_requires_{}'.format(name))
             # name
             field = nodes.field()
             field += nodes.field_name(text='name')
