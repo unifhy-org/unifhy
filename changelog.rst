@@ -8,7 +8,7 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 v0.1.0
 ------
 
-Released on 2021-12-??.
+Released on 2021-12-07.
 
 .. rubric:: Functional changes
 
