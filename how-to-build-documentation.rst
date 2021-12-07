@@ -10,7 +10,7 @@ command can be used to build the documentation automatically:
 
 .. code-block:: bash
 
-   gh workflow run build-docs.yml --ref dev
+   gh workflow run build_docs.yml --ref dev
 
 This will build the documentation based on the latest commit on the
 'dev' branch and, as part of the workflow, will directly commit any

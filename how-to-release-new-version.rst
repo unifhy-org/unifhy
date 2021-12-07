@@ -51,7 +51,7 @@ justified or required, the following steps must be followed.
 
    .. code-block:: bash
 
-      gh workflow run build-docs.yml --ref release-v#.#.# -f branch=release-v#.#.# -f release=#.#.#
+      gh workflow run build_docs.yml --ref release-v#.#.# -f branch=release-v#.#.# -f release=#.#.#
 
 6. create a draft pull request on GitHub to merge the release branch
    in 'main' branch
