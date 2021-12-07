@@ -129,23 +129,23 @@ class MetaComponent(abc.ABCMeta):
     def __str__(cls):
         info_a = [
             "\n".join(
-                ([f"    {t.replace('_info', ' metadata')}:"]
+                ([f"    {t.replace('_info', ' metadata').replace('_', '')}:"]
                  + [f"        {n} [{info['units']}]"
-                    for n, info in getattr(cls, f'_{t}').items()])
+                    for n, info in getattr(cls, t).items()])
             )
-            for t in ['inwards_info', 'inputs_info']
-            if getattr(cls, f'_{t}')
+            for t in ['inwards_info', '_inputs_info']
+            if getattr(cls, t)
         ]
 
         info_b = [
             "\n".join(
-                ([f"    {t.replace('_info', ' metadata')}:"]
+                ([f"    {t.replace('_info', ' metadata').replace('_', '')}:"]
                  + [f"        {n} [{info['units']}]"
-                    for n, info in getattr(cls, f'_{t}').items()])
+                    for n, info in getattr(cls, t).items()])
             )
-            for t in ['parameters_info', 'constants_info', 'states_info',
-                      'outwards_info', 'outputs_info']
-            if getattr(cls, f'_{t}')
+            for t in ['_parameters_info', '_constants_info', '_states_info',
+                      'outwards_info', '_outputs_info']
+            if getattr(cls, t)
         ]
 
         return "\n".join(
