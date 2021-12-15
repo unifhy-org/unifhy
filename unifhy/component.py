@@ -1353,6 +1353,7 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'surfacelayer'
     _inwards_info = {
+        # waterenergy --------------------------------------------------
         'soil_water_stress_for_transpiration': {
             'units': '1',
             'from': 'subsurface',
@@ -1373,8 +1374,11 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
             'from': 'subsurface',
             'method': 'mean'
         }
+        # nutrients ----------------------------------------------------
+        # NONE
     }
     _outwards_info = {
+        # waterenergy --------------------------------------------------
         'canopy_liquid_throughfall_and_snow_melt_flux': {
             'units': 'kg m-2 s-1',
             'to': ['subsurface'],
@@ -1404,6 +1408,27 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
             'units': 'kg m-2 s-1',
             'to': ['openwater'],
             'method': 'mean'
+        },
+        # nutrients ----------------------------------------------------
+        'mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_concentration_of_carbon_dioxide_in_air': {
+            'units': 'kg m-3',
+            'to': ['openwater'],
+            'method': 'mean'
         }
     }
 
@@ -1414,6 +1439,7 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'subsurface'
     _inwards_info = {
+        # waterenergy --------------------------------------------------
         'canopy_liquid_throughfall_and_snow_melt_flux': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
@@ -1444,8 +1470,11 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             'from': 'openwater',
             'method': 'mean'
         }
+        # nutrients ----------------------------------------------------
+        # NONE
     }
     _outwards_info = {
+        # waterenergy --------------------------------------------------
         'soil_water_stress_for_transpiration': {
             'units': '1',
             'to': ['surfacelayer'],
@@ -1472,6 +1501,97 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             'method': 'mean'
         },
         'net_groundwater_flux_to_rivers': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        # nutrients ----------------------------------------------------
+        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'to': ['openwater'],
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff': {
             'units': 'kg m-2 s-1',
             'to': ['openwater'],
             'method': 'mean'
@@ -1485,6 +1605,7 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """
     _category = 'openwater'
     _inwards_info = {
+        # waterenergy --------------------------------------------------
         'water_evaporation_flux_from_open_water': {
             'units': 'kg m-2 s-1',
             'from': 'surfacelayer',
@@ -1504,9 +1625,121 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
             'units': 'kg m-2 s-1',
             'from': 'subsurface',
             'method': 'mean'
+        },
+        # nutrients ----------------------------------------------------
+        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff': {
+            'units': 'kg m-2 s-1',
+            'from': 'subsurface',
+            'method': 'mean'
+        },
+        'mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition': {
+            'units': 'kg m-2 s-1',
+            'from': 'surface',
+            'method': 'mean'
+        },
+        'mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition': {
+            'units': 'kg m-2 s-1',
+            'from': 'surface',
+            'method': 'mean'
+        },
+        'mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition': {
+            'units': 'kg m-2 s-1',
+            'from': 'surface',
+            'method': 'mean'
+        },
+        'mass_concentration_of_carbon_dioxide_in_air': {
+            'units': 'kg m-3',
+            'from': 'surface',
+            'method': 'mean'
         }
     }
     _outwards_info = {
+        # waterenergy --------------------------------------------------
         'open_water_area_fraction': {
             'units': '1',
             'to': ['subsurface'],
@@ -1517,6 +1750,8 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
             'to': ['subsurface'],
             'method': 'mean'
         }
+        # nutrients ----------------------------------------------------
+        # NONE
     }
 
 
