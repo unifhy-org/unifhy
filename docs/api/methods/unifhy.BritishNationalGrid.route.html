@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>unifhy.BritishNationalGrid.route &#8212; unifhy v0.1.0 documentation</title>
+    <title>unifhy.BritishNationalGrid.route &#8212; unifhy latest documentation</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -68,7 +68,7 @@
       <ul class="navbar-nav mr-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              v0.1.0
+              latest
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
               
@@ -683,7 +683,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>values_to_route: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values to route following the flow direction, e.g.
+<dt>values_to_route: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values to route following the flow direction, e.g.
 how river discharge to route. The shape of this array
 must be the same as of the grid.</p>
 </dd>
@@ -691,12 +691,12 @@ must be the same as of the grid.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>values_routed: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values routed following the flow direction, e.g. how
+<dt>values_routed: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values routed following the flow direction, e.g. how
 much river discharge is coming into each grid element
 from their upstream grid elements. The shape of this
 array is the same as of the grid.</p>
 </dd>
-<dt>values_out: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values that routed following the flow direction would
+<dt>values_out: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values that routed following the flow direction would
 have left the domain (a value is considered to leave the
 domain if it is directed towards beyond the bounds of
 of the domain, or towards a masked location within the
@@ -715,7 +715,7 @@ is the same as of the grid.</p>
 <p class="admonition-title">Warning</p>
 <p>Given that Y and X <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> coordinates are ordered increasingly
 northwards and eastwards, respectively, and given that a 2D
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> origin (i.e. [0, 0]) is in the upper-left
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> origin (i.e. [0, 0]) is in the upper-left
 corner when visualising the content of an array (i.e. using
 <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>), routing a value northwards will result in visualising
 it “moving down” the array (and not up), and routing a value
@@ -860,13 +860,13 @@ eastwards will result in visualising it “moving right”.</p>
   <div class="container">
     <div class="footer-item">
       <p class="copyright">
-            &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+            &copy; Copyright 2020-2022, UK Centre for Ecology &amp; Hydrology.
       </p>
     </div>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Dec 07, 2021.<br>
+        Last updated on Jan 06, 2022.<br>
       </p>
     </div>
   </div>

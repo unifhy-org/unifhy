@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Files &#8212; unifhy v0.1.0 documentation</title>
+    <title>Files &#8212; unifhy latest documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -68,7 +68,7 @@
       <ul class="navbar-nav mr-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              v0.1.0
+              latest
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
               
@@ -230,141 +230,141 @@
 save the configuration of a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Content of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code> configuration YAML file for <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">identifier</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test-dummy-same_t-same_s</span>
-<span class="nt">config_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
-<span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
-<span class="nt">surfacelayer</span><span class="p">:</span>
-  <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">tests.components.surfacelayer.dummy</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Dummy</span>
-  <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
-  <span class="nt">timedomain</span><span class="p">:</span>
-    <span class="nt">start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span>
-    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span>
-    <span class="nt">step</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span>
-    <span class="nt">units</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span>
-    <span class="nt">calendar</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gregorian</span>
-  <span class="nt">spacedomain</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">LatLonGrid</span>
-    <span class="nt">latitude_extent</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">51</span><span class="p p-Indicator">,</span> <span class="nv">55</span><span class="p p-Indicator">]</span>
-    <span class="nt">latitude_resolution</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">longitude_extent</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">-2</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">]</span>
-    <span class="nt">longitude_resolution</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">latitude_longitude_location</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">centre</span>
-    <span class="nt">land_sea_mask</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_global_land_sea_mask_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">land_sea_mask</span>
-    <span class="nt">flow_direction</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_global_flow_direction_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">flow_direction</span>
-    <span class="nt">cell_area</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">dataset</span><span class="p">:</span>
-    <span class="nt">driving_a</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">driving_a</span>
-    <span class="nt">driving_b</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">driving_b</span>
-    <span class="nt">driving_c</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">driving_c</span>
-    <span class="nt">ancillary_c</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ancillary_c</span>
-  <span class="nt">parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">constants</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">records</span><span class="p">:</span>
-    <span class="nt">output_x</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
-      <span class="nt">timedelta(days=8)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">cumulative</span><span class="p p-Indicator">,</span> <span class="nv">average</span><span class="p p-Indicator">,</span> <span class="nv">min</span><span class="p p-Indicator">,</span> <span class="nv">max</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_i</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_j</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
-    <span class="nt">state_a</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
-    <span class="nt">state_b</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span>
-<span class="nt">subsurface</span><span class="p">:</span>
-  <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">tests.components.subsurface.dummy</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Dummy</span>
-  <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
-  <span class="nt">timedomain</span><span class="p">:</span>
-    <span class="nt">start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span>
-    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span>
-    <span class="nt">step</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span>
-    <span class="nt">units</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span>
-    <span class="nt">calendar</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gregorian</span>
-  <span class="nt">spacedomain</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">LatLonGrid</span>
-    <span class="nt">latitude_extent</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">51</span><span class="p p-Indicator">,</span> <span class="nv">55</span><span class="p p-Indicator">]</span>
-    <span class="nt">latitude_resolution</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">longitude_extent</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">-2</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">]</span>
-    <span class="nt">longitude_resolution</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">latitude_longitude_location</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">centre</span>
-    <span class="nt">land_sea_mask</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">flow_direction</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">cell_area</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">dataset</span><span class="p">:</span>
-    <span class="nt">driving_a</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_subsurface_data_daily_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">driving_a</span>
-  <span class="nt">parameters</span><span class="p">:</span>
-    <span class="nt">parameter_a</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="s">&#39;1&#39;</span><span class="p p-Indicator">]</span>
-  <span class="nt">constants</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">records</span><span class="p">:</span>
-    <span class="nt">output_x</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-      <span class="nt">timedelta(days=8)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span> <span class="nv">mean</span><span class="p p-Indicator">,</span> <span class="nv">minimum</span><span class="p p-Indicator">,</span> <span class="nv">maximum</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_k</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_m</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">state_a</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">state_b</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-<span class="nt">openwater</span><span class="p">:</span>
-  <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">tests.components.openwater.dummy</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Dummy</span>
-  <span class="nt">saving_directory</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputs</span>
-  <span class="nt">timedomain</span><span class="p">:</span>
-    <span class="nt">start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span>
-    <span class="nt">end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span>
-    <span class="nt">step</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span>
-    <span class="nt">units</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span>
-    <span class="nt">calendar</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gregorian</span>
-  <span class="nt">spacedomain</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">LatLonGrid</span>
-    <span class="nt">latitude_extent</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">51</span><span class="p p-Indicator">,</span> <span class="nv">55</span><span class="p p-Indicator">]</span>
-    <span class="nt">latitude_resolution</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">longitude_extent</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">-2</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">]</span>
-    <span class="nt">longitude_resolution</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">latitude_longitude_location</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">centre</span>
-    <span class="nt">land_sea_mask</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">flow_direction</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">cell_area</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">dataset</span><span class="p">:</span>
-    <span class="nt">ancillary_b</span><span class="p">:</span>
-      <span class="nt">files</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">data/dummy_openwater_data_daily_1deg.nc</span><span class="p p-Indicator">]</span>
-      <span class="nt">select</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ancillary_b</span>
-  <span class="nt">parameters</span><span class="p">:</span>
-    <span class="nt">parameter_c</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span> <span class="s">&#39;1&#39;</span><span class="p p-Indicator">]</span>
-  <span class="nt">constants</span><span class="p">:</span>
-    <span class="nt">constant_c</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span> <span class="s">&#39;1&#39;</span><span class="p p-Indicator">]</span>
-  <span class="nt">records</span><span class="p">:</span>
-    <span class="nt">output_x</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-      <span class="nt">timedelta(days=8)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span> <span class="nv">mean</span><span class="p p-Indicator">,</span> <span class="nv">minimum</span><span class="p p-Indicator">,</span> <span class="nv">maximum</span><span class="p p-Indicator">]</span>
-    <span class="nt">output_y</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_l</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_n</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">transfer_o</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
-    <span class="nt">state_a</span><span class="p">:</span>
-      <span class="nt">timedelta(days=1)</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-dummy-same_t-same_s</span><span class="w"></span>
+<span class="nt">config_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outputs</span><span class="w"></span>
+<span class="nt">saving_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outputs</span><span class="w"></span>
+<span class="nt">surfacelayer</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tests.components.surfacelayer.dummy</span><span class="w"></span>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dummy</span><span class="w"></span>
+<span class="w">  </span><span class="nt">saving_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outputs</span><span class="w"></span>
+<span class="w">  </span><span class="nt">timedomain</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span><span class="w"></span>
+<span class="w">    </span><span class="nt">end</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span><span class="w"></span>
+<span class="w">    </span><span class="nt">step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span><span class="w"></span>
+<span class="w">    </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span><span class="w"></span>
+<span class="w">    </span><span class="nt">calendar</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gregorian</span><span class="w"></span>
+<span class="w">  </span><span class="nt">spacedomain</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LatLonGrid</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_extent</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">51</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">55</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_resolution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">longitude_extent</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">longitude_resolution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_longitude_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">centre</span><span class="w"></span>
+<span class="w">    </span><span class="nt">land_sea_mask</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_global_land_sea_mask_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">land_sea_mask</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flow_direction</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_global_flow_direction_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flow_direction</span><span class="w"></span>
+<span class="w">    </span><span class="nt">cell_area</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">dataset</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">driving_a</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">driving_a</span><span class="w"></span>
+<span class="w">    </span><span class="nt">driving_b</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">driving_b</span><span class="w"></span>
+<span class="w">    </span><span class="nt">driving_c</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">driving_c</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ancillary_c</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_surfacelayer_data_daily_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ancillary_c</span><span class="w"></span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">constants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">records</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">output_x</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=8)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">cumulative</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">average</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">min</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">max</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_i</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_j</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state_a</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state_b</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">instantaneous</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="nt">subsurface</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tests.components.subsurface.dummy</span><span class="w"></span>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dummy</span><span class="w"></span>
+<span class="w">  </span><span class="nt">saving_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outputs</span><span class="w"></span>
+<span class="w">  </span><span class="nt">timedomain</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span><span class="w"></span>
+<span class="w">    </span><span class="nt">end</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span><span class="w"></span>
+<span class="w">    </span><span class="nt">step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span><span class="w"></span>
+<span class="w">    </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span><span class="w"></span>
+<span class="w">    </span><span class="nt">calendar</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gregorian</span><span class="w"></span>
+<span class="w">  </span><span class="nt">spacedomain</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LatLonGrid</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_extent</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">51</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">55</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_resolution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">longitude_extent</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">longitude_resolution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_longitude_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">centre</span><span class="w"></span>
+<span class="w">    </span><span class="nt">land_sea_mask</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flow_direction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">cell_area</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">dataset</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">driving_a</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_subsurface_data_daily_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">driving_a</span><span class="w"></span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">parameter_a</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">  </span><span class="nt">constants</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">records</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">output_x</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=8)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">mean</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">minimum</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">maximum</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_k</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_m</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state_a</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state_b</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="nt">openwater</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tests.components.openwater.dummy</span><span class="w"></span>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dummy</span><span class="w"></span>
+<span class="w">  </span><span class="nt">saving_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outputs</span><span class="w"></span>
+<span class="w">  </span><span class="nt">timedomain</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-01-01 09:00:00</span><span class="w"></span>
+<span class="w">    </span><span class="nt">end</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019-01-17 09:00:00</span><span class="w"></span>
+<span class="w">    </span><span class="nt">step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timedelta(days=1)</span><span class="w"></span>
+<span class="w">    </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">days since 2019-01-01 09:00:00Z</span><span class="w"></span>
+<span class="w">    </span><span class="nt">calendar</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gregorian</span><span class="w"></span>
+<span class="w">  </span><span class="nt">spacedomain</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LatLonGrid</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_extent</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">51</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">55</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_resolution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">longitude_extent</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">longitude_resolution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">latitude_longitude_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">centre</span><span class="w"></span>
+<span class="w">    </span><span class="nt">land_sea_mask</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flow_direction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">cell_area</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">dataset</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ancillary_b</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">data/dummy_openwater_data_daily_1deg.nc</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ancillary_b</span><span class="w"></span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">parameter_c</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">  </span><span class="nt">constants</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">constant_c</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">  </span><span class="nt">records</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">output_x</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=8)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sum</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">mean</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">minimum</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">maximum</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">output_y</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_l</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_n</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">transfer_o</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state_a</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timedelta(days=1)</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">point</span><span class="p p-Indicator">]</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -387,13 +387,13 @@ save the configuration of a <a class="reference internal" href="../api/classes/u
   <div class="container">
     <div class="footer-item">
       <p class="copyright">
-            &copy; Copyright 2020-2021, UK Centre for Ecology &amp; Hydrology.
+            &copy; Copyright 2020-2022, UK Centre for Ecology &amp; Hydrology.
       </p>
     </div>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Dec 07, 2021.<br>
+        Last updated on Jan 06, 2022.<br>
       </p>
     </div>
   </div>
