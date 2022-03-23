@@ -50,4 +50,14 @@ GitHub repository:
    pip install git+https://github.com/unifhy-org/unifhy.git@dev
 
 
+Testing the framework
+---------------------
+
+To check whether the framework has been installed properly, you can run
+tests. These tests are to be run from the ``tests`` directory:
+
+.. code-block:: bash
+   :caption: Running the basic test suite.
+
+   python run_basic_tests.py
 
