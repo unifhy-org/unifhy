@@ -61,3 +61,13 @@ tests. These tests are to be run from the ``tests`` directory:
 
    python run_basic_tests.py
 
+
+Installing framework components
+-------------------------------
+
+The framework components listed in the :doc:`science library <../science_library>`
+are independent of the framework: they come as Python packages
+of their own. Consequently, they need to be installed separately.
+The distribution of these components is left at the discretion of the component
+contributors. Please refer to their documentation and/or their codebase
+to follow the recommended way of installing them.
