@@ -57,7 +57,7 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python'
     ],
-    packages=find_packages(exclude=["docs*"]),
+    packages=find_packages(exclude=["docs*", "data*"]),
     python_requires=">=3.7",
     install_requires=requirements('requirements.txt'),
     extras_require={

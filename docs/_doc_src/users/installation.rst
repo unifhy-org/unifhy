@@ -14,18 +14,18 @@ If you wish to install the most recent **stable** version of `unifhy`, it is
 available from the *conda-forge* channel, so you can use `conda` (recommended
 way):
 
-.. code-block:: bash
+.. code-block:: console
    :caption: Installing stable version using `conda`.
 
-   conda install -c conda-forge unifhy
+   $ conda install -c conda-forge unifhy
 
 It is also available from the Python Package Index (PyPI), so you can also
 use `pip`:
 
-.. code-block:: bash
+.. code-block:: console
    :caption: Installing stable version using `pip`.
 
-   pip install unifhy
+   $ pip install unifhy
 
 .. warning::
 
@@ -44,10 +44,10 @@ If you need the **latest**, potentially unstable, features listed in the
 :doc:`change log <../changelog>`, please install from the *dev* branch on the
 GitHub repository:
 
-.. code-block:: bash
+.. code-block:: console
    :caption: Installing latest features using `pip`.
 
-   pip install git+https://github.com/unifhy-org/unifhy.git@dev
+   $ pip install git+https://github.com/unifhy-org/unifhy.git@dev
 
 
 Testing the framework
@@ -56,10 +56,10 @@ Testing the framework
 To check whether the framework has been installed properly, you can run
 tests. These tests are to be run from the ``tests`` directory:
 
-.. code-block:: bash
+.. code-block:: console
    :caption: Running the basic test suite.
 
-   python run_basic_tests.py
+   $ python run_basic_tests.py
 
 
 Installing framework components

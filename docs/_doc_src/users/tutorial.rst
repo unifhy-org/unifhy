@@ -4,27 +4,54 @@
 Tutorial
 ========
 
-This section showcases the basic usage of modelling framework `unifhy`
+This section showcases the basic usage of the modelling framework `unifhy`
 (Unified Framework for Hydrology).
 
-.. code-block:: python
-   :caption: Importing the package and checking its version.
+.. important::
 
-   >>> import unifhy
-   >>> print(unifhy.__version__)
-   0.1.0
+   To run this tutorial, you need to install the framework and the relevant
+   science components to be used (here Artemis and RFM). To do so, run the
+   following commands:
+
+   .. code-block:: console
+      :caption: Installing the framework.
+
+      $ conda install unifhy
+
+   .. code-block:: console
+      :caption: Installing the relevant science components.
+
+      $ pip install unifhycontrib-artemis unifhycontrib-rfm
+
+   More details can be found in the :doc:`installation <installation>` section.
+
+   This tutorial is based on v0.1.0 of the framework, you can check the version
+   you have just installed by starting a Python console and executing the following
+   commands:
+
+   .. code-block:: python
+      :caption: Importing the framework and checking its version.
+
+      >>> import unifhy
+      >>> print(unifhy.__version__)
+      0.1.0
+
+
+   The input data required to run this tutorial can be found in the ``data``
+   folder of the GitHub repository.
+
+
+Configuring a Model
+-------------------
 
 The central object in the framework is the `Model`, which requires three
 `Component`\s for the three compartments of the terrestrial water cycle.
 The components currently available to choose from are listed in the
 :doc:`science library <../science_library>` section.
 
-Each component needs to be spatio-temporally configured through `SpaceDomain`
-and `TimeDomain` objects, to be given data contained in a `DataSet` instance,
+Each component needs to be spatio-temporally discretised through `SpaceDomain`
+and `TimeDomain` instances, to be given data contained in a `DataSet` instance,
 and to be given parameter and/or constant values.
-
-Configuring a Model
--------------------
 
 Time
 ~~~~
@@ -38,17 +65,17 @@ the period and the temporal resolution.
    >>> from datetime import datetime, timedelta
    >>> timedomain = unifhy.TimeDomain.from_start_end_step(
    ...    start=datetime(2017, 1, 1, 0, 0, 0),
-   ...    end=datetime(2018, 1, 1, 0, 0, 0),
+   ...    end=datetime(2017, 2, 1, 0, 0, 0),
    ...    step=timedelta(hours=1),
    ...    calendar='gregorian'
    ... )
    >>> print(timedomain)
    TimeDomain(
-       time (8760,): [2017-01-01 00:00:00, ..., 2017-12-31 23:00:00] gregorian
-       bounds (8760, 2): [[2017-01-01 00:00:00, ..., 2018-01-01 00:00:00]] gregorian
+       time (744,): [2017-01-01 00:00:00, ..., 2017-01-31 23:00:00] gregorian
+       bounds (744, 2): [[2017-01-01 00:00:00, ..., 2017-02-01 00:00:00]] gregorian
        calendar: gregorian
        units: seconds since 1970-01-01 00:00:00Z
-       period: 365 days, 0:00:00
+       period: 31 days, 0:00:00
        timedelta: 1:00:00
    )
 
@@ -57,7 +84,7 @@ Space
 ~~~~~
 
 All spatial configurations supported by the framework are subclasses of
-`SpaceDomain`, they characterise the spatial dimensions of a `Component`,
+`SpaceDomain`: they characterise the spatial dimensions of a `Component`,
 i.e. the region and the spatial resolution. The spatial configurations
 currently supported can be found in the :doc:`API Reference<../api_reference>`'s
 Space section. `LatLonGrid` is one example.
@@ -100,7 +127,7 @@ depending on the component's requirements: *land_sea_mask*,
 
    >>> import cf
    >>> spacedomain.land_sea_mask = (
-   ...     cf.read('in/ancillary/land_sea_mask.nc').select_field('land_binary_mask')
+   ...     cf.read('data/land_sea_mask.nc').select_field('land_binary_mask')
    ... )
    >>> print(spacedomain.land_sea_mask)
    [[ True  True  True  True  True  True]
@@ -112,9 +139,15 @@ depending on the component's requirements: *land_sea_mask*,
     [ True  True  True  True False False]
     [ True  True  True False False False]]
    >>> spacedomain.flow_direction = (
-   ...     cf.read('in/ancillary/flow_direction.nc').select_field("long_name=flow direction")
+   ...     cf.read('data/flow_direction.nc').select_field("long_name=flow direction")
    ... )
 
+
+.. note::
+
+   To check whether a component needs any of these spatial properties,
+   each `Component` can be queried via its methods `requires_land_sea_mask()`,
+   `requires_flow_direction()`, and `requires_cell_area()`.
 
 Data
 ~~~~
@@ -132,43 +165,43 @@ instances.
    :caption: Instantiating `DataSet` from a CF-compliant netCDF file.
 
    >>> dataset_surfacelayer = unifhy.DataSet(
-   ...     files=['in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc',
-   ...            'in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc',
-   ...            'in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc',
-   ...            'in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc',
-   ...            'in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc',
-   ...            'in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc',
-   ...            'in/ancillary/leaf_area_index.nc',
-   ...            'in/ancillary/canopy_height.nc',
-   ...            'in/ancillary/soil_albedo.nc'],
+   ...     files=['data/surface_downwelling_longwave_flux_in_air.nc',
+   ...            'data/surface_downwelling_shortwave_flux_in_air.nc',
+   ...            'data/specific_humidity.nc',
+   ...            'data/air_temperature.nc',
+   ...            'data/wind_speed.nc',
+   ...            'data/precipitation_flux.nc',
+   ...            'data/leaf_area_index.nc',
+   ...            'data/canopy_height.nc',
+   ...            'data/soil_albedo.nc'],
    ...     name_mapping={'leaf-area index': 'leaf_area_index',
    ...                   'canopy height': 'vegetation_height',
    ...                   'soil albedo': 'surface_albedo'}
    ... )
    >>> print(dataset_surfacelayer)
    DataSet{
-       air_temperature(time(8760), latitude(20), longitude(28)) K
+       air_temperature(time(744), latitude(20), longitude(28)) K
        leaf_area_index(time(12), latitude(360), longitude(720)) 1
-       precipitation_flux(time(8760), latitude(20), longitude(28)) kg m-2 s-1
-       specific_humidity(time(8760), latitude(20), longitude(28)) kg kg-1
+       precipitation_flux(time(744), latitude(20), longitude(28)) kg m-2 s-1
+       specific_humidity(time(744), latitude(20), longitude(28)) kg kg-1
        surface_albedo(latitude(360), longitude(720)) 1
-       surface_downwelling_longwave_flux_in_air(time(8760), latitude(20), longitude(28)) W m-2
-       surface_downwelling_shortwave_flux_in_air(time(8760), latitude(20), longitude(28)) W m-2
+       surface_downwelling_longwave_flux_in_air(time(744), latitude(20), longitude(28)) W m-2
+       surface_downwelling_shortwave_flux_in_air(time(744), latitude(20), longitude(28)) W m-2
        vegetation_height(latitude(360), longitude(720)) m
-       wind_speed(time(8760), latitude(20), longitude(28)) m s-1
+       wind_speed(time(744), latitude(20), longitude(28)) m s-1
    }
    >>> dataset_subsurface = unifhy.DataSet(
-   ...     files=['in/ancillary/saturated_hydraulic_conductivity.nc',
-   ...            'in/ancillary/topmodel_saturation_capacity.nc',
-   ...            'in/ancillary/topographic_index.nc'],
+   ...     files=['data/saturated_hydraulic_conductivity.nc',
+   ...            'data/available_water_storage_capacity.nc',
+   ...            'data/topographic_index.nc'],
    ...     name_mapping={
    ...         'saturated hydraulic conductivity': 'saturated_hydraulic_conductivity',
-   ...         'topmodel saturation capacity': 'topmodel_saturation_capacity',
+   ...         'available water storage capacity': 'topmodel_saturation_capacity',
    ...         'topographic index': 'topographic_index'
    ...      }
    ... )
    >>> dataset_openwater = unifhy.DataSet(
-   ...     files='in/ancillary/rfm_iarea.nc',
+   ...     files='data/flow_accumulation.nc',
    ...     name_mapping={
    ...         'RFM drainage area in cell counts (WFDEI)': 'flow_accumulation'
    ...     }
@@ -224,7 +257,7 @@ and data needs differ.
    :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
 
    >>> component = unifhycontrib.artemis.SubSurfaceComponent(
-   ...     saving_directory='outputs',
+   ...     saving_directory='outputs/',
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
    ...     dataset=dataset_subsurface,
@@ -237,7 +270,7 @@ and data needs differ.
    SubSurfaceComponent(
        category: subsurface
        saving directory: outputs
-       timedomain: period: 365 days, 0:00:00
+       timedomain: period: 31 days, 0:00:00
        spacedomain: shape: (Y: 8, X: 6)
        records:
            surface_runoff_flux_delivered_to_rivers: 1 day, 0:00:00 {'mean'}
@@ -264,7 +297,7 @@ three parts of the terrestrial water cycle.
    ...     identifier='tutorial',
    ...     config_directory='configurations',
    ...     saving_directory='outputs',
-   ...     surfacelayer=unifhy.surfacelayer.Artemis(
+   ...     surfacelayer=unifhycontrib.artemis.SurfaceLayerComponent(
    ...         'outputs', timedomain, spacedomain, dataset_surfacelayer,
    ...         parameters={}
    ...     ),
@@ -278,8 +311,8 @@ three parts of the terrestrial water cycle.
    ...                     'cb_land': (0.10, 'm s-1'),
    ...                     'c_river': (0.62, 'm s-1'),
    ...                     'cb_river': (0.15, 'm s-1'),
-   ...                     'ret_l': (0.0, 'm s-1'),
-   ...                     'ret_r': (0.005, 'm s-1'),
+   ...                     'ret_l': (0.0, '1'),
+   ...                     'ret_r': (0.005, '1'),
    ...                     'routing_length': (50000, 'm')},
    ...         records={
    ...             'outgoing_water_volume_transport_along_river_channel': {
@@ -337,14 +370,24 @@ three parts of the terrestrial water cycle.
    returning null values for the component's outwards transfers.
 
 At this stage, the `Model` as such is fully configured, and the configuration
-can be saved as a YAML file in the *config_directory* and named using the
+is automatically saved as a YAML file in the *config_directory* and named using the
 *identifier* (e.g. in this tutorial, the file would be at
-*configurations/tutorial.yml*).
+*configurations/tutorial.yml*). This file can be reused later to directly obtain
+a configured model.
 
 .. code-block:: python
-   :caption: Saving `Model` set up in YAML file.
+   :caption: Configuring a `Model` from a YAML configuration file.
 
-   >>> model.to_yaml()
+   >>> another_model = unifhy.Model.from_yaml('configurations/tutorial.yml')
+   >>> print(another_model)
+   Model(
+       identifier: tutorial
+       config directory: configurations
+       saving directory: outputs
+       surfacelayer: unifhycontrib.artemis.surfacelayer
+       subsurface: unifhycontrib.artemis.subsurface
+       openwater: unifhycontrib.rfm.openwater
+   )
 
 
 See the :doc:`files <files>` section for an example of such model
@@ -362,12 +405,11 @@ and/or a main simulation run.
 .. code-block:: python
    :caption: Spinning-up and running the `Model` simulation.
 
-   >>> model.spin_up(start=datetime(2019, 1, 1, 9, 0, 0),
-   ...               end=datetime(2019, 1, 3, 9, 0, 0),
+   >>> model.spin_up(start=datetime(2017, 1, 1, 0, 0, 0),
+   ...               end=datetime(2017, 1, 3, 0, 0, 0),
    ...               cycles=2,
    ...               dumping_frequency=timedelta(days=3))
    >>> model.simulate(dumping_frequency=timedelta(days=2))
-
 
 Resume
 ~~~~~~
@@ -384,6 +426,9 @@ used to select the given snapshot in time to restart from.
 .. code-block:: python
    :caption: Resuming the `Model` main simulation run.
 
-   >>> model.resume(tag='run', at=datetime(2019, 1, 7, 9, 0, 0))
+   >>> model.resume(tag='run', at=datetime(2017, 1, 7, 0, 0, 0))
 
-Further training resources are available at `<https://github.com/unifhy-org/unifhy-training>`_.
+
+.. note::
+
+   Further training resources are available at `<https://github.com/unifhy-org/unifhy-training>`_.
