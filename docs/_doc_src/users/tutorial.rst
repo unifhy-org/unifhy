@@ -38,20 +38,23 @@ This section showcases the basic usage of the modelling framework `unifhy`
 
 
    The input data required to run this tutorial can be found in the ``data``
-   folder of the GitHub repository.
+   folder of the repository.
 
 
 Configuring a Model
 -------------------
 
-The central object in the framework is the `Model`, which requires three
-`Component`\s for the three compartments of the terrestrial water cycle.
-The components currently available to choose from are listed in the
-:doc:`science library <../science_library>` section.
+The central object in the framework is the `Model`, which combines three
+science components for the three compartments of the terrestrial water cycle.
+The science components currently available to choose from are listed in
+the :doc:`science library <../science_library>` section.
 
-Each component needs to be spatio-temporally discretised through `SpaceDomain`
-and `TimeDomain` instances, to be given data contained in a `DataSet` instance,
-and to be given parameter and/or constant values.
+Each science component needs to be spatio-temporally discretised through
+`SpaceDomain` and `TimeDomain` instances, to be given data contained in
+a `DataSet` instance, and to be given parameter and/or constant values.
+
+See :ref:`Fig. 3<fig_uml>` for more details on how all these concepts are
+together.
 
 Time
 ~~~~
@@ -211,11 +214,13 @@ instances.
 Science
 ~~~~~~~
 
-`Component` is the core object subclassed into three distinct classes
-for surface, sub-surface, and open water parts of the water cycle:
-`SurfaceLayerComponent`, `SubSurfaceComponent`, and `OpenWaterComponent`
-respectively. Each kind of component has the same API, only their interfaces
-and data needs differ.
+Each science component is either of a `SurfaceLayerComponent`,
+`SubSurfaceComponent`, or `OpenWaterComponent` type, and it embeds the
+biophysical processes for the surface, sub-surface, or open water parts
+of the water cycle, respectively. All three types share the framework
+`Component` class as their base class, which makes them readily compatible
+with `unifhy`. They have the same API, only their interfaces and data
+needs differ (i.e their signatures).
 
 .. code-block:: python
    :caption: Exploring the signature of 'Artemis' `SubSurfaceComponent`.
@@ -252,6 +257,9 @@ and data needs differ.
    see :doc:`Artemis <../science/subsurface/unifhycontrib.artemis.SubSurfaceComponent>`
    subsurface component page.
 
+To get a science component instance, one needs to provide a `TimeDomain`
+instance, a `SpaceDomain` instance, a `DataSet` instance, and parameter
+and/or constant values as per indicated in its signature.
 
 .. code-block:: python
    :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
@@ -286,8 +294,10 @@ Framework
 ~~~~~~~~~
 
 `Model` constitutes the core object of the modelling framework. It needs
-to be instantiated with three `Component` instances, one for each of the
-three parts of the terrestrial water cycle.
+to be instantiated with three science `Component` instances, one for each
+of the three parts of the terrestrial water cycle. It combines these three
+science components to make a fully functional model for the terrestrial
+water cycle.
 
 .. code-block:: python
    :caption: Instantiating a `Model`.

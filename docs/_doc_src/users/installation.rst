@@ -4,6 +4,16 @@
 Installation
 ============
 
+It is important to make the distinction between the framework (i.e. `unifhy`)
+and the science components that the framework can work with (typically named
+with prefix `unifhycontrib-`). Indeed, the framework and the science components
+come as separate packages. Thus, they need to be installed separately.
+
+The framework *only* provides the infrastructure to combine and run science
+components. The user must then select and install the science components
+they want to use to simulate the terrestrial water cycle.
+
+
 Installing the framework
 ------------------------
 
@@ -62,10 +72,10 @@ tests. These tests are to be run from the ``tests`` directory:
    $ python run_basic_tests.py
 
 
-Installing framework components
--------------------------------
+Installing science components
+-----------------------------
 
-The framework components listed in the :doc:`science library <../science_library>`
+The science components listed in the :doc:`science library <../science_library>`
 are independent of the framework: they come as Python packages
 of their own. Consequently, they need to be installed separately.
 The distribution of these components is left at the discretion of the component
