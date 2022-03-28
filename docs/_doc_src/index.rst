@@ -13,6 +13,45 @@
 
 .. add guides to sidebar
 
+Getting started
+---------------
+
+.. panels::
+   :card: + intro-card text-center
+   :column: col-lg-4 col-md-6 col-sm-12 col-xs-12 p-2
+
+   Learn how to get `unifhy`.
+
+   +++
+
+   .. link-button:: users/installation
+      :type: ref
+      :text: Installation
+      :classes: btn-outline-primary btn-block stretched-link
+
+   ---
+
+   Learn how to use `unifhy`.
+
+   +++
+
+   .. link-button:: users/tutorial
+      :type: ref
+      :text: Tutorial
+      :classes: btn-outline-primary btn-block stretched-link
+
+   ---
+
+   Contribute to `unifhy`.
+
+   +++
+
+   .. link-button:: contributors
+      :type: ref
+      :text: Contributor Guide
+      :classes: btn-outline-primary btn-block stretched-link
+
+
 Documentation
 -------------
 
