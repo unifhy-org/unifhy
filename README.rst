@@ -1,13 +1,13 @@
 Unified Framework for Hydrology
 -------------------------------
 
-.. image:: https://img.shields.io/pypi/v/unifhy?style=flat-square&color=00b0f0
+.. image:: https://img.shields.io/pypi/v/unifhy?style=flat-square
    :target: https://pypi.python.org/pypi/unifhy
    :alt: PyPI Version
-.. image:: https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&label=doi&query=doi&style=flat-square&color=00b0f0
+.. image:: https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&label=doi&query=doi&style=flat-square
    :target: https://zenodo.org/badge/latestdoi/234523723
    :alt: DOI
-.. image:: https://img.shields.io/github/license/unifhy-org/unifhy?style=flat-square&color=00b0f0
+.. image:: https://img.shields.io/github/license/unifhy-org/unifhy?style=flat-square
    :target: https://opensource.org/licenses/BSD-3-Clause
    :alt: Licence
 .. image:: https://img.shields.io/badge/fair-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow?style=flat-square
