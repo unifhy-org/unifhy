@@ -20,8 +20,11 @@ Unified Framework for Hydrology
 The Python package `unifhy` (Unified Framework for Hydrology) is a hydrological 
 modelling framework which combines interchangeable modelling components for the 
 surface layer, subsurface, and open water parts of the terrestrial water cycle. 
-It is designed to foster collaborations between land surface, hydrological, and 
-groundwater modelling communities.
+By two-way coupling these three components, the framework provides a fully
+functional model for simulating the terrestrial water cycle. It is designed to
+foster collaborations between land surface, hydrological, and groundwater
+modelling communities by structuring their interactions around standardised
+interfaces between the components.
 
 .. end here for docs
 
