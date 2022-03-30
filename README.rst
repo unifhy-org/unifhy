@@ -23,5 +23,7 @@ surface layer, subsurface, and open water parts of the terrestrial water cycle.
 It is designed to foster collaborations between land surface, hydrological, and 
 groundwater modelling communities.
 
+.. end here for docs
+
 More details can be found in the online documentation accessible at
 `<https://unifhy-org.github.io/unifhy>`_.

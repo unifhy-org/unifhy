@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 .. include:: ../../README.rst
-   :end-before: More details can be found in the online documentation
+   :end-before: .. end here for docs
 
 .. _fig_diagram:
 .. figure:: ../_doc_img/framework_diagram.svg
