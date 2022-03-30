@@ -27,7 +27,7 @@ The table below lists the source for each data file.
 +----------------------------------------------+----------------------------------------------+
 | leaf_area_index.nc                           | https://doi.org/10.5067/MODIS/MOD15A2H.006   |
 +----------------------------------------------+----------------------------------------------+
-| topmodel_saturation_capacity.nc              | Nachtergaele, F., et al.: Harmonized World   |
+| available_water_storage_capacity.nc          | Nachtergaele, F., et al.: Harmonized World   |
 +----------------------------------------------+ Soil Database (version 1.2), Food and        |
 | saturated_hydraulic_conductivity.nc          | Agriculture Organization of the UN,          |
 |                                              | International Institute for Applied Systems  |
