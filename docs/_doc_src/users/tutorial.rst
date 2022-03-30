@@ -54,7 +54,7 @@ Each science component needs to be spatio-temporally discretised through
 a `DataSet` instance, and to be given parameter and/or constant values.
 
 See :ref:`Fig. 3<fig_uml>` for more details on how all these concepts are
-together.
+articulated together.
 
 Time
 ~~~~
