@@ -711,10 +711,9 @@ class Component(metaclass=MetaComponent):
         # check space compatibility for input data
         for data_name, data_unit in self._inputs_info.items():
             try:
-                filenames = dataset[data_name].field.get_filenames()
                 dataset[data_name] = Variable(
                     spacedomain.subset_and_compare(dataset[data_name].field),
-                    filenames
+                    dataset[data_name].filenames
                 )
             except RuntimeError:
                 raise ValueError(
@@ -733,15 +732,17 @@ class Component(metaclass=MetaComponent):
             )
 
             self.datasubset[data_name] = self._check_time(
-                self.dataset[data_name].field, timedomain,
+                self.dataset[data_name], timedomain,
                 self._inputs_info[data_name]['kind'], error, self._io_slice,
                 frequency=self._inputs_info[data_name].get('frequency')
             )
 
     @staticmethod
-    def _check_time(field, timedomain, kind, error, reading_slice,
+    def _check_time(variable, timedomain, kind, error, reading_slice,
                     frequency=None):
-        filenames = field.get_filenames()
+        field = variable.field
+        filenames = variable.filenames
+
         if kind == 'dynamic':
             try:
                 variable_subset = DynamicVariable(

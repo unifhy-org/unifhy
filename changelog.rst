@@ -5,6 +5,11 @@ latest
 
 Yet to be versioned and released. Only available from *dev* branch until then.
 
+.. rubric:: Bug fixes
+
+* fix intermittent data filenames loss in YAML configuration file
+  (`#80 <https://github.com/unifhy-org/unifhy/issues/80>`_)
+
 .. rubric:: Documentation
 
 * add data to run tutorial and revise tutorial accordingly
