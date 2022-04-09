@@ -2,7 +2,6 @@ import unittest
 import doctest
 
 from tests.test_model import BasicTestModel
-from tests.test_utils.test_clock import TestClock
 import unifhy
 
 
