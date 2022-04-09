@@ -45,6 +45,7 @@ jobs:
         run: |
           mamba install udunits2=2.2.25
           mamba install --file=requirements.txt
+          mamba install --file=requirements-tests.txt
 
       # build dummy components required for tests
       - name: install Fortran compiler (linux)
@@ -59,7 +60,6 @@ jobs:
 
       - name: build dummy C and Fortran components
         run: |
-          mamba install cython
           (cd ./tests/components && make)
 
       # install package
