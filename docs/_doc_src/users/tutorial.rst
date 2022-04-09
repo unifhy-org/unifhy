@@ -265,7 +265,7 @@ and/or constant values as per indicated in its signature.
    :caption: Getting an instance of `SubSurfaceComponent` 'Artemis'.
 
    >>> component = unifhycontrib.artemis.SubSurfaceComponent(
-   ...     saving_directory='outputs/',
+   ...     saving_directory='outputs',
    ...     timedomain=timedomain,
    ...     spacedomain=spacedomain,
    ...     dataset=dataset_subsurface,
