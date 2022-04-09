@@ -5,6 +5,14 @@ latest
 
 Yet to be versioned and released. Only available from *dev* branch until then.
 
+.. rubric:: Documentation
+
+* add data to run tutorial and revise tutorial accordingly
+  (`#81 <https://github.com/unifhy-org/unifhy/pull/81>`_)
+* revise installation instructions to recommend `conda` over `pip`
+  because of `esmpy` dependency not available on PyPI
+  (`#81 <https://github.com/unifhy-org/unifhy/pull/81>`_)
+
 v0.1.0
 ------
 
