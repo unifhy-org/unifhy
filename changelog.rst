@@ -9,6 +9,10 @@ Yet to be versioned and released. Only available from *dev* branch until then.
 
 * fix intermittent data filenames loss in YAML configuration file
   (`#80 <https://github.com/unifhy-org/unifhy/issues/80>`_)
+* fix relative import bug for advanced test suite
+  (`#82 <https://github.com/unifhy-org/unifhy/issues/82>`_)
+* prevent unwanted installation of `tests` package alongside `unifhy`
+  (`#83 <https://github.com/unifhy-org/unifhy/issues/83>`_)
 
 .. rubric:: Documentation
 
