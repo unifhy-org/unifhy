@@ -2,14 +2,33 @@ import unittest
 import doctest
 
 import unifhy
+from tests.test_model import (
+    TestModelSameTimeSameSpace, TestModelSameTimeDiffSpace,
+    TestModelDiffTimeSameSpace, TestModelDiffTimeDiffSpace
+)
+from tests.test_utils.test_clock import TestClock
 
 
 if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    all_tests = test_loader.discover('.', pattern='test_*.py')
-    test_suite.addTests(all_tests)
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace)
+    )
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace)
+    )
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace)
+    )
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace)
+    )
+
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestClock)
+    )
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.data))
     test_suite.addTests(doctest.DocTestSuite(unifhy.time))

@@ -4,12 +4,14 @@ import cf
 
 import unifhy
 
-from tests.test_time import get_dummy_timedomain
-from tests.test_space import (get_dummy_spacedomain,
-                              get_dummy_land_sea_mask_field,
-                              get_dummy_flow_direction_field)
-from tests.test_data import (get_dummy_dataset,
-                             get_dummy_component_substitute_dataset)
+from .test_time import get_dummy_timedomain
+from .test_space import (
+    get_dummy_spacedomain, get_dummy_land_sea_mask_field,
+    get_dummy_flow_direction_field
+)
+from .test_data import (
+    get_dummy_dataset, get_dummy_component_substitute_dataset
+)
 
 time_resolutions = {
     'surfacelayer': {

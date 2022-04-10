@@ -64,7 +64,8 @@ Testing the framework
 ---------------------
 
 To check whether the framework has been installed properly, you can run
-tests. These tests are to be run from the ``tests`` directory:
+tests. These tests are available from the ``tests`` directory in the
+repository:
 
 .. code-block:: console
    :caption: Running the basic test suite.

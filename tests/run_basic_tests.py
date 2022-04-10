@@ -2,6 +2,7 @@ import unittest
 import doctest
 
 from tests.test_model import BasicTestModel
+from tests.test_utils.test_clock import TestClock
 import unifhy
 
 
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     )
 
     test_suite.addTests(
-        test_loader.discover('./test_utils', pattern='test_*.py')
+        test_loader.loadTestsFromTestCase(TestClock)
     )
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.data))

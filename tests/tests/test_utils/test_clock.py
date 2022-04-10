@@ -2,7 +2,7 @@ import unittest
 import doctest
 
 import unifhy._utils
-from tests.test_time import (
+from ..test_time import (
     get_dummy_timedomain, get_dummy_dumping_frequency,
     get_dummy_timedomain_different_start
 )

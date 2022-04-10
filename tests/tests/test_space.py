@@ -5,7 +5,6 @@ import doctest
 import cf
 
 import unifhy
-from tests.test_data import get_dummy_dataset
 
 
 def get_dummy_spacedomain(resolution):
