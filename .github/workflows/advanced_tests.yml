@@ -60,7 +60,7 @@ jobs:
 
       - name: build dummy C and Fortran components
         run: |
-          (cd ./tests/components && make)
+          (cd ./tests/tests/components && make)
 
       # install package
       - name: install package
