@@ -24,6 +24,8 @@
     
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     
   <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
@@ -268,45 +270,71 @@
                 
   <div class="section" id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
-<p>This section showcases the basic usage of modelling framework <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>
+<p>This section showcases the basic usage of the modelling framework <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>
 (Unified Framework for Hydrology).</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To run this tutorial, you need to install the framework and the relevant
+science components to be used (here Artemis and RFM). To do so, run the
+following commands:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Importing the package and checking its version.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="code-block-caption"><span class="caption-text">Installing the framework.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda install unifhy
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Installing the relevant science components.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install unifhycontrib-artemis unifhycontrib-rfm
+</pre></div>
+</div>
+</div>
+<p>More details can be found in the <a class="reference internal" href="installation.html"><span class="doc">installation</span></a> section.</p>
+<p>This tutorial is based on v0.1.0 of the framework, you can check the version
+you have just installed by starting a Python console and executing the following
+commands:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Importing the framework and checking its version.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
 <span class="go">0.1.0</span>
 </pre></div>
 </div>
 </div>
-<p>The central object in the framework is the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>, which requires three
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>s for the three compartments of the terrestrial water cycle.
-The components currently available to choose from are listed in the
-<a class="reference internal" href="../science_library.html"><span class="doc">science library</span></a> section.</p>
-<p>Each component needs to be spatio-temporally configured through <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>
-and <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> objects, to be given data contained in a <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance,
-and to be given parameter and/or constant values.</p>
+<p>The input data required to run this tutorial can be found in the <code class="docutils literal notranslate"><span class="pre">data</span></code>
+folder of the repository.</p>
+</div>
 <div class="section" id="configuring-a-model">
 <h2>Configuring a Model<a class="headerlink" href="#configuring-a-model" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>The central object in the framework is the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>, which combines three
+science components for the three compartments of the terrestrial water cycle.
+The science components currently available to choose from are listed in
+the <a class="reference internal" href="../science_library.html"><span class="doc">science library</span></a> section.</p>
+<p>Each science component needs to be spatio-temporally discretised through
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> and <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> instances, to be given data contained in
+a <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance, and to be given parameter and/or constant values.</p>
+<p>See <a class="reference internal" href="../api_reference.html#fig-uml"><span class="std std-ref">Fig. 3</span></a> for more details on how all these concepts are
+articulated together.</p>
 <div class="section" id="time">
 <h3>Time<a class="headerlink" href="#time" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>, i.e.
 the period and the temporal resolution.</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> by specifying its start, end, and step.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> by specifying its start, end, and step.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">timedomain</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">TimeDomain</span><span class="o">.</span><span class="n">from_start_end_step</span><span class="p">(</span>
 <span class="gp">... </span>   <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="gp">... </span>   <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>   <span class="n">step</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
 <span class="gp">... </span>   <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;gregorian&#39;</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">timedomain</span><span class="p">)</span>
 <span class="go">TimeDomain(</span>
-<span class="go">    time (8760,): [2017-01-01 00:00:00, ..., 2017-12-31 23:00:00] gregorian</span>
-<span class="go">    bounds (8760, 2): [[2017-01-01 00:00:00, ..., 2018-01-01 00:00:00]] gregorian</span>
+<span class="go">    time (744,): [2017-01-01 00:00:00, ..., 2017-01-31 23:00:00] gregorian</span>
+<span class="go">    bounds (744, 2): [[2017-01-01 00:00:00, ..., 2017-02-01 00:00:00]] gregorian</span>
 <span class="go">    calendar: gregorian</span>
 <span class="go">    units: seconds since 1970-01-01 00:00:00Z</span>
-<span class="go">    period: 365 days, 0:00:00</span>
+<span class="go">    period: 31 days, 0:00:00</span>
 <span class="go">    timedelta: 1:00:00</span>
 <span class="go">)</span>
 </pre></div>
@@ -316,12 +344,12 @@ the period and the temporal resolution.</p>
 <div class="section" id="space">
 <h3>Space<a class="headerlink" href="#space" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>All spatial configurations supported by the framework are subclasses of
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>, they characterise the spatial dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>: they characterise the spatial dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>,
 i.e. the region and the spatial resolution. The spatial configurations
 currently supported can be found in the <a class="reference internal" href="../api_reference.html"><span class="doc">API Reference</span></a>’s
 Space section. <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> is one example.</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> from its dimensions’ extents and resolutions.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> from its dimensions’ extents and resolutions.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
 <span class="gp">... </span>   <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">55</span><span class="p">),</span>
 <span class="gp">... </span>   <span class="n">latitude_resolution</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
@@ -356,11 +384,11 @@ each spatial element in the component spacedomain. For some spacedomains
 cell area is calculated automatically by the framework if not already set.</p></li>
 </ul>
 </div></blockquote>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span> <span class="o">=</span> <span class="p">(</span>
-<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/land_sea_mask.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;land_binary_mask&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;data/land_sea_mask.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;land_binary_mask&#39;</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span><span class="p">)</span>
 <span class="go">[[ True  True  True  True  True  True]</span>
@@ -372,10 +400,16 @@ cell area is calculated automatically by the framework if not already set.</p></
 <span class="go"> [ True  True  True  True False False]</span>
 <span class="go"> [ True  True  True False False False]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">flow_direction</span> <span class="o">=</span> <span class="p">(</span>
-<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;in/ancillary/flow_direction.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s2">&quot;long_name=flow direction&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;data/flow_direction.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s2">&quot;long_name=flow direction&quot;</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To check whether a component needs any of these spatial properties,
+each <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> can be queried via its methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_land_sea_mask()</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_flow_direction()</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_cell_area()</span></code>.</p>
 </div>
 </div>
 <div class="section" id="data">
@@ -388,46 +422,46 @@ instances.</p>
 <p>Only data fully compliant with the
 <a class="reference external" href="https://cfconventions.org/">CF conventions</a> (v1.8 or later) can be used.</p>
 </div>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Instantiating <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> from a CF-compliant netCDF file.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Instantiating <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> from a CF-compliant netCDF file.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_surfacelayer</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/driving/LWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/driving/SWdown_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/driving/Qair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/driving/Tair_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/driving/Wind_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/driving/Precip_WFDE5_CRU_2017*_v1.0.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/leaf_area_index.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/canopy_height.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/soil_albedo.nc&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;data/surface_downwelling_longwave_flux_in_air.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/surface_downwelling_shortwave_flux_in_air.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/specific_humidity.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/air_temperature.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/wind_speed.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/precipitation_flux.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/leaf_area_index.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/canopy_height.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/soil_albedo.nc&#39;</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;leaf-area index&#39;</span><span class="p">:</span> <span class="s1">&#39;leaf_area_index&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="s1">&#39;canopy height&#39;</span><span class="p">:</span> <span class="s1">&#39;vegetation_height&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="s1">&#39;soil albedo&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_albedo&#39;</span><span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset_surfacelayer</span><span class="p">)</span>
 <span class="go">DataSet{</span>
-<span class="go">    air_temperature(time(8760), latitude(20), longitude(28)) K</span>
+<span class="go">    air_temperature(time(744), latitude(20), longitude(28)) K</span>
 <span class="go">    leaf_area_index(time(12), latitude(360), longitude(720)) 1</span>
-<span class="go">    precipitation_flux(time(8760), latitude(20), longitude(28)) kg m-2 s-1</span>
-<span class="go">    specific_humidity(time(8760), latitude(20), longitude(28)) kg kg-1</span>
+<span class="go">    precipitation_flux(time(744), latitude(20), longitude(28)) kg m-2 s-1</span>
+<span class="go">    specific_humidity(time(744), latitude(20), longitude(28)) kg kg-1</span>
 <span class="go">    surface_albedo(latitude(360), longitude(720)) 1</span>
-<span class="go">    surface_downwelling_longwave_flux_in_air(time(8760), latitude(20), longitude(28)) W m-2</span>
-<span class="go">    surface_downwelling_shortwave_flux_in_air(time(8760), latitude(20), longitude(28)) W m-2</span>
+<span class="go">    surface_downwelling_longwave_flux_in_air(time(744), latitude(20), longitude(28)) W m-2</span>
+<span class="go">    surface_downwelling_shortwave_flux_in_air(time(744), latitude(20), longitude(28)) W m-2</span>
 <span class="go">    vegetation_height(latitude(360), longitude(720)) m</span>
-<span class="go">    wind_speed(time(8760), latitude(20), longitude(28)) m s-1</span>
+<span class="go">    wind_speed(time(744), latitude(20), longitude(28)) m s-1</span>
 <span class="go">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_subsurface</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;in/ancillary/saturated_hydraulic_conductivity.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/topmodel_saturation_capacity.nc&#39;</span><span class="p">,</span>
-<span class="gp">... </span>           <span class="s1">&#39;in/ancillary/topographic_index.nc&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;data/saturated_hydraulic_conductivity.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/available_water_storage_capacity.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="s1">&#39;data/topographic_index.nc&#39;</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span>
 <span class="gp">... </span>        <span class="s1">&#39;saturated hydraulic conductivity&#39;</span><span class="p">:</span> <span class="s1">&#39;saturated_hydraulic_conductivity&#39;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s1">&#39;topmodel saturation capacity&#39;</span><span class="p">:</span> <span class="s1">&#39;topmodel_saturation_capacity&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;available water storage capacity&#39;</span><span class="p">:</span> <span class="s1">&#39;topmodel_saturation_capacity&#39;</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="s1">&#39;topographic index&#39;</span><span class="p">:</span> <span class="s1">&#39;topographic_index&#39;</span>
 <span class="gp">... </span>     <span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_openwater</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;in/ancillary/rfm_iarea.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="s1">&#39;data/flow_accumulation.nc&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">name_mapping</span><span class="o">=</span><span class="p">{</span>
 <span class="gp">... </span>        <span class="s1">&#39;RFM drainage area in cell counts (WFDEI)&#39;</span><span class="p">:</span> <span class="s1">&#39;flow_accumulation&#39;</span>
 <span class="gp">... </span>    <span class="p">}</span>
@@ -438,13 +472,15 @@ instances.</p>
 </div>
 <div class="section" id="science">
 <h3>Science<a class="headerlink" href="#science" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
-<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> is the core object subclassed into three distinct classes
-for surface, sub-surface, and open water parts of the water cycle:
-<a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a>
-respectively. Each kind of component has the same API, only their interfaces
-and data needs differ.</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Exploring the signature of ‘Artemis’ <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<p>Each science component is either of a <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>,
+<a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, or <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> type, and it embeds the
+biophysical processes for the surface, sub-surface, or open water parts
+of the water cycle, respectively. All three types share the framework
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> class as their base class, which makes them readily compatible
+with <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>. They have the same API, only their interfaces and data
+needs differ (i.e their signatures).</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Exploring the signature of ‘Artemis’ <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>.</span><a class="headerlink" href="#id8" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhycontrib.artemis</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">unifhycontrib</span><span class="o">.</span><span class="n">artemis</span><span class="o">.</span><span class="n">SubSurfaceComponent</span><span class="p">)</span>
 <span class="go">SubSurfaceComponent(</span>
@@ -479,8 +515,11 @@ and data needs differ.</p>
 see <a class="reference internal" href="../science/subsurface/unifhycontrib.artemis.SubSurfaceComponent.html"><span class="doc">Artemis</span></a>
 subsurface component page.</p>
 </div>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Getting an instance of <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a> ‘Artemis’.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<p>To get a science component instance, one needs to provide a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a>
+instance, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> instance, a <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance, and parameter
+and/or constant values as per indicated in its signature.</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Getting an instance of <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a> ‘Artemis’.</span><a class="headerlink" href="#id9" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">unifhycontrib</span><span class="o">.</span><span class="n">artemis</span><span class="o">.</span><span class="n">SubSurfaceComponent</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">saving_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
@@ -495,7 +534,7 @@ subsurface component page.</p>
 <span class="go">SubSurfaceComponent(</span>
 <span class="go">    category: subsurface</span>
 <span class="go">    saving directory: outputs</span>
-<span class="go">    timedomain: period: 365 days, 0:00:00</span>
+<span class="go">    timedomain: period: 31 days, 0:00:00</span>
 <span class="go">    spacedomain: shape: (Y: 8, X: 6)</span>
 <span class="go">    records:</span>
 <span class="go">        surface_runoff_flux_delivered_to_rivers: 1 day, 0:00:00 {&#39;mean&#39;}</span>
@@ -513,16 +552,18 @@ none are recorded.</p>
 <div class="section" id="framework">
 <h3>Framework<a class="headerlink" href="#framework" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> constitutes the core object of the modelling framework. It needs
-to be instantiated with three <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> instances, one for each of the
-three parts of the terrestrial water cycle.</p>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id8" title="Permalink to this code"><span class="fa fa-link"></a></div>
+to be instantiated with three science <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> instances, one for each
+of the three parts of the terrestrial water cycle. It combines these three
+science components to make a fully functional model for the terrestrial
+water cycle.</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id10" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhycontrib.rfm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">identifier</span><span class="o">=</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">config_directory</span><span class="o">=</span><span class="s1">&#39;configurations&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">saving_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">surfacelayer</span><span class="o">=</span><span class="n">unifhy</span><span class="o">.</span><span class="n">surfacelayer</span><span class="o">.</span><span class="n">Artemis</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">surfacelayer</span><span class="o">=</span><span class="n">unifhycontrib</span><span class="o">.</span><span class="n">artemis</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">(</span>
 <span class="gp">... </span>        <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">timedomain</span><span class="p">,</span> <span class="n">spacedomain</span><span class="p">,</span> <span class="n">dataset_surfacelayer</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
 <span class="gp">... </span>    <span class="p">),</span>
@@ -536,8 +577,8 @@ three parts of the terrestrial water cycle.</p>
 <span class="gp">... </span>                    <span class="s1">&#39;cb_land&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                    <span class="s1">&#39;c_river&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.62</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                    <span class="s1">&#39;cb_river&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
-<span class="gp">... </span>                    <span class="s1">&#39;ret_l&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
-<span class="gp">... </span>                    <span class="s1">&#39;ret_r&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.005</span><span class="p">,</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="s1">&#39;ret_l&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="s1">&#39;ret_r&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.005</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                    <span class="s1">&#39;routing_length&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">50000</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">)},</span>
 <span class="gp">... </span>        <span class="n">records</span><span class="o">=</span><span class="p">{</span>
 <span class="gp">... </span>            <span class="s1">&#39;outgoing_water_volume_transport_along_river_channel&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -594,12 +635,22 @@ by not processing the component’s inwards transfers received, and by
 returning null values for the component’s outwards transfers.</p>
 </div>
 <p>At this stage, the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> as such is fully configured, and the configuration
-can be saved as a YAML file in the <em>config_directory</em> and named using the
+is automatically saved as a YAML file in the <em>config_directory</em> and named using the
 <em>identifier</em> (e.g. in this tutorial, the file would be at
-<em>configurations/tutorial.yml</em>).</p>
-<div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">Saving <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> set up in YAML file.</span><a class="headerlink" href="#id9" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">()</span>
+<em>configurations/tutorial.yml</em>). This file can be reused later to directly obtain
+a configured model.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Configuring a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> from a YAML configuration file.</span><a class="headerlink" href="#id11" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">another_model</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s1">&#39;configurations/tutorial.yml&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">another_model</span><span class="p">)</span>
+<span class="go">Model(</span>
+<span class="go">    identifier: tutorial</span>
+<span class="go">    config directory: configurations</span>
+<span class="go">    saving directory: outputs</span>
+<span class="go">    surfacelayer: unifhycontrib.artemis.surfacelayer</span>
+<span class="go">    subsurface: unifhycontrib.artemis.subsurface</span>
+<span class="go">    openwater: unifhycontrib.rfm.openwater</span>
+<span class="go">)</span>
 </pre></div>
 </div>
 </div>
@@ -613,10 +664,10 @@ configuration YAML file.</p>
 <h3>Spin-Up and Simulate<a class="headerlink" href="#spin-up-and-simulate" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>Once configured, the instance of <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can be used to start a spin up run
 and/or a main simulation run.</p>
-<div class="literal-block-wrapper docutils container" id="id10">
-<div class="code-block-caption"><span class="caption-text">Spinning-up and running the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> simulation.</span><a class="headerlink" href="#id10" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">spin_up</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Spinning-up and running the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> simulation.</span><a class="headerlink" href="#id12" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">spin_up</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>              <span class="n">cycles</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 <span class="gp">... </span>              <span class="n">dumping_frequency</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">dumping_frequency</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -634,13 +685,16 @@ for the given run to be resumed to reach completion of the simulation
 period. The <em>tag</em> parameter must be used to select which run to resume
 (i.e. any spin-up cycle, or the main run), and the <em>at</em> parameter can be
 used to select the given snapshot in time to restart from.</p>
-<div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">Resuming the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> main simulation run.</span><a class="headerlink" href="#id11" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Resuming the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> main simulation run.</span><a class="headerlink" href="#id13" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Further training resources are available at <a class="reference external" href="https://github.com/unifhy-org/unifhy-training">https://github.com/unifhy-org/unifhy-training</a>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -667,7 +721,7 @@ used to select the given snapshot in time to restart from.</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Jan 06, 2022.<br>
+        Last updated on Apr 16, 2022.<br>
       </p>
     </div>
   </div>

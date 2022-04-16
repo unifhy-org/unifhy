@@ -24,6 +24,8 @@
     
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css" />
     
   <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
@@ -179,6 +181,11 @@
   </a>
  </li>
  <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#getting-started">
+   Getting started
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#documentation">
    Documentation
   </a>
@@ -213,18 +220,58 @@
                 
   <div class="section" id="unified-framework-for-hydrology">
 <h1>Unified Framework for Hydrology<a class="headerlink" href="#unified-framework-for-hydrology" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
-<a class="reference external image-reference" href="https://pypi.python.org/pypi/unifhy"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/unifhy?style=flat-square&amp;color=00b0f0" /></a>
-<a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/234523723"><img alt="DOI" src="https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&amp;label=doi&amp;query=doi&amp;style=flat-square&amp;color=00b0f0" /></a>
-<a class="reference external image-reference" href="https://opensource.org/licenses/BSD-3-Clause"><img alt="Licence" src="https://img.shields.io/github/license/unifhy-org/unifhy?style=flat-square&amp;color=00b0f0" /></a>
+<a class="reference external image-reference" href="https://pypi.python.org/pypi/unifhy"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/unifhy?style=flat-square" /></a>
+<a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/234523723"><img alt="DOI" src="https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&amp;label=doi&amp;query=doi&amp;style=flat-square" /></a>
+<a class="reference external image-reference" href="https://opensource.org/licenses/BSD-3-Clause"><img alt="Licence" src="https://img.shields.io/github/license/unifhy-org/unifhy?style=flat-square" /></a>
 <a class="reference external image-reference" href="https://fair-software.eu"><img alt="FAIR Software Compliance" src="https://img.shields.io/badge/fair-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow?style=flat-square" /></a>
 <a class="reference external image-reference" href="https://github.com/unifhy-org/unifhy/actions/workflows/basic_tests.yml"><img alt="Tests Status" src="https://img.shields.io/github/workflow/status/unifhy-org/unifhy/Basic%20tests?style=flat-square&amp;label=tests" /></a>
 <p>The Python package <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code> (Unified Framework for Hydrology) is a hydrological
 modelling framework which combines interchangeable modelling components for the
 surface layer, subsurface, and open water parts of the terrestrial water cycle.
-It is designed to foster collaborations between land surface, hydrological, and
-groundwater modelling communities.</p>
+By two-way coupling these three components, the framework provides a fully
+functional model for simulating the terrestrial water cycle. It is designed to
+foster collaborations between land surface, hydrological, and groundwater
+modelling communities by structuring their interactions around standardised
+interfaces between the components.</p>
 <div class="figure align-center" id="id1">
 <span id="fig-diagram"></span><img alt="modelling framework diagram" src="_images/framework_diagram.svg" /><p class="caption"><span class="caption-text">Fig. 1: Diagram of the Modelling Framework Blueprint for <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>.</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
+</div>
+</div>
+<div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
+<div class="sphinx-bs container pb-4 docutils">
+<div class="row docutils">
+<div class="d-flex col-lg-4 col-md-6 col-sm-12 col-xs-12 p-2 docutils">
+<div class="card w-100 shadow intro-card text-center docutils">
+<div class="card-body docutils">
+<p class="card-text">Learn how to get <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>.</p>
+</div>
+<div class="card-footer docutils">
+<p class="card-text"><a class="sphinx-bs btn text-wrap btn-outline-primary btn-block stretched-link reference internal" href="users/installation.html"><span class="doc">Installation</span></a></p>
+</div>
+</div>
+</div>
+<div class="d-flex col-lg-4 col-md-6 col-sm-12 col-xs-12 p-2 docutils">
+<div class="card w-100 shadow intro-card text-center docutils">
+<div class="card-body docutils">
+<p class="card-text">Learn how to use <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>.</p>
+</div>
+<div class="card-footer docutils">
+<p class="card-text"><a class="sphinx-bs btn text-wrap btn-outline-primary btn-block stretched-link reference internal" href="users/tutorial.html"><span class="doc">Tutorial</span></a></p>
+</div>
+</div>
+</div>
+<div class="d-flex col-lg-4 col-md-6 col-sm-12 col-xs-12 p-2 docutils">
+<div class="card w-100 shadow intro-card text-center docutils">
+<div class="card-body docutils">
+<p class="card-text">Contribute to <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>.</p>
+</div>
+<div class="card-footer docutils">
+<p class="card-text"><a class="sphinx-bs btn text-wrap btn-outline-primary btn-block stretched-link reference internal" href="contributors.html"><span class="doc">Contributor Guide</span></a></p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="documentation">
@@ -319,7 +366,7 @@ programme (NE/S017380/1).</p>
     <div class="footer-item">
       <p class="sphinx-version">
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
-        Last updated on Jan 06, 2022.<br>
+        Last updated on Apr 16, 2022.<br>
       </p>
     </div>
   </div>
