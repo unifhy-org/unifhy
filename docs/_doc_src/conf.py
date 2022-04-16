@@ -53,6 +53,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.githubpages',
     'sphinx.ext.mathjax',
+    'sphinx_panels',
     # internal extensions
     'autocomponent'
 ]
@@ -232,3 +233,7 @@ rst_prolog = """
    :language: python
    :class: highlight
 """
+
+# -- Options for sphinx-panels extension -------------------------------------
+
+panels_add_bootstrap_css = False

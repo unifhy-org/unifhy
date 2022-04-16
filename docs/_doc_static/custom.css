@@ -170,3 +170,15 @@ dt:target, span.highlighted {
 rect.highlighted {
     fill: rgba(var(--pst-color-link-hover), 0.3);
 }
+
+/* override style for sphinx-panels */
+.btn-outline-primary {
+    color: rgba(var(--pst-color-link),1);
+    border-color: rgba(var(--pst-color-link),1);
+}
+
+.btn-outline-primary:hover {
+    color: white;
+    border-color: rgba(var(--pst-color-link-hover),1);
+    background-color: rgba(var(--pst-color-link-hover),1);
+}
