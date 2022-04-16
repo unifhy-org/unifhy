@@ -480,8 +480,12 @@ if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainAPI))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainComparison))
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestTimeDomainAPI)
+    )
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestTimeDomainComparison)
+    )
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.time))
 
