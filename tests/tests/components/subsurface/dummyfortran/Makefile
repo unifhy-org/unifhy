@@ -6,10 +6,7 @@ sig:
 
 lib:
 	rm -rf *.so
-ifdef ON_MACOS
-	export LIBRARY_PATH="$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
-endif
-	python -m numpy.f2py -c dummyfortran.pyf dummy.f90
+	python -m numpy.f2py -c dummyfortran.pyf dummy.f90 --fcompiler=gfortran-10
 	rm -rf *.pyf
 
 clean:
