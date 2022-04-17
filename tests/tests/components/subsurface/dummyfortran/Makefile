@@ -6,7 +6,8 @@ sig:
 
 lib:
 	rm -rf *.so
-	python -m numpy.f2py -c dummyfortran.pyf dummy.f90 --fcompiler=gfortran-10
+	alias gfortran="gfortran-9"
+	python -m numpy.f2py -c dummyfortran.pyf dummy.f90
 	rm -rf *.pyf
 
 clean:
