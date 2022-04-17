@@ -9,7 +9,7 @@
 v0.1.1
 ------
 
-Released on 2022-04-16.
+Released on 2022-04-17.
 
 .. rubric:: Bug fixes
 
