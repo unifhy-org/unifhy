@@ -57,11 +57,16 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           mamba install gfortran_impl_osx-64
-          export ON_MACOS=1
 
-      - name: build dummy C and Fortran components
+      - name: build dummy C and Fortran components (linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           (cd ./tests/tests/components && make)
+
+      - name: build dummy C and Fortran components (macos)
+          if: matrix.os == 'ubuntu-latest'
+          run: |
+            (cd ./tests/tests/components && export ON_MACOS="1" && make)
 
       # install package
       - name: install package
