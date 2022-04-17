@@ -7,10 +7,9 @@ sig:
 lib:
 	rm -rf *.so
 ifdef ON_MACOS
-	python -m numpy.f2py -c dummyfortran.pyf dummy.f90 --f90flags='-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib'
-else
-	python -m numpy.f2py -c dummyfortran.pyf dummy.f90
+	export LIBRARY_PATH="$LIBRARY_PATH:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
 endif
+	python -m numpy.f2py -c dummyfortran.pyf dummy.f90
 	rm -rf *.pyf
 
 clean:
