@@ -64,7 +64,7 @@ jobs:
           (cd ./tests/tests/components && make)
 
       - name: build dummy C and Fortran components (macos)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'macos-latest'
         run: |
           (cd ./tests/tests/components && export ON_MACOS="1" && make)
 
