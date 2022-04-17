@@ -48,6 +48,13 @@ jobs:
           mamba install --file=requirements-tests.txt
 
       # build dummy components required for tests
+      - name: make gfortran available (macos only)
+        if: matrix.os == 'macos-latest'
+        run: |
+          sudo ln -s /usr/local/bin/gfortran-10 /usr/local/bin/gfortran
+          sudo mkdir /usr/local/gfortran
+          sudo ln -s /usr/local/Cellar/gcc@10/*/lib/gcc/10 /usr/local/gfortran/lib
+
       - name: build dummy C and Fortran components
         run: |
           (cd ./tests/tests/components && make)
