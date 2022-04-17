@@ -1,9 +1,32 @@
 .. default-role:: obj
 
-latest
+..
+   latest
+   ------
+
+   Yet to be versioned and released. Only available from *dev* branch until then.
+
+v0.1.1
 ------
 
-Yet to be versioned and released. Only available from *dev* branch until then.
+Released on 2022-04-17.
+
+.. rubric:: Bug fixes
+
+* fix intermittent data filenames loss in YAML configuration file
+  (`#80 <https://github.com/unifhy-org/unifhy/issues/80>`_)
+* fix relative import bug for advanced test suite
+  (`#82 <https://github.com/unifhy-org/unifhy/issues/82>`_)
+* prevent unwanted installation of `tests` package alongside `unifhy`
+  (`#83 <https://github.com/unifhy-org/unifhy/issues/83>`_)
+
+.. rubric:: Documentation
+
+* add data to run tutorial and revise tutorial accordingly
+  (`#81 <https://github.com/unifhy-org/unifhy/pull/81>`_)
+* revise installation instructions to recommend `conda` over `pip`
+  because of `esmpy` dependency not available on PyPI
+  (`#81 <https://github.com/unifhy-org/unifhy/pull/81>`_)
 
 v0.1.0
 ------
