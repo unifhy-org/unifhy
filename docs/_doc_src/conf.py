@@ -147,9 +147,9 @@ html_favicon = '../_doc_img/favicon.ico'
 
 html_permalinks_icon = '<span class="fa fa-link">'
 
-json_url = "https://github.com/ThibHlln/unifhy/blob/update-pydata-sphinx-theme-0.9.0/docs/_doc_static/switcher.json"
+json_url = "https://thibhlln.github.io/unifhy/_static/switcher.json"
 if version == 'latest':
-    json_url = "/_doc_static/switcher.json"
+    json_url = "/_static/switcher.json"
 
 html_theme_options = {
     "icon_links": [
