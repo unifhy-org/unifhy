@@ -1,4 +1,4 @@
-sphinx==4.2.0
-pydata-sphinx-theme==0.6.3
-sphinx-panels
+sphinx==4.5.0
+pydata-sphinx-theme==0.9.0
+sphinx-panels==0.6.0
 gitpython
