@@ -137,11 +137,7 @@ html_css_files = [
 ]
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = {
-}
-
-# https://alabaster.readthedocs.io/en/latest/customization.html
-# https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
+html_sidebars = {}
 
 html_baseurl = 'https://unifhy-org.github.io/unifhy'
 
@@ -150,6 +146,10 @@ html_logo = '../_doc_img/logo_colours.svg'
 html_favicon = '../_doc_img/favicon.ico'
 
 html_permalinks_icon = '<span class="fa fa-link">'
+
+json_url = "https://github.com/ThibHlln/unifhy/blob/update-pydata-sphinx-theme-0.9.0/docs/_doc_static/switcher.json"
+if version == 'latest':
+    json_url = "/_doc_static/switcher.json"
 
 html_theme_options = {
     "icon_links": [
@@ -167,7 +167,7 @@ html_theme_options = {
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
-        "json_url": "https://github.com/ThibHlln/unifhy/blob/update-pydata-sphinx-theme-0.9.0/docs/_doc_static/switcher.json",
+        "json_url": json_url,
         "version_match": version,
     }
 }
