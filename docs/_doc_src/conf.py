@@ -31,8 +31,8 @@ author = 'Thibault Hallouin'
 
 # The full version, including alpha/beta/rc tags
 if os.getenv('VERSION_RELEASE'):
-    release = 'v{}'.format(__version__)
-    version = 'v{}'.format(__version__)
+    release = f'v{__version__}'
+    version = f'v{__version__}'
 else:
     release = 'latest'
     version = 'latest'
@@ -167,7 +167,7 @@ html_theme_options = {
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
-        "json_url": "https://github.com/ThibHlln/unifhy/blob/update-pydata-sphinx-theme-0.9.0/docs/_doc_src/switcher.json",
+        "json_url": "https://github.com/ThibHlln/unifhy/blob/update-pydata-sphinx-theme-0.9.0/docs/_doc_static/switcher.json",
         "version_match": version,
     }
 }
