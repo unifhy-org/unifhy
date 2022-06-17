@@ -160,7 +160,16 @@ html_theme_options = {
         }
     ],
     "show_prev_next": False,
-    "navbar_align": "left"
+    "navbar_align": "content",
+    "navbar_start": ["navbar-logo", "version-switcher"],
+    # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
+    # "footer_items": ["copyright", "sphinx-version", ""]
+    "switcher": {
+        "json_url": "https://github.com/ThibHlln/unifhy/blob/update-pydata-sphinx-theme-0.9.0/docs/_doc_src/switcher.json",
+        "version_match": version,
+    }
 }
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
@@ -185,30 +194,6 @@ html_use_index = True
 html_split_index = False
 
 html_show_sourcelink = False
-
-# info for versioning at bottom of sidebar
-repo = Repo(search_parent_directories=True)
-remote_url = repo.remotes.origin.url
-
-versions = [
-    (tag.name, '/'.join([html_baseurl, tag.name[1:]])) for tag in repo.tags
-]
-
-if version != 'latest':
-    if (version, '/'.join([html_baseurl, __version__])) not in versions:
-        versions.insert(0, (version, '/'.join([html_baseurl, __version__])))
-versions.insert(0, ('latest', html_baseurl))
-
-html_context = {
-    'current_version': version if version == 'latest' else __version__,
-    'versions': versions,
-    'show_versions': True if versions else False,
-    'links': [
-        ('Source Code', remote_url),
-        ('Issue Tracker', '/'.join([remote_url.replace('.git', ''), 'issues'])),
-        ('User Support', '/'.join([remote_url.replace('.git', ''), 'discussions']))
-    ]
-}
 
 # -- Extension configuration -------------------------------------------------
 
