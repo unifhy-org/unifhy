@@ -84,7 +84,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api/methods/unifhy.RotatedLatLonGrid.is_space_equal_to and {'json_url': '/_doc_static/switcher.json', 'version_match': 'latest'}.
+     variables api/methods/unifhy.RotatedLatLonGrid.is_space_equal_to and {'json_url': '/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -111,7 +111,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("/_doc_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "api/methods/unifhy.RotatedLatLonGrid.is_space_equal_to.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
