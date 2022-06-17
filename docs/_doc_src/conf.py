@@ -147,10 +147,6 @@ html_favicon = '../_doc_img/favicon.ico'
 
 html_permalinks_icon = '<span class="fa fa-link">'
 
-json_url = "https://thibhlln.github.io/unifhy/_static/switcher.json"
-if version == 'latest':
-    json_url = "/_static/switcher.json"
-
 html_theme_options = {
     "icon_links": [
         {
@@ -167,7 +163,7 @@ html_theme_options = {
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
-        "json_url": json_url,
+        "json_url": "https://thibhlln.github.io/unifhy/_static/switcher.json",
         "version_match": version,
     }
 }
