@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>unifhy.LatLonGrid.route &#8212; unifhy latest documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -27,6 +28,8 @@
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/my_pygments_light.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/my_pygments_dark.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
@@ -66,8 +69,8 @@
   
   
   
-    <img src="../../_static/logo_colours.svg" class="logo__image only-light" alt="Logo image">
-    <img src="../../_static/logo_colours.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="../../_static/logo_light.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -84,7 +87,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api/methods/unifhy.LatLonGrid.route and {'json_url': 'https://thibhlln.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
+     variables api/methods/unifhy.LatLonGrid.route and {'json_url': 'https://unifhy-org.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -111,7 +114,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://thibhlln.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://unifhy-org.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "api/methods/unifhy.LatLonGrid.route.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
@@ -773,7 +776,7 @@ function checkPageExistsAndRedirect(event) {
               
               <article class="bd-article" role="main">
                 
-  <div class="section" id="unifhy-latlongrid-route">
+  <section id="unifhy-latlongrid-route">
 <h1>unifhy.LatLonGrid.route<a class="headerlink" href="#unifhy-latlongrid-route" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="unifhy.LatLonGrid.route">
@@ -784,7 +787,7 @@ function checkPageExistsAndRedirect(event) {
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>values_to_route: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values to route following the flow direction, e.g.
+<dt>values_to_route: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values to route following the flow direction, e.g.
 how river discharge to route. The shape of this array
 must be the same as of the grid.</p>
 </dd>
@@ -792,12 +795,12 @@ must be the same as of the grid.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>values_routed: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values routed following the flow direction, e.g. how
+<dt>values_routed: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values routed following the flow direction, e.g. how
 much river discharge is coming into each grid element
 from their upstream grid elements. The shape of this
 array is the same as of the grid.</p>
 </dd>
-<dt>values_out: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values that routed following the flow direction would
+<dt>values_out: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The values that routed following the flow direction would
 have left the domain (a value is considered to leave the
 domain if it is directed towards beyond the bounds of
 of the domain, or towards a masked location within the
@@ -816,7 +819,7 @@ is the same as of the grid.</p>
 <p class="admonition-title">Warning</p>
 <p>Given that Y and X <code class="xref py py-obj docutils literal notranslate"><span class="pre">Grid</span></code> coordinates are ordered increasingly
 northwards and eastwards, respectively, and given that a 2D
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> origin (i.e. [0, 0]) is in the upper-left
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> origin (i.e. [0, 0]) is in the upper-left
 corner when visualising the content of an array (i.e. using
 <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>), routing a value northwards will result in visualising
 it “moving down” the array (and not up), and routing a value
@@ -943,7 +946,7 @@ eastwards will result in visualising it “moving right”.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
               </article>
@@ -970,7 +973,7 @@ eastwards will result in visualising it “moving right”.</p>
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
   </div>
   

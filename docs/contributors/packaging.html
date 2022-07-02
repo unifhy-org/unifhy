@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Packaging &#8212; unifhy latest documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -27,6 +28,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_light.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_dark.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
@@ -66,8 +69,8 @@
   
   
   
-    <img src="../_static/logo_colours.svg" class="logo__image only-light" alt="Logo image">
-    <img src="../_static/logo_colours.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="../_static/logo_light.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/logo_dark.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -84,7 +87,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables contributors/packaging and {'json_url': 'https://thibhlln.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
+     variables contributors/packaging and {'json_url': 'https://unifhy-org.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -111,7 +114,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://thibhlln.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://unifhy-org.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "contributors/packaging.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
@@ -333,7 +336,7 @@ function checkPageExistsAndRedirect(event) {
               
               <article class="bd-article" role="main">
                 
-  <div class="section" id="packaging">
+  <section id="packaging">
 <h1>Packaging<a class="headerlink" href="#packaging" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>This section details the steps required to turn your component
 contribution(s) into a Python package.</p>
@@ -346,7 +349,7 @@ contribution(s) into a Python package.</p>
 <li><p><a class="reference internal" href="#populate-the-package-metadata" id="id4">Populate the package metadata</a></p></li>
 </ul>
 </div>
-<div class="section" id="create-a-local-git-repository">
+<section id="create-a-local-git-repository">
 <h2>Create a local git repository<a class="headerlink" href="#create-a-local-git-repository" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>First, choose a name for the model your component(s) originate(s) from,
 following <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#package-and-module-names">PEP 8 naming convention</a>,
@@ -357,8 +360,8 @@ prefix <em>unifhycontrib-</em> to it:</p>
 </pre></div>
 </div>
 <p>where <em>&lt;model_name&gt;</em> should be replaced with your chosen model name.</p>
-</div>
-<div class="section" id="retrieve-the-component-package-template">
+</section>
+<section id="retrieve-the-component-package-template">
 <h2>Retrieve the component package template<a class="headerlink" href="#retrieve-the-component-package-template" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>Download the <a class="reference external" href="https://github.com/unifhy-org/unifhycontrib-template">template source</a>
 and copy the unzipped source in the newly created directory.</p>
@@ -396,8 +399,8 @@ then ‘Download ZIP’.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git commit -am <span class="s2">&quot;start with template&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="bring-in-your-component-contribution-s">
+</section>
+<section id="bring-in-your-component-contribution-s">
 <h2>Bring in your component contribution(s)<a class="headerlink" href="#bring-in-your-component-contribution-s" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>The template features three trivial components <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>,
 <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, and <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a>.</p>
@@ -437,16 +440,16 @@ for your model components.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git commit -am <span class="s2">&quot;bring in my own components&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="populate-the-package-metadata">
+</section>
+<section id="populate-the-package-metadata">
 <h2>Populate the package metadata<a class="headerlink" href="#populate-the-package-metadata" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>Modify the first section in the <a class="reference external" href="https://github.com/unifhy-org/unifhycontrib-template/blob/main/setup.py#L4-L20">setup.py</a>
 module with the relevant metadata for your package. This will be used when
 your package is uploaded to the <a class="reference external" href="https://pypi.org/">Python Package Index (PyPI)</a>.</p>
 <p>Now that your component(s) has (have) been turned into a Python package,
 please consider <a class="reference internal" href="sharing.html"><span class="doc">sharing</span></a> it (them) with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code> community.</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </article>
@@ -473,7 +476,7 @@ please consider <a class="reference internal" href="sharing.html"><span class="d
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
   </div>
   

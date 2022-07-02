@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Development &#8212; unifhy latest documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -27,6 +28,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_light.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_dark.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
@@ -66,8 +69,8 @@
   
   
   
-    <img src="../_static/logo_colours.svg" class="logo__image only-light" alt="Logo image">
-    <img src="../_static/logo_colours.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="../_static/logo_light.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/logo_dark.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -84,7 +87,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables contributors/development and {'json_url': 'https://thibhlln.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
+     variables contributors/development and {'json_url': 'https://unifhy-org.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -111,7 +114,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://thibhlln.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://unifhy-org.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "contributors/development.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
@@ -333,7 +336,7 @@ function checkPageExistsAndRedirect(event) {
               
               <article class="bd-article" role="main">
                 
-  <div class="section" id="development">
+  <section id="development">
 <h1>Development<a class="headerlink" href="#development" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>This section details the steps required to develop a component contribution
 that is compliant with the framework.</p>
@@ -346,7 +349,7 @@ that is compliant with the framework.</p>
 <li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id11">Implement the initialise-run-finalise component class methods</a></p></li>
 </ul>
 </div>
-<div class="section" id="create-your-science-component-by-subclassing-a-generic-framework-component">
+<section id="create-your-science-component-by-subclassing-a-generic-framework-component">
 <h2>Create your science component by subclassing a generic framework component<a class="headerlink" href="#create-your-science-component-by-subclassing-a-generic-framework-component" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>In the modelling framework, the terrestrial water cycle is divided into
 three components, i.e. <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>,
@@ -359,10 +362,12 @@ inward information (variables that are given to the component, i.e.
 “inwards”), and outward information (variables that are computed by the
 component, i.e. “outwards”), see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>, and
 <a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a>.</p>
-<div class="figure align-center" id="id1">
-<span id="fig-transfers"></span><img alt="component transfers" src="../_images/framework_detailed_transfers.svg" /><p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components (see
+<figure class="align-center" id="id1">
+<span id="fig-transfers"></span><img alt="component transfers" src="../_images/framework_detailed_transfers.svg" /><figcaption>
+<p><span class="caption-text">Fig. 2: Transfers of Information between Components (see
 <a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a> for the numbers meanings).</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
-</div>
+</figcaption>
+</figure>
 <span id="tab-transfers"></span><table class="table" id="id2">
 <caption><span class="caption-text">Tab. 1: Transfers of Information between Components (see
         <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a> for the numbers context)</span><a class="headerlink" href="#id2" title="Permalink to this table"><span class="fa fa-link"></a></caption>
@@ -470,8 +475,8 @@ script to remain valid, it will be replaced in the subsequent steps.</p>
 <p>By convention, it is asked that you use the same class name as the
 one you subclassed from, e.g. <em>SurfaceLayerComponent</em> here.</p>
 </div>
-</div>
-<div class="section" id="document-your-science-component-using-its-class-docstring">
+</section>
+<section id="document-your-science-component-using-its-class-docstring">
 <h2>Document your science component using its class docstring<a class="headerlink" href="#document-your-science-component-using-its-class-docstring" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>A description of the component (with reference(s) if applicable) alongside
 a field list containing e.g. name(s) of contributor(s), affiliation(s) of
@@ -505,8 +510,8 @@ The field list should be placed last and preceded by a blank line.</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="define-your-science-component-using-its-class-attributes">
+</section>
+<section id="define-your-science-component-using-its-class-attributes">
 <h2>Define your science component using its class attributes<a class="headerlink" href="#define-your-science-component-using-its-class-attributes" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>The component interface definition is used by the framework to make sure
 that your component can be coupled with other components to form a model.
@@ -603,7 +608,7 @@ those variables already included in the fixed interface, i.e. outwards
 able to record the component outwards and the component states they would
 like, component outputs offer you the possibility to add more variables
 to their list of recordable variables.</p>
-<p>Any output returned must be a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> of the same shape as the
+<p>Any output returned must be a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> of the same shape as the
 component space domain. The output name used in the returned dictionary
 can differ from the Python variable pointing to the array.</p>
 <p class="rubric">States</p>
@@ -660,7 +665,7 @@ corresponds to the second most recent timestep, index
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>(list of) <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.view.html#numpy.ndarray.view" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray.view</span></code></a></dt><dd><p>The state value (or list of values) for the requested
+<dt>(list of) <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.view.html#numpy.ndarray.view" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray.view</span></code></a></dt><dd><p>The state value (or list of values) for the requested
 time index (indices).</p>
 </dd>
 </dl>
@@ -684,7 +689,7 @@ index <code class="xref py py-obj docutils literal notranslate"><span class="pre
 timestep, index <code class="xref py py-obj docutils literal notranslate"><span class="pre">-2</span></code> corresponds to the third most
 recent timestep, etc.</p>
 </dd>
-<dt>value: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The state value(s) to assign at the given time index
+<dt>value: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The state value(s) to assign at the given time index
 (indices).</p>
 </dd>
 </dl>
@@ -823,8 +828,8 @@ as the space domain (see e.g. <a class="reference internal" href="../api/attribu
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="implement-the-initialise-run-finalise-component-class-methods">
+</section>
+<section id="implement-the-initialise-run-finalise-component-class-methods">
 <h2>Implement the initialise-run-finalise component class methods<a class="headerlink" href="#implement-the-initialise-run-finalise-component-class-methods" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>The numerical calculations in your component contribution must be broken
 down into the three phases initialise, run, and finalise. This means that
@@ -950,8 +955,8 @@ states, parameters, and constants.</p>
 <a class="reference internal" href="../science_library.html"><span class="doc">science library</span></a> section.</p>
 <p>This concludes the preparation of your component contribution, the next
 step is to <a class="reference internal" href="packaging.html"><span class="doc">package</span></a> your component(s).</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </article>
@@ -978,7 +983,7 @@ step is to <a class="reference internal" href="packaging.html"><span class="doc"
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
   </div>
   

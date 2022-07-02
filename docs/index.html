@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Unified Framework for Hydrology &#8212; unifhy latest documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -27,6 +28,8 @@
     <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/my_pygments_light.css" />
+    <link rel="stylesheet" type="text/css" href="_static/my_pygments_dark.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
@@ -65,8 +68,8 @@
   
   
   
-    <img src="_static/logo_colours.svg" class="logo__image only-light" alt="Logo image">
-    <img src="_static/logo_colours.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="_static/logo_light.svg" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo_dark.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -83,7 +86,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables index and {'json_url': 'https://thibhlln.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
+     variables index and {'json_url': 'https://unifhy-org.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -110,7 +113,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://thibhlln.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://unifhy-org.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "index.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
@@ -317,7 +320,7 @@ function checkPageExistsAndRedirect(event) {
               
               <article class="bd-article" role="main">
                 
-  <div class="section" id="unified-framework-for-hydrology">
+  <section id="unified-framework-for-hydrology">
 <h1>Unified Framework for Hydrology<a class="headerlink" href="#unified-framework-for-hydrology" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <a class="reference external image-reference" href="https://pypi.python.org/pypi/unifhy"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/unifhy?style=flat-square" /></a>
 <a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/234523723"><img alt="DOI" src="https://img.shields.io/badge/dynamic/json?url=https://zenodo.org/api/records/4726695&amp;label=doi&amp;query=doi&amp;style=flat-square" /></a>
@@ -332,11 +335,13 @@ functional model for simulating the terrestrial water cycle. It is designed to
 foster collaborations between land surface, hydrological, and groundwater
 modelling communities by structuring their interactions around standardised
 interfaces between the components.</p>
-<div class="figure align-center" id="id1">
-<span id="fig-diagram"></span><img alt="modelling framework diagram" src="_images/framework_diagram.svg" /><p class="caption"><span class="caption-text">Fig. 1: Diagram of the Modelling Framework Blueprint for <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>.</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
-</div>
-</div>
-<div class="section" id="getting-started">
+<figure class="align-center" id="id1">
+<span id="fig-diagram"></span><img alt="modelling framework diagram" src="_images/framework_diagram.svg" /><figcaption>
+<p><span class="caption-text">Fig. 1: Diagram of the Modelling Framework Blueprint for <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>.</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <div class="sphinx-bs container pb-4 docutils">
 <div class="row docutils">
@@ -372,8 +377,8 @@ interfaces between the components.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="documentation">
+</section>
+<section id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>The documentation features three guides for various target audiences:</p>
 <div class="toctree-wrapper compound">
@@ -436,12 +441,12 @@ documented:</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-<div class="section" id="acknowledgements">
+</section>
+<section id="acknowledgements">
 <h1>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>The development of this framework is funded by the NERC Hydro-JULES
 programme (NE/S017380/1).</p>
-</div>
+</section>
 
 
               </article>
@@ -468,7 +473,7 @@ programme (NE/S017380/1).</p>
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
   </div>
   

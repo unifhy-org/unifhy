@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Installation &#8212; unifhy latest documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -27,6 +28,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_light.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_dark.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
@@ -66,8 +69,8 @@
   
   
   
-    <img src="../_static/logo_colours.svg" class="logo__image only-light" alt="Logo image">
-    <img src="../_static/logo_colours.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="../_static/logo_light.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/logo_dark.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -84,7 +87,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables users/installation and {'json_url': 'https://thibhlln.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
+     variables users/installation and {'json_url': 'https://unifhy-org.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -111,7 +114,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://thibhlln.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://unifhy-org.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "users/installation.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
@@ -345,7 +348,7 @@ function checkPageExistsAndRedirect(event) {
               
               <article class="bd-article" role="main">
                 
-  <div class="section" id="installation">
+  <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>It is important to make the distinction between the framework (i.e. <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>)
 and the science components that the framework can work with (typically named
@@ -354,9 +357,9 @@ come as separate packages. Thus, they need to be installed separately.</p>
 <p>The framework <em>only</em> provides the infrastructure to combine and run science
 components. The user must then select and install the science components
 they want to use to simulate the terrestrial water cycle.</p>
-<div class="section" id="installing-the-framework">
+<section id="installing-the-framework">
 <h2>Installing the framework<a class="headerlink" href="#installing-the-framework" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<div class="section" id="official-releases">
+<section id="official-releases">
 <h3>Official releases<a class="headerlink" href="#official-releases" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>If you wish to install the most recent <strong>stable</strong> version of <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>, it is
 available from the <em>conda-forge</em> channel, so you can use <code class="xref py py-obj docutils literal notranslate"><span class="pre">conda</span></code> (recommended
@@ -384,8 +387,8 @@ these packages to follow the recommended way of installing them. The
 full list of package dependencies can be found in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>
 file of the given release.</p>
 </div>
-</div>
-<div class="section" id="latest-developments">
+</section>
+<section id="latest-developments">
 <h3>Latest developments<a class="headerlink" href="#latest-developments" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>If you need the <strong>latest</strong>, potentially unstable, features listed in the
 <a class="reference internal" href="../changelog.html"><span class="doc">change log</span></a>, please install from the <em>dev</em> branch on the
@@ -396,9 +399,9 @@ GitHub repository:</p>
 </pre></div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="testing-the-framework">
+</section>
+</section>
+<section id="testing-the-framework">
 <h2>Testing the framework<a class="headerlink" href="#testing-the-framework" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>To check whether the framework has been installed properly, you can run
 tests. These tests are available from the <code class="docutils literal notranslate"><span class="pre">tests</span></code> directory in the
@@ -409,8 +412,8 @@ repository:</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="installing-science-components">
+</section>
+<section id="installing-science-components">
 <h2>Installing science components<a class="headerlink" href="#installing-science-components" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>The science components listed in the <a class="reference internal" href="../science_library.html"><span class="doc">science library</span></a>
 are independent of the framework: they come as Python packages
@@ -418,8 +421,8 @@ of their own. Consequently, they need to be installed separately.
 The distribution of these components is left at the discretion of the component
 contributors. Please refer to their documentation and/or their codebase
 to follow the recommended way of installing them.</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </article>
@@ -446,7 +449,7 @@ to follow the recommended way of installing them.</p>
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
   </div>
   

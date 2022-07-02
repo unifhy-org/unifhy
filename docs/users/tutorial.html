@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Tutorial &#8212; unifhy latest documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -27,6 +28,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_light.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/my_pygments_dark.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
@@ -66,8 +69,8 @@
   
   
   
-    <img src="../_static/logo_colours.svg" class="logo__image only-light" alt="Logo image">
-    <img src="../_static/logo_colours.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="../_static/logo_light.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/logo_dark.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -84,7 +87,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables users/tutorial and {'json_url': 'https://thibhlln.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
+     variables users/tutorial and {'json_url': 'https://unifhy-org.github.io/unifhy/_static/switcher.json', 'version_match': 'latest'}.
 -->
 
 <script type="text/javascript">
@@ -111,7 +114,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://thibhlln.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://unifhy-org.github.io/unifhy/_static/switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "users/tutorial.html";
         let btn = document.getElementById("version_switcher_button");
         // Set empty strings by default so that these attributes exist and can be used in CSS selectors
@@ -367,7 +370,7 @@ function checkPageExistsAndRedirect(event) {
               
               <article class="bd-article" role="main">
                 
-  <div class="section" id="tutorial">
+  <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
 <p>This section showcases the basic usage of the modelling framework <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>
 (Unified Framework for Hydrology).</p>
@@ -403,7 +406,7 @@ commands:</p>
 <p>The input data required to run this tutorial can be found in the <code class="docutils literal notranslate"><span class="pre">data</span></code>
 folder of the repository.</p>
 </div>
-<div class="section" id="configuring-a-model">
+<section id="configuring-a-model">
 <h2>Configuring a Model<a class="headerlink" href="#configuring-a-model" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <p>The central object in the framework is the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>, which combines three
 science components for the three compartments of the terrestrial water cycle.
@@ -414,7 +417,7 @@ the <a class="reference internal" href="../science_library.html"><span class="do
 a <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance, and to be given parameter and/or constant values.</p>
 <p>See <a class="reference internal" href="../api_reference.html#fig-uml"><span class="std std-ref">Fig. 3</span></a> for more details on how all these concepts are
 articulated together.</p>
-<div class="section" id="time">
+<section id="time">
 <h3>Time<a class="headerlink" href="#time" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>, i.e.
 the period and the temporal resolution.</p>
@@ -439,8 +442,8 @@ the period and the temporal resolution.</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="space">
+</section>
+<section id="space">
 <h3>Space<a class="headerlink" href="#space" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>All spatial configurations supported by the framework are subclasses of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code>: they characterise the spatial dimensions of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>,
@@ -510,8 +513,8 @@ cell area is calculated automatically by the framework if not already set.</p></
 each <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> can be queried via its methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_land_sea_mask()</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_flow_direction()</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_cell_area()</span></code>.</p>
 </div>
-</div>
-<div class="section" id="data">
+</section>
+<section id="data">
 <h3>Data<a class="headerlink" href="#data" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> must be used to gather all of the data required to run a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>
 of <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> . It is a dictionary-like object that stores references to <a class="reference external" href="https://ncas-cms.github.io/cf-python/class/cf.Field.html#cf.Field" title="(in Python cf package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
@@ -568,8 +571,8 @@ instances.</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="science">
+</section>
+<section id="science">
 <h3>Science<a class="headerlink" href="#science" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>Each science component is either of a <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>,
 <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>, or <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> type, and it embeds the
@@ -647,8 +650,8 @@ and/or constant values as per indicated in its signature.</p>
 parameter are the component’s outwards, outputs, and states. By default,
 none are recorded.</p>
 </div>
-</div>
-<div class="section" id="framework">
+</section>
+<section id="framework">
 <h3>Framework<a class="headerlink" href="#framework" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> constitutes the core object of the modelling framework. It needs
 to be instantiated with three science <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code> instances, one for each
@@ -755,11 +758,11 @@ a configured model.</p>
 </div>
 <p>See the <a class="reference internal" href="files.html"><span class="doc">files</span></a> section for an example of such model
 configuration YAML file.</p>
-</div>
-</div>
-<div class="section" id="simulating-with-a-model">
+</section>
+</section>
+<section id="simulating-with-a-model">
 <h2>Simulating with a Model<a class="headerlink" href="#simulating-with-a-model" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<div class="section" id="spin-up-and-simulate">
+<section id="spin-up-and-simulate">
 <h3>Spin-Up and Simulate<a class="headerlink" href="#spin-up-and-simulate" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>Once configured, the instance of <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can be used to start a spin up run
 and/or a main simulation run.</p>
@@ -773,8 +776,8 @@ and/or a main simulation run.</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="resume">
+</section>
+<section id="resume">
 <h3>Resume<a class="headerlink" href="#resume" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>If the model has terminated prematurely, and <em>dumping_frequency</em> was
 set in the <em>spin-up</em> and/or <em>simulate</em> invocations, a series of snapshots
@@ -794,9 +797,9 @@ used to select the given snapshot in time to restart from.</p>
 <p class="admonition-title">Note</p>
 <p>Further training resources are available at <a class="reference external" href="https://github.com/unifhy-org/unifhy-training">https://github.com/unifhy-org/unifhy-training</a>.</p>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
               </article>
@@ -823,7 +826,7 @@ used to select the given snapshot in time to restart from.</p>
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
   </div>
   
