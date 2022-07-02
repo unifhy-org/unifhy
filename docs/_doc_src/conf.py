@@ -14,7 +14,6 @@ import pydata_sphinx_theme
 from datetime import datetime
 import os
 import sys
-from git import Repo
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.append(os.path.abspath("./_doc_ext"))
 
