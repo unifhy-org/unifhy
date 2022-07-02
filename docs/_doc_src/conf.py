@@ -107,9 +107,6 @@ add_module_names = True
 # the output. They are ignored by default.
 show_authors = False
 
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
-
 # The default language to highlight source code
 highlight_language = 'python'
 
@@ -126,14 +123,14 @@ html_theme = 'pydata_sphinx_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['../_doc_static']
+html_static_path = ['../_doc_static', '../_doc_img']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'unifhydoc'
 
 # Paths (filenames) here must be relative to (under) html_static_path as above:
 html_css_files = [
-    'custom.css'
+    'custom.css', 'my_pygments_light.css', 'my_pygments_dark.css'
 ]
 
 # Custom sidebar templates, maps document names to template names.
@@ -141,13 +138,15 @@ html_sidebars = {}
 
 html_baseurl = 'https://unifhy-org.github.io/unifhy'
 
-html_logo = '../_doc_img/logo_colours.svg'
-
 html_favicon = '../_doc_img/favicon.ico'
 
 html_permalinks_icon = '<span class="fa fa-link">'
 
 html_theme_options = {
+    "logo": {
+        "image_light": "logo_light.svg",
+        "image_dark": "logo_dark.svg",
+    },
     "icon_links": [
         {
             "name": "GitHub",
@@ -163,7 +162,7 @@ html_theme_options = {
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
-        "json_url": "https://thibhlln.github.io/unifhy/_static/switcher.json",
+        "json_url": f"{html_baseurl}/_static/switcher.json",
         "version_match": version,
     }
 }
