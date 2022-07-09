@@ -236,8 +236,9 @@ a:hover code.literal{
 }
 
 /* override style for tables */
-table {
+.table {
     margin-top: 10px;
+    color: var(--pst-color-text-base);
 }
 
 /* */
