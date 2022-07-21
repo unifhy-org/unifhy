@@ -2549,7 +2549,7 @@ class LatLonGrid(Grid):
         ..     X_bounds (360, 2): [[-180, ..., 180]] degrees_east
         .. )
 
-        Trying to instantiate grid with latitudes from East to West:
+        Trying to instantiate grid with latitudes from North to South:
 
         >>> sd = LatLonGrid(
         ...     latitude=[75, 45, 15],
