@@ -1,14 +1,23 @@
 import unittest
 import doctest
 
-from tests.test_model import BasicTestModel
+from tests.test_model import (
+    BasicTestModel
+)
 from tests.test_space import (
-    TestLatLonGridAPI, TestGridComparison
+    TestLatLonGridAPI,
+    TestGridComparison
 )
 from tests.test_time import (
-    TestTimeDomainAPI, TestTimeDomainComparison
+    TestTimeDomainAPI,
+    TestTimeDomainComparison
 )
-from tests.test_utils.test_clock import TestClock
+from tests.test_utils.test_clock import (
+    TestClock
+)
+from tests.test_component import (
+    TestSubstituteComponent
+)
 import unifhy
 
 
@@ -51,6 +60,9 @@ if __name__ == '__main__':
     )
     test_suite.addTests(
         test_loader.loadTestsFromTestCase(TestClock)
+    )
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestSubstituteComponent)
     )
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.data))

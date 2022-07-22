@@ -1,5 +1,7 @@
+import unittest
 from importlib import import_module
 from datetime import timedelta
+import numpy
 import cf
 
 import unifhy
@@ -203,3 +205,77 @@ def get_dummy_component(category, kind, time_, space_, source):
             spacedomain=spacedomain,
             substituting_class=component_class
         )
+
+
+class TestSubstituteComponent(unittest.TestCase):
+
+    td = get_dummy_timedomain("daily")
+    sd = get_dummy_spacedomain("1deg")
+
+    def test_instantiation_datacomponent(self):
+
+        td = self.td
+        sd = self.sd
+
+        for substituting_class in [unifhy.component.SurfaceLayerComponent,
+                                   unifhy.component.SubSurfaceComponent,
+                                   unifhy.component.OpenWaterComponent]:
+
+            with self.subTest(subtituting_class=substituting_class.category):
+                # prepare dummy dataset for substituting component
+                ds = unifhy.data.DataSet()
+
+                for outward, info in substituting_class.outwards_info.items():
+                    # create dummy field from dummy timedomain and spacedomain
+                    fld = sd.to_field()
+                    fld.set_construct(td.to_field().domain_axis('T'))
+                    fld.set_construct(td.to_field().dimension_coordinate('T'))
+
+                    # populate with zero data
+                    fld.set_data(
+                        numpy.zeros((td.time.size, sd.Y.size, sd.X.size)),
+                        axes=('T', 'Y', 'X')
+                    )
+
+                    # define some basic metadata
+                    fld.standard_name = outward
+                    fld.units = info["units"]
+
+                    # turn field into unifhy Variable
+                    var = unifhy.data.Variable(fld, ())
+
+                    # append Variable to DataSet
+                    ds[outward] = var
+
+                # test instantiation of DataComponent
+                dc = unifhy.DataComponent(td, sd, ds, substituting_class)
+                self.assertEqual(
+                    dc.outwards_info, substituting_class._outwards_info
+                )
+
+    def test_instantiation_nullcomponent(self):
+
+        td = self.td
+        sd = self.sd
+
+        for substituting_class in [unifhy.component.SurfaceLayerComponent,
+                                   unifhy.component.SubSurfaceComponent,
+                                   unifhy.component.OpenWaterComponent]:
+            with self.subTest(subtituting_class=substituting_class.category):
+                # test instantiation of NullComponent
+                nc = unifhy.NullComponent(td, sd, substituting_class)
+                self.assertEqual(
+                    nc.outwards_info, substituting_class._outwards_info
+                )
+
+
+if __name__ == '__main__':
+    test_loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestSubstituteComponent)
+    )
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(test_suite)
