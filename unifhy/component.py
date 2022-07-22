@@ -25,27 +25,32 @@ from .settings import dtype_float, array_order
 
 class MetaComponent(abc.ABCMeta):
     """MetaComponent is a metaclass for `Component`."""
-    # intrinsic attributes
-    _category = None
+    def __new__(mcs, *args, **kwargs):
+        class_ = super().__new__(mcs, *args, **kwargs)
 
-    _inwards_info = None
-    _outwards_info = None
+        # intrinsic attributes
+        mcs._category = None
 
-    _inwards = None
-    _outwards = None
+        mcs._inwards_info = None
+        mcs._outwards_info = None
 
-    # definition attributes
-    _inputs_info = None
-    _parameters_info = None
-    _constants_info = None
-    _states_info = None
-    _outputs_info = None
+        mcs._inwards = None
+        mcs._outwards = None
 
-    _solver_history = None
+        # definition attributes
+        mcs._inputs_info = None
+        mcs._parameters_info = None
+        mcs._constants_info = None
+        mcs._states_info = None
+        mcs._outputs_info = None
 
-    _requires_land_sea_mask = None
-    _requires_flow_direction = None
-    _requires_cell_area = None
+        mcs._solver_history = None
+
+        mcs._requires_land_sea_mask = None
+        mcs._requires_flow_direction = None
+        mcs._requires_cell_area = None
+
+        return class_
 
     @property
     def category(cls):
