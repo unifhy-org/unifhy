@@ -1407,6 +1407,10 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
             'method': 'mean'
         }
     }
+    # if not specified, assume all inwards are required
+    _inwards = tuple(_inwards_info)
+    # if not specified, assume all outwards are produced
+    _outwards = tuple(_outwards_info)
 
 
 class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
@@ -1478,6 +1482,10 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             'method': 'mean'
         }
     }
+    # if not specified, assume all inwards are required
+    _inwards = tuple(_inwards_info)
+    # if not specified, assume all outwards are produced
+    _outwards = tuple(_outwards_info)
 
 
 class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
@@ -1519,6 +1527,10 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
             'method': 'mean'
         }
     }
+    # if not specified, assume all inwards are required
+    _inwards = tuple(_inwards_info)
+    # if not specified, assume all outwards are produced
+    _outwards = tuple(_outwards_info)
 
 
 class DataComponent(Component):
