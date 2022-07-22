@@ -127,6 +127,34 @@ class MetaComponent(abc.ABCMeta):
         return cls._requires_cell_area
 
     def __str__(cls):
+        """**Examples:**
+
+        >>> from tests.components.surfacelayer import Dummy
+        >>> print(Dummy)
+        Dummy(
+            category: surfacelayer
+            inwards metadata:
+                transfer_k [1]
+                transfer_l [1]
+                transfer_n [1]
+            inputs metadata:
+                driving_a [1]
+                driving_b [1]
+                driving_c [1]
+                ancillary_c [1]
+            requires land sea mask: True
+            requires flow direction: True
+            requires cell area: False
+            states metadata:
+                state_a [1]
+                state_b [1]
+            outwards metadata:
+                transfer_i [1]
+                transfer_j [1]
+            outputs metadata:
+                output_x [1]
+        )
+        """
         info_a = [
             "\n".join(
                 ([f"    {t.replace('_info', ' metadata').replace('_', '')}:"]

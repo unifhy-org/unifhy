@@ -1,4 +1,5 @@
 import unittest
+import doctest
 from importlib import import_module
 from datetime import timedelta
 import numpy
@@ -276,6 +277,8 @@ if __name__ == '__main__':
     test_suite.addTests(
         test_loader.loadTestsFromTestCase(TestSubstituteComponent)
     )
+
+    test_suite.addTests(doctest.DocTestSuite(unifhy.component))
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

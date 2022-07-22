@@ -63,6 +63,7 @@ if __name__ == '__main__':
     test_suite.addTests(doctest.DocTestSuite(unifhy.data))
     test_suite.addTests(doctest.DocTestSuite(unifhy.time))
     test_suite.addTests(doctest.DocTestSuite(unifhy.space))
+    test_suite.addTests(doctest.DocTestSuite(unifhy.component))
     test_suite.addTests(doctest.DocTestSuite(unifhy.model))
     test_suite.addTests(doctest.DocTestSuite(unifhy._utils.clock))
     test_suite.addTests(doctest.DocTestSuite(unifhy._utils.exchanger))
