@@ -1,10 +1,15 @@
 .. default-role:: obj
 
-..
-   latest
-   ------
 
-   Yet to be versioned and released. Only available from *dev* branch until then.
+latest
+------
+
+Yet to be versioned and released. Only available from *dev* branch until then.
+
+* fix `DataComponent`/`NullComponent` bug making them unusable as
+  substitute components in a `Model`
+  (`#87 <https://github.com/unifhy-org/unifhy/issues/87>`_)
+
 
 v0.1.1
 ------
