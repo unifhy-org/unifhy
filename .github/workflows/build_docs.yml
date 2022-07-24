@@ -10,7 +10,7 @@ on:
       release:
         description: 'release version tag (#.#.#)'
         required: false
-        default: ''
+        default: '""'
 
 jobs:
 

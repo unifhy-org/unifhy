@@ -137,6 +137,7 @@ See an example of a mock component description below.
        :Affiliations: [1] University
        :Licence: GPL-3.0
        :Copyright: 2021, Jane Doe
+       :Codebase: https://github.com/XXX/XXX
        """
 
 

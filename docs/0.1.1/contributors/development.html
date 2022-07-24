@@ -1,0 +1,887 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Development &#8212; unifhy v0.1.1 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="canonical" href="https://unifhy-org.github.io/unifhy/contributors/development.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Packaging" href="packaging.html" />
+    <link rel="prev" title="Contributor Guide" href="../contributors.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+    <div id="navbar-start">
+      <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="navbar-brand" href="../index.html">
+              <img src="../_static/logo_colours.svg" class="logo" alt="logo">
+            </a>
+          </li>
+      </ul>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class=" collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              v0.1.1
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="version-menu">
+              
+                <a class="dropdown-item" href="https://unifhy-org.github.io/unifhy">latest</a>
+              
+                <a class="dropdown-item" href="https://unifhy-org.github.io/unifhy/0.1.1">v0.1.1</a>
+              
+                <a class="dropdown-item" href="https://unifhy-org.github.io/unifhy/0.1.0">v0.1.0</a>
+              
+            </div>
+          </li>
+      </ul>
+
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../users.html">
+  User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../contributors.html">
+  Contributor Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../developers.html">
+  Developer Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../science_library.html">
+  Science Library
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api_reference.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../changelog.html">
+  Change Log
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../licence.html">
+  Licence
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../genindex.html">
+  Index
+ </a>
+</li>
+
+        
+      </ul>
+
+      <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/unifhy-org/unifhy" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Development
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="packaging.html">
+   Packaging
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="sharing.html">
+   Sharing
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-your-science-component-by-subclassing-a-generic-framework-component">
+   Create your science component by subclassing a generic framework component
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#document-your-science-component-using-its-class-docstring">
+   Document your science component using its class docstring
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-your-science-component-using-its-class-attributes">
+   Define your science component using its class attributes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implement-the-initialise-run-finalise-component-class-methods">
+   Implement the initialise-run-finalise component class methods
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline"><span class="fa fa-link"></a></h1>
+<p>This section details the steps required to develop a component contribution
+that is compliant with the framework.</p>
+<p>You can follow the steps below to develop your component(s):</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#create-your-science-component-by-subclassing-a-generic-framework-component" id="id8">Create your science component by subclassing a generic framework component</a></p></li>
+<li><p><a class="reference internal" href="#document-your-science-component-using-its-class-docstring" id="id9">Document your science component using its class docstring</a></p></li>
+<li><p><a class="reference internal" href="#define-your-science-component-using-its-class-attributes" id="id10">Define your science component using its class attributes</a></p></li>
+<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id11">Implement the initialise-run-finalise component class methods</a></p></li>
+</ul>
+</div>
+<div class="section" id="create-your-science-component-by-subclassing-a-generic-framework-component">
+<h2>Create your science component by subclassing a generic framework component<a class="headerlink" href="#create-your-science-component-by-subclassing-a-generic-framework-component" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>In the modelling framework, the terrestrial water cycle is divided into
+three components, i.e. <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a>, <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>,
+and <a class="reference internal" href="../api/classes/unifhy.OpenWaterComponent.html#unifhy.OpenWaterComponent" title="unifhy.OpenWaterComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenWaterComponent</span></code></a> (see <a class="reference internal" href="../index.html#fig-diagram"><span class="std std-ref">Fig. 1</span></a>). These are the
+three framework components to create subclasses from to start your
+science component.</p>
+<p>Each component features a fixed interface (i.e. a pre-defined set of
+transfers of information with the other components of the framework):
+inward information (variables that are given to the component, i.e.
+“inwards”), and outward information (variables that are computed by the
+component, i.e. “outwards”), see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>, and
+<a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a>.</p>
+<div class="figure align-center" id="id1">
+<span id="fig-transfers"></span><img alt="component transfers" src="../_images/framework_detailed_transfers.svg" /><p class="caption"><span class="caption-text">Fig. 2: Transfers of Information between Components (see
+<a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a> for the numbers meanings).</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
+</div>
+<span id="tab-transfers"></span><table class="table" id="id2">
+<caption><span class="caption-text">Tab. 1: Transfers of Information between Components (see
+        <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a> for the numbers context)</span><a class="headerlink" href="#id2" title="Permalink to this table"><span class="fa fa-link"></a></caption>
+<colgroup>
+<col style="width: 3%" />
+<col style="width: 64%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>canopy_liquid_throughfall_and_snow_melt_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>transpiration_flux_from_root_uptake</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>soil_water_stress_for_transpiration</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>direct_water_evaporation_flux_from_soil</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>soil_water_stress_for_direct_soil_evaporation</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>water_evaporation_flux_from_standing_water</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>standing_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>total_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>water_evaporation_flux_from_open_water</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>direct_throughfall_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>surface_runoff_flux_delivered_to_rivers</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>net_groundwater_flux_to_rivers</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>open_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>open_water_surface_height</p></td>
+<td><p>m</p></td>
+</tr>
+</tbody>
+</table>
+<p>For component contributions to be fully <code class="xref py py-obj docutils literal notranslate"><span class="pre">unifhy</span></code>-compliant, they need to
+comply with this fixed interface. If your science component contribution
+is overlapping several components, it requires to be refactored into the
+relevant number of components.</p>
+<p>Contributions must be implemented as Python classes, and more specifically
+as subclasses of one of the three framework components. This way, the
+interface for the science component contribution is already set, and the
+component directly inherits all the functionalities intrinsic to the
+framework so that, as a contributor, you can focus solely on specifying
+the data and science elements of your component(s).</p>
+<p>Creating your contribution as a Python class can simply be done by
+subclassing from the relevant framework component.</p>
+<p class="rubric">Example</p>
+<p>See an example of a mock surface layer component creation below.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
+
+
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="code highlight python docutils literal notranslate"><span class="k"><span class="pre">pass</span></span></code> is only added here temporarily for this Python example
+script to remain valid, it will be replaced in the subsequent steps.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By convention, it is asked that you use the same class name as the
+one you subclassed from, e.g. <em>SurfaceLayerComponent</em> here.</p>
+</div>
+</div>
+<div class="section" id="document-your-science-component-using-its-class-docstring">
+<h2>Document your science component using its class docstring<a class="headerlink" href="#document-your-science-component-using-its-class-docstring" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>A description of the component (with reference(s) if applicable) alongside
+a field list containing e.g. name(s) of contributor(s), affiliation(s) of
+contributor(s), licence, copyright, etc. must be provided. To do so, use
+your class docstring and follow a <a class="reference external" href="https://docutils.sourceforge.io/docs/user/rst/quickref.html">reStructuredText syntax</a>.</p>
+<p>For the structure of the docstring itself, please start with a short summary line
+followed by a blank line before providing a more elaborate description as per
+<a class="reference external" href="https://www.python.org/dev/peps/pep-0257/#multi-line-docstrings">PEP 257</a>.
+The field list should be placed last and preceded by a blank line.</p>
+<p class="rubric">Example</p>
+<p>See an example of a mock component description below.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
+
+
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Summary line describing the component.</span>
+
+<span class="sd">    More elaborate description for the component.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">    `Doe et al. (2020) &lt;https://doi.org/##.####/XXX&gt;`_.</span>
+
+<span class="sd">    :Contributors: Jane Doe [1]</span>
+<span class="sd">    :Affiliations: [1] University</span>
+<span class="sd">    :Licence: GPL-3.0</span>
+<span class="sd">    :Copyright: 2021, Jane Doe</span>
+<span class="sd">    :Codebase: https://github.com/XXX/XXX</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="define-your-science-component-using-its-class-attributes">
+<h2>Define your science component using its class attributes<a class="headerlink" href="#define-your-science-component-using-its-class-attributes" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>The component interface definition is used by the framework to make sure
+that your component can be coupled with other components to form a model.
+Indeed, while a standard interface exists for the framework component
+(see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>), the science component may fall short
+to use or produce some of them. So long as the other components it is
+coupled with are not needing the ones not produced, the framework does
+not enforce a full compliance with its standard interface. However,
+transfers not present in the standard interface cannot be used.</p>
+<p>The definition of the component interface is specified by assigning
+sets to the class attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inwards</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards</span></code>. In such a set,
+the items must be part or all of the transfers in the fixed interface
+for this component (see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>).</p>
+<p>The component definition is used by the framework to make sure that all
+the information required by the component to run is provided by the
+user. The definition of a component is made of the information about its
+inputs, outputs, states, parameters, and constants.</p>
+<p>The definition for the component is specified by assigning dictionaries
+to the class attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inputs_info</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outputs_info</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_states_info</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_parameters_info</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_constants_info</span></code>. In such a dictionary, the
+keys correspond to the variable names, and the corresponding value
+is another dictionary containing the metadata for the variable. The
+metadata must at least feature the variable <em>units</em> in the
+<a class="reference external" href="https://en.wikipedia.org/wiki/International_System_of_Units">SI system</a>
+and a brief <em>description</em> of the variable in plain english is encouraged.</p>
+<p>See an example below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;variable_name&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;SI unit&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;plain english&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Details on what each type of variable is, and their potential additional
+metadata are provided in the sub-sections below.</p>
+<p class="rubric">Inputs</p>
+<p>The inputs correspond to the driving data required by the component.
+They exclude those variables already included in the fixed interface,
+i.e. inwards (see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>).</p>
+<p>In addition to its <em>units</em> and <em>description</em>, input variables must be
+given a <em>kind</em>. The inputs can be one of the three following kinds:</p>
+<ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">'dynamic'</span></code>: data required for each spatial element and for each time step,</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">'static'</span></code>: data required for each spatial element and constant over time,</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">'climatologic'</span></code>: data required for each spatial element and for a given
+frequency within a climatology year.</p></li>
+</ul>
+<p>If no kind is specified, a dynamic kind is assumed.</p>
+<p>If the input is of climatologic kind, <em>frequency</em> must also be given and it
+can take one of the supported values described in <a class="reference internal" href="#tab-frequencies"><span class="std std-ref">Tab. 1</span></a>
+below.</p>
+<span id="tab-frequencies"></span><table class="table" id="id5">
+<caption><span class="caption-text">Tab. 2: Supported frequencies for climatologic inputs</span><a class="headerlink" href="#id5" title="Permalink to this table"><span class="fa fa-link"></a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>climatologic frequency</p></th>
+<th class="head"><p>length of time dimension in data</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'seasonal'</span></code></p></td>
+<td><p>Length of 4, corresponding to the meteorological
+seasons (i.e. Winter [DJF], Spring [MAM],
+Summer [JJA], Autumn [SON], in this order).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'monthly'</span></code></p></td>
+<td><p>Length of 12, corresponding to the months in the
+calendar year (i.e. from January to December).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'day_of_year'</span></code></p></td>
+<td><p>Length of 366, corresponding to the days in the
+calendar year (i.e. from January 1st to December
+31st, including value for February 29th).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Length according to the integer value (e.g. a
+value of 6 means 6 climatologic values for the
+calendar year).</p></td>
+</tr>
+</tbody>
+</table>
+<p>The framework gives the inputs as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code> method. They are given as arrays of the same shape as the component
+space domain.</p>
+<p class="rubric">Outputs</p>
+<p>The outputs correspond to the variables computed by the component that
+you want the component users to be able to record. The outputs exclude
+those variables already included in the fixed interface, i.e. outwards
+(see <a class="reference internal" href="#fig-transfers"><span class="std std-ref">Fig. 2</span></a>). The component users will always be
+able to record the component outwards and the component states they would
+like, component outputs offer you the possibility to add more variables
+to their list of recordable variables.</p>
+<p>Any output returned must be a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> of the same shape as the
+component space domain. The output name used in the returned dictionary
+can differ from the Python variable pointing to the array.</p>
+<p class="rubric">States</p>
+<p>The states correspond to the component variables that need to be given
+initial values to start the component time integration, and whose values
+need to be sustained from one time step to the next.</p>
+<p>In addition to its <em>units</em> and <em>description</em>, an optional <em>divisions</em>
+metadata exists, where its expected value is an integer, a string, or
+a sequence of integers and/or strings:</p>
+<ul class="simple">
+<li><p>by default its value is 1, indicating the state is a scalar;</p></li>
+<li><p>if its value is an integer greater than 1, it indicates that the state
+is a vector, and its value is the length of the vector;</p></li>
+<li><p>if its value is a string, the string must correspond to the name of a
+component constant, whose value will be used in place of the string
+as divisions;</p></li>
+<li><p>if its value is a sequence, it indicates that the state is an array,
+and its values are the lengths of the dimensions of the array (in the
+order in the sequence).</p></li>
+</ul>
+<p>The <em>divisions</em> metadata can be used when considering e.g. different
+vertical layers in a component. Note that scalar/vector/array refers to
+the dimension of the state for a given element in the space domain, so
+a scalar state does not mean that there is only one state value for the
+whole spatial domain, it only means that there is only one state value
+for each spatial element in the space domain.</p>
+<p>The framework gives the states as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> methods. They are given as framework
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code> objects.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Each <code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code> object stores the different timesteps of a component
+state. To retrieve or assign values for a given timestep, the methods
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timestep</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_timestep</span></code> must be used.</p>
+<table class="table">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><dl class="py method">
+<dt class="sig sig-object py" id="unifhy._utils.state.State.get_timestep">
+<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">get_timestep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeindex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unifhy._utils.state.State.get_timestep" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
+<dd><p>Return the state value(s) for the given time index (indices).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>timeindex: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>)</dt><dd><p>The temporal index (or indices) of the state to evaluate.
+The indices must be lower or equal to zero. Index <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code>
+corresponds to the most recent timestep, index <code class="xref py py-obj docutils literal notranslate"><span class="pre">-1</span></code>
+corresponds to the second most recent timestep, index
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">-2</span></code> corresponds to the third most recent timestep, etc.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>(list of) <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.view.html#numpy.ndarray.view" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray.view</span></code></a></dt><dd><p>The state value (or list of values) for the requested
+time index (indices).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</td>
+</tr>
+<tr class="row-even"><td><dl class="py method">
+<dt class="sig sig-object py" id="unifhy._utils.state.State.set_timestep">
+<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">set_timestep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeindex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unifhy._utils.state.State.set_timestep" title="Permalink to this definition"><span class="fa fa-link"></a></dt>
+<dd><p>Assign the state value(s) at the given time index (indices).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>timeindex: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>)</dt><dd><p>The temporal index (or indices) of the state to assign
+value(s) for. The indices must be lower or equal to
+zero. Index <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code> corresponds to the most recent timestep,
+index <code class="xref py py-obj docutils literal notranslate"><span class="pre">-1</span></code> corresponds to the second most recent
+timestep, index <code class="xref py py-obj docutils literal notranslate"><span class="pre">-2</span></code> corresponds to the third most
+recent timestep, etc.</p>
+</dd>
+<dt>value: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The state value(s) to assign at the given time index
+(indices).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The retrieved state arrays are of the same size as the component space
+domain plus (an) additional trailing axis (axes) if the given component
+state features <em>divisions</em> (i.e. a scalar state will feature no additional
+axis, a vector state will feature one additional axis of size equal to the
+vector length, and an array state will feature as many additional axes
+as the array dimension of sizes equal to the array dimension lengths and
+in the same order).</p>
+<p class="rubric">Parameters</p>
+<p>The parameters are those variables subject to tuning. Note, parameter
+tuning/calibration is not a functionality offered by the framework.</p>
+<p>In addition to its <em>units</em> and <em>description</em>, a <em>valid_range</em> metadata
+is recommended to be given and take a sequence of two numbers as
+value to define the extent of the valid range of parameter values.
+Providing such a range helps the users of your component to determine
+its parameters values for their specific modelling context.</p>
+<p>The framework gives the parameters as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> methods. They are given as arrays of the
+same shape as the component space domain.</p>
+<p class="rubric">Constants</p>
+<p>The constants are those variable not subject to tuning. Nevertheless,
+they can be adjusted by the users, e.g. to adjust its precision, or to
+adapt it to their modelling context.</p>
+<p>In addition to its <em>units</em> and <em>description</em>, a <em>default_value</em> metadata
+is mandatory for each constant. This is to provide a value for the user
+if they are not interested in providing/adjusting it.</p>
+<p>The framework gives the constants as keyword arguments to the component
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> methods. They are given as scalars.</p>
+<p class="rubric">Extra spatial attributes</p>
+<p>In addition, the component definition features three optional spatial
+attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code>. They must be assigned a boolean value (True if
+required by your component, False if not) – their default value is
+False. If they are required, the framework will ensure that the user
+provides the information so that the component can run successfully.</p>
+<p>If you need land sea mask information for your computations, set
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_land_sea_mask</span></code> to True and access it in your class methods
+using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.land_sea_mask</span></code>. This will return an array of the
+same size as the space domain (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.land_sea_mask.html#unifhy.LatLonGrid.land_sea_mask" title="unifhy.LatLonGrid.land_sea_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.land_sea_mask</span></code></a> for
+details).</p>
+<p>If you need flow direction information or want to use the flow routing
+functionality of the component (accessible through <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.route(...)</span></code>),
+set <code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_flow_direction</span></code> to True, and access it in your class methods
+using <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.flow_direction</span></code>. This will return an array of the
+same size as the space domain plus an additional trailing axis of size 2
+for gridded space domains (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.flow_direction.html#unifhy.LatLonGrid.flow_direction" title="unifhy.LatLonGrid.flow_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.flow_direction</span></code></a> for
+details).</p>
+<p>If you need the horizontal cell area of the space domain elements, set
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_requires_cell_area</span></code> to True and access it in your class methods using
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">self.spacedomain.cell_area</span></code>. This will return an array of the same size
+as the space domain (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.cell_area.html#unifhy.LatLonGrid.cell_area" title="unifhy.LatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.cell_area</span></code></a> for details).</p>
+<p class="rubric">Example</p>
+<p>See a detailed example of a mock component definition below.</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
+
+
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
+    <span class="n">_inwards</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;inwards_1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;inwards_2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;inwards_3&#39;</span>
+    <span class="p">}</span>
+    <span class="n">_outwards</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;outwards_1&#39;</span>
+    <span class="p">}</span>
+    <span class="n">_inputs_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;input_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief input description here&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;input_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;climatologic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;monthly&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief input description here&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;input_3&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;static&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief input description here&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_outputs_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;output_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief output description here&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;output_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-3 s-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief output description here&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_states_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;state_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief state description here&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;state_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;divisions&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief state description here&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_parameters_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;parameter_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;valid_range&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief parameter description here&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_constants_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;constant_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;default_value&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;brief constant description here&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">_requires_land_sea_mask</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_requires_flow_direction</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_requires_cell_area</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="implement-the-initialise-run-finalise-component-class-methods">
+<h2>Implement the initialise-run-finalise component class methods<a class="headerlink" href="#implement-the-initialise-run-finalise-component-class-methods" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
+<p>The numerical calculations in your component contribution must be broken
+down into the three phases initialise, run, and finalise. This means that
+your Python class must feature three methods named <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>,
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code>. Note, <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize</span></code> spellings are not
+supported.</p>
+<p>Since the parameters of the three methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> are going to be passed as keyword arguments, the names of the
+parameters in the signatures of these methods must necessarily be the ones
+found in the component definition attributes (if renaming is required,
+this can be done internally to the methods). In turn, this means that the
+order of the method parameters in the method signatures does not matter.
+Moreover, your method signatures must all feature a final special
+method parameter <code class="xref py py-obj docutils literal notranslate"><span class="pre">**kwargs</span></code> to collect all the remaining available
+arguments given by the framework that the component is not using.</p>
+<p class="rubric">Initialise</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> method must define the initial conditions for the
+component states so that its integration can be started. However, the
+component user may have already set initial component state values that
+should not be overwritten. This is why state initial conditions must be
+set only if the component property <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialised_states</span></code> evaluates as <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<p>This method can also feature any other action that is required to be
+done only once before the start of the integration, i.e. pre-processing.
+In such a situation, a special component attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">shelf</span></code> exists. It is
+a dictionary that can be used e.g. to store anything that needs computing
+once in <code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise</span></code> and to be used repeatedly in <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>.</p>
+<p>It is called at the beginning of a model simulation period.</p>
+<p>The possible method parameters in the method signature are the component
+inputs, states, parameters, and constants.</p>
+<p>This method is not expected to return anything.</p>
+<p class="rubric">Run</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code> method contains the computations required to integrate from
+one time step to the next.</p>
+<p>It is called iteratively to move through the model simulation period.
+Between each call, the component states are automatically incremented in
+time by the framework.</p>
+<p>The possible method parameters in the method signature are the component
+inwards, inputs, states, parameters, and constants.</p>
+<p>This method is expected to return a tuple of two dictionaries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>the first dictionary must contain the component outward transfers
+(keys are the outwards names, values are the outwards arrays),</p></li>
+<li><p>the second dictionary must contain the component outputs
+(keys are the outputs names, values are the outputs arrays).</p></li>
+</ul>
+</div></blockquote>
+<p>Note, the second dictionary may be empty if the component does not
+feature any outputs in its definition.</p>
+<p class="rubric">Finalise</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">finalise</span></code> method should contain any action required to guarantee
+that the simulation completes “elegantly” and can be restarted after
+the last simulation time step. It can also feature any other action
+that is required to be done only once after the end of the integration
+over the whole simulation period.</p>
+<p>It is called once at the end of a model simulation period.</p>
+<p>The possible method parameters in the method signature are the component
+states, parameters, and constants.</p>
+<p>This method is not expected to return anything.</p>
+<p class="rubric">Example</p>
+<p>See a detailed example of a mock component implementation below.</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
+
+
+<span class="k">class</span> <span class="nc">SurfaceLayerComponent</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">SurfaceLayerComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;component description here&quot;&quot;&quot;</span>
+
+    <span class="c1"># component definition here</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="n">parameter_1</span><span class="p">,</span> <span class="n">constant_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised_states</span><span class="p">:</span>
+            <span class="c1"># set here initial condition values for component states</span>
+            <span class="n">state_1</span><span class="o">.</span><span class="n">set_timestep</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="n">state_2</span><span class="o">.</span><span class="n">set_timestep</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inwards_1</span><span class="p">,</span> <span class="n">inwards_2</span><span class="p">,</span> <span class="n">inwards_3</span><span class="p">,</span> <span class="n">input_1</span><span class="p">,</span> <span class="n">input_2</span><span class="p">,</span> <span class="n">input_3</span><span class="p">,</span>
+            <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="n">parameter_1</span><span class="p">,</span> <span class="n">constant_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c1"># compute science using available inwards/inputs/parameters/constants</span>
+        <span class="n">routed</span><span class="p">,</span> <span class="n">outed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacedomain</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">inwards_1</span> <span class="o">+</span> <span class="n">inwards_2</span> <span class="o">+</span> <span class="n">inwards_3</span><span class="p">)</span>
+
+        <span class="n">outwards_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">routed</span> <span class="o">+</span> <span class="n">input_1</span> <span class="o">+</span> <span class="n">state_1</span><span class="o">.</span><span class="n">get_timestep</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                      <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedelta_in_seconds</span><span class="p">)</span> <span class="o">*</span> <span class="n">parameter_1</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_datetime</span><span class="o">.</span><span class="n">month</span>
+
+        <span class="n">output_1</span> <span class="o">=</span> <span class="n">input_2</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">*</span> <span class="n">constant_1</span>
+
+        <span class="n">output_2</span> <span class="o">=</span> <span class="n">input_2</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">constant_1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">output_2</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">0.05</span> <span class="o">*</span> <span class="n">state_2</span><span class="o">.</span><span class="n">get_timestep</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+                         <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedelta_in_seconds</span><span class="p">)</span>
+        <span class="n">output_2</span> <span class="o">/=</span> <span class="n">input_3</span>
+
+        <span class="c1"># update component state</span>
+        <span class="n">state_1</span><span class="o">.</span><span class="n">set_timestep</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">state_1</span><span class="o">.</span><span class="n">get_timestep</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedelta_in_seconds</span> <span class="o">*</span> <span class="n">parameter_1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">state_2</span><span class="o">.</span><span class="n">set_timestep</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="mf">0.95</span> <span class="o">*</span> <span class="n">state_2</span><span class="o">.</span><span class="n">get_timestep</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># return outwards and outputs</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;outwards_1&#39;</span><span class="p">:</span> <span class="n">outwards_1</span><span class="p">},</span>
+            <span class="p">{</span><span class="s1">&#39;output_1&#39;</span><span class="p">:</span> <span class="n">output_1</span><span class="p">,</span>
+             <span class="s1">&#39;output_2&#39;</span><span class="p">:</span> <span class="n">output_2</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="n">parameter_1</span><span class="p">,</span> <span class="n">constant_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># cleanly wrap up simulation here</span>
+        <span class="c1"># to be able to restart from where simulation stopped</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<p>Real component implementations are available in the
+<a class="reference internal" href="../science_library.html"><span class="doc">science library</span></a> section.</p>
+<p>This concludes the preparation of your component contribution, the next
+step is to <a class="reference internal" href="packaging.html"><span class="doc">package</span></a> your component(s).</p>
+</div>
+</div>
+
+
+              </div>
+              
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <div class="footer-item">
+      <p class="copyright">
+            &copy; Copyright 2020-2022, UK Centre for Ecology &amp; Hydrology.
+      </p>
+    </div>
+    <div class="footer-item">
+      <p class="sphinx-version">
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.
+        Last updated on Apr 17, 2022.<br>
+      </p>
+    </div>
+  </div>
+</footer>
+  </body>
+</html>

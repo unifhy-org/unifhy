@@ -10,7 +10,7 @@ with open("unifhy/version.py", 'r') as fv:
     exec(fv.read())
 
 
-def requirements(filename):
+def read_requirements(filename):
     requires = []
     with open(filename, 'r') as fr:
         for line in fr:
@@ -57,10 +57,11 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python'
     ],
-    packages=find_packages(exclude=["docs*"]),
+    packages=find_packages(exclude=["data*", "docs*", "tests*"]),
     python_requires=">=3.7",
-    install_requires=requirements('requirements.txt'),
+    install_requires=read_requirements('requirements.txt'),
     extras_require={
-        'docs': requirements('requirements-docs.txt')
+        'docs': read_requirements('requirements-docs.txt'),
+        'tests': read_requirements('requirements-tests.txt')
     }
 )
