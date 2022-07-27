@@ -1756,22 +1756,22 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
         },
         'mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition': {
             'units': 'kg m-2 s-1',
-            'from': 'surface',
+            'from': 'surfacelayer',
             'method': 'mean'
         },
         'mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition': {
             'units': 'kg m-2 s-1',
-            'from': 'surface',
+            'from': 'surfacelayer',
             'method': 'mean'
         },
         'mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition': {
             'units': 'kg m-2 s-1',
-            'from': 'surface',
+            'from': 'surfacelayer',
             'method': 'mean'
         },
         'mass_concentration_of_carbon_dioxide_in_air': {
             'units': 'kg m-3',
-            'from': 'surface',
+            'from': 'surfacelayer',
             'method': 'mean'
         }
     }
