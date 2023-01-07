@@ -45,6 +45,12 @@ jobs:
         run: |
           mamba install udunits2=2.2.25
           mamba install --file=requirements.txt
+
+      # add symlink for gfortran on macOS image
+      - name: install package dependencies
+        if: matrix.os == 'macos-latest'
+        run: |
+          sudo ln -s /usr/local/bin/gfortran-9 /usr/local/bin/gfortran    
           
       # install package
       - name: install package
