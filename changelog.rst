@@ -6,6 +6,12 @@ latest
 
 Yet to be versioned and released. Only available from *dev* branch until then.
 
+.. rubric:: Dependencies
+
+* add support for Python 3.10 and 3.11
+
+.. rubric:: Bug fixes
+
 * fix `DataComponent`/`NullComponent` bug making them unusable as
   substitute components in a `Model`
   (`#87 <https://github.com/unifhy-org/unifhy/issues/87>`_)

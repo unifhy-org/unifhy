@@ -13,7 +13,7 @@ Unified Framework for Hydrology
 .. image:: https://img.shields.io/badge/fair-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow?style=flat-square
    :target: https://fair-software.eu
    :alt: FAIR Software Compliance
-.. image:: https://img.shields.io/github/workflow/status/unifhy-org/unifhy/Basic%20tests?style=flat-square&label=tests
+.. image:: https://img.shields.io/github/actions/workflow/status/unifhy-org/unifhy/basic_tests.yml?style=flat-square&label=tests
    :target: https://github.com/unifhy-org/unifhy/actions/workflows/basic_tests.yml
    :alt: Tests Status
 
