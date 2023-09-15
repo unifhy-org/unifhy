@@ -9,22 +9,28 @@ from copy import deepcopy
 import yaml
 
 from ._utils.state import (
-    State, create_states_dump, update_states_dump, load_states_dump
+    State,
+    create_states_dump,
+    update_states_dump,
+    load_states_dump,
 )
-from ._utils.record import (
-    StateRecord, OutwardRecord, OutputRecord, RecordStream
-)
+from ._utils.record import StateRecord, OutwardRecord, OutputRecord, RecordStream
 from .time import TimeDomain
 from . import space
 from .space import SpaceDomain, Grid
 from .data import (
-    DataSet, Variable, StaticVariable, ClimatologicVariable, DynamicVariable
+    DataSet,
+    Variable,
+    StaticVariable,
+    ClimatologicVariable,
+    DynamicVariable,
 )
 from .settings import dtype_float, array_order
 
 
 class MetaComponent(abc.ABCMeta):
     """MetaComponent is a metaclass for `Component`."""
+
     # intrinsic attributes
     _category = None
 
@@ -54,15 +60,13 @@ class MetaComponent(abc.ABCMeta):
     @property
     def inwards_info(cls):
         return {
-            k: deepcopy(v) for k, v in cls._inwards_info.items()
-            if k in cls._inwards
+            k: deepcopy(v) for k, v in cls._inwards_info.items() if k in cls._inwards
         }
 
     @property
     def outwards_info(cls):
         return {
-            k: deepcopy(v) for k, v in cls._outwards_info.items()
-            if k in cls._outwards
+            k: deepcopy(v) for k, v in cls._outwards_info.items() if k in cls._outwards
         }
 
     @property
@@ -157,22 +161,35 @@ class MetaComponent(abc.ABCMeta):
         """
         info_a = [
             "\n".join(
-                ([f"    {t.replace('_info', ' metadata').replace('_', '')}:"]
-                 + [f"        {n} [{info['units']}]"
-                    for n, info in getattr(cls, t).items()])
+                (
+                    [f"    {t.replace('_info', ' metadata').replace('_', '')}:"]
+                    + [
+                        f"        {n} [{info['units']}]"
+                        for n, info in getattr(cls, t).items()
+                    ]
+                )
             )
-            for t in ['inwards_info', '_inputs_info']
+            for t in ["inwards_info", "_inputs_info"]
             if getattr(cls, t)
         ]
 
         info_b = [
             "\n".join(
-                ([f"    {t.replace('_info', ' metadata').replace('_', '')}:"]
-                 + [f"        {n} [{info['units']}]"
-                    for n, info in getattr(cls, t).items()])
+                (
+                    [f"    {t.replace('_info', ' metadata').replace('_', '')}:"]
+                    + [
+                        f"        {n} [{info['units']}]"
+                        for n, info in getattr(cls, t).items()
+                    ]
+                )
             )
-            for t in ['_parameters_info', '_constants_info', '_states_info',
-                      'outwards_info', '_outputs_info']
+            for t in [
+                "_parameters_info",
+                "_constants_info",
+                "_states_info",
+                "outwards_info",
+                "_outputs_info",
+            ]
             if getattr(cls, t)
         ]
 
@@ -188,10 +205,7 @@ class MetaComponent(abc.ABCMeta):
                 f"    requires flow direction: "
                 f"{getattr(cls, '_requires_flow_direction')}"
             ]
-            + [
-                f"    requires cell area: "
-                f"{getattr(cls, '_requires_cell_area')}"
-            ]
+            + [f"    requires cell area: " f"{getattr(cls, '_requires_cell_area')}"]
             + info_b
             + [")"]
         )
@@ -199,7 +213,7 @@ class MetaComponent(abc.ABCMeta):
 
 class Component(metaclass=MetaComponent):
     # intrinsic attributes (set to default)
-    _category = ''
+    _category = ""
 
     _inwards_info = {}
     _outwards_info = {}
@@ -220,9 +234,17 @@ class Component(metaclass=MetaComponent):
     _requires_flow_direction = False
     _requires_cell_area = False
 
-    def __init__(self, saving_directory, timedomain, spacedomain,
-                 dataset=None, parameters=None, constants=None, records=None,
-                 io_slice=None):
+    def __init__(
+        self,
+        saving_directory,
+        timedomain,
+        spacedomain,
+        dataset=None,
+        parameters=None,
+        constants=None,
+        records=None,
+        io_slice=None,
+    ):
         """**Instantiation**
 
         :Parameters:
@@ -538,9 +560,7 @@ class Component(metaclass=MetaComponent):
                     name, **self._states_info[name]
                 )
             else:
-                raise ValueError(
-                    f"{name} not available for {self._category} component"
-                )
+                raise ValueError(f"{name} not available for {self._category} component")
 
             for delta, methods in frequencies.items():
                 # instantiate RecordStream if none for given timedelta yet
@@ -561,10 +581,10 @@ class Component(metaclass=MetaComponent):
 
     def _check_definition(self):
         # check inwards/outwards are relevant for the component category
-        for lead in ['inwards', 'outwards']:
+        for lead in ["inwards", "outwards"]:
             info = {}
-            def_attr = getattr(self, f'_{lead}')
-            cls_attr = getattr(self, f'_{lead}_info')
+            def_attr = getattr(self, f"_{lead}")
+            cls_attr = getattr(self, f"_{lead}_info")
             for name in def_attr:
                 if name in cls_attr:
                     info[name] = cls_attr[name]
@@ -573,15 +593,14 @@ class Component(metaclass=MetaComponent):
                         f"{lead[:-1]} {name} in component definition is "
                         f"not compatible with component category"
                     )
-            setattr(self, f'_{lead}_info', info)
+            setattr(self, f"_{lead}_info", info)
 
         # check for units
-        for lead in ['inputs', 'parameters', 'constants',
-                     'outputs', 'states']:
-            attr = getattr(self, f'_{lead}_info')
+        for lead in ["inputs", "parameters", "constants", "outputs", "states"]:
+            attr = getattr(self, f"_{lead}_info")
             if attr:
                 for name, info in attr.items():
-                    if 'units' not in info:
+                    if "units" not in info:
                         raise RuntimeError(
                             f"units missing for {name} in {self._category} "
                             f"component definition"
@@ -590,29 +609,31 @@ class Component(metaclass=MetaComponent):
         # check for presence of input kind, if not assume 'dynamic'
         if self._inputs_info:
             for name, info in self._inputs_info.items():
-                if 'kind' not in info:
+                if "kind" not in info:
                     # assume it is a 'standard' input, i.e. dynamic
                     # (this is also useful for a `DataComponent` which
                     #  will not have a 'kind' since inputs are inherited
                     #  from outwards of the component being substituted)
-                    info['kind'] = 'dynamic'
+                    info["kind"] = "dynamic"
                 else:
-                    if info['kind'] not in ['dynamic', 'static',
-                                            'climatologic']:
+                    if info["kind"] not in ["dynamic", "static", "climatologic"]:
                         raise ValueError(
                             f"invalid type for {name} in {self._category} "
                             f"component definition"
                         )
-                    if info['kind'] == 'climatologic':
-                        if 'frequency' not in info:
+                    if info["kind"] == "climatologic":
+                        if "frequency" not in info:
                             raise RuntimeError(
                                 f"frequency missing for {name} in "
                                 f"{self._category} component definition"
                             )
-                        freq = info['frequency']
+                        freq = info["frequency"]
                         if not isinstance(freq, int):
-                            if (isinstance(freq, str) and freq
-                                    not in ['seasonal', 'monthly', 'daily']):
+                            if isinstance(freq, str) and freq not in [
+                                "seasonal",
+                                "monthly",
+                                "daily",
+                            ]:
                                 raise TypeError(
                                     f"invalid frequency for {name} in "
                                     f"{self._category} component definition"
@@ -621,7 +642,7 @@ class Component(metaclass=MetaComponent):
         # check for presence of constant default_value
         if self._constants_info:
             for name, info in self._constants_info.items():
-                if 'default_value' not in info:
+                if "default_value" not in info:
                     raise RuntimeError(
                         f"default_value missing for constant {name} in "
                         f"{self._category} component definition"
@@ -630,7 +651,7 @@ class Component(metaclass=MetaComponent):
         # check for presence of state divisions, if not assume scalar
         if self._states_info:
             for name, info in self._states_info.items():
-                d = info.get('divisions', None)
+                d = info.get("divisions", None)
 
                 if d is None:
                     # assign default value (i.e. state is a scalar)
@@ -664,7 +685,7 @@ class Component(metaclass=MetaComponent):
                                 f"definition"
                             )
 
-                info['divisions'] = d
+                info["divisions"] = d
 
     def _check_timedomain(self, timedomain):
         """The purpose of this method is to check that the timedomain is
@@ -691,8 +712,8 @@ class Component(metaclass=MetaComponent):
                 f"for spacedomain"
             )
 
-        for extra in ['land_sea_mask', 'flow_direction', 'cell_area']:
-            if getattr(self, '_requires_{}'.format(extra)):
+        for extra in ["land_sea_mask", "flow_direction", "cell_area"]:
+            if getattr(self, "_requires_{}".format(extra)):
                 if getattr(spacedomain, extra) is None:
                     raise RuntimeError(
                         f"'{extra}' must be set in {SpaceDomain.__name__} of "
@@ -704,7 +725,6 @@ class Component(metaclass=MetaComponent):
 
         # check that the dataset is an instance of DataSet
         if not isinstance(dataset, DataSet):
-
             raise TypeError(
                 f"object given for dataset argument of {self._category} "
                 f"component '{self.__class__.__name__}' not of type "
@@ -720,9 +740,10 @@ class Component(metaclass=MetaComponent):
                     f"for {self._category} component '{self.__class__.__name__}'"
                 )
             # check that input data units are compliant with component units
-            if hasattr(dataset[data_name].field, 'units'):
-                if not Units(data_info['units']).equals(
-                        Units(dataset[data_name].field.units)):
+            if hasattr(dataset[data_name].field, "units"):
+                if not Units(data_info["units"]).equals(
+                    Units(dataset[data_name].field.units)
+                ):
                     raise ValueError(
                         f"units of variable '{data_name}' in {DataSet.__name__} "
                         f"not equal to units required by {self._category} "
@@ -741,7 +762,7 @@ class Component(metaclass=MetaComponent):
             try:
                 dataset[data_name] = Variable(
                     spacedomain.subset_and_compare(dataset[data_name].field),
-                    dataset[data_name].filenames
+                    dataset[data_name].filenames,
                 )
             except RuntimeError:
                 raise ValueError(
@@ -760,31 +781,32 @@ class Component(metaclass=MetaComponent):
             )
 
             self.datasubset[data_name] = self._check_time(
-                self.dataset[data_name], timedomain,
-                self._inputs_info[data_name]['kind'], error, self._io_slice,
-                frequency=self._inputs_info[data_name].get('frequency')
+                self.dataset[data_name],
+                timedomain,
+                self._inputs_info[data_name]["kind"],
+                error,
+                self._io_slice,
+                frequency=self._inputs_info[data_name].get("frequency"),
             )
 
     @staticmethod
-    def _check_time(variable, timedomain, kind, error, reading_slice,
-                    frequency=None):
+    def _check_time(variable, timedomain, kind, error, reading_slice, frequency=None):
         field = variable.field
         filenames = variable.filenames
 
-        if kind == 'dynamic':
+        if kind == "dynamic":
             try:
                 variable_subset = DynamicVariable(
-                    timedomain.subset_and_compare(field), filenames,
-                    reading_slice
+                    timedomain.subset_and_compare(field), filenames, reading_slice
                 )
             except RuntimeError:
                 raise error
 
-        elif kind == 'climatologic':
+        elif kind == "climatologic":
             lengths = {
-                'seasonal': 4,  # DJF-MAM-JJA-SON
-                'monthly': 12,  # January to December
-                'day_of_year': 366  # Jan 1st to Dec 31st (with Feb 29th)
+                "seasonal": 4,  # DJF-MAM-JJA-SON
+                "monthly": 12,  # January to December
+                "day_of_year": 366,  # Jan 1st to Dec 31st (with Feb 29th)
             }
             if isinstance(frequency, str):
                 length = lengths[frequency]
@@ -792,7 +814,7 @@ class Component(metaclass=MetaComponent):
                 length = int(frequency)
 
             # check that time dimension is of expected length
-            if field.construct('time').size != length:
+            if field.construct("time").size != length:
                 raise error
 
             # copy reference for climatologic input data
@@ -800,10 +822,9 @@ class Component(metaclass=MetaComponent):
 
         else:  # kind == 'static':
             # copy reference for static input data
-            if field.has_construct('time'):
-                if field.construct('time').size == 1:
-                    variable_subset = StaticVariable(field.squeeze('time'),
-                                                     filenames)
+            if field.has_construct("time"):
+                if field.construct("time").size == 1:
+                    variable_subset = StaticVariable(field.squeeze("time"), filenames)
                 else:
                     raise error
             else:
@@ -822,9 +843,7 @@ class Component(metaclass=MetaComponent):
             for name, info in self._parameters_info.items():
                 # check presence of value for parameter
                 if name not in parameters:
-                    raise RuntimeError(
-                        f"value missing for parameter {name}"
-                    )
+                    raise RuntimeError(f"value missing for parameter {name}")
                 parameter = parameters[name]
 
                 # check parameter type
@@ -834,33 +853,23 @@ class Component(metaclass=MetaComponent):
                     try:
                         parameter = spacedomain.subset_and_compare(parameter)
                     except RuntimeError:
-                        raise RuntimeError(
-                            f"parameter {name} spatially incompatible"
-                        )
+                        raise RuntimeError(f"parameter {name} spatially incompatible")
                     parameter = parameter.data
                 elif isinstance(parameter, (tuple, list)) and len(parameter) == 2:
                     try:
                         parameter = cf.Data(*parameter)
                     except ValueError:
-                        raise ValueError(
-                            f"parameter {name} not convertible to cf.Data"
-                        )
+                        raise ValueError(f"parameter {name} not convertible to cf.Data")
                 else:
-                    raise TypeError(
-                        f"invalid type for parameter {name}"
-                    )
+                    raise TypeError(f"invalid type for parameter {name}")
 
                 # check parameter units
                 if not parameter.get_units(False):
-                    raise ValueError(
-                        f"missing units for parameter {name}"
-                    )
+                    raise ValueError(f"missing units for parameter {name}")
                 if not parameter.Units.equals(
-                        Units(self._parameters_info[name]['units'])
+                    Units(self._parameters_info[name]["units"])
                 ):
-                    raise ValueError(
-                        f"invalid units for parameter {name}"
-                    )
+                    raise ValueError(f"invalid units for parameter {name}")
 
                 # check parameter shape (and reshape if scalar-like)
                 if parameter.shape == spacedomain.shape:
@@ -870,9 +879,7 @@ class Component(metaclass=MetaComponent):
                     try:
                         p = parameter.array.item()
                     except ValueError:
-                        raise ValueError(
-                            f"incompatible shape for parameter {name}"
-                        )
+                        raise ValueError(f"incompatible shape for parameter {name}")
                     # assign scalar to newly created array of spacedomain shape
                     parameter = np.zeros(spacedomain.shape, dtype_float())
                     parameter[:] = p
@@ -894,7 +901,7 @@ class Component(metaclass=MetaComponent):
         if self._constants_info:
             for name, info in self._constants_info.items():
                 if name not in constants:
-                    constants_[name] = info['default_value']
+                    constants_[name] = info["default_value"]
                 else:
                     constant = constants[name]
 
@@ -909,29 +916,21 @@ class Component(metaclass=MetaComponent):
                                 f"constant {name} not convertible to cf.Data"
                             )
                     else:
-                        raise TypeError(
-                            f"invalid type for constant {name}"
-                        )
+                        raise TypeError(f"invalid type for constant {name}")
 
                     # check parameter units
                     if not constant.get_units(False):
-                        raise ValueError(
-                            f"missing units for constant {name}"
-                        )
+                        raise ValueError(f"missing units for constant {name}")
                     if not constant.Units.equals(
-                            Units(self._constants_info[name]['units'])
+                        Units(self._constants_info[name]["units"])
                     ):
-                        raise ValueError(
-                            f"invalid units for constant {name}"
-                        )
+                        raise ValueError(f"invalid units for constant {name}")
 
                     # assign parameter value in place of cf.Data
                     try:
                         constants_[name] = constant.array.item()
                     except ValueError:
-                        raise ValueError(
-                            f"constant {name} not a scalar"
-                        )
+                        raise ValueError(f"constant {name} not a scalar")
 
         return constants_
 
@@ -940,7 +939,7 @@ class Component(metaclass=MetaComponent):
         by an integer using component constants.
         """
         for s in self._states_info:
-            d = self._states_info[s]['divisions']
+            d = self._states_info[s]["divisions"]
 
             new_d = []
             for v in d:
@@ -960,7 +959,7 @@ class Component(metaclass=MetaComponent):
                     # do not add dimension if it is 1
                     new_d.append(new_v)
 
-            self._states_info[s]['divisions'] = tuple(new_d)
+            self._states_info[s]["divisions"] = tuple(new_d)
 
     @property
     def category(self):
@@ -980,21 +979,19 @@ class Component(metaclass=MetaComponent):
     @classmethod
     def from_config(cls, cfg):
         # get relevant spacedomain subclass
-        spacedomain = getattr(space, cfg['spacedomain']['class'])
+        spacedomain = getattr(space, cfg["spacedomain"]["class"])
 
         # convert parameters to cf.Field or cf.Data
         parameters = {}
-        if cfg.get('parameters'):
-            for name, info in cfg['parameters'].items():
-                error = ValueError(
-                    f"invalid information in YAML for parameter {name}"
-                )
+        if cfg.get("parameters"):
+            for name, info in cfg["parameters"].items():
+                error = ValueError(f"invalid information in YAML for parameter {name}")
                 if isinstance(info, (tuple, list)):
                     parameters[name] = cf.Data(*info)
                 elif isinstance(info, dict):
-                    if info.get('files') and info.get('select'):
-                        parameters[name] = (
-                            cf.read(info['files']).select_field(info['select'])
+                    if info.get("files") and info.get("select"):
+                        parameters[name] = cf.read(info["files"]).select_field(
+                            info["select"]
                         )
                     else:
                         raise error
@@ -1002,14 +999,14 @@ class Component(metaclass=MetaComponent):
                     raise error
 
         return cls(
-            saving_directory=cfg['saving_directory'],
-            timedomain=TimeDomain.from_config(cfg['timedomain']),
-            spacedomain=spacedomain.from_config(cfg['spacedomain']),
-            dataset=DataSet.from_config(cfg.get('dataset')),
+            saving_directory=cfg["saving_directory"],
+            timedomain=TimeDomain.from_config(cfg["timedomain"]),
+            spacedomain=spacedomain.from_config(cfg["spacedomain"]),
+            dataset=DataSet.from_config(cfg.get("dataset")),
             parameters=parameters,
-            constants=cfg.get('constants'),
-            records=cfg.get('records'),
-            io_slice=cfg.get('io_slice', None)
+            constants=cfg.get("constants"),
+            records=cfg.get("records"),
+            io_slice=cfg.get("io_slice", None),
         )
 
     def to_config(self):
@@ -1022,27 +1019,31 @@ class Component(metaclass=MetaComponent):
                     if original.data.get_filenames():
                         # comes from a file, point to it
                         parameters[name] = {
-                            'files': original.data.get_filenames(),
-                            'select': original.identity()
+                            "files": original.data.get_filenames(),
+                            "select": original.identity(),
                         }
                     else:
                         # create a new file for it
                         filename = sep.join(
-                            [self.saving_directory,
-                             '_'.join([self.identifier, self._category, name])
-                             + ".nc"]
+                            [
+                                self.saving_directory,
+                                "_".join([self.identifier, self._category, name])
+                                + ".nc",
+                            ]
                         )
                         cf.write(original, filename)
                         # point to it
                         parameters[name] = {
-                            'files': [filename],
-                            'select': original.identity()
+                            "files": [filename],
+                            "select": original.identity(),
                         }
                 else:
                     if np.amin(value) == np.amax(value):
                         # can be stored as a scalar
-                        parameters[name] = (np.mean(value).item(),
-                                            self._parameters_info[name]['units'])
+                        parameters[name] = (
+                            np.mean(value).item(),
+                            self._parameters_info[name]["units"],
+                        )
                     else:
                         # must be stored as a cf.Field in new file
                         field = self.spacedomain.to_field()
@@ -1050,59 +1051,69 @@ class Component(metaclass=MetaComponent):
                         field.long_name = name
                         # create a new file for it
                         filename = sep.join(
-                            [self.saving_directory,
-                             '_'.join([self.identifier, self._category, name])
-                             + ".nc"]
+                            [
+                                self.saving_directory,
+                                "_".join([self.identifier, self._category, name])
+                                + ".nc",
+                            ]
                         )
                         cf.write(original, filename)
                         # point to it
                         parameters[name] = {
-                            'files': [filename],
-                            'select': field.identity()
+                            "files": [filename],
+                            "select": field.identity(),
                         }
 
         constants = {}
         if self.constants:
             for name, value in self.constants.items():
-                constants[name] = (value, self._constants_info[name]['units'])
+                constants[name] = (value, self._constants_info[name]["units"])
 
         cfg = {
-            'module': self.__module__,
-            'class': self.__class__.__name__,
-            'saving_directory': self.saving_directory,
-            'timedomain': self.timedomain.to_config(),
-            'spacedomain': self.spacedomain.to_config(),
-            'dataset': self.dataset.to_config(),
-            'parameters': parameters if parameters else None,
-            'constants': constants if constants else None,
-            'records': self.records if self.records else None,
-            'io_slice': self._io_slice
+            "module": self.__module__,
+            "class": self.__class__.__name__,
+            "saving_directory": self.saving_directory,
+            "timedomain": self.timedomain.to_config(),
+            "spacedomain": self.spacedomain.to_config(),
+            "dataset": self.dataset.to_config(),
+            "parameters": parameters if parameters else None,
+            "constants": constants if constants else None,
+            "records": self.records if self.records else None,
+            "io_slice": self._io_slice,
         }
         return cfg
 
     def get_spin_up_timedomain(self, start, end):
-        if ((end - start)
-                % self.timedomain.timedelta).total_seconds() != 0:
+        if ((end - start) % self.timedomain.timedelta).total_seconds() != 0:
             raise RuntimeError(
                 f"spin up start-end incompatible with {self._category} "
                 f"component timedelta"
             )
 
         timedomain = TimeDomain.from_start_end_step(
-            start, end, self.timedomain.timedelta,
+            start,
+            end,
+            self.timedomain.timedelta,
             self.timedomain.units,
-            self.timedomain.calendar
+            self.timedomain.calendar,
         )
 
         return timedomain
 
     def __str__(self):
-        shape = ', '.join([f"{ax}: {ln}" for ax, ln in
-                           zip(self.spacedomain.axes, self.spaceshape)])
+        shape = ", ".join(
+            [f"{ax}: {ln}" for ax, ln in zip(self.spacedomain.axes, self.spaceshape)]
+        )
 
-        records = [f"        {o}: {d} {m}"
-                   for o, f in self.records.items()
-                   for d, m in f.items()] if self.records else []
+        records = (
+            [
+                f"        {o}: {d} {m}"
+                for o, f in self.records.items()
+                for d, m in f.items()
+            ]
+            if self.records
+            else []
+        )
 
         return "\n".join(
             [f"{self.__class__.__name__}("]
@@ -1110,7 +1121,8 @@ class Component(metaclass=MetaComponent):
             + [f"    saving directory: {self.saving_directory}"]
             + [f"    timedomain: period: {self.timedomain.period}"]
             + [f"    spacedomain: shape: ({shape})"]
-            + (["    records:"] if records else []) + records
+            + (["    records:"] if records else [])
+            + records
             + [")"]
         )
 
@@ -1137,9 +1149,7 @@ class Component(metaclass=MetaComponent):
             self.datasubset[d].reset_time()
 
         # initialise component
-        self.initialise(
-            **inputs, **self.parameters, **self.constants, **self.states
-        )
+        self.initialise(**inputs, **self.parameters, **self.constants, **self.states)
         self._initialised_states = True
 
         # create dump file for given run
@@ -1185,31 +1195,42 @@ class Component(metaclass=MetaComponent):
 
     def finalise_(self):
         timestamp = self.timedomain.bounds.array[-1, -1]
-        update_states_dump(sep.join([self.saving_directory, self.dump_file]),
-                           self.states, timestamp, self._solver_history)
+        update_states_dump(
+            sep.join([self.saving_directory, self.dump_file]),
+            self.states,
+            timestamp,
+            self._solver_history,
+        )
         self.finalise(**self.parameters, **self.constants, **self.states)
 
     def _instantiate_states(self):
         # get a State object for each state and initialise to zero
         for s in self._states_info:
-            d = self._states_info[s].get('divisions')
-            o = self._states_info[s].get('order', array_order())
+            d = self._states_info[s].get("divisions")
+            o = self._states_info[s].get("order", array_order())
             self.states[s] = State(
                 np.zeros(
                     (self._solver_history + 1, *self.spaceshape, *d),
-                    dtype_float(), order=o
+                    dtype_float(),
+                    order=o,
                 ),
-                order=o
+                order=o,
             )
 
     def _initialise_states_dump(self, tag, overwrite):
-        self.dump_file = '_'.join([self.identifier, self._category,
-                                   tag, 'dump_states.nc'])
-        if (overwrite or not path.exists(sep.join([self.saving_directory,
-                                                   self.dump_file]))):
-            create_states_dump(sep.join([self.saving_directory, self.dump_file]),
-                               self._states_info, self._solver_history,
-                               self.timedomain, self.spacedomain)
+        self.dump_file = "_".join(
+            [self.identifier, self._category, tag, "dump_states.nc"]
+        )
+        if overwrite or not path.exists(
+            sep.join([self.saving_directory, self.dump_file])
+        ):
+            create_states_dump(
+                sep.join([self.saving_directory, self.dump_file]),
+                self._states_info,
+                self._solver_history,
+                self.timedomain,
+                self.spacedomain,
+            )
 
     def initialise_states_from_dump(self, dump_file, at=None):
         """Initialise the states of the Component from a dump file.
@@ -1245,11 +1266,13 @@ class Component(metaclass=MetaComponent):
         states, at = load_states_dump(dump_file, at, self._states_info)
         for s in self._states_info:
             if s in states:
-                o = self._states_info[s].get('order', array_order())
+                o = self._states_info[s].get("order", array_order())
                 self.states[s] = State(states[s], order=o)
             else:
-                raise KeyError(f"initial conditions for {self._category} "
-                               f"component state '{s}' not in dump")
+                raise KeyError(
+                    f"initial conditions for {self._category} "
+                    f"component state '{s}' not in dump"
+                )
         self._initialised_states = True
 
         return at
@@ -1260,8 +1283,12 @@ class Component(metaclass=MetaComponent):
 
     def dump_states(self, timeindex):
         timestamp = self.timedomain.bounds.array[timeindex, 0]
-        update_states_dump(sep.join([self.saving_directory, self.dump_file]),
-                           self.states, timestamp, self._solver_history)
+        update_states_dump(
+            sep.join([self.saving_directory, self.dump_file]),
+            self.states,
+            timestamp,
+            self._solver_history,
+        )
 
     def _initialise_record_streams(self):
         for delta, stream in self._record_streams.items():
@@ -1271,9 +1298,10 @@ class Component(metaclass=MetaComponent):
     def _create_stream_files_and_dumps(self, tag, overwrite):
         for delta, stream in self._record_streams.items():
             # initialise record files
-            filename = '_'.join([self.identifier, self._category, tag,
-                                 'records', stream.frequency_tag])
-            file_ = sep.join([self.saving_directory, filename + '.nc'])
+            filename = "_".join(
+                [self.identifier, self._category, tag, "records", stream.frequency_tag]
+            )
+            file_ = sep.join([self.saving_directory, filename + ".nc"])
 
             if overwrite or not path.exists(file_):
                 stream.create_record_stream_file(file_)
@@ -1281,17 +1309,25 @@ class Component(metaclass=MetaComponent):
                 stream.file = file_
 
             # initialise stream dumps
-            filename = '_'.join([self.identifier, self._category, tag,
-                                 'dump_record_stream', stream.frequency_tag])
-            file_ = sep.join([self.saving_directory, filename + '.nc'])
+            filename = "_".join(
+                [
+                    self.identifier,
+                    self._category,
+                    tag,
+                    "dump_record_stream",
+                    stream.frequency_tag,
+                ]
+            )
+            file_ = sep.join([self.saving_directory, filename + ".nc"])
 
             if overwrite or not path.exists(file_):
                 stream.create_record_stream_dump(file_)
             else:
                 stream.dump_file = file_
 
-    def revive_record_streams_from_dump(self, dump_file_pattern,
-                                        timedomain=None, at=None):
+    def revive_record_streams_from_dump(
+        self, dump_file_pattern, timedomain=None, at=None
+    ):
         """Revive the record streams of the Component from a dump file.
 
         :Parameters:
@@ -1340,9 +1376,11 @@ class Component(metaclass=MetaComponent):
         if self.records:
             for delta, stream in self._record_streams.items():
                 file_ = dump_file_pattern.format(stream.frequency_tag)
-                ats.append(stream.load_record_stream_dump(
-                    file_, at, timedomain or self.timedomain, self.spacedomain
-                ))
+                ats.append(
+                    stream.load_record_stream_dump(
+                        file_, at, timedomain or self.timedomain, self.spacedomain
+                    )
+                )
         self._revived_streams = True
 
         return ats
@@ -1380,85 +1418,86 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
     processes in the surface layer compartment of the hydrological
     cycle.
     """
-    _category = 'surfacelayer'
+
+    _category = "surfacelayer"
     _inwards_info = {
         # waterenergy --------------------------------------------------
-        'soil_water_stress_for_transpiration': {
-            'units': '1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "soil_water_stress_for_transpiration": {
+            "units": "1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'soil_water_stress_for_direct_soil_evaporation': {
-            'units': '1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "soil_water_stress_for_direct_soil_evaporation": {
+            "units": "1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'standing_water_area_fraction': {
-            'units': '1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "standing_water_area_fraction": {
+            "units": "1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'total_water_area_fraction': {
-            'units': '1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "total_water_area_fraction": {
+            "units": "1",
+            "from": "subsurface",
+            "method": "mean",
         }
         # nutrients ----------------------------------------------------
         # NONE
     }
     _outwards_info = {
         # waterenergy --------------------------------------------------
-        'canopy_liquid_throughfall_and_snow_melt_flux': {
-            'units': 'kg m-2 s-1',
-            'to': ['subsurface'],
-            'method': 'mean'
+        "canopy_liquid_throughfall_and_snow_melt_flux": {
+            "units": "kg m-2 s-1",
+            "to": ["subsurface"],
+            "method": "mean",
         },
-        'transpiration_flux_from_root_uptake': {
-            'units': 'kg m-2 s-1',
-            'to': ['subsurface'],
-            'method': 'mean'
+        "transpiration_flux_from_root_uptake": {
+            "units": "kg m-2 s-1",
+            "to": ["subsurface"],
+            "method": "mean",
         },
-        'direct_water_evaporation_flux_from_soil': {
-            'units': 'kg m-2 s-1',
-            'to': ['subsurface'],
-            'method': 'mean'
+        "direct_water_evaporation_flux_from_soil": {
+            "units": "kg m-2 s-1",
+            "to": ["subsurface"],
+            "method": "mean",
         },
-        'water_evaporation_flux_from_standing_water': {
-            'units': 'kg m-2 s-1',
-            'to': ['subsurface'],
-            'method': 'mean'
+        "water_evaporation_flux_from_standing_water": {
+            "units": "kg m-2 s-1",
+            "to": ["subsurface"],
+            "method": "mean",
         },
-        'water_evaporation_flux_from_open_water': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "water_evaporation_flux_from_open_water": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'direct_throughfall_flux': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "direct_throughfall_flux": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
         # nutrients ----------------------------------------------------
-        'mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_concentration_of_carbon_dioxide_in_air': {
-            'units': 'kg m-3',
-            'to': ['openwater'],
-            'method': 'mean'
-        }
+        "mass_concentration_of_carbon_dioxide_in_air": {
+            "units": "kg m-3",
+            "to": ["openwater"],
+            "method": "mean",
+        },
     }
     # if not specified, assume all inwards are required
     _inwards = tuple(_inwards_info)
@@ -1470,165 +1509,166 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
     """The SubSurfaceComponent is simulating the hydrological processes
     in the subsurface compartment of the hydrological cycle.
     """
-    _category = 'subsurface'
+
+    _category = "subsurface"
     _inwards_info = {
         # waterenergy --------------------------------------------------
-        'canopy_liquid_throughfall_and_snow_melt_flux': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "canopy_liquid_throughfall_and_snow_melt_flux": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'transpiration_flux_from_root_uptake': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "transpiration_flux_from_root_uptake": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'direct_water_evaporation_flux_from_soil': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "direct_water_evaporation_flux_from_soil": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'water_evaporation_flux_from_standing_water': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "water_evaporation_flux_from_standing_water": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'open_water_area_fraction': {
-            'units': '1',
-            'from': 'openwater',
-            'method': 'mean'
+        "open_water_area_fraction": {
+            "units": "1",
+            "from": "openwater",
+            "method": "mean",
         },
-        'open_water_surface_height': {
-            'units': 'm',
-            'from': 'openwater',
-            'method': 'mean'
+        "open_water_surface_height": {
+            "units": "m",
+            "from": "openwater",
+            "method": "mean",
         }
         # nutrients ----------------------------------------------------
         # NONE
     }
     _outwards_info = {
         # waterenergy --------------------------------------------------
-        'soil_water_stress_for_transpiration': {
-            'units': '1',
-            'to': ['surfacelayer'],
-            'method': 'mean'
+        "soil_water_stress_for_transpiration": {
+            "units": "1",
+            "to": ["surfacelayer"],
+            "method": "mean",
         },
-        'soil_water_stress_for_direct_soil_evaporation': {
-            'units': '1',
-            'to': ['surfacelayer'],
-            'method': 'mean'
+        "soil_water_stress_for_direct_soil_evaporation": {
+            "units": "1",
+            "to": ["surfacelayer"],
+            "method": "mean",
         },
-        'standing_water_area_fraction': {
-            'units': '1',
-            'to': ['surfacelayer'],
-            'method': 'mean'
+        "standing_water_area_fraction": {
+            "units": "1",
+            "to": ["surfacelayer"],
+            "method": "mean",
         },
-        'total_water_area_fraction': {
-            'units': '1',
-            'to': ['surfacelayer'],
-            'method': 'mean'
+        "total_water_area_fraction": {
+            "units": "1",
+            "to": ["surfacelayer"],
+            "method": "mean",
         },
-        'surface_runoff_flux_delivered_to_rivers': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "surface_runoff_flux_delivered_to_rivers": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'net_groundwater_flux_to_rivers': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "net_groundwater_flux_to_rivers": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
         # nutrients ----------------------------------------------------
-        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
+        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'to': ['openwater'],
-            'method': 'mean'
-        }
+        "mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
     }
     # if not specified, assume all inwards are required
     _inwards = tuple(_inwards_info)
@@ -1640,152 +1680,153 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
     """The OpenWaterComponent is simulating the hydrological processes
     in the open water compartment of the hydrological cycle.
     """
-    _category = 'openwater'
+
+    _category = "openwater"
     _inwards_info = {
         # waterenergy --------------------------------------------------
-        'water_evaporation_flux_from_open_water': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "water_evaporation_flux_from_open_water": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'direct_throughfall_flux': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "direct_throughfall_flux": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'surface_runoff_flux_delivered_to_rivers': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "surface_runoff_flux_delivered_to_rivers": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'net_groundwater_flux_to_rivers': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "net_groundwater_flux_to_rivers": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
         # nutrients ----------------------------------------------------
-        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff': {
-            'units': 'kg m-2 s-1',
-            'from': 'subsurface',
-            'method': 'mean'
+        "mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "from": "subsurface",
+            "method": "mean",
         },
-        'mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition': {
-            'units': 'kg m-2 s-1',
-            'from': 'surfacelayer',
-            'method': 'mean'
+        "mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "from": "surfacelayer",
+            "method": "mean",
         },
-        'mass_concentration_of_carbon_dioxide_in_air': {
-            'units': 'kg m-3',
-            'from': 'surfacelayer',
-            'method': 'mean'
-        }
+        "mass_concentration_of_carbon_dioxide_in_air": {
+            "units": "kg m-3",
+            "from": "surfacelayer",
+            "method": "mean",
+        },
     }
     _outwards_info = {
         # waterenergy --------------------------------------------------
-        'open_water_area_fraction': {
-            'units': '1',
-            'to': ['subsurface'],
-            'method': 'mean'
+        "open_water_area_fraction": {
+            "units": "1",
+            "to": ["subsurface"],
+            "method": "mean",
         },
-        'open_water_surface_height': {
-            'units': 'm',
-            'to': ['subsurface'],
-            'method': 'mean'
+        "open_water_surface_height": {
+            "units": "m",
+            "to": ["subsurface"],
+            "method": "mean",
         }
         # nutrients ----------------------------------------------------
         # NONE
@@ -1803,15 +1844,17 @@ class DataComponent(Component):
     Its intended use is to replace a compartment of the hydrological
     cycle with measurements or with previous simulation runs.
     """
-    _category = 'data'
+
+    _category = "data"
     _inwards_info = {}
     _outwards_info = {}
 
     # definition attributes
     _solver_history = 0
 
-    def __init__(self, timedomain, spacedomain, dataset, substituting_class,
-                 io_slice=None):
+    def __init__(
+        self, timedomain, spacedomain, dataset, substituting_class, io_slice=None
+    ):
         """**Instantiation**
 
         :Parameters:
@@ -1856,12 +1899,14 @@ class DataComponent(Component):
         self._inputs_info = substituting_class.outwards_info
 
         # initialise as a Component
-        super(DataComponent, self).__init__(None, timedomain, spacedomain,
-                                            dataset, io_slice=io_slice)
+        super(DataComponent, self).__init__(
+            None, timedomain, spacedomain, dataset, io_slice=io_slice
+        )
 
     def __str__(self):
-        shape = ', '.join([f"{ax}: {ln}" for ax, ln in
-                           zip(self.spacedomain.axes, self.spaceshape)])
+        shape = ", ".join(
+            [f"{ax}: {ln}" for ax, ln in zip(self.spacedomain.axes, self.spaceshape)]
+        )
         return "\n".join(
             [f"{self.__class__.__name__}("]
             + [f"    category: {self._category}"]
@@ -1873,33 +1918,30 @@ class DataComponent(Component):
 
     @classmethod
     def from_config(cls, cfg):
-        spacedomain = getattr(space, cfg['spacedomain']['class'])
-        substituting_class = (
-            getattr(
-                import_module(cfg['substituting']['module']),
-                cfg['substituting']['class']
-            )
+        spacedomain = getattr(space, cfg["spacedomain"]["class"])
+        substituting_class = getattr(
+            import_module(cfg["substituting"]["module"]), cfg["substituting"]["class"]
         )
         return cls(
-            timedomain=TimeDomain.from_config(cfg['timedomain']),
-            spacedomain=spacedomain.from_config(cfg['spacedomain']),
-            dataset=DataSet.from_config(cfg.get('dataset')),
+            timedomain=TimeDomain.from_config(cfg["timedomain"]),
+            spacedomain=spacedomain.from_config(cfg["spacedomain"]),
+            dataset=DataSet.from_config(cfg.get("dataset")),
             substituting_class=substituting_class,
-            io_slice=cfg.get('io_slice', None)
+            io_slice=cfg.get("io_slice", None),
         )
 
     def to_config(self):
         cfg = {
-            'module': self.__module__,
-            'class': self.__class__.__name__,
-            'timedomain': self.timedomain.to_config(),
-            'spacedomain': self.spacedomain.to_config(),
-            'dataset': self.dataset.to_config(),
-            'substituting': {
-                'module': self._substituting_class.__module__,
-                'class': self._substituting_class.__name__
+            "module": self.__module__,
+            "class": self.__class__.__name__,
+            "timedomain": self.timedomain.to_config(),
+            "spacedomain": self.spacedomain.to_config(),
+            "dataset": self.dataset.to_config(),
+            "substituting": {
+                "module": self._substituting_class.__module__,
+                "class": self._substituting_class.__name__,
             },
-            'io_slice': self._io_slice
+            "io_slice": self._io_slice,
         }
         return cfg
 
@@ -1931,7 +1973,8 @@ class NullComponent(Component):
     Its intended use is to ignore a compartment of the hydrological
     cycle.
     """
-    _category = 'null'
+
+    _category = "null"
     _inwards_info = {}
     _outwards_info = {}
 
@@ -1970,8 +2013,9 @@ class NullComponent(Component):
         super(NullComponent, self).__init__(None, timedomain, spacedomain)
 
     def __str__(self):
-        shape = ', '.join([f"{ax}: {ln}" for ax, ln in
-                           zip(self.spacedomain.axes, self.spaceshape)])
+        shape = ", ".join(
+            [f"{ax}: {ln}" for ax, ln in zip(self.spacedomain.axes, self.spaceshape)]
+        )
         return "\n".join(
             [f"{self.__class__.__name__}("]
             + [f"    category: {self._category}"]
@@ -1982,29 +2026,26 @@ class NullComponent(Component):
 
     @classmethod
     def from_config(cls, cfg):
-        spacedomain = getattr(space, cfg['spacedomain']['class'])
-        substituting_class = (
-            getattr(
-                import_module(cfg['substituting']['module']),
-                cfg['substituting']['class']
-            )
+        spacedomain = getattr(space, cfg["spacedomain"]["class"])
+        substituting_class = getattr(
+            import_module(cfg["substituting"]["module"]), cfg["substituting"]["class"]
         )
         return cls(
-            timedomain=TimeDomain.from_config(cfg['timedomain']),
-            spacedomain=spacedomain.from_config(cfg['spacedomain']),
-            substituting_class=substituting_class
+            timedomain=TimeDomain.from_config(cfg["timedomain"]),
+            spacedomain=spacedomain.from_config(cfg["spacedomain"]),
+            substituting_class=substituting_class,
         )
 
     def to_config(self):
         cfg = {
-            'module': self.__module__,
-            'class': self.__class__.__name__,
-            'timedomain': self.timedomain.to_config(),
-            'spacedomain': self.spacedomain.to_config(),
-            'substituting': {
-                'module': self._substituting_class.__module__,
-                'class': self._substituting_class.__name__
-            }
+            "module": self.__module__,
+            "class": self.__class__.__name__,
+            "timedomain": self.timedomain.to_config(),
+            "spacedomain": self.spacedomain.to_config(),
+            "substituting": {
+                "module": self._substituting_class.__module__,
+                "class": self._substituting_class.__name__,
+            },
         }
         return cfg
 

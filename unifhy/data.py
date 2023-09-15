@@ -70,9 +70,7 @@ class DataSet(MutableMapping):
         """
         self._variables = {}
         if files is not None:
-            self.update(
-                self._get_dict_variables_from_file(files, name_mapping, select)
-            )
+            self.update(self._get_dict_variables_from_file(files, name_mapping, select))
 
     def __getitem__(self, key):
         return self._variables[key]
@@ -96,14 +94,20 @@ class DataSet(MutableMapping):
         return len(self._variables)
 
     def __str__(self):
-        return "\n".join(
-            ["DataSet{"] +
-            [f"    {self._variables[v]!r}".replace(
-                '<CF Field: ', '').replace('>', '').replace(
-                self._variables[v].identity(), v)
-             for v in sorted(self._variables)] +
-            ["}"]
-        ) if self._variables else "DataSet{ }"
+        return (
+            "\n".join(
+                ["DataSet{"]
+                + [
+                    f"    {self._variables[v]!r}".replace("<CF Field: ", "")
+                    .replace(">", "")
+                    .replace(self._variables[v].identity(), v)
+                    for v in sorted(self._variables)
+                ]
+                + ["}"]
+            )
+            if self._variables
+            else "DataSet{ }"
+        )
 
     def load_from_file(self, files, name_mapping=None, select=None):
         """Append to the `DataSet` the variables that are contained in
@@ -164,16 +168,14 @@ class DataSet(MutableMapping):
             snowfall_flux(time(6), atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) kg m-2 s-1
         }
         """
-        self.update(
-            self._get_dict_variables_from_file(files, name_mapping, select)
-        )
+        self.update(self._get_dict_variables_from_file(files, name_mapping, select))
 
     @staticmethod
     def _get_dict_variables_from_file(files, name_mapping, select):
         variables = {}
 
         for field in cf.read(
-                files, aggregate={'relaxed_identities': True}, select=select
+            files, aggregate={"relaxed_identities": True}, select=select
         ):
             filenames = field.get_filenames()
 
@@ -182,7 +184,7 @@ class DataSet(MutableMapping):
             name_in_mapping = None
 
             # loop by increasing order of priority
-            for attrib in ['long_name', 'standard_name']:
+            for attrib in ["long_name", "standard_name"]:
                 if hasattr(field, attrib):
                     field_names.append(getattr(field, attrib))
                     if name_mapping:
@@ -191,9 +193,7 @@ class DataSet(MutableMapping):
                                 f"{attrib}={getattr(field, attrib)}"
                             ]
                         elif getattr(field, attrib) in name_mapping:
-                            name_in_mapping = name_mapping[
-                                getattr(field, attrib)
-                            ]
+                            name_in_mapping = name_mapping[getattr(field, attrib)]
 
             if name_in_mapping is None:
                 # try to use the latest (highest priority) name found
@@ -238,9 +238,9 @@ class DataSet(MutableMapping):
         if cfg:
             for var in cfg:
                 inst.load_from_file(
-                    files=cfg[var]['files'],
-                    select=cfg[var]['select'],
-                    name_mapping={cfg[var]['select']: var}
+                    files=cfg[var]["files"],
+                    select=cfg[var]["select"],
+                    name_mapping={cfg[var]["select"]: var},
                 )
         return inst
 
@@ -274,15 +274,14 @@ class DataSet(MutableMapping):
 
         for var_name in self:
             cfg[var_name] = {
-                'files': list(self[var_name].filenames),
-                'select': self[var_name].identity()
+                "files": list(self[var_name].filenames),
+                "select": self[var_name].identity(),
             }
 
         return cfg
 
 
 class Variable(object):
-
     def __init__(self, field, filenames):
         self._f = field
         # filenames may be dropped by cf-python after data access so
@@ -305,7 +304,6 @@ class Variable(object):
 
 
 class StaticVariable(Variable):
-
     def __init__(self, field, filenames):
         super(StaticVariable, self).__init__(field, filenames)
         # no time dimension, so load in full array at once
@@ -326,7 +324,6 @@ class ClimatologicVariable(StaticVariable):
 
 
 class DynamicVariable(Variable):
-
     def __init__(self, field, filenames, reading_slice):
         super(DynamicVariable, self).__init__(field, filenames)
         self._steps_per_slice = reading_slice
@@ -340,7 +337,7 @@ class DynamicVariable(Variable):
         if slice_index == 0:
             i = self._current_slice
             length = self._steps_per_slice
-            self._current_array = self._f[i*length:(i+1)*length].array
+            self._current_array = self._f[i * length : (i + 1) * length].array
             self._current_slice += 1
 
         return self._current_array[slice_index]

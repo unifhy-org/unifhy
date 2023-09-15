@@ -1,8 +1,8 @@
-numpy>=1.16
-netCDF4>=1.5
-esmpy
+cf-python>=3.11.0
 cftime
 cfunits
-cf-python>=3.11.0
-pyyaml>=5.3
+esmpy
+netCDF4>=1.5
+numpy>=1.16
 pyproj>=3.0
+pyyaml>=5.3

@@ -6,8 +6,13 @@ import yaml
 
 from ._utils import Exchanger, Clock, Compass
 from ._utils.exchanger import load_transfers_dump
-from .component import (SurfaceLayerComponent, SubSurfaceComponent,
-                        OpenWaterComponent, DataComponent, NullComponent)
+from .component import (
+    SurfaceLayerComponent,
+    SubSurfaceComponent,
+    OpenWaterComponent,
+    DataComponent,
+    NullComponent,
+)
 from .time import TimeDomain
 
 
@@ -18,9 +23,17 @@ class Model(object):
     compatibility between `Component`\s, and controlling the simulation
     workflow.
     """
-    def __init__(self, identifier, config_directory, saving_directory,
-                 surfacelayer, subsurface, openwater,
-                 _to_yaml=True):
+
+    def __init__(
+        self,
+        identifier,
+        config_directory,
+        saving_directory,
+        surfacelayer,
+        subsurface,
+        openwater,
+        _to_yaml=True,
+    ):
         """**Instantiation**
 
         :Parameters:
@@ -52,13 +65,12 @@ class Model(object):
         # assign components to model if of the correct type
         #: Return the surface layer component of the model.
         self.surfacelayer = self._process_component_type(
-            surfacelayer, SurfaceLayerComponent)
+            surfacelayer, SurfaceLayerComponent
+        )
         #: Return the sub-surface component of the model.
-        self.subsurface = self._process_component_type(
-            subsurface, SubSurfaceComponent)
+        self.subsurface = self._process_component_type(subsurface, SubSurfaceComponent)
         #: Return the open water component of the model.
-        self.openwater = self._process_component_type(
-            openwater, OpenWaterComponent)
+        self.openwater = self._process_component_type(openwater, OpenWaterComponent)
 
         self._check_components_plugging()
 
@@ -113,12 +125,14 @@ class Model(object):
     def _check_components_plugging(self):
         # check that each component inward is available as an outward
         # from the expected component
-        for cat in ['surfacelayer', 'subsurface', 'openwater']:
+        for cat in ["surfacelayer", "subsurface", "openwater"]:
             dst = getattr(self, cat)
             for trf, info in dst.inwards_info.items():
-                src = getattr(self, info['from'])
-                if (trf not in src.outwards_info
-                        or cat not in src.outwards_info[trf]['to']):
+                src = getattr(self, info["from"])
+                if (
+                    trf not in src.outwards_info
+                    or cat not in src.outwards_info[trf]["to"]
+                ):
                     raise RuntimeError(
                         f"{cat} component inward transfer '{trf}' "
                         f"not available from {src.category} component"
@@ -138,63 +152,55 @@ class Model(object):
 
     @classmethod
     def from_config(cls, cfg):
-        surfacelayer = (
-            getattr(
-                import_module(cfg['surfacelayer']['module']),
-                cfg['surfacelayer']['class']
-            )
+        surfacelayer = getattr(
+            import_module(cfg["surfacelayer"]["module"]), cfg["surfacelayer"]["class"]
         )
-        subsurface = (
-            getattr(
-                import_module(cfg['subsurface']['module']),
-                cfg['subsurface']['class']
-            )
+        subsurface = getattr(
+            import_module(cfg["subsurface"]["module"]), cfg["subsurface"]["class"]
         )
-        openwater = (
-            getattr(
-                import_module(cfg['openwater']['module']),
-                cfg['openwater']['class']
-            )
+        openwater = getattr(
+            import_module(cfg["openwater"]["module"]), cfg["openwater"]["class"]
         )
 
         return cls(
-            identifier=cfg['identifier'],
-            config_directory=cfg['config_directory'],
-            saving_directory=cfg['saving_directory'],
-            surfacelayer=surfacelayer.from_config(
-                cfg['surfacelayer']),
-            subsurface=subsurface.from_config(
-                cfg['subsurface']),
-            openwater=openwater.from_config(
-                cfg['openwater']),
-            _to_yaml=False
+            identifier=cfg["identifier"],
+            config_directory=cfg["config_directory"],
+            saving_directory=cfg["saving_directory"],
+            surfacelayer=surfacelayer.from_config(cfg["surfacelayer"]),
+            subsurface=subsurface.from_config(cfg["subsurface"]),
+            openwater=openwater.from_config(cfg["openwater"]),
+            _to_yaml=False,
         )
 
     def to_config(self):
         return {
-            'identifier': self._identifier,
-            'config_directory': self.config_directory,
-            'saving_directory': self.saving_directory,
-            'surfacelayer': self.surfacelayer.to_config(),
-            'subsurface': self.subsurface.to_config(),
-            'openwater': self.openwater.to_config()
+            "identifier": self._identifier,
+            "config_directory": self.config_directory,
+            "saving_directory": self.saving_directory,
+            "surfacelayer": self.surfacelayer.to_config(),
+            "subsurface": self.subsurface.to_config(),
+            "openwater": self.openwater.to_config(),
         }
 
     @staticmethod
     def _set_up_yaml_loader():
         # configure yaml for loading datetime.timedelta
         yaml.add_constructor(
-            u'!timedelta',
+            "!timedelta",
             lambda loader, node: timedelta(
-                **{match[1]: float(match[2]) for match in
-                   re.findall(r"(([a-z]+) *= *([0-9]+\.?[0-9]*))",
-                              loader.construct_scalar(node))}
+                **{
+                    match[1]: float(match[2])
+                    for match in re.findall(
+                        r"(([a-z]+) *= *([0-9]+\.?[0-9]*))",
+                        loader.construct_scalar(node),
+                    )
+                }
             ),
-            Loader=yaml.FullLoader
+            Loader=yaml.FullLoader,
         )
         yaml.add_implicit_resolver(
-            u'!timedelta',
-            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
+            "!timedelta",
+            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)"),
         )
 
     @staticmethod
@@ -203,23 +209,22 @@ class Model(object):
         for type_ in (list, tuple, set):
             yaml.add_representer(
                 type_,
-                lambda dumper, data:
-                dumper.represent_sequence(u'tag:yaml.org,2002:seq',
-                                          data, flow_style=True),
-                Dumper=yaml.Dumper
+                lambda dumper, data: dumper.represent_sequence(
+                    "tag:yaml.org,2002:seq", data, flow_style=True
+                ),
+                Dumper=yaml.Dumper,
             )
         # configure the dumping format for datetime.timedelta
         yaml.add_representer(
             timedelta,
-            lambda dumper, data:
-            dumper.represent_scalar(
-                u'!timedelta', 'timedelta(seconds=%s)' % data.total_seconds()
+            lambda dumper, data: dumper.represent_scalar(
+                "!timedelta", "timedelta(seconds=%s)" % data.total_seconds()
             ),
-            Dumper=yaml.Dumper
+            Dumper=yaml.Dumper,
         )
         yaml.add_implicit_resolver(
-            u'!timedelta',
-            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)")
+            "!timedelta",
+            re.compile(r"timedelta\(( *([a-z]+) *= *([0-9]+\.?[0-9]*) *,?)+\)"),
         )
 
     @classmethod
@@ -252,7 +257,7 @@ class Model(object):
         """
         cls._set_up_yaml_loader()
 
-        with open(yaml_file, 'r') as f:
+        with open(yaml_file, "r") as f:
             cfg = yaml.load(f, yaml.FullLoader)
         return cls.from_config(cfg)
 
@@ -262,8 +267,9 @@ class Model(object):
         self._set_up_yaml_dumper()
 
         # dump configuration in yaml file
-        with open(sep.join([self.config_directory, f'{self._identifier}.yml']),
-                  'w') as f:
+        with open(
+            sep.join([self.config_directory, f"{self._identifier}.yml"]), "w"
+        ) as f:
             yaml.dump(self.to_config(), f, yaml.Dumper, sort_keys=False)
 
     def initialise_transfers_from_dump(self, dump_file, at=None):
@@ -298,40 +304,59 @@ class Model(object):
 
         """
         # set up compass responsible for mapping across components
-        compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
-                           'subsurface': self.subsurface.spacedomain,
-                           'openwater': self.openwater.spacedomain})
+        compass = Compass(
+            {
+                "surfacelayer": self.surfacelayer.spacedomain,
+                "subsurface": self.subsurface.spacedomain,
+                "openwater": self.openwater.spacedomain,
+            }
+        )
 
         # set up clock responsible for iterating over time
-        clock = Clock({'surfacelayer': self.surfacelayer.timedomain,
-                       'subsurface': self.subsurface.timedomain,
-                       'openwater': self.openwater.timedomain})
+        clock = Clock(
+            {
+                "surfacelayer": self.surfacelayer.timedomain,
+                "subsurface": self.subsurface.timedomain,
+                "openwater": self.openwater.timedomain,
+            }
+        )
 
         # set up exchanger responsible for transfers between components
-        self.exchanger = Exchanger({'surfacelayer': self.surfacelayer,
-                                    'subsurface': self.subsurface,
-                                    'openwater': self.openwater},
-                                   clock, compass, self._identifier,
-                                   self.saving_directory)
+        self.exchanger = Exchanger(
+            {
+                "surfacelayer": self.surfacelayer,
+                "subsurface": self.subsurface,
+                "openwater": self.openwater,
+            },
+            clock,
+            compass,
+            self._identifier,
+            self.saving_directory,
+        )
 
-        transfers, at = load_transfers_dump(dump_file, at,
-                                            self.exchanger.transfers)
+        transfers, at = load_transfers_dump(dump_file, at, self.exchanger.transfers)
         for tr in self.exchanger.transfers:
             if tr in transfers:
-                if self.exchanger.transfers[tr].get('from') is None:
+                if self.exchanger.transfers[tr].get("from") is None:
                     continue
                 else:
-                    self.exchanger.transfers[tr]['slices'][-1] = transfers[tr]
+                    self.exchanger.transfers[tr]["slices"][-1] = transfers[tr]
             else:
                 raise KeyError(
-                    f"initial conditions for exchanger transfer '{tr}' "
-                    f"not in dump"
+                    f"initial conditions for exchanger transfer '{tr}' " f"not in dump"
                 )
 
         return at
 
-    def spin_up(self, start, end, cycles=1, dumping_frequency=None,
-                overwrite=True, _cycle_origin_no=0):
+    def spin_up(
+        self,
+        start,
+        end,
+        cycles=1,
+        dumping_frequency=None,
+        overwrite=True,
+        _cycle_origin_no=0,
+    ):
         """Run model spin-up simulation to initialise states of each
         `Component` of the Model.
 
@@ -376,28 +401,23 @@ class Model(object):
 
         """
         # generate spin-up timedomains for each model component
-        surfacelayer_timedomain = (
-            self.surfacelayer.get_spin_up_timedomain(start, end)
-        )
-        subsurface_timedomain = (
-            self.subsurface.get_spin_up_timedomain(start, end)
-        )
-        openwater_timedomain = (
-            self.openwater.get_spin_up_timedomain(start, end)
-        )
+        surfacelayer_timedomain = self.surfacelayer.get_spin_up_timedomain(start, end)
+        subsurface_timedomain = self.subsurface.get_spin_up_timedomain(start, end)
+        openwater_timedomain = self.openwater.get_spin_up_timedomain(start, end)
 
         # store spin up configuration in a separate yaml file
         spin_up_config = {
-            'start': start.strftime('%Y-%m-%d %H:%M:%S'),
-            'end': end.strftime('%Y-%m-%d %H:%M:%S'),
-            'cycles': cycles,
-            'dumping_frequency': dumping_frequency
-            if dumping_frequency is not None else None
+            "start": start.strftime("%Y-%m-%d %H:%M:%S"),
+            "end": end.strftime("%Y-%m-%d %H:%M:%S"),
+            "cycles": cycles,
+            "dumping_frequency": dumping_frequency
+            if dumping_frequency is not None
+            else None,
         }
         self._set_up_yaml_dumper()
-        with open(sep.join([self.config_directory,
-                            f"{self._identifier}.spin_up.yml"]),
-                  'w') as f:
+        with open(
+            sep.join([self.config_directory, f"{self._identifier}.spin_up.yml"]), "w"
+        ) as f:
             yaml.dump(spin_up_config, f, yaml.Dumper, sort_keys=False)
 
         # store main run attributes
@@ -412,7 +432,7 @@ class Model(object):
 
         # start the spin up run(s)
         for cycle in range(cycles):
-            tag = f'spinup{_cycle_origin_no + cycle + 1}'
+            tag = f"spinup{_cycle_origin_no + cycle + 1}"
             self._initialise(tag, overwrite)
             self._run(tag, dumping_frequency, overwrite)
             self._finalise()
@@ -450,18 +470,19 @@ class Model(object):
         """
         # store spin up configuration in a separate yaml file
         simulate_config = {
-            'dumping_frequency': dumping_frequency
-            if dumping_frequency is not None else None
+            "dumping_frequency": dumping_frequency
+            if dumping_frequency is not None
+            else None
         }
         self._set_up_yaml_dumper()
-        with open(sep.join([self.config_directory,
-                            f"{self._identifier}.simulate.yml"]),
-                  'w') as f:
+        with open(
+            sep.join([self.config_directory, f"{self._identifier}.simulate.yml"]), "w"
+        ) as f:
             yaml.dump(simulate_config, f, yaml.Dumper, sort_keys=False)
 
         # initialise, run, finalise model
-        self._initialise('run', overwrite)
-        self._run('run', dumping_frequency, overwrite)
+        self._initialise("run", overwrite)
+        self._run("run", dumping_frequency, overwrite)
         self._finalise()
 
     def _initialise(self, tag, overwrite):
@@ -472,25 +493,39 @@ class Model(object):
 
     def _run(self, tag, dumping_frequency=None, overwrite=True):
         # set up compass responsible for mapping across components
-        compass = Compass({'surfacelayer': self.surfacelayer.spacedomain,
-                           'subsurface': self.subsurface.spacedomain,
-                           'openwater': self.openwater.spacedomain})
+        compass = Compass(
+            {
+                "surfacelayer": self.surfacelayer.spacedomain,
+                "subsurface": self.subsurface.spacedomain,
+                "openwater": self.openwater.spacedomain,
+            }
+        )
 
         # set up clock responsible for iterating over time
-        clock = Clock({'surfacelayer': self.surfacelayer.timedomain,
-                       'subsurface': self.subsurface.timedomain,
-                       'openwater': self.openwater.timedomain})
+        clock = Clock(
+            {
+                "surfacelayer": self.surfacelayer.timedomain,
+                "subsurface": self.subsurface.timedomain,
+                "openwater": self.openwater.timedomain,
+            }
+        )
         if dumping_frequency is not None:
             clock.set_dumping_frequency(dumping_frequency)
 
         # set up exchanger responsible for transfers between components
         if self.exchanger is None:
             # generate an instance of Exchanger
-            self.exchanger = Exchanger({'surfacelayer': self.surfacelayer,
-                                        'subsurface': self.subsurface,
-                                        'openwater': self.openwater},
-                                       clock, compass, self._identifier,
-                                       self.saving_directory)
+            self.exchanger = Exchanger(
+                {
+                    "surfacelayer": self.surfacelayer,
+                    "subsurface": self.subsurface,
+                    "openwater": self.openwater,
+                },
+                clock,
+                compass,
+                self._identifier,
+                self.saving_directory,
+            )
         else:
             # no need for a new instance, but need to re-run the setup
             # of the existing instance because time or space information
@@ -499,46 +534,39 @@ class Model(object):
         self.exchanger.initialise_(tag, overwrite)
 
         # run components
-        for (run_surfacelayer, run_subsurface, run_openwater,
-             dumping) in clock:
-
+        for run_surfacelayer, run_subsurface, run_openwater, dumping in clock:
             to_exchanger = {}
 
             if dumping:
-                ti = clock.get_current_timeindex('surfacelayer')
+                ti = clock.get_current_timeindex("surfacelayer")
                 self.surfacelayer.dump_states(ti)
                 self.surfacelayer.dump_record_streams(ti)
-                ti = clock.get_current_timeindex('subsurface')
+                ti = clock.get_current_timeindex("subsurface")
                 self.subsurface.dump_states(ti)
                 self.subsurface.dump_record_streams(ti)
-                ti = clock.get_current_timeindex('openwater')
+                ti = clock.get_current_timeindex("openwater")
                 self.openwater.dump_states(ti)
                 self.openwater.dump_record_streams(ti)
-                self.exchanger.dump_transfers(
-                    clock.get_current_timestamp()
-                )
+                self.exchanger.dump_transfers(clock.get_current_timestamp())
 
             if run_surfacelayer:
                 to_exchanger.update(
                     self.surfacelayer.run_(
-                        clock.get_current_timeindex('surfacelayer'),
-                        self.exchanger
+                        clock.get_current_timeindex("surfacelayer"), self.exchanger
                     )
                 )
 
             if run_subsurface:
                 to_exchanger.update(
                     self.subsurface.run_(
-                        clock.get_current_timeindex('subsurface'),
-                        self.exchanger
+                        clock.get_current_timeindex("subsurface"), self.exchanger
                     )
                 )
 
             if run_openwater:
                 to_exchanger.update(
                     self.openwater.run_(
-                        clock.get_current_timeindex('openwater'),
-                        self.exchanger
+                        clock.get_current_timeindex("openwater"), self.exchanger
                     )
                 )
 
@@ -572,10 +600,10 @@ class Model(object):
 
         """
         # check validity of tag
-        if tag == 'run':
-            method = 'simulate'
-        elif 'spinup' in tag:
-            method = 'spin_up'
+        if tag == "run":
+            method = "simulate"
+        elif "spinup" in tag:
+            method = "spin_up"
             res = re.compile(r"spinup[0-9]+").match(tag)
             if not res or ((res.end() - res.start()) != len(tag)):
                 raise ValueError(f"tag '{tag}' for resume is invalid")
@@ -583,11 +611,10 @@ class Model(object):
             raise ValueError(f"tag '{tag}' for resume is invalid")
 
         # collect simulate arguments stored in yaml file
-        yaml_sig = sep.join([self.config_directory,
-                             f"{self._identifier}.*.yml"])
+        yaml_sig = sep.join([self.config_directory, f"{self._identifier}.*.yml"])
         self._set_up_yaml_loader()
         try:
-            with open(yaml_sig.replace('*', method), 'r') as f:
+            with open(yaml_sig.replace("*", method), "r") as f:
                 cfg = yaml.load(f, yaml.FullLoader)
         except FileNotFoundError:
             raise FileNotFoundError("no configuration file found")
@@ -604,34 +631,50 @@ class Model(object):
                 continue
 
             # initialise component states from dump file
-            dump_file = sep.join([self.saving_directory,
-                                  '_'.join([component.identifier,
-                                            component.category,
-                                            tag, 'dump_states.nc'])])
+            dump_file = sep.join(
+                [
+                    self.saving_directory,
+                    "_".join(
+                        [
+                            component.identifier,
+                            component.category,
+                            tag,
+                            "dump_states.nc",
+                        ]
+                    ),
+                ]
+            )
 
             ats.append(component.initialise_states_from_dump(dump_file, at))
 
             # revive component record streams from dump file
-            dump_file = sep.join([self.saving_directory,
-                                  '_'.join([component.identifier,
-                                            component.category,
-                                            tag, 'dump_record_stream_{}.nc'])])
+            dump_file = sep.join(
+                [
+                    self.saving_directory,
+                    "_".join(
+                        [
+                            component.identifier,
+                            component.category,
+                            tag,
+                            "dump_record_stream_{}.nc",
+                        ]
+                    ),
+                ]
+            )
 
             timedomain = None
-            if method == 'spin_up':
+            if method == "spin_up":
                 # need to generate and use spin-up timedomain, because
                 # until 'spin_up' is invoked, the component has the
                 # timedomain corresponding to the main run (which, if
                 # used, would result in improper initialisation of
                 # record steams)
-                start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
-                end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
+                start = datetime.strptime(str(cfg["start"]), "%Y-%m-%d %H:%M:%S")
+                end = datetime.strptime(str(cfg["end"]), "%Y-%m-%d %H:%M:%S")
                 timedomain = component.get_spin_up_timedomain(start, end)
 
             ats.extend(
-                component.revive_record_streams_from_dump(
-                    dump_file, timedomain, at
-                )
+                component.revive_record_streams_from_dump(dump_file, timedomain, at)
             )
 
         # if all components are Data or Null, exit resume
@@ -639,32 +682,38 @@ class Model(object):
             return
 
         # initialise model exchanger transfers from dump file
-        dump_file = sep.join([self.saving_directory,
-                              '_'.join([self._identifier, 'exchanger',
-                                        tag, 'dump_transfers.nc'])])
+        dump_file = sep.join(
+            [
+                self.saving_directory,
+                "_".join([self._identifier, "exchanger", tag, "dump_transfers.nc"]),
+            ]
+        )
 
         ats.append(self.initialise_transfers_from_dump(dump_file, at))
 
         # check whether snapshots in dumps are for same datetime
         if not len(set(ats)) == 1:
-            raise RuntimeError("dump files feature different last "
-                               "snapshots in time, cannot resume")
+            raise RuntimeError(
+                "dump files feature different last " "snapshots in time, cannot resume"
+            )
         at = list(set(ats))[0]
 
         # proceed with call to spin_up or simulate method of self
-        if method == 'spin_up':
-            cycle_no = int(tag.split('spinup')[-1])
+        if method == "spin_up":
+            cycle_no = int(tag.split("spinup")[-1])
 
             # resume the spin up run(s)
-            start = datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S')
-            end = datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S')
-            dumping_frequency = cfg['dumping_frequency']
+            start = datetime.strptime(str(cfg["start"]), "%Y-%m-%d %H:%M:%S")
+            end = datetime.strptime(str(cfg["end"]), "%Y-%m-%d %H:%M:%S")
+            dumping_frequency = cfg["dumping_frequency"]
 
             # resume spin up cycle according to the latest dump found
             if at == end:
-                if cfg['cycles'] == cycle_no:
-                    raise RuntimeError("(all) spin up run(s) already completed "
-                                       "successfully, cannot resume")
+                if cfg["cycles"] == cycle_no:
+                    raise RuntimeError(
+                        "(all) spin up run(s) already completed "
+                        "successfully, cannot resume"
+                    )
             else:
                 # resume spin up cycle
                 self.spin_up(
@@ -673,22 +722,21 @@ class Model(object):
                     cycles=1,
                     dumping_frequency=dumping_frequency,
                     overwrite=False,
-                    _cycle_origin_no=cycle_no - 1
+                    _cycle_origin_no=cycle_no - 1,
                 )
             # start any potential additional spin up cycle
-            if cfg['cycles'] - cycle_no > 0:
+            if cfg["cycles"] - cycle_no > 0:
                 self.spin_up(
                     start=start,
                     end=end,
-                    cycles=cfg['cycles'] - cycle_no,
+                    cycles=cfg["cycles"] - cycle_no,
                     dumping_frequency=dumping_frequency,
                     overwrite=False,
-                    _cycle_origin_no=cycle_no
+                    _cycle_origin_no=cycle_no,
                 )
         else:  # method == 'simulate'
             # adjust the component timedomain to reflect remaining period
-            for component in [self.surfacelayer, self.subsurface,
-                              self.openwater]:
+            for component in [self.surfacelayer, self.subsurface, self.openwater]:
                 if at == component.timedomain.bounds.datetime_array[-1, -1]:
                     raise RuntimeError(
                         f"{component.category} component run already completed "
@@ -700,12 +748,9 @@ class Model(object):
                     end=component.timedomain.bounds.datetime_array[-1, -1],
                     step=component.timedomain.timedelta,
                     units=component.timedomain.units,
-                    calendar=component.timedomain.calendar
+                    calendar=component.timedomain.calendar,
                 )
                 component.timedomain = remaining_td
 
             # resume simulation run
-            self.simulate(
-                dumping_frequency=cfg['dumping_frequency'],
-                overwrite=False
-            )
+            self.simulate(dumping_frequency=cfg["dumping_frequency"], overwrite=False)

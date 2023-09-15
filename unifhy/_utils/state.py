@@ -27,10 +27,10 @@ class State(object):
     evaluation/assignment of `self[key]` (i.e. `__getitem__`/
     `__setitem__`).
     """
-    def __init__(self, array, order='C'):
+
+    def __init__(self, array, order="C"):
         self._slices = [
-            np.asfortranarray(array[i, ...]) if order == 'F'
-            else array[i, ...]
+            np.asfortranarray(array[i, ...]) if order == "F" else array[i, ...]
             for i in range(array.shape[0])
         ]
 
@@ -118,10 +118,9 @@ class State(object):
         # prepare the left-hand side for the permutation of views
         lhs = [t for t in self]
         # prepare the right-hand side for the permutation of views
-        rhs = (
-            [t for t in self.get_timestep(slice(first_index + 1, None))]
-            + [self.get_timestep(first_index)]
-        )
+        rhs = [t for t in self.get_timestep(slice(first_index + 1, None))] + [
+            self.get_timestep(first_index)
+        ]
         # carry out the permutation of views
         # to avoid new object creations
         lhs[:] = rhs[:]
@@ -132,9 +131,8 @@ class State(object):
         self.set_timestep(0, 0.0)
 
 
-def create_states_dump(filepath, states_info, solver_history,
-                       timedomain, spacedomain):
-    with Dataset(filepath, 'w') as f:
+def create_states_dump(filepath, states_info, solver_history, timedomain, spacedomain):
+    with Dataset(filepath, "w") as f:
         axes = spacedomain.axes
 
         # description
@@ -144,18 +142,18 @@ def create_states_dump(filepath, states_info, solver_history,
         )
 
         # dimensions
-        f.createDimension('time', None)
-        f.createDimension('history', solver_history + 1)
+        f.createDimension("time", None)
+        f.createDimension("history", solver_history + 1)
         for axis in axes:
             f.createDimension(axis, len(getattr(spacedomain, axis)))
-        f.createDimension('nv', 2)
+        f.createDimension("nv", 2)
 
         # coordinate variables
-        t = f.createVariable('time', np.float64, ('time',))
-        t.standard_name = 'time'
+        t = f.createVariable("time", np.float64, ("time",))
+        t.standard_name = "time"
         t.units = timedomain.units
         t.calendar = timedomain.calendar
-        h = f.createVariable('history', np.int8, ('history',))
+        h = f.createVariable("history", np.int8, ("history",))
         h[:] = np.arange(-solver_history, 1, 1)
         for axis in axes:
             coord = spacedomain.to_field().dim(axis)
@@ -163,43 +161,43 @@ def create_states_dump(filepath, states_info, solver_history,
             a = f.createVariable(axis, dtype_float(), (axis,))
             a.standard_name = coord.standard_name
             a.units = coord.units
-            a.bounds = f'{axis}_bounds'
+            a.bounds = f"{axis}_bounds"
             a[:] = coord.data.array
             # (domain coordinate bounds)
-            b = f.createVariable(f'{axis}_bounds', dtype_float(), (axis, 'nv'))
+            b = f.createVariable(f"{axis}_bounds", dtype_float(), (axis, "nv"))
             b.units = coord.units
             b[:] = coord.bounds.data.array
 
         # state variables
         for var in states_info:
-            d = states_info[var]['divisions']
+            d = states_info[var]["divisions"]
             if d:
                 dims = []
                 for n, v in enumerate(d):
-                    dim_name = f'{var}_divisions_{str(n + 1)}'
+                    dim_name = f"{var}_divisions_{str(n + 1)}"
                     f.createDimension(dim_name, v)
                     dims.append(dim_name)
-                dims = ('time', 'history', *axes, *dims)
+                dims = ("time", "history", *axes, *dims)
             else:
-                dims = ('time', 'history', *axes)
+                dims = ("time", "history", *axes)
 
             s = f.createVariable(var, dtype_float(), dims)
 
             s.standard_name = var
-            s.units = states_info[var]['units']
+            s.units = states_info[var]["units"]
 
 
 def update_states_dump(filepath, states, timestamp, solver_history):
-    with Dataset(filepath, 'a') as f:
+    with Dataset(filepath, "a") as f:
         try:
             # check whether given snapshot already in file
-            t = cftime.time2index(timestamp, f.variables['time'])
+            t = cftime.time2index(timestamp, f.variables["time"])
         # will get a IndexError if time variable is empty
         # will get a ValueError if timestamp not in time variable
         except (IndexError, ValueError):
             # if not, extend time dimension
-            t = len(f.variables['time'])
-            f.variables['time'][t] = timestamp
+            t = len(f.variables["time"])
+            f.variables["time"][t] = timestamp
 
         for state in states:
             for i, step in enumerate(range(-solver_history, 1, 1)):
@@ -209,23 +207,23 @@ def update_states_dump(filepath, states, timestamp, solver_history):
 def load_states_dump(filepath, datetime_, states_info):
     states = {}
 
-    with Dataset(filepath, 'r') as f:
+    with Dataset(filepath, "r") as f:
         f.set_always_mask(False)
         # determine point in time to use from the dump
         if datetime_ is None:
             # if not specified, use the last time index
             t = -1
-            datetime_ = cftime.num2date(f.variables['time'][-1],
-                                        f.variables['time'].units,
-                                        f.variables['time'].calendar)
+            datetime_ = cftime.num2date(
+                f.variables["time"][-1],
+                f.variables["time"].units,
+                f.variables["time"].calendar,
+            )
         else:
             # find the index for the datetime given
             try:
-                t = cftime.date2index(datetime_, f.variables['time'])
+                t = cftime.date2index(datetime_, f.variables["time"])
             except ValueError:
-                raise ValueError(
-                    f"{datetime_} not available in dump {filepath}"
-                )
+                raise ValueError(f"{datetime_} not available in dump {filepath}")
 
         # try to get each of the states, if not in file, carry on anyway
         for state in states_info:

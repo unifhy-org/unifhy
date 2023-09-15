@@ -6,59 +6,29 @@ from tests.test_model import (
     TestModelSameTimeSameSpace,
     TestModelSameTimeDiffSpace,
     TestModelDiffTimeSameSpace,
-    TestModelDiffTimeDiffSpace
+    TestModelDiffTimeDiffSpace,
 )
-from tests.test_space import (
-    TestLatLonGridAPI,
-    TestGridComparison
-)
-from tests.test_time import (
-    TestTimeDomainAPI,
-    TestTimeDomainComparison
-)
-from tests.test_utils.test_clock import (
-    TestClock
-)
-from tests.test_component import (
-    TestSubstituteComponent
-)
+from tests.test_space import TestLatLonGridAPI, TestGridComparison
+from tests.test_time import TestTimeDomainAPI, TestTimeDomainComparison
+from tests.test_utils.test_clock import TestClock
+from tests.test_component import TestSubstituteComponent
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace)
-    )
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
 
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestLatLonGridAPI)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestGridComparison)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestTimeDomainAPI)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestTimeDomainComparison)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestClock)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestSubstituteComponent)
-    )
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestLatLonGridAPI))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestGridComparison))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainAPI))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainComparison))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestClock))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestSubstituteComponent))
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.data))
     test_suite.addTests(doctest.DocTestSuite(unifhy.time))

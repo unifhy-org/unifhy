@@ -8,43 +8,42 @@ import unifhy
 
 
 def get_dummy_spacedomain(resolution):
-    if resolution == '1deg':
+    if resolution == "1deg":
         return unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=1,
             longitude_extent=(-2, 1),
-            longitude_resolution=1
+            longitude_resolution=1,
         )
-    elif resolution == 'pt5deg':
+    elif resolution == "pt5deg":
         return unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=0.5,
             longitude_extent=(-2, 1),
-            longitude_resolution=0.5
+            longitude_resolution=0.5,
         )
-    elif resolution == 'pt25deg':
+    elif resolution == "pt25deg":
         return unifhy.LatLonGrid.from_extent_and_resolution(
             latitude_extent=(51, 55),
             latitude_resolution=0.25,
             longitude_extent=(-2, 1),
-            longitude_resolution=0.25
+            longitude_resolution=0.25,
         )
 
 
 def get_dummy_land_sea_mask_field(resolution):
     return cf.read(
-        'data/dummy_global_land_sea_mask_{}.nc'.format(resolution)
-    ).select_field('land_sea_mask')
+        "data/dummy_global_land_sea_mask_{}.nc".format(resolution)
+    ).select_field("land_sea_mask")
 
 
 def get_dummy_flow_direction_field(resolution):
     return cf.read(
-        'data/dummy_global_flow_direction_{}.nc'.format(resolution)
-    ).select_field('flow_direction')
+        "data/dummy_global_flow_direction_{}.nc".format(resolution)
+    ).select_field("flow_direction")
 
 
 class TestLatLonGridAPI(unittest.TestCase):
-
     def test_init_variants(self):
         # create a spacedomain using default instantiation
         sd1 = unifhy.LatLonGrid(
@@ -81,50 +80,41 @@ class TestLatLonGridAPI(unittest.TestCase):
 
 
 class TestGridComparison(unittest.TestCase):
-
-    grids = [
-        unifhy.LatLonGrid,
-        unifhy.RotatedLatLonGrid,
-        unifhy.BritishNationalGrid
-    ]
+    grids = [unifhy.LatLonGrid, unifhy.RotatedLatLonGrid, unifhy.BritishNationalGrid]
 
     axis_name = {
-        'LatLonGrid': {
-            'X': 'longitude',
-            'Y': 'latitude',
-            'Z': 'altitude'
+        "LatLonGrid": {"X": "longitude", "Y": "latitude", "Z": "altitude"},
+        "RotatedLatLonGrid": {
+            "X": "grid_longitude",
+            "Y": "grid_latitude",
+            "Z": "altitude",
         },
-        'RotatedLatLonGrid': {
-            'X': 'grid_longitude',
-            'Y': 'grid_latitude',
-            'Z': 'altitude'
+        "BritishNationalGrid": {
+            "X": "projection_x_coordinate",
+            "Y": "projection_y_coordinate",
+            "Z": "altitude",
         },
-        'BritishNationalGrid': {
-            'X': 'projection_x_coordinate',
-            'Y': 'projection_y_coordinate',
-            'Z': 'altitude'
-        }
     }
 
     extent_resolution = {
-        'LatLonGrid': {
-            'extent': {'X': [51, 55], 'Y': [-2, 1], 'Z': [0, 4]},
-            'resolution': {'X': 1, 'Y': 1, 'Z': 4}
+        "LatLonGrid": {
+            "extent": {"X": [51, 55], "Y": [-2, 1], "Z": [0, 4]},
+            "resolution": {"X": 1, "Y": 1, "Z": 4},
         },
-        'RotatedLatLonGrid': {
-            'extent': {'X': [-20, 50], 'Y': [-10, 30], 'Z': [0, 4]},
-            'resolution': {'X': 5, 'Y': 5, 'Z': 4}
+        "RotatedLatLonGrid": {
+            "extent": {"X": [-20, 50], "Y": [-10, 30], "Z": [0, 4]},
+            "resolution": {"X": 5, "Y": 5, "Z": 4},
         },
-        'BritishNationalGrid': {
-            'extent': {'X': [1000, 2000], 'Y': [3000, 4000], 'Z': [0, 4]},
-            'resolution': {'X': 100, 'Y': 100, 'Z': 4}
-        }
+        "BritishNationalGrid": {
+            "extent": {"X": [1000, 2000], "Y": [3000, 4000], "Z": [0, 4]},
+            "resolution": {"X": 100, "Y": 100, "Z": 4},
+        },
     }
 
     extras = {
-        'RotatedLatLonGrid': {
-            'grid_north_pole_latitude': 0.,
-            'grid_north_pole_longitude': 0.
+        "RotatedLatLonGrid": {
+            "grid_north_pole_latitude": 0.0,
+            "grid_north_pole_longitude": 0.0,
         }
     }
 
@@ -134,11 +124,12 @@ class TestGridComparison(unittest.TestCase):
             with self.subTest(spacedomain=cls_name):
                 # create a simple spacedomain
                 params = {
-                    "_".join([self.axis_name[cls_name][axis], prop]):
-                        self.extent_resolution[cls_name][prop][axis]
-                    for prop in ['extent', 'resolution']
+                    "_".join(
+                        [self.axis_name[cls_name][axis], prop]
+                    ): self.extent_resolution[cls_name][prop][axis]
+                    for prop in ["extent", "resolution"]
                     # for axis in ['X', 'Y', 'Z']
-                    for axis in ['X', 'Y']
+                    for axis in ["X", "Y"]
                 }
 
                 extras = self.extras.get(cls_name, {})
@@ -146,8 +137,8 @@ class TestGridComparison(unittest.TestCase):
                 sd1 = spacedomain.from_extent_and_resolution(**params, **extras)
 
                 # create another spacedomain with same extents but halved X/Y resolutions
-                params["{}_resolution".format(self.axis_name[cls_name]['X'])] /= 2
-                params["{}_resolution".format(self.axis_name[cls_name]['Y'])] /= 2
+                params["{}_resolution".format(self.axis_name[cls_name]["X"])] /= 2
+                params["{}_resolution".format(self.axis_name[cls_name]["Y"])] /= 2
                 sd2 = spacedomain.from_extent_and_resolution(**params, **extras)
 
                 # check that they are not equal
@@ -161,11 +152,12 @@ class TestGridComparison(unittest.TestCase):
             with self.subTest(spacedomain=cls_name):
                 # create a simple spacedomain
                 params = {
-                    "_".join([self.axis_name[cls_name][axis], prop]):
-                        self.extent_resolution[cls_name][prop][axis]
-                    for prop in ['extent', 'resolution']
+                    "_".join(
+                        [self.axis_name[cls_name][axis], prop]
+                    ): self.extent_resolution[cls_name][prop][axis]
+                    for prop in ["extent", "resolution"]
                     # for axis in ['X', 'Y', 'Z']
-                    for axis in ['X', 'Y']
+                    for axis in ["X", "Y"]
                 }
 
                 extras = self.extras.get(cls_name, {})
@@ -174,9 +166,9 @@ class TestGridComparison(unittest.TestCase):
 
                 # create another spacedomain with one more coordinate on X axis
                 params2 = deepcopy(params)
-                params2["{}_extent".format(self.axis_name[cls_name]['X'])][0] -= (
-                    params2["{}_resolution".format(self.axis_name[cls_name]['X'])]
-                )
+                params2["{}_extent".format(self.axis_name[cls_name]["X"])][
+                    0
+                ] -= params2["{}_resolution".format(self.axis_name[cls_name]["X"])]
                 sd2 = spacedomain.from_extent_and_resolution(**params2, **extras)
 
                 # check that these are not equal
@@ -199,16 +191,12 @@ class TestGridComparison(unittest.TestCase):
                 # self.assertTrue(sd1.is_space_equal_to(sd3.to_field(), ignore_z=True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestLatLonGridAPI)
-    )
-    test_suite.addTests(
-        test_loader.loadTestsFromTestCase(TestGridComparison)
-    )
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestLatLonGridAPI))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(TestGridComparison))
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.space))
 
