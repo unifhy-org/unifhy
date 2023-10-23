@@ -34,6 +34,9 @@ class Simulator(object):
         surfacelayer_kind,
         subsurface_kind,
         openwater_kind,
+        nutrient_surfacelayer_kind,
+        nutrient_subsurface_kind,
+        nutrient_openwater_kind,
         sources=None,
         id_trail=None,
     ):
@@ -46,6 +49,9 @@ class Simulator(object):
                 surfacelayer_kind,
                 subsurface_kind,
                 openwater_kind,
+                nutrient_surfacelayer_kind,
+                nutrient_subsurface_kind,
+                nutrient_openwater_kind,
                 sources,
                 id_trail,
             ),
@@ -68,6 +74,9 @@ class Simulator(object):
         surfacelayer_kind,
         subsurface_kind,
         openwater_kind,
+        nutrient_surfacelayer_kind,
+        nutrient_subsurface_kind,
+        nutrient_openwater_kind,
         sources,
         id_trail,
     ):
@@ -80,6 +89,17 @@ class Simulator(object):
             space_,
             "Python" if sources is None else sources.get(category, "Python"),
         )
+
+        # for nutrient surfacelayer component
+        category = "nutrientsurfacelayer"
+        surfacelayer = get_dummy_component(
+            category,
+            nutrient_surfacelayer_kind,
+            time_,
+            space_,
+            "Python" if sources is None else sources.get(category, "Python"),
+        )
+
         # for subsurface component
         category = "subsurface"
         subsurface = get_dummy_component(
@@ -89,6 +109,17 @@ class Simulator(object):
             space_,
             "Python" if sources is None else sources.get(category, "Python"),
         )
+
+        # for nutrient subsurface component
+        category = "nutrientsubsurface"
+        subsurface = get_dummy_component(
+            category,
+            nutrient_subsurface_kind,
+            time_,
+            space_,
+            "Python" if sources is None else sources.get(category, "Python"),
+        )
+
         # for openwater
         category = "openwater"
         openwater = get_dummy_component(
@@ -99,14 +130,27 @@ class Simulator(object):
             "Python" if sources is None else sources.get(category, "Python"),
         )
 
+        # for nutrient openwater
+        category = "nutrientopenwater"
+        openwater = get_dummy_component(
+            category,
+            nutrient_openwater_kind,
+            time_,
+            space_,
+            "Python" if sources is None else sources.get(category, "Python"),
+        )
+
         # try to get an instance of model with the given combination
         model = unifhy.Model(
-            identifier="test-{}-{}-{}{}{}{}".format(
+            identifier="test-{}-{}-{}{}{}{}{}{}{}".format(
                 time_,
                 space_,
                 surfacelayer_kind,
                 subsurface_kind,
                 openwater_kind,
+                nutrient_surfacelayer_kind,
+                nutrient_subsurface_kind,
+                nutrient_openwater_kind,
                 "" if id_trail is None else id_trail,
             ),
             config_directory="outputs",
@@ -179,6 +223,17 @@ class Simulator(object):
                     )
                 )
             )
+        if self.model.nutrientsurfacelayer.saving_directory is not None:
+            files.extend(
+                glob(
+                    os.sep.join(
+                        [
+                            self.model.nutrientsurfacelayer.saving_directory,
+                            self.model.identifier + "*_dump*.nc",
+                        ]
+                    )
+                )
+            )
         if self.model.subsurface.saving_directory is not None:
             files.extend(
                 glob(
@@ -190,12 +245,34 @@ class Simulator(object):
                     )
                 )
             )
+        if self.model.nutrientsubsurface.saving_directory is not None:
+            files.extend(
+                glob(
+                    os.sep.join(
+                        [
+                            self.model.nutrientsubsurface.saving_directory,
+                            self.model.identifier + "*_dump*.nc",
+                        ]
+                    )
+                )
+            )
         if self.model.openwater.saving_directory is not None:
             files.extend(
                 glob(
                     os.sep.join(
                         [
                             self.model.openwater.saving_directory,
+                            self.model.identifier + "*_dump*.nc",
+                        ]
+                    )
+                )
+            )
+        if self.model.nutrientopenwater.saving_directory is not None:
+            files.extend(
+                glob(
+                    os.sep.join(
+                        [
+                            self.model.nutrientopenwater.saving_directory,
                             self.model.identifier + "*_dump*.nc",
                         ]
                     )
@@ -218,6 +295,17 @@ class Simulator(object):
                     )
                 )
             )
+        if self.model.nutrientsurfacelayer.saving_directory is not None:
+            files.extend(
+                glob(
+                    os.sep.join(
+                        [
+                            self.model.nutrientsurfacelayer.saving_directory,
+                            self.model.identifier + "*_records*.nc",
+                        ]
+                    )
+                )
+            )
         if self.model.subsurface.saving_directory is not None:
             files.extend(
                 glob(
@@ -229,12 +317,34 @@ class Simulator(object):
                     )
                 )
             )
+        if self.model.nutrientsubsurface.saving_directory is not None:
+            files.extend(
+                glob(
+                    os.sep.join(
+                        [
+                            self.model.nutrientsubsurface.saving_directory,
+                            self.model.identifier + "*_records*.nc",
+                        ]
+                    )
+                )
+            )
         if self.model.openwater.saving_directory is not None:
             files.extend(
                 glob(
                     os.sep.join(
                         [
                             self.model.openwater.saving_directory,
+                            self.model.identifier + "*_records*.nc",
+                        ]
+                    )
+                )
+            )
+        if self.model.nutrientopenwater.saving_directory is not None:
+            files.extend(
+                glob(
+                    os.sep.join(
+                        [
+                            self.model.nutrientopenwater.saving_directory,
                             self.model.identifier + "*_records*.nc",
                         ]
                     )
@@ -289,12 +399,14 @@ class BasicTestModel(object):
         simulation periods 8 days each.
         """
         # set up a model, and spin it up
-        simulator_1 = Simulator.from_scratch(self.t, self.s, "c", "c", "c")
+        simulator_1 = Simulator.from_scratch(
+            self.t, self.s, "c", "c", "c", "c", "c", "c"
+        )
         simulator_1.spinup_model(cycles=1)
 
         # set up another model
         simulator_2 = Simulator.from_scratch(
-            self.t, self.s, "c", "c", "c", id_trail="bis"
+            self.t, self.s, "c", "c", "c", "c", "c", "c", id_trail="bis"
         )
 
         # use dump of first model as initial conditions for second model
@@ -306,6 +418,14 @@ class BasicTestModel(object):
                 ]
             )
         )
+        simulator_2.model.nutrientsurfacelayer.initialise_states_from_dump(
+            os.sep.join(
+                [
+                    simulator_1.model.nutrientsurfacelayer.saving_directory,
+                    simulator_1.model.nutrientsurfacelayer.dump_file,
+                ]
+            )
+        )
         simulator_2.model.subsurface.initialise_states_from_dump(
             os.sep.join(
                 [
@@ -314,11 +434,27 @@ class BasicTestModel(object):
                 ]
             )
         )
+        simulator_2.model.nutrientsubsurface.initialise_states_from_dump(
+            os.sep.join(
+                [
+                    simulator_1.model.nutrientsubsurface.saving_directory,
+                    simulator_1.model.nutrientsubsurface.dump_file,
+                ]
+            )
+        )
         simulator_2.model.openwater.initialise_states_from_dump(
             os.sep.join(
                 [
                     simulator_1.model.openwater.saving_directory,
                     simulator_1.model.openwater.dump_file,
+                ]
+            )
+        )
+        simulator_2.model.nutrientopenwater.initialise_states_from_dump(
+            os.sep.join(
+                [
+                    simulator_1.model.nutrientopenwater.saving_directory,
+                    simulator_1.model.nutrientopenwater.dump_file,
                 ]
             )
         )
@@ -380,7 +516,7 @@ class BasicTestModel(object):
         - checking the values in the record files.
         """
         # set up a model from yaml configuration file
-        simulator = Simulator.from_scratch(self.t, self.s, "c", "c", "c")
+        simulator = Simulator.from_scratch(self.t, self.s, "c", "c", "c", "c", "c", "c")
 
         # start main run
         simulator.run_model()
@@ -421,7 +557,9 @@ class BasicTestModel(object):
         simulation periods 8 days each.
         """
         # set up a model
-        simulator_1 = Simulator.from_scratch(self.t, self.s, "c", "c", "c")
+        simulator_1 = Simulator.from_scratch(
+            self.t, self.s, "c", "c", "c", "c", "c", "c"
+        )
 
         # spinup model
         simulator_1.spinup_model()
@@ -487,7 +625,9 @@ class BasicTestModel(object):
         - checking the values in the record files.
         """
         # set up a model
-        simulator_1 = Simulator.from_scratch(self.t, self.s, "c", "c", "c")
+        simulator_1 = Simulator.from_scratch(
+            self.t, self.s, "c", "c", "c", "c", "c", "c"
+        )
 
         # set up another model using YAML of first model
         simulator_2 = Simulator(
@@ -541,7 +681,9 @@ class BasicTestModel(object):
         to the next.
         """
         # set up, spinup, and run model
-        simulator_1 = Simulator.from_scratch(self.t, self.s, "d", "c", "n")
+        simulator_1 = Simulator.from_scratch(
+            self.t, self.s, "d", "c", "n", "d", "c", "n"
+        )
         simulator_1.spinup_model()
         simulator_1.run_model()
 
@@ -549,6 +691,9 @@ class BasicTestModel(object):
         last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
         last_states_ss = deepcopy(simulator_1.model.subsurface.states)
         last_states_ow = deepcopy(simulator_1.model.openwater.states)
+        last_states_nsl = deepcopy(simulator_1.model.nutrientsurfacelayer.states)
+        last_states_nss = deepcopy(simulator_1.model.nutrientsubsurface.states)
+        last_states_now = deepcopy(simulator_1.model.nutrientopenwater.states)
 
         # set up another model using YAML of first model
         simulator_2 = Simulator(
@@ -572,10 +717,21 @@ class BasicTestModel(object):
             compare_states(last_states_sl, simulator_2.model.surfacelayer.states)
         )
         self.assertTrue(
+            compare_states(
+                last_states_nsl, simulator_2.model.nutrientsurfacelayer.states
+            )
+        )
+        self.assertTrue(
             compare_states(last_states_ss, simulator_2.model.subsurface.states)
         )
         self.assertTrue(
+            compare_states(last_states_nss, simulator_2.model.nutrientsubsurface.states)
+        )
+        self.assertTrue(
             compare_states(last_states_ow, simulator_2.model.openwater.states)
+        )
+        self.assertTrue(
+            compare_states(last_states_now, simulator_2.model.nutrientopenwater.states)
         )
 
         # clean up
@@ -587,7 +743,14 @@ class BasicTestModel(object):
         values, and the final values of exchanger transfers are correct.
         """
         # check components' final state values
-        for comp in [model.surfacelayer, model.subsurface, model.openwater]:
+        for comp in [
+            model.surfacelayer,
+            model.subsurface,
+            model.openwater,
+            model.nutrientsurfacelayer,
+            model.nutrientsubsurface,
+            model.nutrientopenwater,
+        ]:
             self.check_component_states(comp)
 
         # check final transfer values
@@ -645,7 +808,14 @@ class BasicTestModel(object):
         component transfers, component records are correct, from start
         to end.
         """
-        for component in [model.surfacelayer, model.subsurface, model.openwater]:
+        for component in [
+            model.surfacelayer,
+            model.subsurface,
+            model.openwater,
+            model.nutrientsurfacelayer,
+            model.nutrientsubsurface,
+            model.nutrientopenwater,
+        ]:
             rtol, atol = unifhy.rtol(), unifhy.atol()
 
             # if component is "real", otherwise no records requested
@@ -716,20 +886,35 @@ class AdvancedTestModel(BasicTestModel):
         # tuple(surfacelayer kind, subsurface kind, openwater kind)
         # with 'c' for Component, 'd' for DataComponent, 'n' for NullComponent
         doe = (
-            (sl, ss, ow)
+            (sl, ss, ow, nsl, nss, now)
             for sl in ("c", "d", "n")
             for ss in ("c", "d", "n")
             for ow in ("c", "d", "n")
+            for nsl in ("c", "d", "n")
+            for nss in ("c", "d", "n")
+            for now in ("c", "d", "n")
         )
 
         # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind in doe:
+        for sl_kind, ss_kind, ow_kind, nsl_kind, nss_kind, now_kind in doe:
             with self.subTest(
-                surfacelayer=sl_kind, subsurface=ss_kind, openwater=ow_kind
+                surfacelayer=sl_kind,
+                subsurface=ss_kind,
+                openwater=ow_kind,
+                nutrientsurfacelayer=nsl_kind,
+                nutrientsubsurface=nss_kind,
+                nutrientopenwater=now_kind,
             ):
                 # set up, spinup, and run model
                 simulator_1 = Simulator.from_scratch(
-                    self.t, self.s, sl_kind, ss_kind, ow_kind
+                    self.t,
+                    self.s,
+                    sl_kind,
+                    ss_kind,
+                    ow_kind,
+                    nsl_kind,
+                    nss_kind,
+                    now_kind,
                 )
                 simulator_1.spinup_model()
                 simulator_1.run_model()
@@ -738,6 +923,11 @@ class AdvancedTestModel(BasicTestModel):
                 last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
                 last_states_ss = deepcopy(simulator_1.model.subsurface.states)
                 last_states_ow = deepcopy(simulator_1.model.openwater.states)
+                last_states_nsl = deepcopy(
+                    simulator_1.model.nutrientsurfacelayer.states
+                )
+                last_states_nss = deepcopy(simulator_1.model.nutrientsubsurface.states)
+                last_states_now = deepcopy(simulator_1.model.nutrientopenwater.states)
 
                 # set up another model using YAML of first model
                 simulator_2 = Simulator(
@@ -763,10 +953,25 @@ class AdvancedTestModel(BasicTestModel):
                     )
                 )
                 self.assertTrue(
+                    compare_states(
+                        last_states_nsl, simulator_2.model.nutrientsurfacelayer.states
+                    )
+                )
+                self.assertTrue(
                     compare_states(last_states_ss, simulator_2.model.subsurface.states)
                 )
                 self.assertTrue(
+                    compare_states(
+                        last_states_nss, simulator_2.model.nutrientsubsurface.states
+                    )
+                )
+                self.assertTrue(
                     compare_states(last_states_ow, simulator_2.model.openwater.states)
+                )
+                self.assertTrue(
+                    compare_states(
+                        last_states_now, simulator_2.model.nutrientopenwater.states
+                    )
                 )
 
                 # clean up
@@ -793,17 +998,35 @@ class AdvancedTestModel(BasicTestModel):
           component outputs).
         """
         doe = (
-            (sl, ss, ow) for sl in ("c", "d") for ss in ("c", "d") for ow in ("c", "d")
+            (sl, ss, ow, nsl, nss, now)
+            for sl in ("c", "d")
+            for ss in ("c", "d")
+            for ow in ("c", "d")
+            for nsl in ("c", "d")
+            for nss in ("c", "d")
+            for now in ("c", "d")
         )
 
         # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind in doe:
+        for sl_kind, ss_kind, ow_kind, nsl_kind, nss_kind, now_kind in doe:
             with self.subTest(
-                surfacelayer=sl_kind, subsurface=ss_kind, openwater=ow_kind
+                surfacelayer=sl_kind,
+                subsurface=ss_kind,
+                openwater=ow_kind,
+                nutrientsurfacelayer=nsl_kind,
+                nutrientsubsurface=nss_kind,
+                nutrientopenwater=now_kind,
             ):
                 # set up, and run model
                 simulator = Simulator.from_scratch(
-                    self.t, self.s, sl_kind, ss_kind, ow_kind
+                    self.t,
+                    self.s,
+                    sl_kind,
+                    ss_kind,
+                    ow_kind,
+                    nsl_kind,
+                    nss_kind,
+                    now_kind,
                 )
                 simulator.run_model()
 
@@ -839,15 +1062,25 @@ class AdvancedTestModel(BasicTestModel):
           component outputs).
         """
         doe = (
-            (sl, ss, ow)
+            (sl, ss, ow, nsl, nss, now)
             for sl in ("Python", "Fortran", "C")
             for ss in ("Python", "Fortran", "C")
             for ow in ("Python", "Fortran", "C")
+            for nsl in ("Python", "Fortran", "C")
+            for nss in ("Python", "Fortran", "C")
+            for now in ("Python", "Fortran", "C")
         )
 
         # loop through all possible combinations of component sources
-        for sl_src, ss_src, ow_src in doe:
-            with self.subTest(surfacelayer=sl_src, subsurface=ss_src, openwater=ow_src):
+        for sl_src, ss_src, ow_src, nsl_src, nss_src, now_src in doe:
+            with self.subTest(
+                surfacelayer=sl_src,
+                subsurface=ss_src,
+                openwater=ow_src,
+                nutrientsurfacelayer=nsl_src,
+                nutrientsubsurface=nss_src,
+                nutrientopenwater=now_src,
+            ):
                 # set up, and run model
                 simulator = Simulator.from_scratch(
                     self.t,
@@ -855,7 +1088,17 @@ class AdvancedTestModel(BasicTestModel):
                     "c",
                     "c",
                     "c",
-                    {"surfacelayer": sl_src, "subsurface": ss_src, "openwater": ow_src},
+                    "c",
+                    "c",
+                    "c",
+                    {
+                        "surfacelayer": sl_src,
+                        "subsurface": ss_src,
+                        "openwater": ow_src,
+                        "nutrientsurfacelayer": nsl_src,
+                        "nutrientsubsurface": nss_src,
+                        "nutrientopenwater": now_src,
+                    },
                 )
                 simulator.run_model()
 

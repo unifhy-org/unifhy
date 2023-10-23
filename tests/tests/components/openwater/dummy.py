@@ -30,10 +30,15 @@ class Dummy(OpenWaterComponent):
             "method": "mean",
         },
         "transfer_o": {"units": "1", "to": ["ocean"], "method": "mean"},
+        "transfer_p": {
+            "units": "1",
+            "to": ["nutrientopenwater"],
+            "method": "mean",
+        },
     }
     # define some dummy inputs/parameters/constants/states/outputs
     _inwards = {"transfer_j", "transfer_m"}
-    _outwards = {"transfer_l", "transfer_n", "transfer_o"}
+    _outwards = {"transfer_l", "transfer_n", "transfer_o", "transfer_p"}
     _inputs_info = {
         "ancillary_b": {
             "units": "1",
@@ -89,6 +94,7 @@ class Dummy(OpenWaterComponent):
                 + state_a.get_timestep(0)[..., 0, 0],
                 "transfer_n": parameter_c * transfer_j,
                 "transfer_o": constant_c + transfer_j,
+                "transfer_p": state_a.get_timestep(0)[..., 0, 0],
             },
             # component outputs
             {
@@ -140,7 +146,13 @@ class DummyFortran(Dummy):
         constant_c,
         **kwargs
     ):
-        transfer_l, transfer_n, transfer_o, output_x, output_y = dummyfortran.run(
+        (
+            transfer_l,
+            transfer_n,
+            transfer_o,
+            output_x,
+            output_y,
+        ) = dummyfortran.run(
             transfer_j,
             transfer_m,
             ancillary_b,

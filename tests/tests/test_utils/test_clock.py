@@ -1,4 +1,4 @@
-import unittest
+import unittet
 import doctest
 
 import unifhy._utils

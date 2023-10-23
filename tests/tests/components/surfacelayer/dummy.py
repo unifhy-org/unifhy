@@ -22,13 +22,18 @@ class Dummy(SurfaceLayerComponent):
         "transfer_k": {"units": "1", "from": "subsurface", "method": "mean"},
         "transfer_l": {"units": "1", "from": "openwater", "method": "mean"},
         "transfer_n": {"units": "1", "from": "openwater", "method": "mean"},
+        "transfer_h": {
+            "units": "1",
+            "from": "nutrientsurfacelayer",
+            "method": "mean",
+        },
     }
     _outwards_info = {
         "transfer_i": {"units": "1", "to": ["subsurface"], "method": "mean"},
         "transfer_j": {"units": "1", "to": ["openwater"], "method": "mean"},
     }
     # define some dummy inputs/parameters/constants/states/outputs
-    _inwards = {"transfer_k", "transfer_l", "transfer_n"}
+    _inwards = {"transfer_k", "transfer_l", "transfer_n", "transfer_h"}
     _outwards = {"transfer_i", "transfer_j"}
     _inputs_info = {
         "driving_a": {"units": "1", "kind": "dynamic"},
@@ -42,7 +47,7 @@ class Dummy(SurfaceLayerComponent):
         "state_a": {"units": "1", "divisions": 1},
         "state_b": {"units": "1", "divisions": 1},
     }
-    _outputs_info = {"output_x": {"units": "1"}}
+    _outputs_info = {"output_x": {"units": "1"}, "output_y": {"units": "1"}}
     _solver_history = 1
     _requires_land_sea_mask = True
     _requires_flow_direction = True
@@ -65,6 +70,7 @@ class Dummy(SurfaceLayerComponent):
         transfer_k,
         transfer_l,
         transfer_n,
+        transfer_h,
         # component driving data
         driving_a,
         driving_b,
@@ -99,7 +105,10 @@ class Dummy(SurfaceLayerComponent):
                 + state_b.get_timestep(0),
             },
             # component outputs
-            {"output_x": output_x},
+            {
+                "output_x": output_x,
+                "output_y": transfer_h * state_a.get_timestep(0),
+            },
         )
 
     def finalise(
