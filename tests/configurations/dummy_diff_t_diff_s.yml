@@ -131,5 +131,141 @@ openwater:
       timedelta(days=2): [point]
     transfer_o:
       timedelta(days=2): [point]
+    transfer_p:
+      timedelta(days=2): [point]
+    state_a:
+      timedelta(days=2): [point]
+nutrientsurfacelayer:
+  module: tests.components.nutrientsurfacelayer.dummy
+  class: Dummy
+  saving_directory: outputs
+  timedomain:
+    start: 2019-01-01 09:00:00
+    end: 2019-01-17 09:00:00
+    step: timedelta(days=1)
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: LatLonGrid
+    latitude_extent: [51, 55]
+    latitude_resolution: 1
+    longitude_extent: [-2, 1]
+    longitude_resolution: 1
+    latitude_longitude_location: centre
+    land_sea_mask:
+      files: [data/dummy_global_land_sea_mask_1deg.nc]
+      select: land_sea_mask
+    flow_direction:
+      files: [data/dummy_global_flow_direction_1deg.nc]
+      select: flow_direction
+    cell_area: null
+  dataset:
+    driving_d:
+      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      select: driving_d
+    driving_e:
+      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      select: driving_e
+    driving_f:
+      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      select: driving_f
+    ancillary_e:
+      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      select: ancillary_e
+  parameters: null
+  constants: null
+  records:
+    output_x:
+      timedelta(days=1): [instantaneous]
+      timedelta(days=8): [cumulative, average, min, max]
+    transfer_a:
+      timedelta(days=1): [instantaneous]
+    transfer_b:
+      timedelta(days=1): [instantaneous]
+    transfer_h:
+      timedelta(days=1): [instantaneous]
+    state_a:
+      timedelta(days=1): [instantaneous]
+    state_b:
+      timedelta(days=1): [instantaneous]
+nutrientsubsurface:
+  module: tests.components.nutrientsubsurface.dummy
+  class: Dummy
+  saving_directory: outputs
+  timedomain:
+    start: 2019-01-01 09:00:00
+    end: 2019-01-17 09:00:00
+    step: timedelta(days=4)
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: LatLonGrid
+    latitude_extent: [51, 55]
+    latitude_resolution: 0.5
+    longitude_extent: [-2, 1]
+    longitude_resolution: 0.5
+    latitude_longitude_location: centre
+    land_sea_mask: null
+    flow_direction: null
+    cell_area: null
+  dataset:
+    driving_d:
+      files: [data/dummy_nutrientsubsurface_data_4daily_pt5deg.nc]
+      select: driving_d
+  parameters:
+    parameter_d: [1, '1']
+  constants: null
+  records:
+    output_x:
+      timedelta(days=4): [point]
+      timedelta(days=8): [sum, mean, minimum, maximum]
+    transfer_c:
+      timedelta(days=4): [point]
+    transfer_e:
+      timedelta(days=4): [point]
+    state_a:
+      timedelta(days=4): [point]
+    state_b:
+      timedelta(days=4): [point]
+nutrientopenwater:
+  module: tests.components.nutrientopenwater.dummy
+  class: Dummy
+  saving_directory: outputs
+  timedomain:
+    start: 2019-01-01 09:00:00
+    end: 2019-01-17 09:00:00
+    step: timedelta(days=2)
+    units: days since 2019-01-01 09:00:00Z
+    calendar: gregorian
+  spacedomain:
+    class: LatLonGrid
+    latitude_extent: [51, 55]
+    latitude_resolution: 0.25
+    longitude_extent: [-2, 1]
+    longitude_resolution: 0.25
+    latitude_longitude_location: centre
+    land_sea_mask: null
+    flow_direction: null
+    cell_area: null
+  dataset:
+    ancillary_d:
+      files: [data/dummy_nutrientopenwater_data_2daily_pt25deg.nc]
+      select: ancillary_d
+  parameters:
+    parameter_e: [3, '1']
+  constants:
+    constant_d: [3, '1']
+  records:
+    output_x:
+      timedelta(days=2): [point]
+      timedelta(days=8): [sum, mean, minimum, maximum]
+    output_y:
+      timedelta(days=2): [point]
+    transfer_d:
+      timedelta(days=2): [point]
+    transfer_f:
+      timedelta(days=2): [point]
+    transfer_g:
+      timedelta(days=2): [point]
     state_a:
       timedelta(days=2): [point]

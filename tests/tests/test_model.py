@@ -784,6 +784,14 @@ class BasicTestModel(object):
         are correct.
         """
         for transfer in [
+            "transfer_a",
+            "transfer_b",
+            "transfer_c",
+            "transfer_d",
+            "transfer_e",
+            "transfer_f",
+            "transfer_g",
+            "transfer_h",
             "transfer_i",
             "transfer_j",
             "transfer_k",
@@ -791,6 +799,7 @@ class BasicTestModel(object):
             "transfer_m",
             "transfer_n",
             "transfer_o",
+            "transfer_p",
         ]:
             arr = exchanger.transfers[transfer]["slices"][-1]
             cat = exchanger.transfers[transfer]["src_cat"]
@@ -954,7 +963,8 @@ class AdvancedTestModel(BasicTestModel):
                 )
                 self.assertTrue(
                     compare_states(
-                        last_states_nsl, simulator_2.model.nutrientsurfacelayer.states
+                        last_states_nsl,
+                        simulator_2.model.nutrientsurfacelayer.states,
                     )
                 )
                 self.assertTrue(
@@ -962,7 +972,8 @@ class AdvancedTestModel(BasicTestModel):
                 )
                 self.assertTrue(
                     compare_states(
-                        last_states_nss, simulator_2.model.nutrientsubsurface.states
+                        last_states_nss,
+                        simulator_2.model.nutrientsubsurface.states,
                     )
                 )
                 self.assertTrue(
@@ -970,7 +981,8 @@ class AdvancedTestModel(BasicTestModel):
                 )
                 self.assertTrue(
                     compare_states(
-                        last_states_now, simulator_2.model.nutrientopenwater.states
+                        last_states_now,
+                        simulator_2.model.nutrientopenwater.states,
                     )
                 )
 

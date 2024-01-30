@@ -13,18 +13,27 @@ from .test_space import (
     get_dummy_land_sea_mask_field,
     get_dummy_flow_direction_field,
 )
-from .test_data import get_dummy_dataset, get_dummy_component_substitute_dataset
+from .test_data import (
+    get_dummy_dataset,
+    get_dummy_component_substitute_dataset,
+)
 
 time_resolutions = {
     "surfacelayer": {"same_t": "daily", "diff_t": "daily"},
     "subsurface": {"same_t": "daily", "diff_t": "4daily"},
     "openwater": {"same_t": "daily", "diff_t": "2daily"},
+    "nutrientsurfacelayer": {"same_t": "daily", "diff_t": "2daily"},
+    "nutrientsubsurface": {"same_t": "daily", "diff_t": "4daily"},
+    "nutrientopenwater": {"same_t": "daily", "diff_t": "daily"},
 }
 
 space_resolutions = {
     "surfacelayer": {"same_s": "1deg", "diff_s": "1deg"},
     "subsurface": {"same_s": "1deg", "diff_s": "pt5deg"},
     "openwater": {"same_s": "1deg", "diff_s": "pt25deg"},
+    "nutrientsurfacelayer": {"same_s": "1deg", "diff_s": "1deg"},
+    "nutrientsubsurface": {"same_s": "1deg", "diff_s": "pt5deg"},
+    "nutrientopenwater": {"same_s": "1deg", "diff_s": "pt25deg"},
 }
 
 parameters = {
@@ -47,6 +56,25 @@ parameters = {
         "same_s": {"parameter_c": [3, "1"]},
         "diff_s": {"parameter_c": [3, "1"]},
     },
+    "nutrientsurfacelayer": {"same_s": {}, "diff_s": {}},
+    "nutrientsubsurface": {
+        "same_s": {
+            "parameter_d": cf.read(
+                "data/dummy_nutrientsubsurface_parameter_d_{}"
+                ".nc".format(space_resolutions["nutrientsubsurface"]["same_s"])
+            ).select_field("long_name=parameter_d")
+        },
+        "diff_s": {
+            "parameter_d": cf.read(
+                "data/dummy_subsurface_parameter_d_{}"
+                ".nc".format(space_resolutions["nutrientsubsurface"]["diff_s"])
+            ).select_field("long_name=parameter_d")
+        },
+    },
+    "nutrientopenwater": {
+        "same_s": {"parameter_e": [3, "1"]},
+        "diff_s": {"parameter_e": [3, "1"]},
+    },
 }
 
 constants = {
@@ -55,6 +83,12 @@ constants = {
     "openwater": {
         "same_s": {"constant_c": cf.Data(3, "1")},
         "diff_s": {"constant_c": cf.Data(3, "1")},
+    },
+    "nutrientsurfacelayer": {"same_s": {}, "diff_s": {}},
+    "nutrientsubsurface": {"same_s": {}, "diff_s": {}},
+    "nutrientopenwater": {
+        "same_s": {"constant_d": cf.Data(3, "1")},
+        "diff_s": {"constant_d": cf.Data(3, "1")},
     },
 }
 
@@ -118,6 +152,7 @@ records = {
             "transfer_l": {timedelta(days=1): ["point"]},
             "transfer_n": {timedelta(days=1): ["point"]},
             "transfer_o": {timedelta(days=1): ["point"]},
+            "transfer_p": {timedelta(days=1): ["point"]},
             "state_a": {timedelta(days=1): ["point"]},
         },
         "diff_t": {
@@ -130,6 +165,83 @@ records = {
             "transfer_l": {timedelta(days=2): ["point"]},
             "transfer_n": {timedelta(days=2): ["point"]},
             "transfer_o": {timedelta(days=2): ["point"]},
+            "transfer_p": {timedelta(days=2): ["point"]},
+            "state_a": {timedelta(days=2): ["point"]},
+        },
+    },
+    "nutrientsurfacelayer": {
+        "same_t": {
+            "output_x": {
+                timedelta(days=1): ["instantaneous"],
+                timedelta(days=8): ["cumulative", "average", "min", "max"],
+            },
+            # using aliases for methods in 'output_x'
+            "transfer_a": {timedelta(days=1): ["point"]},
+            "transfer_b": {timedelta(days=1): ["point"]},
+            "transfer_h": {timedelta(days=1): ["point"]},
+            "state_a": {timedelta(days=1): ["point"]},
+            "state_b": {timedelta(days=1): ["point"]},
+        },
+        "diff_t": {
+            "output_x": {
+                timedelta(days=1): ["point"],
+                timedelta(days=8): ["sum", "mean", "minimum", "maximum"],
+            },
+            # using defaults for methods in 'output_x'
+            "transfer_a": {timedelta(days=1): ["point"]},
+            "transfer_b": {timedelta(days=1): ["point"]},
+            "transfer_h": {timedelta(days=1): ["point"]},
+            "state_a": {timedelta(days=1): ["point"]},
+            "state_b": {timedelta(days=1): ["point"]},
+        },
+    },
+    "nutrientsubsurface": {
+        "same_t": {
+            "output_x": {
+                timedelta(days=1): ["instantaneous"],
+                timedelta(days=8): ["cumulative", "average", "min", "max"],
+            },
+            # using aliases for methods in 'output_x'
+            "transfer_c": {timedelta(days=1): ["point"]},
+            "transfer_e": {timedelta(days=1): ["point"]},
+            "state_a": {timedelta(days=1): ["point"]},
+            "state_b": {timedelta(days=1): ["point"]},
+        },
+        "diff_t": {
+            "output_x": {
+                timedelta(days=4): ["point"],
+                timedelta(days=8): ["sum", "mean", "minimum", "maximum"],
+            },
+            # using defaults for methods in 'output_x'
+            "transfer_c": {timedelta(days=4): ["point"]},
+            "transfer_e": {timedelta(days=4): ["point"]},
+            "state_a": {timedelta(days=4): ["point"]},
+            "state_b": {timedelta(days=4): ["point"]},
+        },
+    },
+    "nutrientopenwater": {
+        "same_t": {
+            "output_x": {
+                timedelta(days=1): ["instantaneous"],
+                timedelta(days=8): ["cumulative", "average", "min", "max"],
+            },
+            # using aliases for methods in 'output_x'
+            "output_y": {timedelta(days=1): ["point"]},
+            "transfer_d": {timedelta(days=1): ["point"]},
+            "transfer_f": {timedelta(days=1): ["point"]},
+            "transfer_g": {timedelta(days=1): ["point"]},
+            "state_a": {timedelta(days=1): ["point"]},
+        },
+        "diff_t": {
+            "output_x": {
+                timedelta(days=2): ["point"],
+                timedelta(days=8): ["sum", "mean", "minimum", "maximum"],
+            },
+            # using defaults for methods in 'output_x'
+            "output_y": {timedelta(days=2): ["point"]},
+            "transfer_d": {timedelta(days=2): ["point"]},
+            "transfer_f": {timedelta(days=2): ["point"]},
+            "transfer_g": {timedelta(days=2): ["point"]},
             "state_a": {timedelta(days=2): ["point"]},
         },
     },
@@ -148,7 +260,7 @@ def get_dummy_component(category, kind, time_, space_, source):
 
     space_resolution = space_resolutions[category][space_]
     spacedomain = get_dummy_spacedomain(space_resolution)
-    if category == "surfacelayer":
+    if category in ["surfacelayer", "nutrientsurfacelayer"]:
         spacedomain.land_sea_mask = get_dummy_land_sea_mask_field(space_resolution)
         spacedomain.flow_direction = get_dummy_flow_direction_field(space_resolution)
 
@@ -170,7 +282,9 @@ def get_dummy_component(category, kind, time_, space_, source):
             timedomain=timedomain,
             spacedomain=spacedomain,
             dataset=get_dummy_component_substitute_dataset(
-                "{}_{}".format(category, time_), time_resolution, space_resolution
+                "{}_{}".format(category, time_),
+                time_resolution,
+                space_resolution,
             ),
             substituting_class=component_class,
             io_slice=10,
@@ -195,6 +309,9 @@ class TestSubstituteComponent(unittest.TestCase):
             unifhy.component.SurfaceLayerComponent,
             unifhy.component.SubSurfaceComponent,
             unifhy.component.OpenWaterComponent,
+            unifhy.component.NutrientSurfaceLayerComponent,
+            unifhy.component.NutrientSubSurfaceComponent,
+            unifhy.component.NutrientOpenWaterComponent,
         ]:
             with self.subTest(subtituting_class=substituting_class.category):
                 # prepare dummy dataset for substituting component
@@ -234,6 +351,9 @@ class TestSubstituteComponent(unittest.TestCase):
             unifhy.component.SurfaceLayerComponent,
             unifhy.component.SubSurfaceComponent,
             unifhy.component.OpenWaterComponent,
+            unifhy.component.NutrientSurfaceLayerComponent,
+            unifhy.component.NutrientSubSurfaceComponent,
+            unifhy.component.NutrientOpenWaterComponent,
         ]:
             with self.subTest(subtituting_class=substituting_class.category):
                 # test instantiation of NullComponent

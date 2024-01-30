@@ -1,4 +1,4 @@
-import unittet
+import unittest
 import doctest
 
 import unifhy._utils
@@ -104,26 +104,43 @@ class TestClock(unittest.TestCase):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": self.td_a,
-                "subsurface": self.td_b,
-                "openwater": self.td_c,
+                "subsurface": self.td_c,
+                "openwater": self.td_b,
+                "nutrientsurfacelayer": self.td_b,
+                "nutrientsubsurface": self.td_c,
+                "nutrientopenwater": self.td_a,
             },
         )
         clock.set_dumping_frequency(dumping_frequency=self.dumping)
 
         self.assertEqual(clock.switches["surfacelayer"].tolist(), self.exp_bool_a)
-        self.assertEqual(clock.switches["subsurface"].tolist(), self.exp_bool_b)
-        self.assertEqual(clock.switches["openwater"].tolist(), self.exp_bool_c)
+        self.assertEqual(clock.switches["subsurface"].tolist(), self.exp_bool_c)
+        self.assertEqual(clock.switches["openwater"].tolist(), self.exp_bool_b)
+        self.assertEqual(
+            clock.switches["nutrientsurfacelayer"].tolist(), self.exp_bool_b
+        )
+        self.assertEqual(clock.switches["nutrientsubsurface"].tolist(), self.exp_bool_c)
+        self.assertEqual(clock.switches["nutrientopenwater"].tolist(), self.exp_bool_a)
         self.assertEqual(clock.switches["dumping"].tolist(), self.exp_bool_d)
 
     def test_clock_iteration(self):
         clock = unifhy._utils.Clock(
-            {"surfacelayer": self.td_a, "subsurface": self.td_b, "openwater": self.td_c}
+            {
+                "surfacelayer": self.td_a,
+                "subsurface": self.td_c,
+                "openwater": self.td_b,
+                "nutrientsurfacelayer": self.td_b,
+                "nutrientsubsurface": self.td_c,
+                "nutrientopenwater": self.td_a,
+            }
         )
 
         out_bool_a, out_bool_b, out_bool_c = list(), list(), list()
+        out_bool_d, out_bool_e, out_bool_f = list(), list(), list()
         out_idx_a, out_idx_b, out_idx_c = list(), list(), list()
+        out_idx_d, out_idx_e, out_idx_f = list(), list(), list()
 
-        for a, b, c, d in clock:
+        for a, b, c, d, e, f, g in clock:
             out_bool_a.append(a)
             if a:
                 out_idx_a.append(clock.get_current_timeindex("surfacelayer"))
@@ -133,22 +150,40 @@ class TestClock(unittest.TestCase):
             out_bool_c.append(c)
             if c:
                 out_idx_c.append(clock.get_current_timeindex("openwater"))
+            out_bool_d.append(d)
+            if d:
+                out_idx_d.append(clock.get_current_timeindex("nutrientsurfacelayer"))
+            out_bool_e.append(e)
+            if e:
+                out_idx_e.append(clock.get_current_timeindex("nutrientsubsurface"))
+            out_bool_f.append(f)
+            if f:
+                out_idx_f.append(clock.get_current_timeindex("nutrientopenwater"))
 
         self.assertEqual(out_bool_a, self.exp_bool_a)
         self.assertEqual(out_bool_b, self.exp_bool_b)
         self.assertEqual(out_bool_c, self.exp_bool_c)
+        self.assertEqual(out_bool_d, self.exp_bool_d)
+        self.assertEqual(out_bool_e, self.exp_bool_e)
+        self.assertEqual(out_bool_f, self.exp_bool_f)
 
         self.assertEqual(out_idx_a, self.exp_idx_a)
         self.assertEqual(out_idx_b, self.exp_idx_b)
         self.assertEqual(out_idx_c, self.exp_idx_c)
+        self.assertEqual(out_idx_d, self.exp_idx_d)
+        self.assertEqual(out_idx_e, self.exp_idx_e)
+        self.assertEqual(out_idx_f, self.exp_idx_f)
 
     @unittest.expectedFailure
     def test_clock_incompatible_timedomains(self):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": get_dummy_timedomain_different_start("daily"),
-                "subsurface": self.td_b,
-                "openwater": self.td_c,
+                "subsurface": self.td_c,
+                "openwater": self.td_b,
+                "nutrientsurfacelayer": self.td_b,
+                "nutrientsubsurface": self.td_c,
+                "nutrientopenwater": self.td_a,
             },
         )
 
@@ -157,8 +192,11 @@ class TestClock(unittest.TestCase):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": self.td_a,
-                "subsurface": self.td_b,
-                "openwater": self.td_c,
+                "subsurface": self.td_c,
+                "openwater": self.td_b,
+                "nutrientsurfacelayer": self.td_c,
+                "nutrientsubsurface": self.td_b,
+                "nutrientopenwater": self.td_a,
             },
         )
         clock.set_dumping_frequency(get_dummy_dumping_frequency("same_t"))
