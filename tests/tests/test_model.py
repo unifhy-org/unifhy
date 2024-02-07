@@ -92,7 +92,7 @@ class Simulator(object):
 
         # for nutrient surfacelayer component
         category = "nutrientsurfacelayer"
-        surfacelayer = get_dummy_component(
+        nutrientsurfacelayer = get_dummy_component(
             category,
             nutrient_surfacelayer_kind,
             time_,
@@ -112,7 +112,7 @@ class Simulator(object):
 
         # for nutrient subsurface component
         category = "nutrientsubsurface"
-        subsurface = get_dummy_component(
+        nutrientsubsurface = get_dummy_component(
             category,
             nutrient_subsurface_kind,
             time_,
@@ -132,7 +132,7 @@ class Simulator(object):
 
         # for nutrient openwater
         category = "nutrientopenwater"
-        openwater = get_dummy_component(
+        nutrientopenwater = get_dummy_component(
             category,
             nutrient_openwater_kind,
             time_,
@@ -158,6 +158,9 @@ class Simulator(object):
             surfacelayer=surfacelayer,
             subsurface=subsurface,
             openwater=openwater,
+            nutrientsurfacelayer=nutrientsurfacelayer,
+            nutrientsubsurface=nutrientsubsurface,
+            nutrientopenwater=nutrientopenwater,
         )
 
         return model
