@@ -10,6 +10,9 @@ from .component import (
     SurfaceLayerComponent,
     SubSurfaceComponent,
     OpenWaterComponent,
+    NutrientSurfaceLayerComponent,
+    NutrientSubSurfaceComponent,
+    NutrientOpenWaterComponent,
     DataComponent,
     NullComponent,
 )
@@ -32,6 +35,9 @@ class Model(object):
         surfacelayer,
         subsurface,
         openwater,
+        nutrientsurfacelayer,
+        nutrientsubsurface,
+        nutrientopenwater,
         _to_yaml=True,
     ):
         """**Instantiation**
@@ -61,6 +67,18 @@ class Model(object):
                 The `Component` responsible for the open water
                 compartment of the hydrological cycle.
 
+            nutrientsurfacelayer: `NutrientSurfaceLayerComponent` object
+                The `Component` responsible for the surface layer
+                compartment of any nutrient modelling.
+
+            nutrientsubsurface: `NutrientSubSurfaceComponent` object
+                The `Component` responsible for the subsurface
+                compartment of any nutrient modelling.
+
+            nutrientopenwater: `NutrientOpenWaterComponent` object
+                The `Component` responsible for the open water
+                compartment of any nutrient modelling.
+
         """
         # assign components to model if of the correct type
         #: Return the surface layer component of the model.
@@ -71,6 +89,18 @@ class Model(object):
         self.subsurface = self._process_component_type(subsurface, SubSurfaceComponent)
         #: Return the open water component of the model.
         self.openwater = self._process_component_type(openwater, OpenWaterComponent)
+
+        self.nutrientsurfacelayer = self._process_component_type(
+            nutrientsurfacelayer, NutrientSurfaceLayerComponent
+        )
+        #: Return the sub-surface component of the model.
+        self.nutrientsubsurface = self._process_component_type(
+            nutrientsubsurface, NutrientSubSurfaceComponent
+        )
+        #: Return the open water component of the model.
+        self.nutrientopenwater = self._process_component_type(
+            nutrientopenwater, NutrientOpenWaterComponent
+        )
 
         self._check_components_plugging()
 
@@ -102,6 +132,9 @@ class Model(object):
         self.surfacelayer.identifier = identifier
         self.subsurface.identifier = identifier
         self.openwater.identifier = identifier
+        self.nutrientsurfacelayer.identifier = identifier
+        self.nutrientsubsurface.identifier = identifier
+        self.nutrientopenwater.identifier = identifier
 
     @staticmethod
     def _process_component_type(component, expected_type):
@@ -125,7 +158,14 @@ class Model(object):
     def _check_components_plugging(self):
         # check that each component inward is available as an outward
         # from the expected component
-        for cat in ["surfacelayer", "subsurface", "openwater"]:
+        for cat in [
+            "surfacelayer",
+            "subsurface",
+            "openwater",
+            "nutrientsurfacelayer",
+            "nutrientsubsurface",
+            "nutrientopenwater",
+        ]:
             dst = getattr(self, cat)
             for trf, info in dst.inwards_info.items():
                 src = getattr(self, info["from"])
@@ -147,19 +187,37 @@ class Model(object):
             + [f"    surfacelayer: {self.surfacelayer.__module__}"]
             + [f"    subsurface: {self.subsurface.__module__}"]
             + [f"    openwater: {self.openwater.__module__}"]
+            + [f"    nutrientsurfacelayer: {self.nutrientsurfacelayer.__module__}"]
+            + [f"    nutrientsubsurface: {self.nutrientsubsurface.__module__}"]
+            + [f"    nutrientopenwater: {self.nutrientopenwater.__module__}"]
             + [")"]
         )
 
     @classmethod
     def from_config(cls, cfg):
         surfacelayer = getattr(
-            import_module(cfg["surfacelayer"]["module"]), cfg["surfacelayer"]["class"]
+            import_module(cfg["surfacelayer"]["module"]),
+            cfg["surfacelayer"]["class"],
         )
         subsurface = getattr(
-            import_module(cfg["subsurface"]["module"]), cfg["subsurface"]["class"]
+            import_module(cfg["subsurface"]["module"]),
+            cfg["subsurface"]["class"],
         )
         openwater = getattr(
-            import_module(cfg["openwater"]["module"]), cfg["openwater"]["class"]
+            import_module(cfg["openwater"]["module"]),
+            cfg["openwater"]["class"],
+        )
+        nutrientsurfacelayer = getattr(
+            import_module(cfg["nutrientsurfacelayer"]["module"]),
+            cfg["nutrientsurfacelayer"]["class"],
+        )
+        nutrientsubsurface = getattr(
+            import_module(cfg["nutrientsubsurface"]["module"]),
+            cfg["nutrientsubsurface"]["class"],
+        )
+        nutrientopenwater = getattr(
+            import_module(cfg["nutrientopenwater"]["module"]),
+            cfg["nutrientopenwater"]["class"],
         )
 
         return cls(
@@ -169,6 +227,13 @@ class Model(object):
             surfacelayer=surfacelayer.from_config(cfg["surfacelayer"]),
             subsurface=subsurface.from_config(cfg["subsurface"]),
             openwater=openwater.from_config(cfg["openwater"]),
+            nutrientsurfacelayer=nutrientsurfacelayer.from_config(
+                cfg["nutrientsurfacelayer"]
+            ),
+            nutrientsubsurface=nutrientsubsurface.from_config(
+                cfg["nutrientsubsurface"]
+            ),
+            nutrientopenwater=nutrientopenwater.from_config(cfg["nutrientopenwater"]),
             _to_yaml=False,
         )
 
@@ -180,6 +245,9 @@ class Model(object):
             "surfacelayer": self.surfacelayer.to_config(),
             "subsurface": self.subsurface.to_config(),
             "openwater": self.openwater.to_config(),
+            "nutrientsurfacelayer": self.nutrientsurfacelayer.to_config(),
+            "nutrientsubsurface": self.nutrientsubsurface.to_config(),
+            "nutrientopenwater": self.nutrientopenwater.to_config(),
         }
 
     @staticmethod
@@ -252,6 +320,9 @@ class Model(object):
             surfacelayer: tests.components.surfacelayer.dummy
             subsurface: tests.components.subsurface.dummy
             openwater: tests.components.openwater.dummy
+            nutrientsurfacelayer: tests.components.nutrientsurfacelayer.dummy
+            nutrientsubsurface: tests.components.nutrientsubsurface.dummy
+            nutrientopenwater: tests.components.nutrientopenwater.dummy
         )
 
         """
@@ -309,6 +380,9 @@ class Model(object):
                 "surfacelayer": self.surfacelayer.spacedomain,
                 "subsurface": self.subsurface.spacedomain,
                 "openwater": self.openwater.spacedomain,
+                "nutrientsurfacelayer": self.nutrientsurfacelayer.spacedomain,
+                "nutrientsubsurface": self.nutrientsubsurface.spacedomain,
+                "nutrientopenwater": self.nutrientopenwater.spacedomain,
             }
         )
 
@@ -318,6 +392,9 @@ class Model(object):
                 "surfacelayer": self.surfacelayer.timedomain,
                 "subsurface": self.subsurface.timedomain,
                 "openwater": self.openwater.timedomain,
+                "nutrientsurfacelayer": self.nutrientsurfacelayer.timedomain,
+                "nutrientsubsurface": self.nutrientsubsurface.timedomain,
+                "nutrientopenwater": self.nutrientopenwater.timedomain,
             }
         )
 
@@ -327,6 +404,9 @@ class Model(object):
                 "surfacelayer": self.surfacelayer,
                 "subsurface": self.subsurface,
                 "openwater": self.openwater,
+                "nutrientsurfacelayer": self.nutrientsurfacelayer,
+                "nutrientsubsurface": self.nutrientsubsurface,
+                "nutrientopenwater": self.nutrientopenwater,
             },
             clock,
             compass,
@@ -404,6 +484,17 @@ class Model(object):
         surfacelayer_timedomain = self.surfacelayer.get_spin_up_timedomain(start, end)
         subsurface_timedomain = self.subsurface.get_spin_up_timedomain(start, end)
         openwater_timedomain = self.openwater.get_spin_up_timedomain(start, end)
+        nutrientsurfacelayer_timedomain = (
+            self.nutrientsurfacelayer.get_spin_up_timedomain(start, end)
+        )
+
+        nutrientsubsurface_timedomain = self.nutrientsubsurface.get_spin_up_timedomain(
+            start, end
+        )
+
+        nutrientopenwater_timedomain = self.nutrientopenwater.get_spin_up_timedomain(
+            start, end
+        )
 
         # store spin up configuration in a separate yaml file
         spin_up_config = {
@@ -416,7 +507,8 @@ class Model(object):
         }
         self._set_up_yaml_dumper()
         with open(
-            sep.join([self.config_directory, f"{self._identifier}.spin_up.yml"]), "w"
+            sep.join([self.config_directory, f"{self._identifier}.spin_up.yml"]),
+            "w",
         ) as f:
             yaml.dump(spin_up_config, f, yaml.Dumper, sort_keys=False)
 
@@ -424,11 +516,17 @@ class Model(object):
         main_sl_td = self.surfacelayer.timedomain
         main_ss_td = self.subsurface.timedomain
         main_ow_td = self.openwater.timedomain
+        main_nsl_td = self.nutrientsurfacelayer.timedomain
+        main_nss_td = self.nutrientsubsurface.timedomain
+        main_now_td = self.nutrientopenwater.timedomain
 
         # assign spin-up run attributes in place of main run's ones
         self.surfacelayer.timedomain = surfacelayer_timedomain
         self.subsurface.timedomain = subsurface_timedomain
         self.openwater.timedomain = openwater_timedomain
+        self.nutrientsurfacelayer.timedomain = nutrientsurfacelayer_timedomain
+        self.nutrientsubsurface.timedomain = nutrientsubsurface_timedomain
+        self.nutrientopenwater.timedomain = nutrientopenwater_timedomain
 
         # start the spin up run(s)
         for cycle in range(cycles):
@@ -441,6 +539,9 @@ class Model(object):
         self.surfacelayer.timedomain = main_sl_td
         self.subsurface.timedomain = main_ss_td
         self.openwater.timedomain = main_ow_td
+        self.nutrientsurfacelayer.timedomain = main_nsl_td
+        self.nutrientsubsurface.timedomain = main_nss_td
+        self.nutrientopenwater.timedomain = main_now_td
 
     def simulate(self, dumping_frequency=None, overwrite=True):
         """Run model simulation over period defined in its components'
@@ -476,7 +577,8 @@ class Model(object):
         }
         self._set_up_yaml_dumper()
         with open(
-            sep.join([self.config_directory, f"{self._identifier}.simulate.yml"]), "w"
+            sep.join([self.config_directory, f"{self._identifier}.simulate.yml"]),
+            "w",
         ) as f:
             yaml.dump(simulate_config, f, yaml.Dumper, sort_keys=False)
 
@@ -490,6 +592,9 @@ class Model(object):
         self.surfacelayer.initialise_(tag, overwrite)
         self.subsurface.initialise_(tag, overwrite)
         self.openwater.initialise_(tag, overwrite)
+        self.nutrientsurfacelayer.initialise_(tag, overwrite)
+        self.nutrientsubsurface.initialise_(tag, overwrite)
+        self.nutrientopenwater.initialise_(tag, overwrite)
 
     def _run(self, tag, dumping_frequency=None, overwrite=True):
         # set up compass responsible for mapping across components
@@ -498,6 +603,9 @@ class Model(object):
                 "surfacelayer": self.surfacelayer.spacedomain,
                 "subsurface": self.subsurface.spacedomain,
                 "openwater": self.openwater.spacedomain,
+                "nutrientsurfacelayer": self.nutrientsurfacelayer.spacedomain,
+                "nutrientsubsurface": self.nutrientsubsurface.spacedomain,
+                "nutrientopenwater": self.nutrientopenwater.spacedomain,
             }
         )
 
@@ -507,6 +615,9 @@ class Model(object):
                 "surfacelayer": self.surfacelayer.timedomain,
                 "subsurface": self.subsurface.timedomain,
                 "openwater": self.openwater.timedomain,
+                "nutrientsurfacelayer": self.nutrientsurfacelayer.timedomain,
+                "nutrientsubsurface": self.nutrientsubsurface.timedomain,
+                "nutrientopenwater": self.nutrientopenwater.timedomain,
             }
         )
         if dumping_frequency is not None:
@@ -520,6 +631,9 @@ class Model(object):
                     "surfacelayer": self.surfacelayer,
                     "subsurface": self.subsurface,
                     "openwater": self.openwater,
+                    "nutrientsurfacelayer": self.nutrientsurfacelayer,
+                    "nutrientsubsurface": self.nutrientsubsurface,
+                    "nutrientopenwater": self.nutrientopenwater,
                 },
                 clock,
                 compass,
@@ -534,7 +648,15 @@ class Model(object):
         self.exchanger.initialise_(tag, overwrite)
 
         # run components
-        for run_surfacelayer, run_subsurface, run_openwater, dumping in clock:
+        for (
+            run_surfacelayer,
+            run_subsurface,
+            run_openwater,
+            run_nutrientsurfacelayer,
+            run_nutrientsubsurface,
+            run_nutrientopenwater,
+            dumping,
+        ) in clock:
             to_exchanger = {}
 
             if dumping:
@@ -547,26 +669,62 @@ class Model(object):
                 ti = clock.get_current_timeindex("openwater")
                 self.openwater.dump_states(ti)
                 self.openwater.dump_record_streams(ti)
+                ti = clock.get_current_timeindex("nutrientsurfacelayer")
+                self.nutrientsurfacelayer.dump_states(ti)
+                self.nutrientsurfacelayer.dump_record_streams(ti)
+                ti = clock.get_current_timeindex("nutrientsubsurface")
+                self.nutrientsubsurface.dump_states(ti)
+                self.nutrientsubsurface.dump_record_streams(ti)
+                ti = clock.get_current_timeindex("nutrientopenwater")
+                self.nutrientopenwater.dump_states(ti)
+                self.nutrientopenwater.dump_record_streams(ti)
                 self.exchanger.dump_transfers(clock.get_current_timestamp())
 
             if run_surfacelayer:
                 to_exchanger.update(
                     self.surfacelayer.run_(
-                        clock.get_current_timeindex("surfacelayer"), self.exchanger
+                        clock.get_current_timeindex("surfacelayer"),
+                        self.exchanger,
                     )
                 )
 
             if run_subsurface:
                 to_exchanger.update(
                     self.subsurface.run_(
-                        clock.get_current_timeindex("subsurface"), self.exchanger
+                        clock.get_current_timeindex("subsurface"),
+                        self.exchanger,
                     )
                 )
 
             if run_openwater:
                 to_exchanger.update(
                     self.openwater.run_(
-                        clock.get_current_timeindex("openwater"), self.exchanger
+                        clock.get_current_timeindex("openwater"),
+                        self.exchanger,
+                    )
+                )
+
+            if run_nutrientsurfacelayer:
+                to_exchanger.update(
+                    self.nutrientsurfacelayer.run_(
+                        clock.get_current_timeindex("nutrientsurfacelayer"),
+                        self.exchanger,
+                    )
+                )
+
+            if run_nutrientsubsurface:
+                to_exchanger.update(
+                    self.nutrientsubsurface.run_(
+                        clock.get_current_timeindex("nutrientsubsurface"),
+                        self.exchanger,
+                    )
+                )
+
+            if run_nutrientopenwater:
+                to_exchanger.update(
+                    self.nutrientopenwater.run_(
+                        clock.get_current_timeindex("nutrientopenwater"),
+                        self.exchanger,
                     )
                 )
 
@@ -577,6 +735,9 @@ class Model(object):
         self.surfacelayer.finalise_()
         self.subsurface.finalise_()
         self.openwater.finalise_()
+        self.nutrientsurfacelayer.finalise_()
+        self.nutrientsubsurface.finalise_()
+        self.nutrientopenwater.finalise_()
         # finalise model
         self.exchanger.finalise_()
 
@@ -624,7 +785,14 @@ class Model(object):
 
         # initialise component states and record streams from dump files
         data_or_null = 0
-        for component in [self.surfacelayer, self.subsurface, self.openwater]:
+        for component in [
+            self.surfacelayer,
+            self.subsurface,
+            self.openwater,
+            self.nutrientsurfacelayer,
+            self.nutrientsubsurface,
+            self.nutrientopenwater,
+        ]:
             # skip DataComponent and NullComponent
             if isinstance(component, (DataComponent, NullComponent)):
                 data_or_null += 1
@@ -736,7 +904,14 @@ class Model(object):
                 )
         else:  # method == 'simulate'
             # adjust the component timedomain to reflect remaining period
-            for component in [self.surfacelayer, self.subsurface, self.openwater]:
+            for component in [
+                self.surfacelayer,
+                self.subsurface,
+                self.openwater,
+                self.nutrientsurfacelayer,
+                self.nutrientsubsurface,
+                self.nutrientopenwater,
+            ]:
                 if at == component.timedomain.bounds.datetime_array[-1, -1]:
                     raise RuntimeError(
                         f"{component.category} component run already completed "

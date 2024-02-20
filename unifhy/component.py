@@ -14,7 +14,12 @@ from ._utils.state import (
     update_states_dump,
     load_states_dump,
 )
-from ._utils.record import StateRecord, OutwardRecord, OutputRecord, RecordStream
+from ._utils.record import (
+    StateRecord,
+    OutwardRecord,
+    OutputRecord,
+    RecordStream,
+)
 from .time import TimeDomain
 from . import space
 from .space import SpaceDomain, Grid
@@ -616,7 +621,11 @@ class Component(metaclass=MetaComponent):
                     #  from outwards of the component being substituted)
                     info["kind"] = "dynamic"
                 else:
-                    if info["kind"] not in ["dynamic", "static", "climatologic"]:
+                    if info["kind"] not in [
+                        "dynamic",
+                        "static",
+                        "climatologic",
+                    ]:
                         raise ValueError(
                             f"invalid type for {name} in {self._category} "
                             f"component definition"
@@ -797,7 +806,9 @@ class Component(metaclass=MetaComponent):
         if kind == "dynamic":
             try:
                 variable_subset = DynamicVariable(
-                    timedomain.subset_and_compare(field), filenames, reading_slice
+                    timedomain.subset_and_compare(field),
+                    filenames,
+                    reading_slice,
                 )
             except RuntimeError:
                 raise error
@@ -963,7 +974,7 @@ class Component(metaclass=MetaComponent):
 
     @property
     def category(self):
-        """Return the part of the water cycle the `Component` represents."""
+        """Return the part of the water/nutrients cycle the `Component` represents."""
         return self._category
 
     @property
@@ -1299,7 +1310,13 @@ class Component(metaclass=MetaComponent):
         for delta, stream in self._record_streams.items():
             # initialise record files
             filename = "_".join(
-                [self.identifier, self._category, tag, "records", stream.frequency_tag]
+                [
+                    self.identifier,
+                    self._category,
+                    tag,
+                    "records",
+                    stream.frequency_tag,
+                ]
             )
             file_ = sep.join([self.saving_directory, filename + ".nc"])
 
@@ -1378,7 +1395,10 @@ class Component(metaclass=MetaComponent):
                 file_ = dump_file_pattern.format(stream.frequency_tag)
                 ats.append(
                     stream.load_record_stream_dump(
-                        file_, at, timedomain or self.timedomain, self.spacedomain
+                        file_,
+                        at,
+                        timedomain or self.timedomain,
+                        self.spacedomain,
                     )
                 )
         self._revived_streams = True
@@ -1421,7 +1441,6 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
 
     _category = "surfacelayer"
     _inwards_info = {
-        # waterenergy --------------------------------------------------
         "soil_water_stress_for_transpiration": {
             "units": "1",
             "from": "subsurface",
@@ -1441,12 +1460,9 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
             "units": "1",
             "from": "subsurface",
             "method": "mean",
-        }
-        # nutrients ----------------------------------------------------
-        # NONE
+        },
     }
     _outwards_info = {
-        # waterenergy --------------------------------------------------
         "canopy_liquid_throughfall_and_snow_melt_flux": {
             "units": "kg m-2 s-1",
             "to": ["subsurface"],
@@ -1477,27 +1493,6 @@ class SurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
             "to": ["openwater"],
             "method": "mean",
         },
-        # nutrients ----------------------------------------------------
-        "mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_concentration_of_carbon_dioxide_in_air": {
-            "units": "kg m-3",
-            "to": ["openwater"],
-            "method": "mean",
-        },
     }
     # if not specified, assume all inwards are required
     _inwards = tuple(_inwards_info)
@@ -1512,7 +1507,6 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
 
     _category = "subsurface"
     _inwards_info = {
-        # waterenergy --------------------------------------------------
         "canopy_liquid_throughfall_and_snow_melt_flux": {
             "units": "kg m-2 s-1",
             "from": "surfacelayer",
@@ -1542,12 +1536,9 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             "units": "m",
             "from": "openwater",
             "method": "mean",
-        }
-        # nutrients ----------------------------------------------------
-        # NONE
+        },
     }
     _outwards_info = {
-        # waterenergy --------------------------------------------------
         "soil_water_stress_for_transpiration": {
             "units": "1",
             "to": ["surfacelayer"],
@@ -1574,97 +1565,6 @@ class SubSurfaceComponent(Component, metaclass=abc.ABCMeta):
             "method": "mean",
         },
         "net_groundwater_flux_to_rivers": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        # nutrients ----------------------------------------------------
-        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff": {
-            "units": "kg m-2 s-1",
-            "to": ["openwater"],
-            "method": "mean",
-        },
-        "mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff": {
             "units": "kg m-2 s-1",
             "to": ["openwater"],
             "method": "mean",
@@ -1683,7 +1583,6 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
 
     _category = "openwater"
     _inwards_info = {
-        # waterenergy --------------------------------------------------
         "water_evaporation_flux_from_open_water": {
             "units": "kg m-2 s-1",
             "from": "surfacelayer",
@@ -1704,7 +1603,172 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
             "from": "subsurface",
             "method": "mean",
         },
-        # nutrients ----------------------------------------------------
+    }
+    _outwards_info = {
+        "open_water_area_fraction": {
+            "units": "1",
+            "to": ["subsurface"],
+            "method": "mean",
+        },
+        "open_water_surface_height": {
+            "units": "m",
+            "to": ["subsurface"],
+            "method": "mean",
+        },
+    }
+    # if not specified, assume all inwards are required
+    _inwards = tuple(_inwards_info)
+    # if not specified, assume all outwards are produced
+    _outwards = tuple(_outwards_info)
+
+
+class NutrientSurfaceLayerComponent(Component, metaclass=abc.ABCMeta):
+    """The NutrientSurfaceLayerComponent simulates surface nutrient processes"""
+
+    _category = "nutrientsurfacelayer"
+    _inwards_info = {}  # None
+    _outwards_info = {
+        "mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_concentration_of_carbon_dioxide_in_air": {
+            "units": "kg m-3",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+    }
+
+    # if not specified, assume all inwards are required
+    _inwards = tuple(_inwards_info)
+    # if not specified, assume all outwards are produced
+    _outwards = tuple(_outwards_info)
+
+
+class NutrientSubSurfaceComponent(Component, metaclass=abc.ABCMeta):
+    """The NutrientSubSurfaceComponent simulates nutrient processes occuring
+    in the subsurface
+    """
+
+    _category = "nutrientsubsurface"
+    _inwards_info = {}  # None
+    _outwards_info = {
+        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+        "mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff": {
+            "units": "kg m-2 s-1",
+            "to": ["openwater"],
+            "method": "mean",
+        },
+    }
+
+    # if not specified, assume all inwards are required
+    _inwards = tuple(_inwards_info)
+    # if not specified, assume all outwards are produced
+    _outwards = tuple(_outwards_info)
+
+
+class NutrientOpenWaterComponent(Component, metaclass=abc.ABCMeta):
+    """The NutrientOpenWaterComponent simulates nutrient process occuring in
+    open-water such as rivers.
+    """
+
+    _category = "nutrientopenwater"
+    _inwards_info = {
         "mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff": {
             "units": "kg m-2 s-1",
             "from": "subsurface",
@@ -1816,21 +1880,8 @@ class OpenWaterComponent(Component, metaclass=abc.ABCMeta):
             "method": "mean",
         },
     }
-    _outwards_info = {
-        # waterenergy --------------------------------------------------
-        "open_water_area_fraction": {
-            "units": "1",
-            "to": ["subsurface"],
-            "method": "mean",
-        },
-        "open_water_surface_height": {
-            "units": "m",
-            "to": ["subsurface"],
-            "method": "mean",
-        }
-        # nutrients ----------------------------------------------------
-        # NONE
-    }
+    _outwards_info = {}  # None
+
     # if not specified, assume all inwards are required
     _inwards = tuple(_inwards_info)
     # if not specified, assume all outwards are produced
@@ -1853,7 +1904,12 @@ class DataComponent(Component):
     _solver_history = 0
 
     def __init__(
-        self, timedomain, spacedomain, dataset, substituting_class, io_slice=None
+        self,
+        timedomain,
+        spacedomain,
+        dataset,
+        substituting_class,
+        io_slice=None,
     ):
         """**Instantiation**
 
@@ -1920,7 +1976,8 @@ class DataComponent(Component):
     def from_config(cls, cfg):
         spacedomain = getattr(space, cfg["spacedomain"]["class"])
         substituting_class = getattr(
-            import_module(cfg["substituting"]["module"]), cfg["substituting"]["class"]
+            import_module(cfg["substituting"]["module"]),
+            cfg["substituting"]["class"],
         )
         return cls(
             timedomain=TimeDomain.from_config(cfg["timedomain"]),
@@ -2028,7 +2085,8 @@ class NullComponent(Component):
     def from_config(cls, cfg):
         spacedomain = getattr(space, cfg["spacedomain"]["class"])
         substituting_class = getattr(
-            import_module(cfg["substituting"]["module"]), cfg["substituting"]["class"]
+            import_module(cfg["substituting"]["module"]),
+            cfg["substituting"]["class"],
         )
         return cls(
             timedomain=TimeDomain.from_config(cfg["timedomain"]),
