@@ -66,7 +66,7 @@ parameters = {
         },
         "diff_s": {
             "parameter_d": cf.read(
-                "data/dummy_subsurface_parameter_d_{}"
+                "data/dummy_nutrientsubsurface_parameter_d_{}"
                 ".nc".format(space_resolutions["nutrientsubsurface"]["diff_s"])
             ).select_field("long_name=parameter_d")
         },
