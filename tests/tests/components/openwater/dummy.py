@@ -150,6 +150,7 @@ class DummyFortran(Dummy):
             transfer_l,
             transfer_n,
             transfer_o,
+            transfer_p,
             output_x,
             output_y,
         ) = dummyfortran.run(
@@ -168,6 +169,7 @@ class DummyFortran(Dummy):
                 "transfer_l": transfer_l,
                 "transfer_n": transfer_n,
                 "transfer_o": transfer_o,
+                "transfer_p": transfer_p,
             },
             # component outputs
             {"output_x": output_x, "output_y": output_y},

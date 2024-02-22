@@ -144,6 +144,7 @@ class DummyFortran(Dummy):
         transfer_k,
         transfer_l,
         transfer_n,
+        transfer_h,
         # component driving data
         driving_a,
         driving_b,
@@ -157,10 +158,11 @@ class DummyFortran(Dummy):
         # component constants
         **kwargs
     ):
-        transfer_i, transfer_j, output_x = dummyfortran.run(
+        transfer_i, transfer_j, output_x, output_y = dummyfortran.run(
             transfer_k,
             transfer_l,
             transfer_n,
+            transfer_h,
             driving_a,
             driving_b,
             driving_c,
@@ -177,7 +179,7 @@ class DummyFortran(Dummy):
             # to exchanger
             {"transfer_i": transfer_i, "transfer_j": transfer_j},
             # component outputs
-            {"output_x": output_x},
+            {"output_x": output_x, "output_y": output_y},
         )
 
     def finalise(

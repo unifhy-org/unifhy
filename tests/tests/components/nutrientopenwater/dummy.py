@@ -120,3 +120,134 @@ class Dummy(NutrientOpenWaterComponent):
         **kwargs
     ):
         pass
+
+
+class DummyFortran(Dummy):
+    # overwrite states to explicitly set array order
+    _states_info = {
+        "state_a": {"units": "1", "divisions": (4, "constant_d"), "order": "F"}
+    }
+
+    def initialise(
+        self,
+        # component states
+        state_a,
+        # component constants
+        constant_d,
+        **kwargs
+    ):
+        if not self.initialised_states:
+            dummyfortran.initialise(state_a.get_timestep(-1), constant_d=constant_d)
+
+    def run(
+        self,
+        # from exchanger
+        transfer_b,
+        transfer_e,
+        transfer_p,
+        # component driving data
+        # component ancillary data
+        ancillary_d,
+        # component parameters
+        parameter_e,
+        # component states
+        state_a,
+        # component constants
+        constant_d,
+        **kwargs
+    ):
+        (
+            transfer_d,
+            transfer_f,
+            transfer_g,
+            output_x,
+            output_y,
+        ) = dummyfortran.run(
+            transfer_b,
+            transfer_e,
+            transfer_p,
+            ancillary_d,
+            parameter_e,
+            state_a.get_timestep(-1),
+            state_a.get_timestep(0),
+            constant_d=constant_d,
+        )
+
+        return (
+            # to exchanger
+            {
+                "transfer_d": transfer_d,
+                "transfer_f": transfer_f,
+                "transfer_g": transfer_g,
+            },
+            # component outputs
+            {"output_x": output_x, "output_y": output_y},
+        )
+
+    def finalise(
+        self,
+        # component states
+        state_a,
+        **kwargs
+    ):
+        dummyfortran.finalise()
+
+
+class DummyC(Dummy):
+    def initialise(
+        self,
+        # component states
+        state_a,
+        # component constants
+        constant_d,
+        **kwargs
+    ):
+        if not self.initialised_states:
+            dummyc.initialise(constant_d, state_a.get_timestep(-1))
+
+    def run(
+        self,
+        # from exchanger
+        transfer_b,
+        transfer_e,
+        transfer_p,
+        # component driving data
+        # component ancillary data
+        ancillary_d,
+        # component parameters
+        parameter_e,
+        # component states
+        state_a,
+        # component constants
+        constant_d,
+        **kwargs
+    ):
+        transfer_d, transfer_f, transfer_g, output_x, output_y = dummyc.run(
+            transfer_b,
+            transfer_e,
+            transfer_p,
+            ancillary_d,
+            parameter_e,
+            state_a.get_timestep(-1),
+            state_a.get_timestep(0),
+            constant_d,
+        )
+
+        return (
+            # to exchanger
+            {
+                "transfer_d": transfer_d,
+                "transfer_f": transfer_f,
+                "transfer_g": transfer_g,
+            },
+            # component outputs
+            {"output_x": output_x, "output_y": output_y},
+        )
+
+    def finalise(
+        self,
+        # component states
+        state_a,
+        **kwargs
+    ):
+        dummyc.finalise()

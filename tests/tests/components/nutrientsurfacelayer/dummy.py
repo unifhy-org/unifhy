@@ -132,3 +132,143 @@ class Dummy(NutrientSurfaceLayerComponent):
         **kwargs
     ):
         pass
+
+
+class DummyFortran(Dummy):
+    # overwrite states to explicitly set array order
+    _states_info = {
+        "state_a": {"units": "1", "divisions": 1, "order": "F"},
+        "state_b": {"units": "1", "divisions": 1, "order": "F"},
+    }
+
+    def initialise(
+        self,
+        # component states
+        state_a,
+        state_b,
+        **kwargs
+    ):
+        if not self.initialised_states:
+            dummyfortran.initialise(state_a.get_timestep(-1), state_b.get_timestep(-1))
+
+    def run(
+        self,
+        # from exchanger
+        transfer_c,
+        transfer_d,
+        transfer_f,
+        # component driving data
+        driving_d,
+        driving_e,
+        driving_f,
+        # component ancillary data
+        ancillary_e,
+        # component parameters
+        # component states
+        state_a,
+        state_b,
+        # component constants
+        **kwargs
+    ):
+        transfer_a, transfer_b, transfer_h, output_x = dummyfortran.run(
+            transfer_c,
+            transfer_d,
+            transfer_f,
+            driving_d,
+            driving_e,
+            driving_f,
+            ancillary_e,
+            state_a.get_timestep(-1),
+            state_a.get_timestep(0),
+            state_b.get_timestep(-1),
+            state_b.get_timestep(0),
+        )
+
+        output_x, _ = self.spacedomain.route(output_x)
+
+        return (
+            # to exchanger
+            {
+                "transfer_a": transfer_a,
+                "transfer_b": transfer_b,
+                "transfer_h": transfer_h,
+            },
+            # component outputs
+            {"output_x": output_x},
+        )
+
+    def finalise(
+        self,
+        # component states
+        state_a,
+        state_b,
+        **kwargs
+    ):
+        dummyfortran.finalise()
+
+
+class DummyC(Dummy):
+    def initialise(
+        self,
+        # component states
+        state_a,
+        state_b,
+        **kwargs
+    ):
+        if not self.initialised_states:
+            dummyc.initialise(state_a.get_timestep(-1), state_b.get_timestep(-1))
+
+    def run(
+        self,
+        # from exchanger
+        transfer_c,
+        transfer_d,
+        transfer_f,
+        # component driving data
+        driving_d,
+        driving_e,
+        driving_f,
+        # component ancillary data
+        ancillary_e,
+        # component parameters
+        # component states
+        state_a,
+        state_b,
+        # component constants
+        **kwargs
+    ):
+        transfer_a, transfer_b, transfer_h, output_x = dummyc.run(
+            transfer_c,
+            transfer_d,
+            transfer_f,
+            driving_d,
+            driving_e,
+            driving_f,
+            ancillary_e,
+            state_a.get_timestep(-1),
+            state_a.get_timestep(0),
+            state_b.get_timestep(-1),
+            state_b.get_timestep(0),
+        )
+
+        output_x, _ = self.spacedomain.route(output_x)
+
+        return (
+            # to exchanger
+            {
+                "transfer_a": transfer_a,
+                "transfer_b": transfer_b,
+                "transfer_h": transfer_h,
+            },
+            # component outputs
+            {"output_x": output_x},
+        )
+
+    def finalise(
+        self,
+        # component states
+        state_a,
+        state_b,
+        **kwargs
+    ):
+        dummyc.finalise()
