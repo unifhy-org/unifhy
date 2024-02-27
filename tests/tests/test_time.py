@@ -11,7 +11,25 @@ import unifhy
 def get_dummy_timedomain(resolution):
     if resolution == "daily":
         return unifhy.TimeDomain(
-            timestamps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+            timestamps=[
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+            ],
             units="days since 2019-01-01 09:00:00Z",
             calendar="gregorian",
         )
@@ -28,7 +46,9 @@ def get_dummy_timedomain(resolution):
             calendar="gregorian",
         )
     else:
-        raise ValueError("timedomain resolution '{}' not supported".format(resolution))
+        raise ValueError(
+            "timedomain resolution '{}' not supported".format(resolution)
+        )
 
 
 def get_dummy_timedomain_different_start(resolution):
@@ -426,7 +446,7 @@ class TestTimeDomainComparison(unittest.TestCase):
         )
 
         td3 = unifhy.TimeDomain(
-            timestamps=np.array([0, 1, 2, 3], dtype=np.int),
+            timestamps=np.array([0, 1, 2, 3], dtype=int),
             units="days since 2019-01-01 09:00:00Z",
             calendar="standard",
         )
@@ -504,7 +524,9 @@ if __name__ == "__main__":
     test_suite = unittest.TestSuite()
 
     test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainAPI))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestTimeDomainComparison))
+    test_suite.addTests(
+        test_loader.loadTestsFromTestCase(TestTimeDomainComparison)
+    )
 
     test_suite.addTests(doctest.DocTestSuite(unifhy.time))
 

@@ -227,7 +227,11 @@ class Grid(SpaceDomain):
         """Determine whether the `Grid` features a vertical dimension.
         Return a `bool`.
         """
-        return True if self._f.dim(self._Z_name, key=True, default=False) else False
+        return (
+            True
+            if self._f.dim(self._Z_name, key=True, default=False)
+            else False
+        )
 
     @property
     def vertical_axis(self):
@@ -383,7 +387,9 @@ class Grid(SpaceDomain):
 
     @land_sea_mask.setter
     def land_sea_mask(self, mask):
-        error = RuntimeError(f"mask shape incompatible with {self.__class__.__name__}")
+        error = RuntimeError(
+            f"mask shape incompatible with {self.__class__.__name__}"
+        )
 
         # check type
         if not isinstance(mask, cf.Field):
@@ -656,7 +662,12 @@ class Grid(SpaceDomain):
 
             for card, yx_rel in self._routing_cardinal_map.items():
                 info[directions == card] = yx_rel
-        elif issubclass(directions.dtype.type, np.integer):
+        elif (
+            issubclass(directions.dtype.type, np.int8)
+            or issubclass(directions.dtype.type, np.int16)
+            or issubclass(directions.dtype.type, np.int32)
+            or issubclass(directions.dtype.type, np.int64)
+        ):
             if info.shape == directions.shape:
                 # relative
                 if np.amin(directions) < -1 or np.amax(directions) > 1:
@@ -929,14 +940,18 @@ class Grid(SpaceDomain):
         if np.ma.is_masked(self.flow_direction):
             mask = self.flow_direction.mask[..., 0]
             values_routed = np.ma.array(
-                np.zeros(values_to_route.shape, values_to_route.dtype), mask=mask
+                np.zeros(values_to_route.shape, values_to_route.dtype),
+                mask=mask,
             )
             values_out = np.ma.array(
-                np.zeros(values_to_route.shape, values_to_route.dtype), mask=mask
+                np.zeros(values_to_route.shape, values_to_route.dtype),
+                mask=mask,
             )
         else:
             mask = None
-            values_routed = np.zeros(values_to_route.shape, values_to_route.dtype)
+            values_routed = np.zeros(
+                values_to_route.shape, values_to_route.dtype
+            )
             values_out = np.zeros(values_to_route.shape, values_to_route.dtype)
         # if no mask, keep as is, if not, take logical negation of it
         mask = None if mask is None else ~mask
@@ -1028,7 +1043,9 @@ class Grid(SpaceDomain):
         error_dim = RuntimeError(
             f"cell_area shape incompatible with {self.__class__.__name__}"
         )
-        error_units = ValueError("cell_area units are missing or not in square metres")
+        error_units = ValueError(
+            "cell_area units are missing or not in square metres"
+        )
 
         # check type
         if not isinstance(areas, cf.Field):
@@ -1049,7 +1066,9 @@ class Grid(SpaceDomain):
             raise error_dim
 
         # check area units
-        if not (areas.data.has_units() and cfunits.Units("m2").equals(areas.Units)):
+        if not (
+            areas.data.has_units() and cfunits.Units("m2").equals(areas.Units)
+        ):
             raise error_units
 
         # get field's data array
@@ -1059,7 +1078,9 @@ class Grid(SpaceDomain):
 
     def _compute_cell_area(self):
         # make use of cf-python to retrieve ESMF objects
-        operator = self._f.regrids(self._f, "conservative", return_operator=True)
+        operator = self._f.regrids(
+            self._f, "conservative", return_operator=True
+        )
         # retrieve ESMF source (arbitrarily chosen) field
         esmf_field = operator.regrid.srcfield
 
@@ -1101,9 +1122,13 @@ class Grid(SpaceDomain):
         """
         # check for values outside of limits
         if limits is not None:
-            if np.amin(dimension) < limits[0] or np.amax(dimension) > limits[1]:
+            if (
+                np.amin(dimension) < limits[0]
+                or np.amax(dimension) > limits[1]
+            ):
                 raise RuntimeError(
-                    f"{name} dimension beyond limits " f"[{limits[0]}, {limits[1]}]"
+                    f"{name} dimension beyond limits "
+                    f"[{limits[0]}, {limits[1]}]"
                 )
 
         # check for duplicated coordinates, meaning domain overlap
@@ -1113,7 +1138,9 @@ class Grid(SpaceDomain):
             sort_dim = np.sort(dimension)
             dup_dim = sort_dim[1:][sort_dim[1:] == sort_dim[:-1]]
             if dup_dim.size > 0:
-                raise RuntimeError(f"duplicates in {name} dimension: {dup_dim}")
+                raise RuntimeError(
+                    f"duplicates in {name} dimension: {dup_dim}"
+                )
 
     @staticmethod
     def _check_dimension_direction(dimension, name, limits, wrap_around):
@@ -1205,7 +1232,9 @@ class Grid(SpaceDomain):
         else:
             # it is a scalar, set difference to one to pass next check
             space_diff = 1
-        if not np.isclose(np.amin(space_diff), np.amax(space_diff), rtol(), atol()):
+        if not np.isclose(
+            np.amin(space_diff), np.amax(space_diff), rtol(), atol()
+        ):
             raise RuntimeError(f"{name} space gap not constant across region")
 
     @staticmethod
@@ -1315,7 +1344,9 @@ class Grid(SpaceDomain):
         if wrap_around:
             bnds[np.isclose(bnds, limits[0], rtol(), atol())] = limits[1]
 
-        error = RuntimeError(f"{name} dimension bounds not directed positively")
+        error = RuntimeError(
+            f"{name} dimension bounds not directed positively"
+        )
 
         if bnds.ndim > 0:
             space_diff = np.diff(bnds, axis=0)
@@ -1413,7 +1444,9 @@ class Grid(SpaceDomain):
         if wrap_around:
             bnds[np.isclose(bnds, limits[0], rtol_, atol_)] = limits[1]
 
-        error = RuntimeError(f"{name} bounds space gap not constant across region")
+        error = RuntimeError(
+            f"{name} bounds space gap not constant across region"
+        )
 
         if bnds.ndim > 0:
             space_diff = np.diff(bnds, axis=0)
@@ -1429,7 +1462,9 @@ class Grid(SpaceDomain):
                     space_diff[space_diff < 0] = neg
         else:
             space_diff = 0
-        if not np.isclose(np.amin(space_diff), np.amax(space_diff), rtol_, atol_):
+        if not np.isclose(
+            np.amin(space_diff), np.amax(space_diff), rtol_, atol_
+        ):
             raise error
 
         if bnds.ndim > 1:
@@ -1445,7 +1480,9 @@ class Grid(SpaceDomain):
                     space_diff[space_diff < 0] = neg
         else:
             space_diff = 0
-        if not np.isclose(np.amin(space_diff), np.amax(space_diff), rtol_, atol_):
+        if not np.isclose(
+            np.amin(space_diff), np.amax(space_diff), rtol_, atol_
+        ):
             raise error
 
     @staticmethod
@@ -1500,7 +1537,9 @@ class Grid(SpaceDomain):
             raise RuntimeError(f"{name} bounds not contiguous across region")
 
     @staticmethod
-    def _check_dimension_in_bounds(dimension, bounds, name, limits, wrap_around):
+    def _check_dimension_in_bounds(
+        dimension, bounds, name, limits, wrap_around
+    ):
         """**Examples:**
 
         >>> import numpy
@@ -1580,7 +1619,8 @@ class Grid(SpaceDomain):
                         not_in_dim[0] > not_in_bnds[0, 1]
                     ):
                         not_in[0] = (not_in_bnds[0, 0] <= not_in_dim[0]) & (
-                            not_in_dim[0] <= (not_in_bnds[0, 1] + limits[1] - limits[0])
+                            not_in_dim[0]
+                            <= (not_in_bnds[0, 1] + limits[1] - limits[0])
                         )
                     # remove one full rotation to lower bound in first
                     # inequality to assume it is wrapping around
@@ -1588,7 +1628,8 @@ class Grid(SpaceDomain):
                         not_in_dim[0] <= not_in_bnds[0, 1]
                     ):
                         not_in[0] = (
-                            (not_in_bnds[0, 0] - limits[1] + limits[0]) <= not_in_dim[0]
+                            (not_in_bnds[0, 0] - limits[1] + limits[0])
+                            <= not_in_dim[0]
                         ) & (not_in_dim[0] <= not_in_bnds[0, 1])
                     inside[~inside] = not_in
         else:
@@ -1604,15 +1645,22 @@ class Grid(SpaceDomain):
                     # remove one full rotation to lower bound in first
                     # inequality to assume it is wrapping around
                     elif (bnds[0] > dimension) & (dimension <= bnds[1]):
-                        inside = ((bnds[0] - limits[1] + limits[0]) <= dimension) & (
-                            dimension <= bnds[1]
-                        )
+                        inside = (
+                            (bnds[0] - limits[1] + limits[0]) <= dimension
+                        ) & (dimension <= bnds[1])
 
         if not np.all(inside):
             raise RuntimeError(f"{name} coordinates not all in their bounds")
 
     def _set_space(
-        self, dimension, dimension_bounds, name, units, axis, limits, wrap_around
+        self,
+        dimension,
+        dimension_bounds,
+        name,
+        units,
+        axis,
+        limits,
+        wrap_around,
     ):
         """**Examples:**
 
@@ -1680,7 +1728,11 @@ class Grid(SpaceDomain):
         axis_ = self._f.set_construct(cf.DomainAxis(dimension.size))
         self._f.set_construct(
             cf.DimensionCoordinate(
-                properties={"standard_name": name, "units": units, "axis": axis},
+                properties={
+                    "standard_name": name,
+                    "units": units,
+                    "axis": axis,
+                },
                 data=cf.Data(dimension),
                 bounds=cf.Bounds(data=cf.Data(dimension_bounds)),
             ),
@@ -1688,7 +1740,9 @@ class Grid(SpaceDomain):
         )
 
     def _set_dummy_data(self):
-        self._f.set_data(cf.Data(np.zeros(self.shape, dtype_float())), axes=self.axes)
+        self._f.set_data(
+            cf.Data(np.zeros(self.shape, dtype_float())), axes=self.axes
+        )
 
     @classmethod
     def _get_grid_from_extent_and_resolution(
@@ -1780,11 +1834,13 @@ class Grid(SpaceDomain):
         if limits is not None:
             if (dim_start < limits[0]) or (dim_start > limits[1]):
                 raise ValueError(
-                    f"{name} extent start beyond limits " f"[{limits[0]}, {limits[1]}]"
+                    f"{name} extent start beyond limits "
+                    f"[{limits[0]}, {limits[1]}]"
                 )
             if (dim_end < limits[0]) or (dim_end > limits[1]):
                 raise ValueError(
-                    f"{name} extent end beyond limits " f"[{limits[0]}, {limits[1]}]"
+                    f"{name} extent end beyond limits "
+                    f"[{limits[0]}, {limits[1]}]"
                 )
 
         if wrap_around:
@@ -1804,7 +1860,9 @@ class Grid(SpaceDomain):
         atol_ = atol()
         if np.isclose((dim_end - dim_start) % resolution, 0, rtol_, atol_):
             dim_size = (dim_end - dim_start) // resolution
-        elif np.isclose((dim_end - dim_start) % resolution, resolution, rtol_, atol_):
+        elif np.isclose(
+            (dim_end - dim_start) % resolution, resolution, rtol_, atol_
+        ):
             dim_size = ((dim_end - dim_start) // resolution) + 1
         else:
             raise RuntimeError(
@@ -1813,7 +1871,9 @@ class Grid(SpaceDomain):
             )
 
         # determine dimension coordinates
-        dim = (np.arange(dim_size) + 0.5 - np.mean(span)) * resolution + dim_start
+        dim = (
+            np.arange(dim_size) + 0.5 - np.mean(span)
+        ) * resolution + dim_start
 
         # determine dimension coordinate bounds
         dim_bounds = dim.reshape((dim.size, -1)) + np.array(span) * resolution
@@ -1959,12 +2019,14 @@ class Grid(SpaceDomain):
         # check dimension coordinates
         if not field.dim(cls._Y_name, default=False):
             raise RuntimeError(
-                f"{cls.__name__} field missing '{cls._Y_name}' " f"dimension coordinate"
+                f"{cls.__name__} field missing '{cls._Y_name}' "
+                f"dimension coordinate"
             )
         y = field.dim(cls._Y_name)
         if not field.dim(cls._X_name, default=False):
             raise RuntimeError(
-                f"{cls.__name__} field missing '{cls._X_name}' " f"dimension coordinate"
+                f"{cls.__name__} field missing '{cls._X_name}' "
+                f"dimension coordinate"
             )
         x = field.dim(cls._X_name)
         z_array = None
@@ -2046,7 +2108,8 @@ class Grid(SpaceDomain):
             + (
                 [
                     "    Z_bounds {}: {}".format(
-                        self._f.dim("Z").bounds.data.shape, self._f.dim("Z").bounds.data
+                        self._f.dim("Z").bounds.data.shape,
+                        self._f.dim("Z").bounds.data,
                     )
                 ]
                 if has_z
@@ -2054,12 +2117,14 @@ class Grid(SpaceDomain):
             )
             + [
                 "    Y_bounds {}: {}".format(
-                    self._f.dim("Y").bounds.data.shape, self._f.dim("Y").bounds.data
+                    self._f.dim("Y").bounds.data.shape,
+                    self._f.dim("Y").bounds.data,
                 )
             ]
             + [
                 "    X_bounds {}: {}".format(
-                    self._f.dim("X").bounds.data.shape, self._f.dim("X").bounds.data
+                    self._f.dim("X").bounds.data.shape,
+                    self._f.dim("X").bounds.data,
                 )
             ]
             + (
@@ -2083,7 +2148,8 @@ class Grid(SpaceDomain):
             + (
                 [
                     "    flow_direction {}: {}".format(
-                        self._flow_direction.shape, cf.Data(self._flow_direction)
+                        self._flow_direction.shape,
+                        cf.Data(self._flow_direction),
                     )
                 ]
                 if self._flow_direction is not None
@@ -2288,7 +2354,9 @@ class Grid(SpaceDomain):
             )
 
     def subset_and_compare(self, field):
-        error = RuntimeError(f"field not compatible with {self.__class__.__name__}")
+        error = RuntimeError(
+            f"field not compatible with {self.__class__.__name__}"
+        )
 
         # TODO: include Z axis in subset when 3D components are
         #       effectively supported
@@ -2360,7 +2428,9 @@ class Grid(SpaceDomain):
             value = extras[extra]
             if value is not None:
                 setattr(
-                    inst, extra, cf.read(value["files"]).select_field(value["select"])
+                    inst,
+                    extra,
+                    cf.read(value["files"]).select_field(value["select"]),
                 )
 
         return inst
@@ -3618,7 +3688,9 @@ class RotatedLatLonGrid(Grid):
         .. )
         """
         extraction_xyz = cls._extract_xyz_from_field(field)
-        extraction_param = cls._extract_crs_rotation_parameters_from_field(field)
+        extraction_param = cls._extract_crs_rotation_parameters_from_field(
+            field
+        )
 
         return cls(
             grid_latitude=extraction_xyz["Y"],
@@ -3667,7 +3739,9 @@ class RotatedLatLonGrid(Grid):
                 f"{cls.__name__} field coordinate conversion missing "
                 f"property 'grid_north_pole_latitude'"
             )
-        if crs.coordinate_conversion.has_parameter("grid_north_pole_longitude"):
+        if crs.coordinate_conversion.has_parameter(
+            "grid_north_pole_longitude"
+        ):
             grid_north_pole_lon = crs.coordinate_conversion.get_parameter(
                 "grid_north_pole_longitude"
             )
@@ -3676,7 +3750,9 @@ class RotatedLatLonGrid(Grid):
                 f"{cls.__name__} field coordinate conversion missing "
                 f"property 'grid_north_pole_longitude'"
             )
-        if crs.coordinate_conversion.has_parameter("north_pole_grid_longitude"):
+        if crs.coordinate_conversion.has_parameter(
+            "north_pole_grid_longitude"
+        ):
             north_pole_grid_lon = crs.coordinate_conversion.get_parameter(
                 "north_pole_grid_longitude"
             )
@@ -3802,22 +3878,33 @@ class RotatedLatLonGrid(Grid):
         lon_bnds = np.zeros(lon.shape + (4,), lon.dtype)
         lat_bnds = np.zeros(lat.shape + (4,), lat.dtype)
         lon_bnds[..., 0], lat_bnds[..., 0] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 0], self.Y_bounds.array[..., 0])
+            *np.meshgrid(
+                self.X_bounds.array[..., 0], self.Y_bounds.array[..., 0]
+            )
         )
         lon_bnds[..., 1], lat_bnds[..., 1] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 1], self.Y_bounds.array[..., 0])
+            *np.meshgrid(
+                self.X_bounds.array[..., 1], self.Y_bounds.array[..., 0]
+            )
         )
         lon_bnds[..., 2], lat_bnds[..., 2] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 1], self.Y_bounds.array[..., 1])
+            *np.meshgrid(
+                self.X_bounds.array[..., 1], self.Y_bounds.array[..., 1]
+            )
         )
         lon_bnds[..., 3], lat_bnds[..., 3] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 0], self.Y_bounds.array[..., 1])
+            *np.meshgrid(
+                self.X_bounds.array[..., 0], self.Y_bounds.array[..., 1]
+            )
         )
 
         # set constructs
         self._f.set_construct(
             cf.AuxiliaryCoordinate(
-                properties={"standard_name": "latitude", "units": "degrees_north"},
+                properties={
+                    "standard_name": "latitude",
+                    "units": "degrees_north",
+                },
                 data=cf.Data(lat),
                 bounds=cf.Bounds(data=cf.Data(lat_bnds)),
             ),
@@ -3825,7 +3912,10 @@ class RotatedLatLonGrid(Grid):
         )
         self._f.set_construct(
             cf.AuxiliaryCoordinate(
-                properties={"standard_name": "longitude", "units": "degrees_east"},
+                properties={
+                    "standard_name": "longitude",
+                    "units": "degrees_east",
+                },
                 data=cf.Data(lon),
                 bounds=cf.Bounds(data=cf.Data(lon_bnds)),
             ),
@@ -3858,12 +3948,15 @@ class RotatedLatLonGrid(Grid):
         # coordinate_reference.equals() would also check the size of
         # the collections of coordinates, which may be rightfully
         # different if Z is ignored)
-        y_x_z = super(RotatedLatLonGrid, self).is_space_equal_to(field, ignore_z)
+        y_x_z = super(RotatedLatLonGrid, self).is_space_equal_to(
+            field, ignore_z
+        )
 
         conversion = False
         if hasattr(field, "coordinate_reference"):
             if field.coordinate_reference(
-                "grid_mapping_name:" "rotated_latitude_longitude", default=False
+                "grid_mapping_name:" "rotated_latitude_longitude",
+                default=False,
             ):
                 conversion = self._check_crs_rotation_parameters(
                     field.coordinate_reference(
@@ -4519,7 +4612,9 @@ class BritishNationalGrid(Grid):
                 "grid_mapping_name:" "transverse_mercator", default=False
             ):
                 conversion = inst._check_crs_projection_parameters(
-                    field.coordinate_reference("grid_mapping_name:transverse_mercator")
+                    field.coordinate_reference(
+                        "grid_mapping_name:transverse_mercator"
+                    )
                 )
 
         if conversion:
@@ -4535,7 +4630,9 @@ class BritishNationalGrid(Grid):
         """Return the coordinate reference of the `BritishNationalGrid`
         instance as a `cf.CoordinateReference` instance.
         """
-        return self._f.coordinate_reference("grid_mapping_name:transverse_mercator")
+        return self._f.coordinate_reference(
+            "grid_mapping_name:transverse_mercator"
+        )
 
     def _set_crs_parameters(self):
         # WGS84
@@ -4608,7 +4705,9 @@ class BritishNationalGrid(Grid):
         )
 
     def _check_crs_projection_parameters(self, coord_ref):
-        if hasattr(coord_ref, "coordinate_conversion") and hasattr(coord_ref, "datum"):
+        if hasattr(coord_ref, "coordinate_conversion") and hasattr(
+            coord_ref, "datum"
+        ):
             # eliminate 'unit'/'units' parameter as it is not standardised in
             # the CF convention, and the split of the coordinate reference into
             # coordinate conversion/datum is a CF data model artifact so they
@@ -4649,22 +4748,33 @@ class BritishNationalGrid(Grid):
         lon_bnds = np.zeros(lon.shape + (4,), lon.dtype)
         lat_bnds = np.zeros(lat.shape + (4,), lat.dtype)
         lon_bnds[..., 0], lat_bnds[..., 0] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 0], self.Y_bounds.array[..., 0])
+            *np.meshgrid(
+                self.X_bounds.array[..., 0], self.Y_bounds.array[..., 0]
+            )
         )
         lon_bnds[..., 1], lat_bnds[..., 1] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 1], self.Y_bounds.array[..., 0])
+            *np.meshgrid(
+                self.X_bounds.array[..., 1], self.Y_bounds.array[..., 0]
+            )
         )
         lon_bnds[..., 2], lat_bnds[..., 2] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 1], self.Y_bounds.array[..., 1])
+            *np.meshgrid(
+                self.X_bounds.array[..., 1], self.Y_bounds.array[..., 1]
+            )
         )
         lon_bnds[..., 3], lat_bnds[..., 3] = trans.transform(
-            *np.meshgrid(self.X_bounds.array[..., 0], self.Y_bounds.array[..., 1])
+            *np.meshgrid(
+                self.X_bounds.array[..., 0], self.Y_bounds.array[..., 1]
+            )
         )
 
         # set constructs
         self._f.set_construct(
             cf.AuxiliaryCoordinate(
-                properties={"standard_name": "latitude", "units": "degrees_north"},
+                properties={
+                    "standard_name": "latitude",
+                    "units": "degrees_north",
+                },
                 data=cf.Data(lat),
                 bounds=cf.Bounds(data=cf.Data(lat_bnds)),
             ),
@@ -4672,7 +4782,10 @@ class BritishNationalGrid(Grid):
         )
         self._f.set_construct(
             cf.AuxiliaryCoordinate(
-                properties={"standard_name": "longitude", "units": "degrees_east"},
+                properties={
+                    "standard_name": "longitude",
+                    "units": "degrees_east",
+                },
                 data=cf.Data(lon),
                 bounds=cf.Bounds(data=cf.Data(lon_bnds)),
             ),
@@ -4775,7 +4888,9 @@ class BritishNationalGrid(Grid):
         # coordinate_reference.equals() would also check the size of
         # the collections of coordinates, which may be rightfully
         # different if Z is ignored)
-        y_x_z = super(BritishNationalGrid, self).is_space_equal_to(field, ignore_z)
+        y_x_z = super(BritishNationalGrid, self).is_space_equal_to(
+            field, ignore_z
+        )
 
         conversion = False
         if hasattr(field, "coordinate_reference"):
@@ -4783,7 +4898,9 @@ class BritishNationalGrid(Grid):
                 "grid_mapping_name:" "transverse_mercator", default=False
             ):
                 conversion = self._check_crs_projection_parameters(
-                    field.coordinate_reference("grid_mapping_name:transverse_mercator")
+                    field.coordinate_reference(
+                        "grid_mapping_name:transverse_mercator"
+                    )
                 )
 
         return y_x_z and conversion
