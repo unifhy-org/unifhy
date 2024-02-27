@@ -21,6 +21,7 @@ class TestClock(unittest.TestCase):
     dumping = get_dummy_dumping_frequency("async")
 
     # expected switches and indices
+    # surfacelayer
     exp_bool_a = [
         True,
         True,
@@ -41,28 +42,72 @@ class TestClock(unittest.TestCase):
     ]
     exp_idx_a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
+    # subsurface
     exp_bool_b = [
         False,
-        True,
+        False,
         False,
         True,
         False,
-        True,
+        False,
         False,
         True,
         False,
-        True,
+        False,
         False,
         True,
         False,
-        True,
+        False,
         False,
         True,
     ]
-    exp_idx_b = [0, 1, 2, 3, 4, 5, 6, 7]
+    exp_idx_b = [0, 1, 2, 3]
 
+    # openwater
     exp_bool_c = [
         False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+    ]
+    exp_idx_c = [0, 1, 2, 3, 4, 5, 6, 7]
+
+    # nutrientsurfacelayer
+    exp_bool_d = [
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+        False,
+        True,
+    ]
+    exp_idx_d = [0, 1, 2, 3, 4, 5, 6, 7]
+
+    # nutrientsubsurface
+    exp_bool_e = [
+        False,
         False,
         False,
         True,
@@ -79,9 +124,31 @@ class TestClock(unittest.TestCase):
         False,
         True,
     ]
-    exp_idx_c = [0, 1, 2, 3]
+    exp_idx_e = [0, 1, 2, 3]
 
-    exp_bool_d = [
+    # nutrientopenwater
+    exp_bool_f = [
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+    ]
+    exp_idx_f = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+    # dumping
+    exp_bool_g = [
         True,
         False,
         False,
@@ -104,34 +171,34 @@ class TestClock(unittest.TestCase):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": self.td_a,
-                "subsurface": self.td_c,
-                "openwater": self.td_b,
-                "nutrientsurfacelayer": self.td_b,
-                "nutrientsubsurface": self.td_c,
-                "nutrientopenwater": self.td_a,
+                "subsurface": self.td_b,
+                "openwater": self.td_c,
+                "nutrientsurfacelayer": self.td_d,
+                "nutrientsubsurface": self.td_e,
+                "nutrientopenwater": self.td_f,
             },
         )
         clock.set_dumping_frequency(dumping_frequency=self.dumping)
 
         self.assertEqual(clock.switches["surfacelayer"].tolist(), self.exp_bool_a)
-        self.assertEqual(clock.switches["subsurface"].tolist(), self.exp_bool_c)
-        self.assertEqual(clock.switches["openwater"].tolist(), self.exp_bool_b)
+        self.assertEqual(clock.switches["subsurface"].tolist(), self.exp_bool_b)
+        self.assertEqual(clock.switches["openwater"].tolist(), self.exp_bool_c)
         self.assertEqual(
-            clock.switches["nutrientsurfacelayer"].tolist(), self.exp_bool_b
+            clock.switches["nutrientsurfacelayer"].tolist(), self.exp_bool_d
         )
-        self.assertEqual(clock.switches["nutrientsubsurface"].tolist(), self.exp_bool_c)
-        self.assertEqual(clock.switches["nutrientopenwater"].tolist(), self.exp_bool_a)
-        self.assertEqual(clock.switches["dumping"].tolist(), self.exp_bool_d)
+        self.assertEqual(clock.switches["nutrientsubsurface"].tolist(), self.exp_bool_e)
+        self.assertEqual(clock.switches["nutrientopenwater"].tolist(), self.exp_bool_f)
+        self.assertEqual(clock.switches["dumping"].tolist(), self.exp_bool_g)
 
     def test_clock_iteration(self):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": self.td_a,
-                "subsurface": self.td_c,
-                "openwater": self.td_b,
-                "nutrientsurfacelayer": self.td_b,
-                "nutrientsubsurface": self.td_c,
-                "nutrientopenwater": self.td_a,
+                "subsurface": self.td_b,
+                "openwater": self.td_c,
+                "nutrientsurfacelayer": self.td_d,
+                "nutrientsubsurface": self.td_e,
+                "nutrientopenwater": self.td_f,
             }
         )
 
@@ -179,11 +246,11 @@ class TestClock(unittest.TestCase):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": get_dummy_timedomain_different_start("daily"),
-                "subsurface": self.td_c,
-                "openwater": self.td_b,
-                "nutrientsurfacelayer": self.td_b,
-                "nutrientsubsurface": self.td_c,
-                "nutrientopenwater": self.td_a,
+                "subsurface": self.td_b,
+                "openwater": self.td_c,
+                "nutrientsurfacelayer": self.td_d,
+                "nutrientsubsurface": self.td_e,
+                "nutrientopenwater": self.td_f,
             },
         )
 
@@ -192,11 +259,11 @@ class TestClock(unittest.TestCase):
         clock = unifhy._utils.Clock(
             {
                 "surfacelayer": self.td_a,
-                "subsurface": self.td_c,
-                "openwater": self.td_b,
-                "nutrientsurfacelayer": self.td_c,
-                "nutrientsubsurface": self.td_b,
-                "nutrientopenwater": self.td_a,
+                "subsurface": self.td_b,
+                "openwater": self.td_c,
+                "nutrientsurfacelayer": self.td_d,
+                "nutrientsubsurface": self.td_e,
+                "nutrientopenwater": self.td_f,
             },
         )
         clock.set_dumping_frequency(get_dummy_dumping_frequency("same_t"))
