@@ -10,12 +10,18 @@ from ..test_time import (
 
 
 class TestClock(unittest.TestCase):
-    # daily
+    # surfacelayer
     td_a = get_dummy_timedomain("daily")
-    # 2-daily
-    td_b = get_dummy_timedomain("2daily")
-    # 4-daily
-    td_c = get_dummy_timedomain("4daily")
+    # subsurface
+    td_b = get_dummy_timedomain("4daily")
+    # openwater
+    td_c = get_dummy_timedomain("2daily")
+    # nutrientsurfacelayer
+    td_d = get_dummy_timedomain("2daily")
+    # nutrientsubsurface
+    td_e = get_dummy_timedomain("4daily")
+    # nutrientopenwater
+    td_f = get_dummy_timedomain("daily")
 
     # dumping frequency
     dumping = get_dummy_dumping_frequency("async")
