@@ -184,15 +184,15 @@ records = {
         },
         "diff_t": {
             "output_x": {
-                timedelta(days=1): ["point"],
+                timedelta(days=2): ["point"],
                 timedelta(days=8): ["sum", "mean", "minimum", "maximum"],
             },
             # using defaults for methods in 'output_x'
-            "transfer_a": {timedelta(days=1): ["point"]},
-            "transfer_b": {timedelta(days=1): ["point"]},
-            "transfer_h": {timedelta(days=1): ["point"]},
-            "state_a": {timedelta(days=1): ["point"]},
-            "state_b": {timedelta(days=1): ["point"]},
+            "transfer_a": {timedelta(days=2): ["point"]},
+            "transfer_b": {timedelta(days=2): ["point"]},
+            "transfer_h": {timedelta(days=2): ["point"]},
+            "state_a": {timedelta(days=2): ["point"]},
+            "state_b": {timedelta(days=2): ["point"]},
         },
     },
     "nutrientsubsurface": {
@@ -234,15 +234,15 @@ records = {
         },
         "diff_t": {
             "output_x": {
-                timedelta(days=2): ["point"],
+                timedelta(days=1): ["point"],
                 timedelta(days=8): ["sum", "mean", "minimum", "maximum"],
             },
             # using defaults for methods in 'output_x'
-            "output_y": {timedelta(days=2): ["point"]},
-            "transfer_d": {timedelta(days=2): ["point"]},
-            "transfer_f": {timedelta(days=2): ["point"]},
-            "transfer_g": {timedelta(days=2): ["point"]},
-            "state_a": {timedelta(days=2): ["point"]},
+            "output_y": {timedelta(days=1): ["point"]},
+            "transfer_d": {timedelta(days=1): ["point"]},
+            "transfer_f": {timedelta(days=1): ["point"]},
+            "transfer_g": {timedelta(days=1): ["point"]},
+            "state_a": {timedelta(days=1): ["point"]},
         },
     },
 }
