@@ -2,7 +2,7 @@ name: Advanced tests
 
 on:
   pull_request:
-    types: [ready_for_review]
+    types: [ready_for_review, opened]
     branches: [main]
 
 jobs:
