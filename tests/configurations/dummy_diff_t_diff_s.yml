@@ -161,16 +161,16 @@ nutrientsurfacelayer:
     cell_area: null
   dataset:
     driving_d:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: driving_d
     driving_e:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: driving_e
     driving_f:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: driving_f
     ancillary_e:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: ancillary_e
   parameters: null
   constants: null
@@ -249,7 +249,7 @@ nutrientopenwater:
     cell_area: null
   dataset:
     ancillary_d:
-      files: [data/dummy_nutrientopenwater_data_2daily_pt25deg.nc]
+      files: [data/dummy_nutrientopenwater_data_daily_pt25deg.nc]
       select: ancillary_d
   parameters:
     parameter_e: [3, '1']

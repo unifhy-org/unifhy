@@ -142,7 +142,7 @@ nutrientsurfacelayer:
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-17 09:00:00
-    step: timedelta(days=1)
+    step: timedelta(days=2)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
@@ -161,33 +161,33 @@ nutrientsurfacelayer:
     cell_area: null
   dataset:
     driving_d:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: driving_d
     driving_e:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: driving_e
     driving_f:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: driving_f
     ancillary_e:
-      files: [data/dummy_nutrientsurfacelayer_data_daily_1deg.nc]
+      files: [data/dummy_nutrientsurfacelayer_data_2daily_1deg.nc]
       select: ancillary_e
   parameters: null
   constants: null
   records:
     output_x:
-      timedelta(days=1): [instantaneous]
+      timedelta(days=2): [instantaneous]
       timedelta(days=8): [cumulative, average, min, max]
     transfer_a:
-      timedelta(days=1): [instantaneous]
+      timedelta(days=2): [instantaneous]
     transfer_b:
-      timedelta(days=1): [instantaneous]
+      timedelta(days=2): [instantaneous]
     transfer_h:
-      timedelta(days=1): [instantaneous]
+      timedelta(days=2): [instantaneous]
     state_a:
-      timedelta(days=1): [instantaneous]
+      timedelta(days=2): [instantaneous]
     state_b:
-      timedelta(days=1): [instantaneous]
+      timedelta(days=2): [instantaneous]
 nutrientsubsurface:
   module: tests.components.nutrientsubsurface.dummy
   class: Dummy
@@ -234,7 +234,7 @@ nutrientopenwater:
   timedomain:
     start: 2019-01-01 09:00:00
     end: 2019-01-17 09:00:00
-    step: timedelta(days=2)
+    step: timedelta(days=1)
     units: days since 2019-01-01 09:00:00Z
     calendar: gregorian
   spacedomain:
@@ -249,7 +249,7 @@ nutrientopenwater:
     cell_area: null
   dataset:
     ancillary_d:
-      files: [data/dummy_nutrientopenwater_data_2daily_1deg.nc]
+      files: [data/dummy_nutrientopenwater_data_daily_1deg.nc]
       select: ancillary_d
   parameters:
     parameter_e: [3, '1']
@@ -257,15 +257,15 @@ nutrientopenwater:
     constant_d: [3, '1']
   records:
     output_x:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
       timedelta(days=8): [sum, mean, minimum, maximum]
     output_y:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     transfer_d:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     transfer_f:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     transfer_g:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
     state_a:
-      timedelta(days=2): [point]
+      timedelta(days=1): [point]
