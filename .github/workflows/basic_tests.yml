@@ -2,8 +2,8 @@ name: Basic tests
 
 on:
   pull_request:
-    types: [ready_for_review]
-    branches: [dev]
+    types: [ready_for_review, opened]
+    branches: [dev, main]
 
 jobs:
 
