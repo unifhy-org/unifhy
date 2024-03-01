@@ -26,7 +26,7 @@ void initialise_(int ny, int nx,
 
 void run_(int ny, int nx,
           // to exchanger
-          double *transfer_b, double *transfer_e, double *transfer_p
+          double *transfer_b, double *transfer_e, double *transfer_p,
           // component ancillary data
           double *ancillary_d,
           // component parameters
