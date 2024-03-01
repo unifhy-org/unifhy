@@ -2,7 +2,7 @@ subroutine initialise(y, x, state_a_m1, state_b_m1)
     implicit none
 
     ! spaceshape
-    parameter, intent(in) :: y, x
+    integer, intent(in) :: y, x
     ! component states
     real(kind=8), intent(inout), dimension(y, x) :: state_a_m1, state_b_m1
 
@@ -22,7 +22,7 @@ subroutine run(y, x, &
     implicit none
 
     ! spaceshape
-    parameter, intent(in) :: y, x
+    integer, intent(in) :: y, x
     ! from exchanger
     real(kind=8), intent(in), dimension(y, x) :: &
         transfer_k, transfer_l, transfer_n, transfer_h
