@@ -35,8 +35,8 @@ def run(cnp.ndarray[cnp.npy_float64, ndim=2] transfer_c,
         cnp.ndarray[cnp.npy_float64, ndim=2] state_b_m1,
         cnp.ndarray[cnp.npy_float64, ndim=2] state_b_0):
 
-    cdef int ny = transfer_k.shape[0]
-    cdef int nx = transfer_k.shape[1]
+    cdef int ny = transfer_c.shape[0]
+    cdef int nx = transfer_c.shape[1]
 
     cdef cnp.ndarray[cnp.npy_float64, ndim=2] transfer_a = np.zeros(
         (ny, nx), dtype=np.float64)
