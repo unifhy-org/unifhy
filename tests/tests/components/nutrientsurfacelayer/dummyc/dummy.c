@@ -47,7 +47,7 @@ void run_(int ny, int nx,
         + (ancillary_e[jk] * state_a_0[jk]);
       transfer_b[jk] = driving_d[jk] + driving_e[jk] + driving_f[jk]
         + transfer_c[jk] + state_b_0[jk];
-      transfer_h[jk] = state_a_0[jk] * ancillary_e[jk]
+      transfer_h[jk] = state_a_0[jk] * ancillary_e[jk];
       // compute outputs
       output_x[jk] = driving_d[jk] + driving_e[jk] + driving_f[jk]
         + transfer_f[jk] - state_a_0[jk];
