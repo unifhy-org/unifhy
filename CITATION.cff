@@ -1,0 +1,48 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Unified Framework for Hydrology
+message: ' If you use this software, please cite it using the metadata from this file (CITATION.cff)'
+type: software
+authors:
+  - given-names: Matt James
+    family-names: Brown
+    email: matbro@ceh.ac.uk
+    affiliation: UKCEH
+    orcid: 'https://orcid.org/0000-0003-1127-0279'
+  - given-names: Thibault
+    family-names: Hallouin
+    affiliation: INRAE
+    orcid: 'https://orcid.org/0000-0003-0144-2989'
+  - given-names: Richard J.
+    family-names: Ellis
+    email: rjel@ceh.ac.uk
+    affiliation: UKCEH
+    orcid: 'https://orcid.org/0000-0001-9667-7478'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.4726695
+    description: Latest-version DOI
+abstract: >-
+  The Python package unifhy (Unified Framework for
+  Hydrology) is a hydrological modelling framework which
+  combines interchangeable modelling components for the
+  surface layer, subsurface, and open water parts of the
+  terrestrial water cycle. By two-way coupling these three
+  components, the framework provides a fully functional
+  model for simulating the terrestrial water cycle. It is
+  designed to foster collaborations between land surface,
+  hydrological, and groundwater modelling communities by
+  structuring their interactions around standardised
+  interfaces between the components.
+keywords:
+  - modelling
+  - framework
+  - modelling framework
+  - model framework
+  - hydrology
+  - unifhy
+  - integrated modelling
+  - coupled modelling
+license: BSD-3-Clause
