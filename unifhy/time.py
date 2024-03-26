@@ -12,27 +12,27 @@ import cfunits
 # note: 'none' calendar is not supported, unlike CF-convention, because you
 # cannot yield a datetime_array from it
 _supported_calendar_mapping = {
-    'standard': 'gregorian',
-    'gregorian': 'gregorian',
-    'proleptic_gregorian': 'proleptic_gregorian',
-    '365_day': '365_day',
-    'noleap': '365_day',
-    '366_day': '366_day',
-    'all_leap': '366_day',
-    '360_day': '360_day',
-    'julian': 'julian'
+    "standard": "gregorian",
+    "gregorian": "gregorian",
+    "proleptic_gregorian": "proleptic_gregorian",
+    "365_day": "365_day",
+    "noleap": "365_day",
+    "366_day": "366_day",
+    "all_leap": "366_day",
+    "360_day": "360_day",
+    "julian": "julian",
 }
 
 _calendar_to_cftime_datetime = {
-    'standard': cftime.DatetimeGregorian,
-    'gregorian': cftime.DatetimeGregorian,
-    'proleptic_gregorian': cftime.DatetimeProlepticGregorian,
-    '365_day': cftime.DatetimeNoLeap,
-    'noleap': cftime.DatetimeNoLeap,
-    '366_day': cftime.DatetimeAllLeap,
-    'all_leap': cftime.DatetimeAllLeap,
-    '360_day': cftime.Datetime360Day,
-    'julian': cftime.DatetimeJulian
+    "standard": cftime.DatetimeGregorian,
+    "gregorian": cftime.DatetimeGregorian,
+    "proleptic_gregorian": cftime.DatetimeProlepticGregorian,
+    "365_day": cftime.DatetimeNoLeap,
+    "noleap": cftime.DatetimeNoLeap,
+    "366_day": cftime.DatetimeAllLeap,
+    "all_leap": cftime.DatetimeAllLeap,
+    "360_day": cftime.Datetime360Day,
+    "julian": cftime.DatetimeJulian,
 }
 
 
@@ -40,8 +40,9 @@ class TimeDomain(object):
     """TimeDomain characterises a temporal dimension that is needed by a
     `Component`.
     """
+
     _epoch = datetime(1970, 1, 1, 0, 0, 0, 0)
-    _calendar = 'gregorian'
+    _calendar = "gregorian"
     _units = f"seconds since {_epoch.strftime('%Y-%m-%d %H:%M:%SZ')}"
     _Units = cfunits.Units(_units, calendar=_calendar)
     _timestep_span = (0, 1)
@@ -121,11 +122,14 @@ class TimeDomain(object):
         axis = self._f.set_construct(cf.DomainAxis(size=0))
         self._f.set_construct(
             cf.DimensionCoordinate(
-                properties={'standard_name': 'time',
-                            'units': units.units,
-                            'calendar': units.calendar,
-                            'axis': 'T'}),
-            axes=axis
+                properties={
+                    "standard_name": "time",
+                    "units": units.units,
+                    "calendar": units.calendar,
+                    "axis": "T",
+                }
+            ),
+            axes=axis,
         )
 
         # set timestamps to construct
@@ -136,36 +140,38 @@ class TimeDomain(object):
         """Return the time series of the TimeDomain
         instance as a `cf.Data` instance.
         """
-        return self._f.construct('time').data
+        return self._f.construct("time").data
 
     @property
     def bounds(self):
         """Return the bounds of the time series of the TimeDomain
         instance as a `cf.Data` instance.
         """
-        return self._f.construct('time').bounds.data
+        return self._f.construct("time").bounds.data
 
     @property
     def units(self):
         """Return the units of the time series of the TimeDomain
         instance as a `str`.
         """
-        return self._f.construct('time').units
+        return self._f.construct("time").units
 
     @property
     def calendar(self):
         """Return the calendar of the time series of the TimeDomain
         instance as a `str`.
         """
-        return self._f.construct('time').calendar
+        return self._f.construct("time").calendar
 
     @property
     def period(self):
         """Return the period that the TimeDomain is covering as a
         `datetime.timedelta`.
         """
-        return (self._f.construct('time').bounds.datetime_array[-1, -1]
-                - self._f.construct('time').bounds.datetime_array[0, 0])
+        return (
+            self._f.construct("time").bounds.datetime_array[-1, -1]
+            - self._f.construct("time").bounds.datetime_array[0, 0]
+        )
 
     @property
     def timedelta(self):
@@ -174,8 +180,8 @@ class TimeDomain(object):
         instance.
         """
         return (
-                self._f.construct('time').bounds.datetime_array[0, 1]
-                - self._f.construct('time').bounds.datetime_array[0, 0]
+            self._f.construct("time").bounds.datetime_array[0, 1]
+            - self._f.construct("time").bounds.datetime_array[0, 0]
         )
 
     def _get_cf_units(self, units, calendar):
@@ -183,16 +189,16 @@ class TimeDomain(object):
         calendar = self._calendar if calendar is None else calendar
         # check that calendar is a classic one for CF-convention
         if calendar.lower() not in _supported_calendar_mapping:
-            raise ValueError(
-                f"calendar '{calendar}' is not supported"
-            )
+            raise ValueError(f"calendar '{calendar}' is not supported")
 
         # get a cf.Units instance from units and calendar
         units = cfunits.Units(units, calendar=calendar)
 
         if not (units.isvalid and units.isreftime):
-            raise ValueError("reference time not valid, format 'unit_of_time "
-                             "since reference_datetime' expected")
+            raise ValueError(
+                "reference time not valid, format 'unit_of_time "
+                "since reference_datetime' expected"
+            )
 
         return units
 
@@ -200,24 +206,18 @@ class TimeDomain(object):
     def _check_dimension_regularity(dimension):
         time_diff = np.diff(dimension)
         if time_diff.size == 0:
-            raise RuntimeError("timestamps sequence must contain 2 items "
-                               "or more")
+            raise RuntimeError("timestamps sequence must contain 2 items " "or more")
         if np.amin(time_diff) != np.amax(time_diff):
-            raise RuntimeError("timestep in sequence not constant "
-                               "across period")
+            raise RuntimeError("timestep in sequence not constant " "across period")
 
     def _set_time(self, timestamps, span):
         # convert timestamps to np.array if not already
         timestamps = np.asarray(timestamps)
         if not timestamps.ndim == 1:
-            raise ValueError(
-                "timestamps array provided is not uni-dimensional"
-            )
+            raise ValueError("timestamps array provided is not uni-dimensional")
 
         if not np.issubdtype(timestamps.dtype, np.number):
-            raise TypeError(
-                "items in timestamps array must be numerical"
-            )
+            raise TypeError("items in timestamps array must be numerical")
 
         # check that the timestamps is regularly spaced
         self._check_dimension_regularity(timestamps)
@@ -234,34 +234,34 @@ class TimeDomain(object):
         bounds[:, 1] = timestamps + span[1] * delta
 
         # add the timestamps
-        self._f.domain_axis('time').set_size(len(timestamps))
-        self._f.construct('time').set_data(cf.Data(timestamps))
-        self._f.construct('time').set_bounds(cf.Bounds(data=cf.Data(bounds)))
+        self._f.domain_axis("time").set_size(len(timestamps))
+        self._f.construct("time").set_data(cf.Data(timestamps))
+        self._f.construct("time").set_bounds(cf.Bounds(data=cf.Data(bounds)))
 
     @classmethod
     def _extract_time_from_field(cls, field):
         # check construct
-        if not field.has_construct('time'):
+        if not field.has_construct("time"):
             raise RuntimeError("no 'time' construct found in field")
-        t = field.construct('time')
+        t = field.construct("time")
         cls._check_dimension_regularity(t.array)
-        if not field.construct('time').has_bounds():
+        if not field.construct("time").has_bounds():
             raise RuntimeError("no 'time' bounds found in field")
-        t_bnds = field.construct('time').bounds
+        t_bnds = field.construct("time").bounds
         cls._check_dimension_regularity(t_bnds.array[:, 0])
         cls._check_dimension_regularity(t_bnds.array[:, 1])
 
-        if not t.has_property('units'):
+        if not t.has_property("units"):
             raise RuntimeError("no 'units' property in field")
-        if not t.has_property('calendar'):
+        if not t.has_property("calendar"):
             raise RuntimeError("no 'calendar' property in field")
 
         return {
-            'start': t_bnds.datetime_array[0, 0],
-            'end': t_bnds.datetime_array[-1, -1],
-            'step': t.datetime_array[1] - t.datetime_array[0],
-            'units': t.units,
-            'calendar': t.calendar
+            "start": t_bnds.datetime_array[0, 0],
+            "end": t_bnds.datetime_array[-1, -1],
+            "step": t.datetime_array[1] - t.datetime_array[0],
+            "units": t.units,
+            "calendar": t.calendar,
         }
 
     def __str__(self):
@@ -302,9 +302,13 @@ class TimeDomain(object):
 
         return not self.__eq__(other)
 
-    def is_time_equal_to(self, field, ignore_bounds=True,
-                         _leading_truncation_idx=None,
-                         _trailing_truncation_idx=None):
+    def is_time_equal_to(
+        self,
+        field,
+        ignore_bounds=True,
+        _leading_truncation_idx=None,
+        _trailing_truncation_idx=None,
+    ):
         """Compare equality between the TimeDomain and the 'time'
         dimension  coordinate in a `cf.Field`.
 
@@ -324,30 +328,27 @@ class TimeDomain(object):
         :Returns: `bool`
         """
         # check that the field has a time construct
-        if field.dim('time', default=None) is None:
+        if field.dim("time", default=None) is None:
             return RuntimeError(
                 f"{field.__class__.__name__} cannot be compared to "
                 f"{self.__class__.__name__} because no time construct"
             )
 
         # check that field calendar is a classic one for CF-convention
-        if hasattr(field.dim('time'), 'calendar'):
-            if (field.dim('time').calendar.lower()
-                    not in _supported_calendar_mapping):
+        if hasattr(field.dim("time"), "calendar"):
+            if field.dim("time").calendar.lower() not in _supported_calendar_mapping:
                 raise ValueError(
                     f"{field.__class__.__name__} calendar "
                     f"'{field.dim('time').calendar}' is not supported"
                 )
         else:
-            field.dim('time').calendar = 'gregorian'
+            field.dim("time").calendar = "gregorian"
 
         # map alternative names for given calendar to same name
         self_calendar = _supported_calendar_mapping[
-            self._f.dim('time').calendar.lower()
+            self._f.dim("time").calendar.lower()
         ]
-        field_calendar = _supported_calendar_mapping[
-            field.dim('time').calendar.lower()
-        ]
+        field_calendar = _supported_calendar_mapping[field.dim("time").calendar.lower()]
 
         # check that the two instances have the same calendar
         if not self_calendar == field_calendar:
@@ -357,12 +358,11 @@ class TimeDomain(object):
             )
 
         # check that the two instances have the same time series length
-        leading_size = (_trailing_truncation_idx if _leading_truncation_idx
-                        else 0)
-        trailing_size = (-_trailing_truncation_idx if _trailing_truncation_idx
-                         else 0)
-        if not (self.time.size - leading_size - trailing_size ==
-                field.dim('time').data.size):
+        leading_size = _trailing_truncation_idx if _leading_truncation_idx else 0
+        trailing_size = -_trailing_truncation_idx if _trailing_truncation_idx else 0
+        if not (
+            self.time.size - leading_size - trailing_size == field.dim("time").data.size
+        ):
             return False
 
         # check that the time data and time bounds data are equal
@@ -370,16 +370,16 @@ class TimeDomain(object):
         # convert data with different reftime as long as they are in
         # the same calendar)
         time_match = (
-            self.time[_leading_truncation_idx:_trailing_truncation_idx] ==
-            field.dim('time').data
+            self.time[_leading_truncation_idx:_trailing_truncation_idx]
+            == field.dim("time").data
         )
 
         if ignore_bounds:
             bounds_match = cf.Data([True])
         else:
             bounds_match = (
-                self.bounds[_leading_truncation_idx:_trailing_truncation_idx] ==
-                field.dim('time').bounds.data
+                self.bounds[_leading_truncation_idx:_trailing_truncation_idx]
+                == field.dim("time").bounds.data
             )
 
         # use a trick by checking the minimum value of the boolean arrays
@@ -416,15 +416,11 @@ class TimeDomain(object):
             )
 
     def subset_and_compare(self, field):
-        error = RuntimeError(
-            f"field not compatible with {self.__class__.__name__}"
-        )
+        error = RuntimeError(f"field not compatible with {self.__class__.__name__}")
 
         # try to subset in time
-        kwargs = {
-            'time': cf.wi(*self.time.datetime_array[[0, -1]])
-        }
-        if field.subspace('test', **kwargs):
+        kwargs = {"time": cf.wi(*self.time.datetime_array[[0, -1]])}
+        if field.subspace("test", **kwargs):
             field_subset = field.subspace(**kwargs)
         else:
             raise error
@@ -528,11 +524,10 @@ class TimeDomain(object):
         # convert datetimes to np.array if not already one
         datetimes = np.asarray(datetimes)
         # check that datetimes sequence contains datetime objects
-        if (not np.issubdtype(datetimes.dtype, np.dtype(datetime)) and
-                not np.issubdtype(datetimes.dtype, np.dtype('datetime64'))):
-            raise TypeError(
-                "datetime sequence given does not contain datetime objects"
-            )
+        if not np.issubdtype(datetimes.dtype, np.dtype(datetime)) and not np.issubdtype(
+            datetimes.dtype, np.dtype("datetime64")
+        ):
+            raise TypeError("datetime sequence given does not contain datetime objects")
         # set units to default if not given
         if units is None:
             units = cls._units
@@ -684,22 +679,36 @@ class TimeDomain(object):
         # convert datetimes to expected calendar before generating sequence
         if calendar is not None:
             start = _calendar_to_cftime_datetime[calendar](
-                start.year, start.month, start.day,
-                start.hour, start.minute, start.second, start.microsecond)
+                start.year,
+                start.month,
+                start.day,
+                start.hour,
+                start.minute,
+                start.second,
+                start.microsecond,
+            )
             end = _calendar_to_cftime_datetime[calendar](
-                end.year, end.month, end.day,
-                end.hour, end.minute, end.second, end.microsecond)
+                end.year,
+                end.month,
+                end.day,
+                end.hour,
+                end.minute,
+                end.second,
+                end.microsecond,
+            )
 
         # determine whole number of timesteps to loop over
-        (divisor, remainder) = divmod(int((end - start).total_seconds()),
-                                      int(step.total_seconds()))
+        (divisor, remainder) = divmod(
+            int((end - start).total_seconds()), int(step.total_seconds())
+        )
 
         # generate sequence of datetimes
-        datetimes = [start + timedelta(seconds=td * step.total_seconds())
-                     for td in range(divisor + 1)]
+        datetimes = [
+            start + timedelta(seconds=td * step.total_seconds())
+            for td in range(divisor + 1)
+        ]
 
-        return cls.from_datetime_sequence(np.asarray(datetimes),
-                                          units, calendar)
+        return cls.from_datetime_sequence(np.asarray(datetimes), units, calendar)
 
     @classmethod
     def from_field(cls, field):
@@ -766,25 +775,25 @@ class TimeDomain(object):
 
     @classmethod
     def from_config(cls, cfg):
-        for required_key in ['start', 'end', 'step']:
+        for required_key in ["start", "end", "step"]:
             if required_key not in cfg:
                 raise KeyError(
                     f"no {required_key} property of time found in configuration"
                 )
         return cls.from_start_end_step(
-            start=datetime.strptime(str(cfg['start']), '%Y-%m-%d %H:%M:%S'),
-            end=datetime.strptime(str(cfg['end']), '%Y-%m-%d %H:%M:%S'),
-            step=cfg['step'],
-            units=cfg['units'] if 'units' in cfg else None,
-            calendar=cfg['calendar'] if 'calendar' in cfg else None
+            start=datetime.strptime(str(cfg["start"]), "%Y-%m-%d %H:%M:%S"),
+            end=datetime.strptime(str(cfg["end"]), "%Y-%m-%d %H:%M:%S"),
+            step=cfg["step"],
+            units=cfg["units"] if "units" in cfg else None,
+            calendar=cfg["calendar"] if "calendar" in cfg else None,
         )
 
     def to_config(self):
         t_bnds = self.bounds.datetime_array
         return {
-            'start': t_bnds[0, 0].strftime('%Y-%m-%d %H:%M:%S'),
-            'end': t_bnds[-1, -1].strftime('%Y-%m-%d %H:%M:%S'),
-            'step': self.timedelta,
-            'units': self.units,
-            'calendar': self.calendar
+            "start": t_bnds[0, 0].strftime("%Y-%m-%d %H:%M:%S"),
+            "end": t_bnds[-1, -1].strftime("%Y-%m-%d %H:%M:%S"),
+            "step": self.timedelta,
+            "units": self.units,
+            "calendar": self.calendar,
         }

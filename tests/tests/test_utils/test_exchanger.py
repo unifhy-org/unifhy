@@ -4,7 +4,7 @@ import doctest
 import unifhy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 

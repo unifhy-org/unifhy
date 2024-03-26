@@ -3,7 +3,6 @@ from ..space import LatLonGrid
 
 
 class Compass(object):
-
     def __init__(self, spacedomains):
         self.categories = tuple(spacedomains)
         self.spacedomains = spacedomains
