@@ -34,8 +34,8 @@ subroutine run(y, x, &
     ! component constants
     integer, intent(in) :: constant_d
     ! component states
-    real(kind=8), intent(in), dimension(y, x, 4, constant_c) :: state_a_m1
-    real(kind=8), intent(inout), dimension(y, x, 4, constant_c) :: state_a_0
+    real(kind=8), intent(in), dimension(y, x, 4, constant_d) :: state_a_m1
+    real(kind=8), intent(inout), dimension(y, x, 4, constant_d) :: state_a_0
     ! to exchanger
     real(kind=8), intent(out), dimension(y, x) :: &
         transfer_d, transfer_f, transfer_g
