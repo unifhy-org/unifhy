@@ -1,4 +1,4 @@
-cf-python>=3.11.0
+cf-python>=3.16.2
 cftime
 cfunits
 esmpy

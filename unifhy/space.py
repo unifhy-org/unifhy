@@ -1066,9 +1066,11 @@ class Grid(SpaceDomain):
 
     def _compute_cell_area(self):
         # make use of cf-python to retrieve ESMF objects
-        operator = self._f.regrids(self._f, "conservative", return_operator=True)
+        operator = self._f.regrids(
+            self._f, "conservative", return_esmpy_regrid_operator=True
+        )
         # retrieve ESMF source (arbitrarily chosen) field
-        esmf_field = operator.regrid.srcfield
+        esmf_field = operator.srcfield
 
         # let ESMF compute the cell area
         esmf_field.get_area()
