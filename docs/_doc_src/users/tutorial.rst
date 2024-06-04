@@ -442,8 +442,8 @@ a configured model.
        surfacelayer: unifhycontrib.artemis.surfacelayer
        subsurface: unifhycontrib.artemis.subsurface
        openwater: unifhycontrib.rfm.openwater
-       nutrientsurfacelayer: unifhy.component.NullComponent,
-       nutrientsubsurface: unifhy.component.DataComponent,
+       nutrientsurfacelayer: unifhy.component,
+       nutrientsubsurface: unifhy.component,
        nutrientopenwater: unifhycontrib.ltls.nutrientopenwater
    )
 
