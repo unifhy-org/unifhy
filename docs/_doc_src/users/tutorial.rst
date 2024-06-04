@@ -10,7 +10,7 @@ This section showcases the basic usage of the modelling framework `unifhy`
 .. important::
 
    To run this tutorial, you need to install the framework and the relevant
-   science components to be used (here Artemis and RFM). To do so, run the
+   science components to be used (here Artemis, RFM and LTLS). To do so, run the
    following commands:
 
    .. code-block:: console
