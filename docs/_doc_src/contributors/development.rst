@@ -16,10 +16,11 @@ You can follow the steps below to develop your component(s):
 Create your science component by subclassing a generic framework component
 --------------------------------------------------------------------------
 
-In the modelling framework, the terrestrial water cycle is divided into
-three components, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
-and `OpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
-three framework components to create subclasses from to start your
+In the modelling framework, the terrestrial water and nutrient cycles are divided into
+three components each, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
+ `OpenWaterComponent`, `NutrientSurfaceLayerComponent`, `NutrientSubSurfaceComponent` 
+and `NutrientOpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
+six framework components to create subclasses from to start your
 science component.
 
 Each component features a fixed interface (i.e. a pre-defined set of
