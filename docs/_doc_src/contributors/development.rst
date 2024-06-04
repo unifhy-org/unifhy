@@ -55,10 +55,38 @@ component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
    8   total_water_area_fraction                       1
    9   water_evaporation_flux_from_open_water          |kg m-2 s-1|
    10  direct_throughfall_flux                         |kg m-2 s-1|
-   11  surface_runoff_flux_delivered_to_rivers         |kg m-2 s-1|
+   11  surface_runoff_flux_delivered_to_rivers         |kg m-2 s-1]
    12  net_groundwater_flux_to_rivers                  |kg m-2 s-1|
    13  open_water_area_fraction                        1
    14  open_water_surface_height                       m
+   15  mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff
+   16  mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff
+   17  mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff
+   18  mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff
+   19  mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff
+   20  mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff
+   21  mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff
+   22  mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff
+   23  mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff
+   24  mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff
+   25  mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff
+   26  mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff
+   27  mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff
+   28  mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff
+   29  mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff
+   30  mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff
+   31  mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff
+   32  mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff
+   33  mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition
+   34  mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition
+   35  mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition
+   36  mass_concentration_of_carbon_dioxide_in_air
+   37  water_volume_in_surface_routing_channels
+   38  water_volume_in_subsurface_routing_channels
+   39  outgoing_water_volume_transport_out_of_subsurface_cell
+   40  outgoing_water_volume_transport_out_of_surface_cell
+   41  upward_volume_transport_of_liquid_water_between_subsurface_and_surface
+   42  return_flow_fraction
    ==  ==============================================  ========================
 
 .. |kg m-2 s-1| replace:: kg m\ :sup:`-2` s\ :sup:`-1`
