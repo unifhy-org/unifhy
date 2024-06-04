@@ -22,6 +22,7 @@ This section showcases the basic usage of the modelling framework `unifhy`
       :caption: Installing the relevant science components.
 
       $ pip install unifhycontrib-artemis unifhycontrib-rfm
+      $ pip install git+ssh://git@github.com/unifhy-org/unifhycontrib-ltls.git@dev
 
    More details can be found in the :doc:`installation <installation>` section.
 
