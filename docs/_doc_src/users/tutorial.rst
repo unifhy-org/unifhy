@@ -333,6 +333,7 @@ water and nutrients cycles.
    :caption: Instantiating a `Model`.
 
    >>> import unifhycontrib.rfm
+   >>> import unifhycontrib.ltls
    >>> model = unifhy.Model(
    ...     identifier='tutorial',
    ...     config_directory='configurations',
