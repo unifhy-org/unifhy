@@ -28,7 +28,10 @@ transfers of information with the other components of the framework):
 inward information (variables that are given to the component, i.e.
 "inwards"), and outward information (variables that are computed by the
 component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
-:ref:`Tab. 1<tab_transfers>`.
+:ref:`Tab. 1<tab_transfers>`, however components can pick and choose 
+which of the inwards to accept and which of the outwards to produce,
+provided components within the Model do not require inwards that
+are not produced.
 
 .. _fig_transfers:
 .. figure:: ../../_doc_img/framework_detailed_transfers.svg
@@ -91,10 +94,8 @@ component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
 
 .. |kg m-2 s-1| replace:: kg m\ :sup:`-2` s\ :sup:`-1`
 
-For component contributions to be fully `unifhy`-compliant, they need to
-comply with this fixed interface. If your science component contribution
-is overlapping several components, it requires to be refactored into the
-relevant number of components.
+If your science component contribution is overlapping several components, 
+it is required to be refactored into the relevant number of components.
 
 Contributions must be implemented as Python classes, and more specifically
 as subclasses of one of the three framework components. This way, the
