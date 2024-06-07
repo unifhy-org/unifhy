@@ -5,9 +5,10 @@ Science Library
 ===============
 
 The modularity of `unifhy` allows for different combinations of
-components to be used to close the terrestrial water cycle. Below is a
+components to be used to close the terrestrial water and nutrient cycles. Below is a
 list of the alternative science (i.e. alternative processes) that can
-be used for each compartment of the terrestrial water cycle.
+be used for each compartment of the terrestrial and nutrient water cycles.
+Please note that the components for the nutrient cycle are still in development.
 
 .. toctree::
    :maxdepth: 2
