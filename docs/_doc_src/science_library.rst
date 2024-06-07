@@ -25,5 +25,20 @@ be used for each compartment of the terrestrial water cycle.
 
    science/openwater.rst
 
+.. toctree::
+   :maxdepth: 2
+
+   science/nutrientsurfacelayer.rst
+
+.. toctree::
+   :maxdepth: 2
+
+   science/nutrientsubsurface.rst
+
+.. toctree::
+   :maxdepth: 2
+
+   science/nutrientopenwater.rst
+
 If you wish to develop your own science components, please refer to the
 :doc:`contributors`.
