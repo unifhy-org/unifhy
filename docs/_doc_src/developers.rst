@@ -61,3 +61,6 @@ Each transfer defined within a component's `_inwards_info` and `_outwards_info` 
 .. note::
 
 Remember adding a transfer between Components in the *framework* means that any Components developed for the framework now have the option to receive and make use of the transfer variable if they are sub-classing the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any Components developed for the NutrientSurfaceLayer could make use of `transfer_x` and any Components developed for the SurfaceLayer could produce `transfer_x`. Both Components would have to be developed to build a Model that actually made use of the new transfer. 
+
+Adding new Components to the framework
+======================================
