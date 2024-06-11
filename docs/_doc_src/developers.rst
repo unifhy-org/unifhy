@@ -60,7 +60,19 @@ Each transfer defined within a component's `_inwards_info` and `_outwards_info` 
 
 .. note::
 
-Remember adding a transfer between Components in the *framework* means that any Components developed for the framework now have the option to receive and make use of the transfer variable if they are sub-classing the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any Components developed for the NutrientSurfaceLayer could make use of `transfer_x` and any Components developed for the SurfaceLayer could produce `transfer_x`. Both Components would have to be developed to build a Model that actually made use of the new transfer. 
+   Remember adding a transfer between Components in the *framework* means that any Components developed for the framework now have the option to receive and make use of the transfer variable if they are sub-classing the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any Components developed for the NutrientSurfaceLayer could make use of `transfer_x` and any Components developed for the SurfaceLayer could produce `transfer_x`. Both Components would have to be developed to build a Model that actually made use of the new transfer. 
 
 Adding new Components to the framework
 ======================================
+
+.. note::
+   By adding a new Component to the *framework* you are creating the space for others to put in the science that represents a new part of the Earth-System that UnifHy has heretofore not accounted for and has had to be input to components via in*puts* i.e. data files instead of dynamically modelled variables. 
+   
+
+Adding new Components to the framework is a more complicated business. 
+The broad strokes are:
+- Decide which area of the Earth-System the Component will represent and what transfers it will need from other Components and provide to other Components
+- Add the Component to unifhy/component.py, subclassing the Component class and following the structure and syntax of the existing Components, and the inwards and outwards transfers to _inwards_info and _outwards_info respectively
+- Add the new transfers provided by the new Component, described by the new Component's _outwards_info, to the relevant other Components' _inward_info
+- Adapt unifhy.Model to accept the extra Component(s)
+- Update the unit tests to handle the extra Component(s). This involves creating dummy Component version(s) of the new dummy Component(s) and calculating the values of all the transfers and records for various configurations of the model when all the Components are run together. There is a tool for this here. 
