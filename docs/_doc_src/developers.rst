@@ -89,50 +89,57 @@ More detail for the steps:
    :caption: Components have the following structure, and should be added before the `DataComponent` class
 
    class ComponentNameHere(Component, metaclass=abc.ABCMeta):
-    """ Component description here
-    """
+       """ Component description here
+       """
+   
+       _category = "componentnamehere"
+       _inwards_info = { # transfers accepted by this component
+           "transfer_a": {
+               "units": "1", # units of transfer
+               "from": "_category of component the transfer is coming from",
+               "method": "mean",
+           },
+           "transfer_b": {
+               "units": "1",
+               "from": "_category of component the transfer is coming from",
+               "method": "mean",
+            },
+            ...
+       }
+       _outwards_info = { # transfers produced by this component
+           "transfer_c": {
+               "units": "kg m-2 s-1",
+               "to": ["_category of component the transfer can be going to",
+                      "_category of another component the transfer can be going to"],
+               "method": "mean",
+           },
+           "transfer_d": {
+               "units": "kg m-2 s-1",
+               "to": ["_category of component the transfer can be going to"],
+               "method": "mean",
+           },
+           ...
+       }
+   
+       # if not specified, assume all inwards are required
+       _inwards = tuple(_inwards_info)
+       # if not specified, assume all outwards are produced
+       _outwards = tuple(_outwards_info)
 
-    _category = "componentnamehere"
-    _inwards_info = { # transfers accepted by this component
-        "transfer_a": {
-            "units": "1", # units of transfer
-            "from": "_category of component the transfer is coming from",
-            "method": "mean",
-        },
-        "transfer_b": {
-            "units": "1",
-            "from": "_category of component the transfer is coming from",
-            "method": "mean",
-         },
-         ...
-    }
-    _outwards_info = { # transfers produced by this component
-        "transfer_c": {
-            "units": "kg m-2 s-1",
-            "to": ["_category of component the transfer can be going to",
-                   "_category of another component the transfer can be going to],
-            "method": "mean",
-        },
-        "transfer_d": {
-            "units": "kg m-2 s-1",
-            "to": ["_category of component the transfer can be going to"],
-            "method": "mean",
-        },
-        ...
-    }
-
-    # if not specified, assume all inwards are required
-    _inwards = tuple(_inwards_info)
-    # if not specified, assume all outwards are produced
-    _outwards = tuple(_outwards_info)
-
-The main things to specify are...
+The main things to specify are:
+- The name of the class
+- The informal name of the class defined by the `_category` variable and used to determine where to send transfers and where they have come from
+- A description of what the Component is intended to simulate in the class docstring
+- The `_inwards_info` and `_outwards_info` dictionaries that describe the transfers that this Component can receive and produce respectively. 
+Anything else does not need to be touched
 
 3. Adding the transfers
 =======================
+The transfers into and out of the component are specified in the `_inwards_info` and `_outwards_info` dictionaries. The structure of these is explained in the previous section <LINK>
 
 4. Adapting unifhy.Model
 ========================
+This step is more involved. Whilst the changes that need to be made are simple, there are a lot of them. The majority of the changes to be made are in the unifhy/model.py file, and they are <LINK to GH ISSUE>
 
 5. Adapting the unit tests
 ==========================
