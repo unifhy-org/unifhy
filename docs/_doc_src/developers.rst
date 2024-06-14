@@ -131,7 +131,7 @@ The main things to specify are:
 - The informal name of the class defined by the `_category` variable and used to determine where to send transfers and where they have come from
 - A description of what the Component is intended to simulate in the class docstring
 - The `_inwards_info` and `_outwards_info` dictionaries that describe the transfers that this Component can receive and produce respectively. 
-Anything else does not need to be touched
+Anything else does not need to be touched.
 
 3. Adding the transfers
 =======================
@@ -139,7 +139,10 @@ The transfers into and out of the component are specified in the `_inwards_info`
 
 4. Adapting unifhy.Model
 ========================
-This step is more involved. Whilst the changes that need to be made are simple, there are a lot of them. The majority of the changes to be made are in the unifhy/model.py file, and they are <LINK to GH ISSUE>
+This step is more involved. Whilst the changes that need to be made are simple, there are a lot of them. The majority of the changes to be made are in the unifhy/model.py file, and they are `listed here <https://github.com/unifhy-org/unifhy/issues/14#issuecomment-2163572649>`_
 
 5. Adapting the unit tests
 ==========================
+The changes made in Step 4 mean that the unit tests that check UnifHy works correctly themselves no longer work correctly and will fail. In order for any further minor changes that are made to UnifHy to be tested correctly, these tests also need to be updated to account for the new Component(s). A comprehensive list of the changes that need to be made `is here <https://github.com/unifhy-org/unifhy/issues/93#issuecomment-2167823946>`_
+The tests for a large part rely on 'dummy' Components that mimick actual science Components developed for UnifHy, containing dummy calculations with dummy input data and dummy transfers. The transfers loosely mimick those of the official UnifHy interface (:ref:`Fig. 1<fig_transfers>`). The biggest bit of work in this step is thus to create the dummy component, dummy input data, and calculate the values of the transfers for the tests to be validated against.
+
