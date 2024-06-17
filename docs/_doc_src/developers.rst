@@ -18,14 +18,14 @@ The transfers that make up the framework (shown in `Table 1 <https://unifhy-org.
    :align: center
    :alt: component transfers
 
-To add new transfers to the framework it is a case of adding the name and details of the transfer to the `_outwards_info` section of the component the transfer is coming from and the `_inwards_info` section of the component the transfer is going to. 
+To add new transfers to the framework it is a case of adding the name and details of the transfer to the `_outwards_info` attribute of the Component the transfer is coming from and the `_inwards_info` attribute of the Component the transfer is going to. 
 
 .. rubric:: Example
 
-   For example to add transfer_x from the `SurfaceLayer` to `NutrientSurfaceLayer` components:
+   For example to add transfer_x from the `SurfaceLayer` to `NutrientSurfaceLayer` Components:
    
    .. code-block:: python
-      :caption: Add the transfer information to the `_outwards_info` of the `SurfaceLayerComponent` class
+      :caption: Add the transfer information to the `_outwards_info` attribute of the `SurfaceLayerComponent` class
    
       class SurfaceLayerComponent(Component,  metaclass=abc.ABCMeta):
              _category = "surfacelayer"
@@ -41,7 +41,7 @@ To add new transfers to the framework it is a case of adding the name and detail
             }
    
    .. code-block:: python
-      :caption: Add the transfer information to the '_inwards_info' of the `NutrientSurfaceLayerComponent` class
+      :caption: Add the transfer information to the '_inwards_info' attribute of the `NutrientSurfaceLayerComponent` class
    
       class NutrientSurfaceLayerComponent(Component,  metaclass=abc.ABCMeta):
              _category = "nutrientsurfacelayer"
@@ -56,17 +56,17 @@ To add new transfers to the framework it is a case of adding the name and detail
            ...
            }
 
-Each transfer defined within a component's `_inwards_info` and `_outwards_info` attributes consists of a dictionary key-value pair where the key is the transfer name and the value a further dictionary with 3 key-value pairs, `units`, `from` or `to` and `method`. If the transfer goes 'to' more than 1 component then `to` can be a list of component names, otherwise a string. The component names are given by the `_category` attributes of the Components. The `method` key sets the method used by the Exchanger (the core of UnifHy, which handles the transfers between components) to process transfers between Components running on different timesteps. "mean" is usually the most appropriate but the other options available are 'sum', 'min' and 'max'. 
+Each transfer defined within a component's `_inwards_info` and `_outwards_info` attributes consists of a dictionary key-value pair where the key is the transfer name and the value a further dictionary with 3 key-value pairs, `units`, `from` or `to` and `method`. If the transfer goes 'to' more than 1 component then `to` can be a list of Component names, otherwise a string. The Component names are given by the `_category` attributes of the Components. The `method` key sets the method used by the Exchanger (the core of UnifHy, which handles the transfers between components) to process transfers between Components running on different timesteps. "mean" is usually the most appropriate but the other options available are 'sum', 'min' and 'max'. 
 
 .. rubric::example
    E.g. for a transfer from Component A running with a 15-min timestep and Component B running on an hourly timestep, the Exchanger will take either a (weighted) mean, (weighted) sum, the min or the max of the 4 timestep values of Component A's transfer to provide to Component B, depending on the value of `method`.  
 
 .. note::
 
-   Remember adding a transfer between Components in the *framework* means that any Components developed for the framework now have the option to receive and make use of the transfer variable if they are sub-classing the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any Components developed for the NutrientSurfaceLayer could make use of `transfer_x` and any Components developed for the SurfaceLayer could produce `transfer_x`. Both Components would have to be developed, or existing Components adapted, to build a Model that actually made use of the new transfer. 
+   Remember adding a transfer between Components in the *framework* means that any models developed to fit one or more of the affected Components of the framework now have the option to receive and make use of the transfer variable if they are sub-classing (based on) the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any models developed for the NutrientSurfaceLayer Component could make use of `transfer_x` and any models developed for the SurfaceLayer Component could produce `transfer_x`. Both models would have to be developed, or existing models adapted, to build a Model that actually made use of the new transfer. 
 
 Adding new Components to the framework
-======================================
+--------------------------------------
 
 .. note::
    By adding a new Component to the *framework* you are creating the space for others to put in the science that represents a new part of the Earth-System that UnifHy has heretofore not accounted for and has had to be input to components via in*puts* i.e. data files instead of dynamically modelled variables. 
@@ -74,6 +74,7 @@ Adding new Components to the framework
 
 Adding new Components to the framework is a more complicated business. 
 The broad strokes are:
+
 1. Decide which area of the Earth-System the Component will represent and what transfers it will need from other Components and provide to other Components
 2. Add the Component to unifhy/component.py, subclassing the Component class and following the structure and syntax of the existing Components, and the inwards and outwards transfers to _inwards_info and _outwards_info respectively
 3. Add the new transfers provided by the new Component, described by the new Component's `_outwards_info`, to the relevant other Components' `_inward_info`s
@@ -83,7 +84,7 @@ The broad strokes are:
 More detail for the steps:
 
 2. Adding Components to component.py
-====================================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
    :caption: Components have the following structure, and should be added before the `DataComponent` class
@@ -127,27 +128,30 @@ More detail for the steps:
        _outwards = tuple(_outwards_info)
 
 The main things to specify are:
+
 - The name of the class
 - The informal name of the class defined by the `_category` variable and used to determine where to send transfers and where they have come from
 - A description of what the Component is intended to simulate in the class docstring
 - The `_inwards_info` and `_outwards_info` dictionaries that describe the transfers that this Component can receive and produce respectively. 
+
 Anything else does not need to be touched.
 
 3. Adding the transfers
-=======================
+^^^^^^^^^^^^^^^^^^^^^^^
 The transfers into and out of the component are specified in the `_inwards_info` and `_outwards_info` dictionaries. The structure of these is explained in the previous section <LINK>
 
 4. Adapting unifhy.Model
-========================
+^^^^^^^^^^^^^^^^^^^^^^^^
 This step is more involved. Whilst the changes that need to be made are simple, there are a lot of them. The majority of the changes to be made are in the unifhy/model.py file, and they are `listed here <https://github.com/unifhy-org/unifhy/issues/14#issuecomment-2163572649>`_
 
 5. Adapting the unit tests
-==========================
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 The changes made in Step 4 mean that the unit tests that check UnifHy works correctly themselves no longer work correctly and will fail. In order for any further minor changes that are made to UnifHy to be tested correctly, these tests also need to be updated to account for the new Component(s). A comprehensive list of the changes that need to be made `is here <https://github.com/unifhy-org/unifhy/issues/93#issuecomment-2167823946>`_
 The tests for a large part rely on 'dummy' Components that mimick actual science Components developed for UnifHy, containing dummy calculations with dummy input data and dummy transfers. The transfers loosely mimick those of the official UnifHy interface (:ref:`Fig. 1<fig_transfers>`). The biggest bit of work in this step is thus to create the dummy component, dummy input data, and calculate the values of the transfers for the tests to be validated against. Some tools have been developed to help with this process:
+
 - `Transfers and outputs calculator <https://github.com/unifhy-org/unifhy/blob/nutrients/tests/tests/test_utils/dummy_output_calculator.py>`_ that calculates the transfers and outputs of the dummy components for the various configurations that are tested by the unit tests, for validation of these tests. Instructions are in the 'dummy_output_calculator.py' linked above. The starting point is to replicate the new dummy component in `dummy_nutrient_components_for_testing.py <https://github.com/unifhy-org/unifhy/blob/nutrients/tests/tests/test_utils/dummy_components_for_testing.py>`_.
 - `Data generators <https://github.com/hydro-jules/data-generators>`_ to produce the netcdf files needed as inputs, substitute data and ancillaries
 
 .. note::
-   It is likely going forward that this level of testing will become unwieldy and unnecessary as UnifHy grows in complexity. Therefore it might be more worthwhile spending time adapting the tests so that not every component needs to be tested. After all, it is the core functionality of UnifHy that is being tested and this doesn't change regardless of how many components are added. 
+   It is likely going forward that this level of testing will become unwieldy and unnecessary as UnifHy grows in complexity. Therefore it might instead be more worthwhile spending time adapting the tests so that not every Component and transfer and configuration of possible Models needs to be tested. After all, it is the core functionality of UnifHy that is being tested and this doesn't change regardless of how many components are added. 
 
