@@ -11,14 +11,25 @@ capabilities of the framework.
 
    Work in progress...
 
-The transfers that make up the framework (shown in `Table 1 <https://unifhy-org.github.io/unifhy/contributors/development.html#id2>`_ and :ref:`Fig. 1<fig_transfers>`) are defined in the unifhy/component.py file.
+Development Guidance
+--------------------
+The UnifHy repository is at https://github.com/unifhy-org/unifhy. The recommended approach if you wish to make your changes available to all users of UnifHy is to create a branch/fork of the repository, make the changes and create a Pull Request once done. Creating the Pull Request triggers the unit tests to run, but these can also be triggered manually by changing the status of the PR to draft and back again. 
+
+To run/test UnifHy from your local copy in which you have made changes, you can install it into your active python environment by pointing pip at the repository containing the code: `pip install /path/to/unifhy/repo`. If further changes are made to the code in /path/to/unifhy/repo then you may need to uninstall (`pip uninstall unifhy`) and reinstall for them to be picked up in your envrionment. 
+
+Adding new transfers
+--------------------
+
+The transfers that make up the UnifHy framework (shown in `Table 1 <https://unifhy-org.github.io/unifhy/contributors/development.html#id2>`_ and :ref:`Fig. 1<fig_transfers>`) are defined in the unifhy/component.py file.
 
 .. _fig_transfers:
 .. figure:: ../../_doc_img/framework_detailed_transfers.svg
    :align: center
    :alt: component transfers
 
-To add new transfers to the framework it is a case of adding the name and details of the transfer to the `_outwards_info` attribute of the Component the transfer is coming from and the `_inwards_info` attribute of the Component the transfer is going to. 
+Each core Component of UnifHy is defined by a python class which subclasses the `Component` class. The `Component` class contains all the functionality that underpins all UnifHy Components. The only significant difference between the Components is defined by the `_inwards_info` and `_outwards_info` attributes which define the transfers each Component is set up to receive and produce. 
+
+To add new transfers to the UnifHy framework it is therefore a case of adding the name and details of the transfer to the `_outwards_info` attribute of the Component the transfer is coming from and the `_inwards_info` attribute of the Component the transfer is going to. 
 
 .. rubric:: Example
 
@@ -65,8 +76,8 @@ Each transfer defined within a component's `_inwards_info` and `_outwards_info` 
 
    Remember adding a transfer between Components in the *framework* means that any models developed to fit one or more of the affected Components of the framework now have the option to receive and make use of the transfer variable if they are sub-classing (based on) the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any models developed for the NutrientSurfaceLayer Component could make use of `transfer_x` and any models developed for the SurfaceLayer Component could produce `transfer_x`. Both models would have to be developed, or existing models adapted, to build a Model that actually made use of the new transfer. 
 
-Adding new Components to the framework
---------------------------------------
+Adding new Components 
+---------------------
 
 .. note::
    By adding a new Component to the *framework* you are creating the space for others to put in the science that represents a new part of the Earth-System that UnifHy has heretofore not accounted for and has had to be input to components via in*puts* i.e. data files instead of dynamically modelled variables. 
