@@ -46,6 +46,11 @@ jobs:
           mamba install udunits2=2.2.25
           mamba install --file=requirements.txt
 
+      # install latest cf-python package
+      - name: install package
+        run: |
+          pip install -e git+https://github.com/owner/repo@main          
+
       # install package
       - name: install package
         run: |
