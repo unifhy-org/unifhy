@@ -49,7 +49,7 @@ jobs:
       # install latest cf-python package
       - name: install package
         run: |
-          pip install -e git+https://github.com/owner/repo@main          
+          pip install -e git+https://github.com/NCAS-CMS/cf-python.git@main       
 
       # install package
       - name: install package
