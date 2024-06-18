@@ -1,4 +1,4 @@
-cf-python>=3.16.2
+cf-python @ git+https://github.com/NCAS-CMS/cf-python@main
 cftime
 cfunits
 esmpy
