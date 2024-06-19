@@ -146,6 +146,7 @@ class MetaComponent(abc.ABCMeta):
                 transfer_k [1]
                 transfer_l [1]
                 transfer_n [1]
+                transfer_h [1]
             inputs metadata:
                 driving_a [1]
                 driving_b [1]
@@ -162,6 +163,7 @@ class MetaComponent(abc.ABCMeta):
                 transfer_j [1]
             outputs metadata:
                 output_x [1]
+                output_y [1]
         )
         """
         info_a = [
