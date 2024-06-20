@@ -902,9 +902,9 @@ class AdvancedTestModel(BasicTestModel):
         # components
         doe = (
             (sl, ss, ow, nsl, nss, now)
-            for sl in ("c")
-            for ss in ("c")
-            for ow in ("c")
+            for sl in ("c",)
+            for ss in ("c",)
+            for ow in ("c",)
             for nsl in ("c", "d", "n")
             for nss in ("c", "d", "n")
             for now in ("c", "d", "n")
@@ -1017,9 +1017,9 @@ class AdvancedTestModel(BasicTestModel):
         """
         doe = (
             (sl, ss, ow, nsl, nss, now)
-            for sl in ("c")
-            for ss in ("c")
-            for ow in ("c")
+            for sl in ("c",)
+            for ss in ("c",)
+            for ow in ("c",)
             for nsl in ("c", "d")
             for nss in ("c", "d")
             for now in ("c", "d")
@@ -1081,9 +1081,9 @@ class AdvancedTestModel(BasicTestModel):
         """
         doe = (
             (sl, ss, ow, nsl, nss, now)
-            for sl in ("Python")
-            for ss in ("Python")
-            for ow in ("Python")
+            for sl in ("Python",)
+            for ss in ("Python",)
+            for ow in ("Python",)
             for nsl in ("Python", "Fortran", "C")
             for nss in ("Python", "Fortran", "C")
             for now in ("Python", "Fortran", "C")
