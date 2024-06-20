@@ -1,1 +1,1 @@
-from .dummy import Dummy  # , DummyFortran, DummyC
+from .dummy import Dummy, DummyFortran, DummyC
