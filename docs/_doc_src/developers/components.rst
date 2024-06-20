@@ -17,7 +17,11 @@ The broad strokes are:
 4. Adapt unifhy.Model to accept the extra Component(s)
 5. Update the unit tests to handle the extra Component(s). This involves creating dummy Component version(s) of the new dummy Component(s) and calculating the values of all the transfers and records for various configurations of the model when all the dummy Components are run together. There is a tool for calculating the values here. 
 
-More detail for the steps:
+More detail for the steps below.
+
+.. contents::
+   :backlinks: none
+   :local:
 
 2. Adding Components to component.py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
