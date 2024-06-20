@@ -7,80 +7,21 @@ Developer Guide
 This guide is for people interested in extending the technical
 capabilities of the framework.
 
+.. warning::
+
+   Work in progress...
+
 .. toctree::
    :maxdepth: 4
 
    developers/transfers
    developers/components
 
-.. warning::
-
-   Work in progress...
-
 Development Guidance
 --------------------
-The UnifHy repository is at https://github.com/unifhy-org/unifhy. The recommended approach if you wish to make your changes available to all users of UnifHy is to create a branch/fork of the repository, make the changes and create a Pull Request once done. Creating the Pull Request triggers the unit tests to run, but these can also be triggered manually by changing the status of the PR to draft and back again. 
+The UnifHy repository is at https://github.com/unifhy-org/unifhy. The recommended approach if you wish to make your changes available to all users of UnifHy is to create a branch/fork of the repository, make the changes and create a Pull Request (PR) once done. Creating the Pull Request triggers the unit tests to run, but these can also be triggered manually by changing the status of the PR to draft and back again. 
 
 To run/test UnifHy from your local copy in which you have made changes, you can install it into your active python environment by pointing pip at the repository containing the code: `pip install /path/to/unifhy/repo`. If further changes are made to the code in /path/to/unifhy/repo then you may need to uninstall (`pip uninstall unifhy`) and reinstall for them to be picked up in your envrionment. 
-
-Adding new transfers
---------------------
-
-The transfers that make up the UnifHy framework (shown in `Table 1 <https://unifhy-org.github.io/unifhy/contributors/development.html#id2>`_ and :ref:`Fig. 1<fig_transfers>`) are defined in the unifhy/component.py file.
-
-.. _fig_transfers:
-.. figure:: ../../_doc_img/framework_detailed_transfers.svg
-   :align: center
-   :alt: component transfers
-
-Each core Component of UnifHy is defined by a python class which subclasses the `Component` class. The `Component` class contains all the functionality that underpins all UnifHy Components. The only significant difference between the Components is defined by the `_inwards_info` and `_outwards_info` attributes which define the transfers each Component is set up to receive and produce. 
-
-To add new transfers to the UnifHy framework it is therefore a case of adding the name and details of the transfer to the `_outwards_info` attribute of the Component the transfer is coming from and the `_inwards_info` attribute of the Component the transfer is going to. 
-
-.. rubric:: Example
-
-   For example to add transfer_x from the `SurfaceLayer` to `NutrientSurfaceLayer` Components:
-   
-   .. code-block:: python
-      :caption: Add the transfer information to the `_outwards_info` attribute of the `SurfaceLayerComponent` class
-   
-      class SurfaceLayerComponent(Component,  metaclass=abc.ABCMeta):
-             _category = "surfacelayer"
-            ...
-             _outwards_info = {
-                  ...,
-                 "transfer_x": {
-                 "units": "kg m-2 s-1",
-                 "to": ["nutrientsurfacelayer"],
-                 "method": "mean",
-               },
-            ...
-            }
-   
-   .. code-block:: python
-      :caption: Add the transfer information to the '_inwards_info' attribute of the `NutrientSurfaceLayerComponent` class
-   
-      class NutrientSurfaceLayerComponent(Component,  metaclass=abc.ABCMeta):
-             _category = "nutrientsurfacelayer"
-            ...
-             _inwards_info = {
-                  ...,
-                 "transfer_x": {
-                 "units": "kg m-2 s-1",
-                 "from": "surfacelayer",
-                 "method": "mean",
-              },
-           ...
-           }
-
-Each transfer defined within a component's `_inwards_info` and `_outwards_info` attributes consists of a dictionary key-value pair where the key is the transfer name and the value a further dictionary with 3 key-value pairs, `units`, `from` or `to` and `method`. If the transfer goes 'to' more than 1 component then `to` can be a list of Component names, otherwise a string. The Component names are given by the `_category` attributes of the Components. The `method` key sets the method used by the Exchanger (the core of UnifHy, which handles the transfers between components) to process transfers between Components running on different timesteps. "mean" is usually the most appropriate but the other options available are 'sum', 'min' and 'max'. 
-
-.. rubric::example
-   E.g. for a transfer from Component A running with a 15-min timestep and Component B running on an hourly timestep, the Exchanger will take either a (weighted) mean, (weighted) sum, the min or the max of the 4 timestep values of Component A's transfer to provide to Component B, depending on the value of `method`.  
-
-.. note::
-
-   Remember adding a transfer between Components in the *framework* means that any models developed to fit one or more of the affected Components of the framework now have the option to receive and make use of the transfer variable if they are sub-classing (based on) the 'to' Component, or have the option to produce the transfer variable if they are sub-classing the 'from' Component. In the example above, any models developed for the NutrientSurfaceLayer Component could make use of `transfer_x` and any models developed for the SurfaceLayer Component could produce `transfer_x`. Both models would have to be developed, or existing models adapted, to build a Model that actually made use of the new transfer. 
 
 Adding new Components 
 ---------------------
