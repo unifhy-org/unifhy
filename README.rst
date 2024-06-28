@@ -13,14 +13,14 @@ Unified Framework for Hydrology
 .. image:: https://img.shields.io/badge/fair-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow?style=flat-square
    :target: https://fair-software.eu
    :alt: FAIR Software Compliance
-.. image:: https://img.shields.io/github/workflow/status/unifhy-org/unifhy/Basic%20tests?style=flat-square&label=tests
+.. image:: https://img.shields.io/github/actions/workflow/status/unifhy-org/unifhy/basic_tests.yml?style=flat-square&label=tests
    :target: https://github.com/unifhy-org/unifhy/actions/workflows/basic_tests.yml
    :alt: Tests Status
 
-The Python package `unifhy` (Unified Framework for Hydrology) is a hydrological 
-modelling framework which combines interchangeable modelling components for the 
-surface layer, subsurface, and open water parts of the terrestrial water cycle. 
-By two-way coupling these three components, the framework provides a fully
+The Python package `unifhy` (Unified Framework for Hydrology) is a hydrological
+modelling framework which combines interchangeable modelling components for the
+surface layer, subsurface, and open water parts of the terrestrial water and nutrient cycles.
+By two-way coupling these six components, the framework provides a fully
 functional model for simulating the terrestrial water cycle. It is designed to
 foster collaborations between land surface, hydrological, and groundwater
 modelling communities by structuring their interactions around standardised

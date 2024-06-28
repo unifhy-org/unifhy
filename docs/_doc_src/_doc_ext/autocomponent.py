@@ -13,9 +13,9 @@ class AutoComponentDirective(SphinxDirective):
     option_spec = {}
 
     def run(self):
-        content = ''.join(self.content).strip()
-        mod_ = import_module('.'.join(content.split('.')[:-1]))
-        cls_ = getattr(mod_, content.split('.')[-1])
+        content = "".join(self.content).strip()
+        mod_ = import_module(".".join(content.split(".")[:-1]))
+        cls_ = getattr(mod_, content.split(".")[-1])
 
         document = []
 
@@ -23,30 +23,38 @@ class AutoComponentDirective(SphinxDirective):
         sig = ".. class:: {}\n".format(content)
         sect = nodes.section()
         sl = StringList(
-            sig.split('\n') + ("\n    " + cls_.__doc__).split('\n'),
-            self.content.parent
+            sig.split("\n") + ("\n    " + cls_.__doc__).split("\n"), self.content.parent
         )
         sect.document = self.state.document
         nested_parse_with_titles(self.state, sl, sect)
         document.extend(sect.children)
 
         # parse class attributes
-        for definition in ['_inputs', 'inwards', '_outputs', 'outwards',
-                           '_parameters', '_constants', '_states']:
-            if getattr(cls_, '{}_info'.format(definition)):
-                attribute = getattr(cls_, '{}_info'.format(definition))
+        for definition in [
+            "_inputs",
+            "inwards",
+            "_outputs",
+            "outwards",
+            "_parameters",
+            "_constants",
+            "_states",
+        ]:
+            if getattr(cls_, "{}_info".format(definition)):
+                attribute = getattr(cls_, "{}_info".format(definition))
                 para = nodes.paragraph()
-                if definition[0] == '_':
+                if definition[0] == "_":
                     definition = definition[1:]
-                rubric = nodes.rubric(nodes.Text(definition.capitalize()),
-                                      nodes.Text(definition.capitalize()))
+                rubric = nodes.rubric(
+                    nodes.Text(definition.capitalize()),
+                    nodes.Text(definition.capitalize()),
+                )
                 para += rubric
 
                 for name, info in attribute.items():
                     field_list = nodes.field_list()
                     # add the name of the attribute
                     field = nodes.field()
-                    field += nodes.field_name(text='name')
+                    field += nodes.field_name(text="name")
                     field_body = nodes.field_body()
                     field_body += nodes.paragraph(text=name)
                     field += field_body
@@ -56,21 +64,17 @@ class AutoComponentDirective(SphinxDirective):
                         field = nodes.field()
                         field += nodes.field_name(text=key)
                         field_body = nodes.field_body()
-                        if key == 'units' and value != '1':
+                        if key == "units" and value != "1":
                             sl = StringList(
-                                [re.sub('(-?[0-9]+)', '\\ :sup:`\\1`\\ ',
-                                        value)],
-                                field
+                                [re.sub("(-?[0-9]+)", "\\ :sup:`\\1`\\ ", value)], field
                             )
                             self.state.nested_parse(sl, 0, field_body)
-                        elif key == 'default_value':
+                        elif key == "default_value":
                             field_body += nodes.paragraph(
-                                text=np.format_float_scientific(
-                                    value, trim='0'
-                                )
+                                text=np.format_float_scientific(value, trim="0")
                             )
-                        elif key == 'to':
-                            field_body += nodes.paragraph(text=', '.join(value))
+                        elif key == "to":
+                            field_body += nodes.paragraph(text=", ".join(value))
                         else:
                             field_body += nodes.paragraph(text=value)
                         field += field_body
@@ -82,23 +86,25 @@ class AutoComponentDirective(SphinxDirective):
 
             # spacedomain special properties
             para = nodes.paragraph()
-            rubric = nodes.rubric(nodes.Text('SpaceDomain Properties'),
-                                  nodes.Text('SpaceDomain Properties'))
+            rubric = nodes.rubric(
+                nodes.Text("SpaceDomain Properties"),
+                nodes.Text("SpaceDomain Properties"),
+            )
             para += rubric
 
-        for name in ['land_sea_mask', 'flow_direction', 'cell_area']:
+        for name in ["land_sea_mask", "flow_direction", "cell_area"]:
             field_list = nodes.field_list()
-            attribute = getattr(cls_, '_requires_{}'.format(name))
+            attribute = getattr(cls_, "_requires_{}".format(name))
             # name
             field = nodes.field()
-            field += nodes.field_name(text='name')
+            field += nodes.field_name(text="name")
             field_body = nodes.field_body()
             field_body += nodes.paragraph(text=name)
             field += field_body
             field_list += field
             # required
             field = nodes.field()
-            field += nodes.field_name(text='required')
+            field += nodes.field_name(text="required")
             field_body = nodes.field_body()
             field_body += nodes.paragraph(text=attribute)
             field += field_body
@@ -112,8 +118,5 @@ class AutoComponentDirective(SphinxDirective):
 
 
 def setup(app):
-    app.add_directive('autocomponent', AutoComponentDirective)
-    return {
-        'parallel_read_safe': True,
-        'parallel_write_safe': True
-    }
+    app.add_directive("autocomponent", AutoComponentDirective)
+    return {"parallel_read_safe": True, "parallel_write_safe": True}

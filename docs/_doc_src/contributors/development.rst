@@ -16,10 +16,11 @@ You can follow the steps below to develop your component(s):
 Create your science component by subclassing a generic framework component
 --------------------------------------------------------------------------
 
-In the modelling framework, the terrestrial water cycle is divided into
-three components, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
-and `OpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
-three framework components to create subclasses from to start your
+In the modelling framework, the terrestrial water and nutrient cycles are divided into
+three components each, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
+ `OpenWaterComponent`, `NutrientSurfaceLayerComponent`, `NutrientSubSurfaceComponent` 
+and `NutrientOpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
+six framework components to create subclasses from to start your
 science component.
 
 Each component features a fixed interface (i.e. a pre-defined set of
@@ -27,7 +28,10 @@ transfers of information with the other components of the framework):
 inward information (variables that are given to the component, i.e.
 "inwards"), and outward information (variables that are computed by the
 component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
-:ref:`Tab. 1<tab_transfers>`.
+:ref:`Tab. 1<tab_transfers>`, however components can pick and choose 
+which of the inwards to accept and which of the outwards to produce,
+provided components within the Model do not require inwards that
+are not produced.
 
 .. _fig_transfers:
 .. figure:: ../../_doc_img/framework_detailed_transfers.svg
@@ -42,30 +46,56 @@ component, i.e. "outwards"), see :ref:`Fig. 2<fig_transfers>`, and
            :ref:`Fig. 2<fig_transfers>` for the numbers context)
 
    ==  ==============================================  ========================
-   #   Name                                            Unit
-   ==  ==============================================  ========================
-   1   canopy_liquid_throughfall_and_snow_melt_flux    |kg m-2 s-1|
-   2   transpiration_flux_from_root_uptake             |kg m-2 s-1|
-   3   soil_water_stress_for_transpiration             1
-   4   direct_water_evaporation_flux_from_soil         |kg m-2 s-1|
-   5   soil_water_stress_for_direct_soil_evaporation   1
-   6   water_evaporation_flux_from_standing_water      |kg m-2 s-1|
-   7   standing_water_area_fraction                    1
-   8   total_water_area_fraction                       1
-   9   water_evaporation_flux_from_open_water          |kg m-2 s-1|
-   10  direct_throughfall_flux                         |kg m-2 s-1|
-   11  surface_runoff_flux_delivered_to_rivers         |kg m-2 s-1|
-   12  net_groundwater_flux_to_rivers                  |kg m-2 s-1|
-   13  open_water_area_fraction                        1
-   14  open_water_surface_height                       m
-   ==  ==============================================  ========================
+   #   Name                                                                           Unit
+   ==  =============================================================================  ========================
+   1   canopy_liquid_throughfall_and_snow_melt_flux                                   |kg m-2 s-1|
+   2   transpiration_flux_from_root_uptake                                            |kg m-2 s-1|
+   3   soil_water_stress_for_transpiration                                            1
+   4   direct_water_evaporation_flux_from_soil                                        |kg m-2 s-1|
+   5   soil_water_stress_for_direct_soil_evaporation                                  1
+   6   water_evaporation_flux_from_standing_water                                     |kg m-2 s-1|
+   7   standing_water_area_fraction                                                   1
+   8   total_water_area_fraction                                                      1
+   9   water_evaporation_flux_from_open_water                                         |kg m-2 s-1|
+   10  direct_throughfall_flux                                                        |kg m-2 s-1|
+   11  surface_runoff_flux_delivered_to_rivers                                        |kg m-2 s-1]
+   12  net_groundwater_flux_to_rivers                                                 |kg m-2 s-1|
+   13  open_water_area_fraction                                                       1
+   14  open_water_surface_height                                                      m
+   15  mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff            |kg m-2 s-1|
+   16  mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff              |kg m-2 s-1|
+   17  mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff        |kg m-2 s-1|
+   18  mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff         |kg m-2 s-1|
+   19  mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff            |kg m-2 s-1|
+   20  mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff                  |kg m-2 s-1|
+   21  mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff                     |kg m-2 s-1|
+   22  mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff           |kg m-2 s-1|
+   23  mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff                     |kg m-2 s-1|
+   24  mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff         |kg m-2 s-1|
+   25  mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff           |kg m-2 s-1|
+   26  mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff     |kg m-2 s-1|
+   27  mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff      |kg m-2 s-1|
+   28  mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff         |kg m-2 s-1|
+   29  mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff               |kg m-2 s-1|
+   30  mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff                  |kg m-2 s-1|
+   31  mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff        |kg m-2 s-1|
+   32  mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff                  |kg m-2 s-1|
+   33  mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition |kg m-2 s-1|
+   34  mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition  |kg m-2 s-1|
+   35  mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition    |kg m-2 s-1|
+   36  mass_concentration_of_carbon_dioxide_in_air                                    kg m\ :sup:`-3`
+   37  water_volume_in_surface_routing_channels                                       m\ :sup:`3`
+   38  water_volume_in_subsurface_routing_channels                                    m\ :sup:`3`
+   39  outgoing_water_volume_transport_out_of_subsurface_cell                         m\ :sup:`3` s\ :sup:`-1` 
+   40  outgoing_water_volume_transport_out_of_surface_cell                            m\ :sup:`3` s\ :sup:`-1` 
+   41  upward_volume_transport_of_liquid_water_between_subsurface_and_surface         m :sup:`3` s\ :sup:`-1` 
+   42  return_flow_fraction                                                           1
+   ==  =============================================================================  ========================
 
 .. |kg m-2 s-1| replace:: kg m\ :sup:`-2` s\ :sup:`-1`
 
-For component contributions to be fully `unifhy`-compliant, they need to
-comply with this fixed interface. If your science component contribution
-is overlapping several components, it requires to be refactored into the
-relevant number of components.
+If your science component contribution is overlapping several components, 
+it is required to be refactored into the relevant number of components.
 
 Contributions must be implemented as Python classes, and more specifically
 as subclasses of one of the three framework components. This way, the

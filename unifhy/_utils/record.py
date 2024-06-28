@@ -12,69 +12,68 @@ from ..settings import dtype_float
 # - key-to-value provides mapping allowing for aliases to point to the
 #   same arbitrarily chosen method name
 _methods_map = {
-    'mean': 'mean',
-    'average': 'mean',
-    'sum': 'sum',
-    'cumulative': 'sum',
-    'point': 'point',
-    'instantaneous': 'point',
-    'min': 'minimum',
-    'minimum': 'minimum',
-    'max': 'maximum',
-    'maximum': 'maximum'
+    "mean": "mean",
+    "average": "mean",
+    "sum": "sum",
+    "cumulative": "sum",
+    "point": "point",
+    "instantaneous": "point",
+    "min": "minimum",
+    "minimum": "minimum",
+    "max": "maximum",
+    "maximum": "maximum",
 }
 
 
 def _frequency_to_frequency_tag(freq):
     if freq % timedelta(weeks=1) == timedelta(seconds=0):
         factor = freq // timedelta(weeks=1)
-        factor = '' if factor == 1 else factor
-        adverb = 'weekly'
+        factor = "" if factor == 1 else factor
+        adverb = "weekly"
     elif freq % timedelta(days=1) == timedelta(seconds=0):
         factor = freq // timedelta(days=1)
-        factor = '' if factor == 1 else factor
-        adverb = 'daily'
+        factor = "" if factor == 1 else factor
+        adverb = "daily"
     elif freq % timedelta(hours=1) == timedelta(seconds=0):
         factor = freq // timedelta(hours=1)
-        factor = '' if factor == 1 else factor
-        adverb = 'hourly'
+        factor = "" if factor == 1 else factor
+        adverb = "hourly"
     elif freq % timedelta(minutes=1) == timedelta(seconds=0):
         factor = freq // timedelta(minutes=1)
-        factor = '' if factor == 1 else factor
-        adverb = 'minute' if factor == 1 else 'min'
+        factor = "" if factor == 1 else factor
+        adverb = "minute" if factor == 1 else "min"
     else:
         factor = int(freq.total_seconds())
-        adverb = 's'
+        adverb = "s"
 
-    return f'{factor}{adverb}'
+    return f"{factor}{adverb}"
 
 
 def _frequency_to_frequency_str(freq):
     if freq % timedelta(weeks=1) == timedelta(seconds=0):
         factor = freq // timedelta(weeks=1)
-        factor = '' if factor == 1 else factor
-        units = 'weeks'
+        factor = "" if factor == 1 else factor
+        units = "weeks"
     elif freq % timedelta(days=1) == timedelta(seconds=0):
         factor = freq // timedelta(days=1)
-        factor = '' if factor == 1 else factor
-        units = 'days'
+        factor = "" if factor == 1 else factor
+        units = "days"
     elif freq % timedelta(hours=1) == timedelta(seconds=0):
         factor = freq // timedelta(hours=1)
-        factor = '' if factor == 1 else factor
-        units = 'hours'
+        factor = "" if factor == 1 else factor
+        units = "hours"
     elif freq % timedelta(minutes=1) == timedelta(seconds=0):
         factor = freq // timedelta(minutes=1)
-        factor = '' if factor == 1 else factor
-        units = 'minutes'
+        factor = "" if factor == 1 else factor
+        units = "minutes"
     else:
         factor = int(freq.total_seconds())
-        units = 'seconds'
+        units = "seconds"
 
-    return f'{factor}{units}'
+    return f"{factor}{units}"
 
 
 class Record(object):
-
     def __init__(self, name, units, divisions=(), **kwargs):
         self.name = name
         self.units = units
@@ -104,7 +103,6 @@ class OutputRecord(Record):
 
 
 class RecordStream(object):
-
     def __init__(self, frequency, writing_slice):
         # check frequency validity
         if not isinstance(frequency, timedelta):
@@ -185,21 +183,20 @@ class RecordStream(object):
 
         # determine most suited time slice
         steps_per_beat = int(
-            self.frequency.total_seconds()
-            / timedomain.timedelta.total_seconds()
+            self.frequency.total_seconds() / timedomain.timedelta.total_seconds()
         )
 
         candidates = np.arange(1, len(timedomain.time) + 1)
         # candidates must be a multiple of the record stream beat
         # while also being a multiple of the component simulation period
         # to guarantee that the last beat will be complete
-        candidates = candidates[(candidates % steps_per_beat == 0)
-                                & (len(timedomain.time) % candidates == 0)]
+        candidates = candidates[
+            (candidates % steps_per_beat == 0)
+            & (len(timedomain.time) % candidates == 0)
+        ]
 
         # slice needs to be long enough to hold at least one beat
-        min_steps_per_slice = max(
-            self._desired_steps_per_slice, steps_per_beat
-        )
+        min_steps_per_slice = max(self._desired_steps_per_slice, steps_per_beat)
 
         selected = candidates[candidates <= min_steps_per_slice][-1]
 
@@ -212,7 +209,7 @@ class RecordStream(object):
             end=timedomain.bounds.datetime_array[-1, -1] + self.frequency,
             step=self.frequency,
             calendar=timedomain.calendar,
-            units=timedomain.units
+            units=timedomain.units,
         )
 
         self._time = _timedomain.time.array[1:]
@@ -245,8 +242,7 @@ class RecordStream(object):
                 if d:
                     axes = [-(a + 1) for a in range(len(d))]
                     msk = np.broadcast_to(
-                        np.expand_dims(msk, axis=axes),
-                        (*spacedomain.shape, *d)
+                        np.expand_dims(msk, axis=axes), (*spacedomain.shape, *d)
                     )
 
             spc_shp = (*spacedomain.shape, *d) if d else spacedomain.shape
@@ -271,10 +267,10 @@ class RecordStream(object):
     def create_record_stream_file(self, filepath):
         self.file = filepath
 
-        with Dataset(self.file, 'w') as f:
+        with Dataset(self.file, "w") as f:
             axes = self._spacedomain.axes
             # dimension for space and time lower+upper bounds
-            f.createDimension('nv', 2)
+            f.createDimension("nv", 2)
             # space coordinate dimensions and coordinate variables
             for axis in axes:
                 # dimension (domain axis)
@@ -285,22 +281,21 @@ class RecordStream(object):
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
-                a.bounds = f'{axis}_bounds'
+                a.bounds = f"{axis}_bounds"
                 a[:] = coord.array
                 # (domain coordinate bounds)
-                b = f.createVariable(f'{axis}_bounds', dtype_float(),
-                                     (axis, 'nv'))
+                b = f.createVariable(f"{axis}_bounds", dtype_float(), (axis, "nv"))
                 b.units = coord.units
                 b[:] = coord.bounds.array
 
             # time coordination dimension and coordinate variable
-            f.createDimension('time', None)
-            t = f.createVariable('time', np.float64, ('time',))
-            t.standard_name = 'time'
+            f.createDimension("time", None)
+            t = f.createVariable("time", np.float64, ("time",))
+            t.standard_name = "time"
             t.units = self._time_units
             t.calendar = self._time_calendar
-            t.bounds = 'time_bounds'
-            b = f.createVariable('time_bounds', np.float64, ('time', 'nv'))
+            t.bounds = "time_bounds"
+            b = f.createVariable("time_bounds", np.float64, ("time", "nv"))
             b.units = self._time_units
             b.calendar = self._time_calendar
 
@@ -309,16 +304,16 @@ class RecordStream(object):
                 if d:
                     dims = []
                     for n, v in enumerate(d):
-                        dim_name = '_'.join([name, 'divisions', str(n + 1)])
+                        dim_name = "_".join([name, "divisions", str(n + 1)])
                         f.createDimension(dim_name, v)
                         dims.append(dim_name)
-                    dims = ('time', *axes, *dims)
+                    dims = ("time", *axes, *dims)
                 else:
-                    dims = ('time', *axes)
+                    dims = ("time", *axes)
 
                 # record variable
                 for method in self._methods[name]:
-                    name_method = '_'.join([name, method])
+                    name_method = "_".join([name, method])
                     v = f.createVariable(name_method, dtype_float(), dims)
                     v.standard_name = name
                     v.units = record.units
@@ -328,7 +323,7 @@ class RecordStream(object):
                     )
 
     def update_record_to_stream_file(self):
-        with Dataset(self.file, 'a') as f:
+        with Dataset(self.file, "a") as f:
             start = self._time_tracker * self._beats_per_slice
             end = start + self._beats_per_slice
 
@@ -338,7 +333,7 @@ class RecordStream(object):
 
             try:
                 # check whether all timestamps already in file
-                ts = cftime.time2index(time_, f.variables['time'])
+                ts = cftime.time2index(time_, f.variables["time"])
 
             # will get a IndexError if time variable is empty
             except IndexError:
@@ -349,43 +344,42 @@ class RecordStream(object):
             except ValueError:
                 # keep expanding time dimension
                 try:
-                    start = cftime.time2index(time_[0], f.variables['time'])
+                    start = cftime.time2index(time_[0], f.variables["time"])
                     # at least one timestamp already in time variable
                     ts = np.arange(start, start + time_len)
                 except ValueError:
                     # no timestamp already in time variable
-                    ts = np.arange(len(f.variables['time']),
-                                   len(f.variables['time']) + time_len)
+                    ts = np.arange(
+                        len(f.variables["time"]), len(f.variables["time"]) + time_len
+                    )
 
-            f.variables['time'][ts] = time_
-            f.variables['time_bounds'][ts] = time_bounds
+            f.variables["time"][ts] = time_
+            f.variables["time_bounds"][ts] = time_bounds
 
             for name, array in self._arrays.items():
-                arr = array.reshape(
-                    (time_len, -1, *self._spaceshapes[name])
-                )
+                arr = array.reshape((time_len, -1, *self._spaceshapes[name]))
 
                 if self._masks[name] is not None:
                     msk = np.broadcast_to(
                         np.expand_dims(self._masks[name], axis=0),
-                        (time_len, *self._spaceshapes[name])
+                        (time_len, *self._spaceshapes[name]),
                     )
                 else:
                     msk = None
 
                 for method in self._methods[name]:
-                    name_method = '_'.join([name, method])
+                    name_method = "_".join([name, method])
 
                     # proceed with required aggregation
-                    if method == 'mean':
+                    if method == "mean":
                         value = np.nanmean(arr, axis=1)
-                    elif method == 'sum':
+                    elif method == "sum":
                         value = np.nansum(arr, axis=1)
-                    elif method == 'point':
+                    elif method == "point":
                         value = arr[:, -1]
-                    elif method == 'minimum':
+                    elif method == "minimum":
                         value = np.nanmin(arr, axis=1)
-                    elif method == 'maximum':
+                    elif method == "maximum":
                         value = np.nanmax(arr, axis=1)
 
                     # store result in file
@@ -403,7 +397,7 @@ class RecordStream(object):
     def create_record_stream_dump(self, filepath):
         self.dump_file = filepath
 
-        with Dataset(self.dump_file, 'w') as f:
+        with Dataset(self.dump_file, "w") as f:
             axes = self._spacedomain.axes
 
             # description
@@ -413,18 +407,18 @@ class RecordStream(object):
             )
 
             # dimensions
-            f.createDimension('time', None)
-            f.createDimension('length', self._steps_per_slice)
+            f.createDimension("time", None)
+            f.createDimension("length", self._steps_per_slice)
             for axis in axes:
                 f.createDimension(axis, len(getattr(self._spacedomain, axis)))
-            f.createDimension('nv', 2)
+            f.createDimension("nv", 2)
 
             # coordinate variables
-            t = f.createVariable('time', np.float64, ('time',))
-            t.standard_name = 'time'
+            t = f.createVariable("time", np.float64, ("time",))
+            t.standard_name = "time"
             t.units = self._time_units
             t.calendar = self._time_calendar
-            h = f.createVariable('length', np.uint32, ('length',))
+            h = f.createVariable("length", np.uint32, ("length",))
             h[:] = np.arange(self._steps_per_slice)
             for axis in axes:
                 coord = self._spacedomain.to_field().dim(axis)
@@ -432,11 +426,10 @@ class RecordStream(object):
                 a = f.createVariable(axis, dtype_float(), (axis,))
                 a.standard_name = coord.standard_name
                 a.units = coord.units
-                a.bounds = f'{axis}_bounds'
+                a.bounds = f"{axis}_bounds"
                 a[:] = coord.data.array
                 # (domain coordinate bounds)
-                b = f.createVariable(f'{axis}_bounds', dtype_float(),
-                                     (axis, 'nv'))
+                b = f.createVariable(f"{axis}_bounds", dtype_float(), (axis, "nv"))
                 b.units = coord.units
                 b[:] = coord.bounds.data.array
 
@@ -446,48 +439,46 @@ class RecordStream(object):
                 if d:
                     dims = []
                     for n, v in enumerate(d):
-                        dim_name = '_'.join([name, 'divisions', str(n + 1)])
+                        dim_name = "_".join([name, "divisions", str(n + 1)])
                         f.createDimension(dim_name, v)
                         dims.append(dim_name)
-                    dims = ('time', 'length', *axes, *dims)
+                    dims = ("time", "length", *axes, *dims)
                 else:
-                    dims = ('time', 'length', *axes)
+                    dims = ("time", "length", *axes)
 
-                s = f.createVariable(name, dtype_float(), dims,
-                                     fill_value=9.9692099683868690E36)
+                s = f.createVariable(
+                    name, dtype_float(), dims, fill_value=9.9692099683868690e36
+                )
                 s.standard_name = name
                 s.units = record.units
-                f.createVariable(f'{name}_tracker', int, ('time',))
+                f.createVariable(f"{name}_tracker", int, ("time",))
 
             # stream-specific variables
-            f.createVariable('time_tracker', int, ('time',))
-            f.createVariable('trigger_tracker', int, ('time',))
+            f.createVariable("time_tracker", int, ("time",))
+            f.createVariable("trigger_tracker", int, ("time",))
 
     def update_record_stream_dump(self, timestamp):
-        with Dataset(self.dump_file, 'a') as f:
+        with Dataset(self.dump_file, "a") as f:
             try:
                 # check whether given snapshot already in file
-                t = cftime.time2index(timestamp, f.variables['time'])
+                t = cftime.time2index(timestamp, f.variables["time"])
             # will get a IndexError if time variable is empty
             # will get a ValueError if timestamp not in time variable
             except (IndexError, ValueError):
                 # if not, extend time dimension
-                t = len(f.variables['time'])
-                f.variables['time'][t] = timestamp
+                t = len(f.variables["time"])
+                f.variables["time"][t] = timestamp
 
             for name in self._records:
                 f.variables[name][t, ...] = self._arrays[name]
-                f.variables[f'{name}_tracker'][t] = (
-                    self._array_trackers[name]
-                )
-            f.variables['time_tracker'][t] = self._time_tracker
-            f.variables['trigger_tracker'][t] = self._trigger_tracker
+                f.variables[f"{name}_tracker"][t] = self._array_trackers[name]
+            f.variables["time_tracker"][t] = self._time_tracker
+            f.variables["trigger_tracker"][t] = self._trigger_tracker
 
-    def load_record_stream_dump(self, filepath, datetime_,
-                                timedomain, spacedomain):
+    def load_record_stream_dump(self, filepath, datetime_, timedomain, spacedomain):
         self.dump_file = filepath
 
-        with Dataset(self.dump_file, 'r') as f:
+        with Dataset(self.dump_file, "r") as f:
             # determine original simulation timedomain from dump start
             self.initialise(timedomain, spacedomain)
 
@@ -495,13 +486,15 @@ class RecordStream(object):
             if datetime_ is None:
                 # if not specified, use the last time index
                 t = -1
-                datetime_ = cftime.num2date(f.variables['time'][-1],
-                                            f.variables['time'].units,
-                                            f.variables['time'].calendar)
+                datetime_ = cftime.num2date(
+                    f.variables["time"][-1],
+                    f.variables["time"].units,
+                    f.variables["time"].calendar,
+                )
             else:
                 # find the index for the datetime given
                 try:
-                    t = cftime.date2index(datetime_, f.variables['time'])
+                    t = cftime.date2index(datetime_, f.variables["time"])
                 except ValueError:
                     raise ValueError(
                         f"{datetime_} not available in record stream "
@@ -512,18 +505,16 @@ class RecordStream(object):
             for name in self._records:
                 try:
                     mask = f.variables[name][t, ...].mask
-                    self._arrays[name][~mask] = (
-                        f.variables[name][t, ...].data[~mask]
-                    )
-                    self._array_trackers[name] = (
-                        f.variables['_'.join([name, 'tracker'])][t]
-                    )
+                    self._arrays[name][~mask] = f.variables[name][t, ...].data[~mask]
+                    self._array_trackers[name] = f.variables[
+                        "_".join([name, "tracker"])
+                    ][t]
                 except KeyError:
                     raise KeyError(
                         f"{name} missing in record stream dump {self.dump_file}"
                     )
             # retrieve stream trackers
-            self._time_tracker = f.variables['time_tracker'][t].item()
-            self._trigger_tracker = f.variables['trigger_tracker'][t].item()
+            self._time_tracker = f.variables["time_tracker"][t].item()
+            self._trigger_tracker = f.variables["trigger_tracker"][t].item()
 
         return datetime_

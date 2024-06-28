@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -58,6 +58,12 @@ jobs:
       - name: build dummy C and Fortran components
         run: |
           (cd ./tests/tests/components && make)
+
+
+      # install latest cf-python package
+      - name: install package
+        run: |
+          pip install https://github.com/NCAS-CMS/cf-python/archive/main.zip          
 
       # install package
       - name: install package
