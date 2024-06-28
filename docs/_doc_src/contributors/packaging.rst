@@ -60,6 +60,9 @@ The template source directory is structured as follows:
    │       ├── surfacelayer.py
    │       ├── subsurface.py
    │       ├── openwater.py
+   |       ├── nutrientsurfacelayer.py 
+   |       ├── nutrientsubsurface.py
+   |       ├── nutrientopenwater.py
    │       └── version.py
    ├── README.rst
    ├── requirements.txt
@@ -80,16 +83,17 @@ Add and commit those files to the repository:
 Bring in your component contribution(s)
 ---------------------------------------
 
-The template features three trivial components `SurfaceLayerComponent`,
-`SubSurfaceComponent`, and `OpenWaterComponent`.
+The template features six trivial components `SurfaceLayerComponent`,
+`SubSurfaceComponent`, `OpenWaterComponent`. `NutrientSurfaceLayerComponent`,
+`NutrientSubSurfaceComponent` and `NutrientOpenWaterComponent`.
 
 Depending on the number of components your contribution overlaps with,
 keep only the relevant ones and delete the other ones.
 
 For example, if your contribution simulates the surface layer and the
-subsurface parts of the terrestrial water cycle:
+subsurface parts of the terrestrial water cycle only:
 
-- delete the module *openwater.py*, and
+- delete the modules *nutrientsurfacelayer.py*, *nutrientsubsurface.py*, *nutrientopenwater.py* and *openwater.py*, and
 - remove `from .openwater import OpenWaterComponent` in *__init__.py*.
 
 Then, bring in your own components:
