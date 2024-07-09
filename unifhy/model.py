@@ -846,7 +846,7 @@ class Model(object):
             )
 
         # if all components are Data or Null, exit resume
-        if data_or_null == 3:
+        if data_or_null == 6:
             return
 
         # initialise model exchanger transfers from dump file

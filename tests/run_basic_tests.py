@@ -14,6 +14,8 @@ class TestModelSameTimeSameSpace(BasicTestModel, unittest.TestCase):
     t = "same_t"
     # flag to specify that components are to run at same spatial resolution
     s = "same_s"
+    #
+    doe = ("c", "c", "c", "c", "c", "c")
 
 
 class TestModelDiffTimeDiffSpace(BasicTestModel, unittest.TestCase):
@@ -21,6 +23,8 @@ class TestModelDiffTimeDiffSpace(BasicTestModel, unittest.TestCase):
     t = "diff_t"
     # flag to specify that components are to run at different spatial resolutions
     s = "diff_s"
+    #
+    doe = ("c", "c", "c", "c", "c", "c")    
 
 
 if __name__ == "__main__":

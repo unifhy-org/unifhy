@@ -184,7 +184,6 @@ class Simulator(object):
             at = get_dummy_spin_up_start_end()[-1] - get_dummy_dumping_frequency(
                 self.time_
             )
-
         self.model.resume(tag=tag, at=at)
 
     def clean_up_files(self):
@@ -401,81 +400,85 @@ class BasicTestModel(object):
         records because they are scattered across two files of for
         simulation periods 8 days each.
         """
-        # set up a model, and spin it up
-        simulator_1 = Simulator.from_scratch(
-            self.t, self.s, "c", "c", "c", "c", "c", "c"
-        )
-        simulator_1.spinup_model(cycles=1)
-
-        # set up another model
-        simulator_2 = Simulator.from_scratch(
-            self.t, self.s, "c", "c", "c", "c", "c", "c", id_trail="bis"
-        )
-
-        # use dump of first model as initial conditions for second model
-        simulator_2.model.surfacelayer.initialise_states_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.surfacelayer.saving_directory,
-                    simulator_1.model.surfacelayer.dump_file,
-                ]
+        
+        if self.doe == ("c", "c", "c", "c", "c", "c"):
+            # set up a model, and spin it up
+            simulator_1 = Simulator.from_scratch(
+                self.t, self.s, "c", "c", "c", "c", "c", "c"
             )
-        )
-        simulator_2.model.nutrientsurfacelayer.initialise_states_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.nutrientsurfacelayer.saving_directory,
-                    simulator_1.model.nutrientsurfacelayer.dump_file,
-                ]
+            simulator_1.spinup_model(cycles=1)
+    
+            # set up another model
+            simulator_2 = Simulator.from_scratch(
+                self.t, self.s, "c", "c", "c", "c", "c", "c", id_trail="bis"
             )
-        )
-        simulator_2.model.subsurface.initialise_states_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.subsurface.saving_directory,
-                    simulator_1.model.subsurface.dump_file,
-                ]
+    
+            # use dump of first model as initial conditions for second model
+            simulator_2.model.surfacelayer.initialise_states_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.surfacelayer.saving_directory,
+                        simulator_1.model.surfacelayer.dump_file,
+                    ]
+                )
             )
-        )
-        simulator_2.model.nutrientsubsurface.initialise_states_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.nutrientsubsurface.saving_directory,
-                    simulator_1.model.nutrientsubsurface.dump_file,
-                ]
+            simulator_2.model.nutrientsurfacelayer.initialise_states_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.nutrientsurfacelayer.saving_directory,
+                        simulator_1.model.nutrientsurfacelayer.dump_file,
+                    ]
+                )
             )
-        )
-        simulator_2.model.openwater.initialise_states_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.openwater.saving_directory,
-                    simulator_1.model.openwater.dump_file,
-                ]
+            simulator_2.model.subsurface.initialise_states_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.subsurface.saving_directory,
+                        simulator_1.model.subsurface.dump_file,
+                    ]
+                )
             )
-        )
-        simulator_2.model.nutrientopenwater.initialise_states_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.nutrientopenwater.saving_directory,
-                    simulator_1.model.nutrientopenwater.dump_file,
-                ]
+            simulator_2.model.nutrientsubsurface.initialise_states_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.nutrientsubsurface.saving_directory,
+                        simulator_1.model.nutrientsubsurface.dump_file,
+                    ]
+                )
             )
-        )
-
-        simulator_2.model.initialise_transfers_from_dump(
-            os.sep.join(
-                [
-                    simulator_1.model.exchanger.saving_directory,
-                    simulator_1.model.exchanger.dump_file,
-                ]
+            simulator_2.model.openwater.initialise_states_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.openwater.saving_directory,
+                        simulator_1.model.openwater.dump_file,
+                    ]
+                )
             )
-        )
-
-        # spin second model up
-        simulator_2.spinup_model(cycles=1)
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator_2.model)
+            simulator_2.model.nutrientopenwater.initialise_states_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.nutrientopenwater.saving_directory,
+                        simulator_1.model.nutrientopenwater.dump_file,
+                    ]
+                )
+            )
+    
+            simulator_2.model.initialise_transfers_from_dump(
+                os.sep.join(
+                    [
+                        simulator_1.model.exchanger.saving_directory,
+                        simulator_1.model.exchanger.dump_file,
+                    ]
+                )
+            )
+    
+            # spin second model up
+            simulator_2.spinup_model(cycles=1)
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator_2.model)
+        else:
+            print('Skipping test')
 
     def test_yaml_setup_simulate(self):
         """
@@ -490,19 +493,23 @@ class BasicTestModel(object):
         - checking the correctness of the final exchanger transfer values;
         - checking the values in the record files.
         """
-        # set up a model from yaml configuration file
-        simulator = Simulator.from_yaml(self.t, self.s)
-
-        # start main run
-        simulator.run_model()
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator.model)
-        # check records
-        self.check_records(simulator.model)
-
-        # clean up
-        simulator.clean_up_files()
+        
+        if self.doe == ("c", "c", "c", "c", "c", "c"):
+            # set up a model from yaml configuration file
+            simulator = Simulator.from_yaml(self.t, self.s)
+    
+            # start main run
+            simulator.run_model()
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator.model)
+            # check records
+            self.check_records(simulator.model)
+    
+            # clean up
+            simulator.clean_up_files()
+        else:
+            print('Skipping test')
 
     def test_setup_simulate_resume_run(self):
         """
@@ -518,22 +525,26 @@ class BasicTestModel(object):
         - checking the correctness of the final exchanger transfer values;
         - checking the values in the record files.
         """
-        # set up a model from yaml configuration file
-        simulator = Simulator.from_scratch(self.t, self.s, "c", "c", "c", "c", "c", "c")
-
-        # start main run
-        simulator.run_model()
-
-        # resume main run
-        simulator.resume_model()
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator.model)
-        # check records
-        self.check_records(simulator.model)
-
-        # clean up
-        simulator.clean_up_files()
+        
+        if self.doe == ("c", "c", "c", "c", "c", "c"):
+            # set up a model from yaml configuration file
+            simulator = Simulator.from_scratch(self.t, self.s, "c", "c", "c", "c", "c", "c")
+    
+            # start main run
+            simulator.run_model()
+    
+            # resume main run
+            simulator.resume_model()
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator.model)
+            # check records
+            self.check_records(simulator.model)
+    
+            # clean up
+            simulator.clean_up_files()
+        else:
+            print('Skipping tests')
 
     def test_setup_spinup_yaml_resume_spinup(self):
         """
@@ -559,59 +570,63 @@ class BasicTestModel(object):
         records because they are scattered across two files of for
         simulation periods 8 days each.
         """
-        # set up a model
-        simulator_1 = Simulator.from_scratch(
-            self.t, self.s, "c", "c", "c", "c", "c", "c"
-        )
-
-        # spinup model
-        simulator_1.spinup_model()
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator_1.model)
-
-        # set up another model using YAML of first model
-        simulator_2 = Simulator(
-            self.t,
-            self.s,
-            unifhy.Model.from_yaml(
-                os.sep.join(
-                    [
-                        simulator_1.model.saving_directory,
-                        "{}.yml".format(simulator_1.model.identifier),
-                    ]
-                )
-            ),
-        )
-
-        # resume first spin-up run
-        simulator_2.resume_model(tag="spinup1")
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator_2.model)
-
-        # set up yet another model using YAML of first model
-        simulator_3 = Simulator(
-            self.t,
-            self.s,
-            unifhy.Model.from_yaml(
-                os.sep.join(
-                    [
-                        simulator_1.model.saving_directory,
-                        "{}.yml".format(simulator_1.model.identifier),
-                    ]
-                )
-            ),
-        )
-
-        # resume second spin-up run
-        simulator_3.resume_model(tag="spinup2")
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator_3.model)
-
-        # clean up
-        simulator_1.clean_up_files()
+        
+        if self.doe == ("c", "c", "c", "c", "c", "c"):
+            # set up a model
+            simulator_1 = Simulator.from_scratch(
+                self.t, self.s, "c", "c", "c", "c", "c", "c"
+            )
+    
+            # spinup model
+            simulator_1.spinup_model()
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator_1.model)
+    
+            # set up another model using YAML of first model
+            simulator_2 = Simulator(
+                self.t,
+                self.s,
+                unifhy.Model.from_yaml(
+                    os.sep.join(
+                        [
+                            simulator_1.model.saving_directory,
+                            "{}.yml".format(simulator_1.model.identifier),
+                        ]
+                    )
+                ),
+            )
+    
+            # resume first spin-up run
+            simulator_2.resume_model(tag="spinup1")
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator_2.model)
+    
+            # set up yet another model using YAML of first model
+            simulator_3 = Simulator(
+                self.t,
+                self.s,
+                unifhy.Model.from_yaml(
+                    os.sep.join(
+                        [
+                            simulator_1.model.saving_directory,
+                            "{}.yml".format(simulator_1.model.identifier),
+                        ]
+                    )
+                ),
+            )
+    
+            # resume second spin-up run
+            simulator_3.resume_model(tag="spinup2")
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator_3.model)
+    
+            # clean up
+            simulator_1.clean_up_files()
+        else:
+            print('Skipping test')
 
     def test_setup_yaml_setup_simulate(self):
         """
@@ -627,35 +642,39 @@ class BasicTestModel(object):
         - checking the correctness of the final exchanger transfer values;
         - checking the values in the record files.
         """
-        # set up a model
-        simulator_1 = Simulator.from_scratch(
-            self.t, self.s, "c", "c", "c", "c", "c", "c"
-        )
-
-        # set up another model using YAML of first model
-        simulator_2 = Simulator(
-            self.t,
-            self.s,
-            unifhy.Model.from_yaml(
-                os.sep.join(
-                    [
-                        simulator_1.model.saving_directory,
-                        "{}.yml".format(simulator_1.model.identifier),
-                    ]
-                )
-            ),
-        )
-
-        # start main run of second model
-        simulator_2.run_model()
-
-        # check final state and transfer values
-        self.check_final_conditions(simulator_2.model)
-        # check records
-        self.check_records(simulator_2.model)
-
-        # clean up
-        simulator_2.clean_up_files()
+        
+        if self.doe == ("c", "c", "c", "c", "c", "c"):
+            # set up a model
+            simulator_1 = Simulator.from_scratch(
+                self.t, self.s, "c", "c", "c", "c", "c", "c"
+            )
+    
+            # set up another model using YAML of first model
+            simulator_2 = Simulator(
+                self.t,
+                self.s,
+                unifhy.Model.from_yaml(
+                    os.sep.join(
+                        [
+                            simulator_1.model.saving_directory,
+                            "{}.yml".format(simulator_1.model.identifier),
+                        ]
+                    )
+                ),
+            )
+    
+            # start main run of second model
+            simulator_2.run_model()
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator_2.model)
+            # check records
+            self.check_records(simulator_2.model)
+    
+            # clean up
+            simulator_2.clean_up_files()
+        else:
+            print('Skipping test')
 
     def test_setup_spinup_simulate_resume_run(self):
         """
@@ -683,62 +702,66 @@ class BasicTestModel(object):
         'correct', and even less so 'consistent' from one combination
         to the next.
         """
-        # set up, spinup, and run model
-        simulator_1 = Simulator.from_scratch(
-            self.t, self.s, "d", "c", "n", "d", "c", "n"
-        )
-        simulator_1.spinup_model()
-        simulator_1.run_model()
-
-        # store the last component states
-        last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
-        last_states_ss = deepcopy(simulator_1.model.subsurface.states)
-        last_states_ow = deepcopy(simulator_1.model.openwater.states)
-        last_states_nsl = deepcopy(simulator_1.model.nutrientsurfacelayer.states)
-        last_states_nss = deepcopy(simulator_1.model.nutrientsubsurface.states)
-        last_states_now = deepcopy(simulator_1.model.nutrientopenwater.states)
-
-        # set up another model using YAML of first model
-        simulator_2 = Simulator(
-            self.t,
-            self.s,
-            unifhy.Model.from_yaml(
-                os.sep.join(
-                    [
-                        simulator_1.model.saving_directory,
-                        "{}.yml".format(simulator_1.model.identifier),
-                    ]
-                )
-            ),
-        )
-
-        # resume model run
-        simulator_2.resume_model()
-
-        # check final state values are coherent
-        self.assertTrue(
-            compare_states(last_states_sl, simulator_2.model.surfacelayer.states)
-        )
-        self.assertTrue(
-            compare_states(
-                last_states_nsl, simulator_2.model.nutrientsurfacelayer.states
+        
+        if self.doe == ("d", "c", "n", "d", "c", "n"):
+            # set up, spinup, and run model
+            simulator_1 = Simulator.from_scratch(
+                self.t, self.s, "d", "c", "n", "d", "c", "n"
             )
-        )
-        self.assertTrue(
-            compare_states(last_states_ss, simulator_2.model.subsurface.states)
-        )
-        self.assertTrue(
-            compare_states(last_states_nss, simulator_2.model.nutrientsubsurface.states)
-        )
-        self.assertTrue(
-            compare_states(last_states_ow, simulator_2.model.openwater.states)
-        )
-        self.assertTrue(
-            compare_states(last_states_now, simulator_2.model.nutrientopenwater.states)
-        )
-
-        # clean up
-        simulator_1.clean_up_files()
+            simulator_1.spinup_model()
+            simulator_1.run_model()
+    
+            # store the last component states
+            last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
+            last_states_ss = deepcopy(simulator_1.model.subsurface.states)
+            last_states_ow = deepcopy(simulator_1.model.openwater.states)
+            last_states_nsl = deepcopy(simulator_1.model.nutrientsurfacelayer.states)
+            last_states_nss = deepcopy(simulator_1.model.nutrientsubsurface.states)
+            last_states_now = deepcopy(simulator_1.model.nutrientopenwater.states)
+    
+            # set up another model using YAML of first model
+            simulator_2 = Simulator(
+                self.t,
+                self.s,
+                unifhy.Model.from_yaml(
+                    os.sep.join(
+                        [
+                            simulator_1.model.saving_directory,
+                            "{}.yml".format(simulator_1.model.identifier),
+                        ]
+                    )
+                ),
+            )
+    
+            # resume model run
+            simulator_2.resume_model()
+    
+            # check final state values are coherent
+            self.assertTrue(
+                compare_states(last_states_sl, simulator_2.model.surfacelayer.states)
+            )
+            self.assertTrue(
+                compare_states(
+                    last_states_nsl, simulator_2.model.nutrientsurfacelayer.states
+                )
+            )
+            self.assertTrue(
+                compare_states(last_states_ss, simulator_2.model.subsurface.states)
+            )
+            self.assertTrue(
+                compare_states(last_states_nss, simulator_2.model.nutrientsubsurface.states)
+            )
+            self.assertTrue(
+                compare_states(last_states_ow, simulator_2.model.openwater.states)
+            )
+            self.assertTrue(
+                compare_states(last_states_now, simulator_2.model.nutrientopenwater.states)
+            )
+    
+            # clean up
+            simulator_1.clean_up_files()
+        else:
+            print('Skipping test')
 
     def check_final_conditions(self, model):
         """
@@ -766,7 +789,7 @@ class BasicTestModel(object):
         """
         cat = component.category
         # if component is "real", otherwise no states
-        if not isinstance(component, unifhy.DataComponent):
+        if not isinstance(component, (unifhy.DataComponent, unifhy.NullComponent)):
             for state in ["state_a", "state_b"]:
                 if exp_records_raw[self.t][cat].get(state) is None:
                     # some components feature only one state
@@ -832,7 +855,7 @@ class BasicTestModel(object):
 
             # if component is "real", otherwise no records requested
             cat = component.category
-            if not isinstance(component, unifhy.DataComponent):
+        if not isinstance(component, (unifhy.DataComponent, unifhy.NullComponent)):
                 for name, frequencies in component.records.items():
                     for delta, methods in frequencies.items():
                         for method in methods:
@@ -900,100 +923,90 @@ class AdvancedTestModel(BasicTestModel):
         # This takes too long with six, so we have to simplify it. We know
         # the case of all 'c' works, and we only really need to test the new
         # components
-        doe = (
-            (sl, ss, ow, nsl, nss, now)
-            for sl in ("c",)
-            for ss in ("c",)
-            for ow in ("c",)
-            for nsl in ("c", "d", "n")
-            for nss in ("c", "d", "n")
-            for now in ("c", "d", "n")
-        )
+        doe = self.doe
 
         # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind, nsl_kind, nss_kind, now_kind in doe:
-            with self.subTest(
-                surfacelayer=sl_kind,
-                subsurface=ss_kind,
-                openwater=ow_kind,
-                nutrientsurfacelayer=nsl_kind,
-                nutrientsubsurface=nss_kind,
-                nutrientopenwater=now_kind,
-            ):
-                # set up, spinup, and run model
-                simulator_1 = Simulator.from_scratch(
-                    self.t,
-                    self.s,
-                    sl_kind,
-                    ss_kind,
-                    ow_kind,
-                    nsl_kind,
-                    nss_kind,
-                    now_kind,
-                )
-                simulator_1.spinup_model()
-                simulator_1.run_model()
+        sl_kind = doe[0]
+        ss_kind = doe[1]
+        ow_kind = doe[2]
+        nsl_kind = doe[3]
+        nss_kind = doe[4]
+        now_kind = doe[5]
+        
+        # set up, spinup, and run model
+        simulator_1 = Simulator.from_scratch(
+            self.t,
+            self.s,
+            sl_kind,
+            ss_kind,
+            ow_kind,
+            nsl_kind,
+            nss_kind,
+            now_kind,
+        )
+        simulator_1.spinup_model()
+        simulator_1.run_model()
 
-                # store the last component states
-                last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
-                last_states_ss = deepcopy(simulator_1.model.subsurface.states)
-                last_states_ow = deepcopy(simulator_1.model.openwater.states)
-                last_states_nsl = deepcopy(
-                    simulator_1.model.nutrientsurfacelayer.states
-                )
-                last_states_nss = deepcopy(simulator_1.model.nutrientsubsurface.states)
-                last_states_now = deepcopy(simulator_1.model.nutrientopenwater.states)
+        # store the last component states
+        last_states_sl = deepcopy(simulator_1.model.surfacelayer.states)
+        last_states_ss = deepcopy(simulator_1.model.subsurface.states)
+        last_states_ow = deepcopy(simulator_1.model.openwater.states)
+        last_states_nsl = deepcopy(
+            simulator_1.model.nutrientsurfacelayer.states
+        )
+        last_states_nss = deepcopy(simulator_1.model.nutrientsubsurface.states)
+        last_states_now = deepcopy(simulator_1.model.nutrientopenwater.states)
 
-                # set up another model using YAML of first model
-                simulator_2 = Simulator(
-                    self.t,
-                    self.s,
-                    unifhy.Model.from_yaml(
-                        os.sep.join(
-                            [
-                                simulator_1.model.saving_directory,
-                                "{}.yml".format(simulator_1.model.identifier),
-                            ]
-                        )
-                    ),
+        # set up another model using YAML of first model
+        simulator_2 = Simulator(
+            self.t,
+            self.s,
+            unifhy.Model.from_yaml(
+                os.sep.join(
+                    [
+                        simulator_1.model.saving_directory,
+                        "{}.yml".format(simulator_1.model.identifier),
+                    ]
                 )
+            ),
+        )
 
-                # resume model run
-                simulator_2.resume_model()
+        # resume model run
+        simulator_2.resume_model()
 
-                # check final state values are coherent
-                self.assertTrue(
-                    compare_states(
-                        last_states_sl, simulator_2.model.surfacelayer.states
-                    )
-                )
-                self.assertTrue(
-                    compare_states(
-                        last_states_nsl,
-                        simulator_2.model.nutrientsurfacelayer.states,
-                    )
-                )
-                self.assertTrue(
-                    compare_states(last_states_ss, simulator_2.model.subsurface.states)
-                )
-                self.assertTrue(
-                    compare_states(
-                        last_states_nss,
-                        simulator_2.model.nutrientsubsurface.states,
-                    )
-                )
-                self.assertTrue(
-                    compare_states(last_states_ow, simulator_2.model.openwater.states)
-                )
-                self.assertTrue(
-                    compare_states(
-                        last_states_now,
-                        simulator_2.model.nutrientopenwater.states,
-                    )
-                )
+        # check final state values are coherent
+        self.assertTrue(
+            compare_states(
+                last_states_sl, simulator_2.model.surfacelayer.states
+            )
+        )
+        self.assertTrue(
+            compare_states(
+                last_states_nsl,
+                simulator_2.model.nutrientsurfacelayer.states,
+            )
+        )
+        self.assertTrue(
+            compare_states(last_states_ss, simulator_2.model.subsurface.states)
+        )
+        self.assertTrue(
+            compare_states(
+                last_states_nss,
+                simulator_2.model.nutrientsubsurface.states,
+            )
+        )
+        self.assertTrue(
+            compare_states(last_states_ow, simulator_2.model.openwater.states)
+        )
+        self.assertTrue(
+            compare_states(
+                last_states_now,
+                simulator_2.model.nutrientopenwater.states,
+            )
+        )
 
-                # clean up
-                simulator_1.clean_up_files()
+        # clean up
+        simulator_1.clean_up_files()
 
     def test_setup_simulate(self):
         """
@@ -1015,47 +1028,39 @@ class AdvancedTestModel(BasicTestModel):
           all component states, all component transfers, and all
           component outputs).
         """
-        doe = (
-            (sl, ss, ow, nsl, nss, now)
-            for sl in ("c",)
-            for ss in ("c",)
-            for ow in ("c",)
-            for nsl in ("c", "d")
-            for nss in ("c", "d")
-            for now in ("c", "d")
-        )
-
-        # loop through all possible combinations of components
-        for sl_kind, ss_kind, ow_kind, nsl_kind, nss_kind, now_kind in doe:
-            with self.subTest(
-                surfacelayer=sl_kind,
-                subsurface=ss_kind,
-                openwater=ow_kind,
-                nutrientsurfacelayer=nsl_kind,
-                nutrientsubsurface=nss_kind,
-                nutrientopenwater=now_kind,
-            ):
-                # set up, and run model
-                simulator = Simulator.from_scratch(
-                    self.t,
-                    self.s,
-                    sl_kind,
-                    ss_kind,
-                    ow_kind,
-                    nsl_kind,
-                    nss_kind,
-                    now_kind,
-                )
-                simulator.run_model()
-
-                # check final state and transfer values
-                self.check_final_conditions(simulator.model)
-                # check records
-                self.check_records(simulator.model)
-
-                # clean up
-                simulator.clean_up_files()
-
+        doe = self.doe
+        if "n" in doe:
+            print("Skipping test")
+        else:
+            # loop through all possible combinations of components
+            sl_kind = doe[0]
+            ss_kind = doe[1]
+            ow_kind = doe[2]
+            nsl_kind = doe[3]
+            nss_kind = doe[4]
+            now_kind = doe[5]
+    
+            # set up, and run model
+            simulator = Simulator.from_scratch(
+                self.t,
+                self.s,
+                sl_kind,
+                ss_kind,
+                ow_kind,
+                nsl_kind,
+                nss_kind,
+                now_kind,
+            )
+            simulator.run_model()
+    
+            # check final state and transfer values
+            self.check_final_conditions(simulator.model)
+            # check records
+            self.check_records(simulator.model)
+    
+            # clean up
+            simulator.clean_up_files()
+            
     def test_setup_simulate_various_sources(self):
         """
         The purpose of this test is to check that, no matter the
@@ -1079,94 +1084,128 @@ class AdvancedTestModel(BasicTestModel):
           all component states, all component transfers, and all
           component outputs).
         """
-        doe = (
-            (sl, ss, ow, nsl, nss, now)
-            for sl in ("Python",)
-            for ss in ("Python",)
-            for ow in ("Python",)
-            for nsl in ("Python", "Fortran", "C")
-            for nss in ("Python", "Fortran", "C")
-            for now in ("Python", "Fortran", "C")
-        )
-
-        # loop through all possible combinations of component sources
-        for sl_src, ss_src, ow_src, nsl_src, nss_src, now_src in doe:
-            with self.subTest(
-                surfacelayer=sl_src,
-                subsurface=ss_src,
-                openwater=ow_src,
-                nutrientsurfacelayer=nsl_src,
-                nutrientsubsurface=nss_src,
-                nutrientopenwater=now_src,
-            ):
-                # set up, and run model
-                simulator = Simulator.from_scratch(
-                    self.t,
-                    self.s,
-                    "c",
-                    "c",
-                    "c",
-                    "c",
-                    "c",
-                    "c",
-                    {
-                        "surfacelayer": sl_src,
-                        "subsurface": ss_src,
-                        "openwater": ow_src,
-                        "nutrientsurfacelayer": nsl_src,
-                        "nutrientsubsurface": nss_src,
-                        "nutrientopenwater": now_src,
-                    },
-                )
-                simulator.run_model()
-
-                # check final state and transfer values
-                self.check_final_conditions(simulator.model)
-                # check records
-                self.check_records(simulator.model)
-
-                # clean up
-                simulator.clean_up_files()
-
-
-class TestModelSameTimeSameSpace(AdvancedTestModel, unittest.TestCase):
-    # flag to specify that components are to run at same temporal resolutions
-    t = "same_t"
-    # flag to specify that components are to run at same spatial resolution
-    s = "same_s"
-
-
-class TestModelDiffTimeSameSpace(AdvancedTestModel, unittest.TestCase):
-    # flag to specify that components are to run at different temporal resolutions
-    t = "diff_t"
-    # flag to specify that components are to run at same spatial resolution
-    s = "same_s"
-
-
-class TestModelSameTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
-    # flag to specify that components are to run at same temporal resolutions
-    t = "same_t"
-    # flag to specify that components are to run at different spatial resolutions
-    s = "diff_s"
-
-
-class TestModelDiffTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
-    # flag to specify that components are to run at different temporal resolutions
-    t = "diff_t"
-    # flag to specify that components are to run at different spatial resolutions
-    s = "diff_s"
+        
+        if self.doe == ("c", "c", "c", "c", "c", "c"): 
+            doet = (
+                (sl, ss, ow, nsl, nss, now)
+                for sl in ("Python",)
+                for ss in ("Python",)
+                for ow in ("Python",)
+                for nsl in ("Python", "Fortran", "C")
+                for nss in ("Python", "Fortran", "C")
+                for now in ("Python", "Fortran", "C")
+            )
+    
+            # loop through all possible combinations of component sources
+            for sl_src, ss_src, ow_src, nsl_src, nss_src, now_src in doet:
+                with self.subTest(
+                    surfacelayer=sl_src,
+                    subsurface=ss_src,
+                    openwater=ow_src,
+                    nutrientsurfacelayer=nsl_src,
+                    nutrientsubsurface=nss_src,
+                    nutrientopenwater=now_src,
+                ):
+                    # set up, and run model
+                    simulator = Simulator.from_scratch(
+                        self.t,
+                        self.s,
+                        "c",
+                        "c",
+                        "c",
+                        "c",
+                        "c",
+                        "c",
+                        {
+                            "surfacelayer": sl_src,
+                            "subsurface": ss_src,
+                            "openwater": ow_src,
+                            "nutrientsurfacelayer": nsl_src,
+                            "nutrientsubsurface": nss_src,
+                            "nutrientopenwater": now_src,
+                        },
+                    )
+                    simulator.run_model()
+    
+                    # check final state and transfer values
+                    self.check_final_conditions(simulator.model)
+                    # check records
+                    self.check_records(simulator.model)
+    
+                    # clean up
+                    simulator.clean_up_files()
+        else:
+            print('Skipping test')
 
 
 if __name__ == "__main__":
+    
+    does = (
+        (sl, ss, ow, nsl, nss, now)
+        for sl in ("c",)
+        for ss in ("c",)
+        for ow in ("c",)
+        for nsl in ("c", "d", "n")
+        for nss in ("c", "d", "n")
+        for now in ("c", "d", "n")
+    )
+    
+    results = []
+    for doe in does:
+        print(doe)
+        class TestModelSameTimeSameSpace(AdvancedTestModel, unittest.TestCase):
+            # flag to specify that components are to run at same temporal resolutions
+            t = "same_t"
+            # flag to specify that components are to run at same spatial resolution
+            s = "same_s"
+            #
+            doe = doe 
+
+        class TestModelSameTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
+            # flag to specify that components are to run at same temporal resolutions
+            t = "same_t"
+            # flag to specify that components are to run at same spatial resolution
+            s = "diff_s"
+            #
+            doe = doe 
+
+        class TestModelDiffTimeSameSpace(AdvancedTestModel, unittest.TestCase):
+            # flag to specify that components are to run at same temporal resolutions
+            t = "diff_t"
+            # flag to specify that components are to run at same spatial resolution
+            s = "same_s"
+            #
+            doe = doe 
+
+        class TestModelDiffTimeDiffSpace(AdvancedTestModel, unittest.TestCase):
+            # flag to specify that components are to run at same temporal resolutions
+            t = "diff_t"
+            # flag to specify that components are to run at same spatial resolution
+            s = "diff_s"
+            #
+            doe = doe             
+            
+        test_loader = unittest.TestLoader()
+        test_suite = unittest.TestSuite()
+    
+        test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
+        test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace))
+        test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace))
+        test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
+        
+        runner = unittest.TextTestRunner(verbosity=2)
+        result = runner.run(test_suite)
+        print(result)
+        results.append(result)
+    
+    # run doc test at end
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
-
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSameTimeSameSpace))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelDiffTimeSameSpace))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelSameTimeDiffSpace))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(TestModelDiffTimeDiffSpace))
-
     test_suite.addTests(doctest.DocTestSuite(unifhy.model))
-
     runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(test_suite)
+    result = runner.run(test_suite)
+    results.append(result)
+    
+    for result in results:
+        if not result.wasSuccessful():
+                exit(1)
