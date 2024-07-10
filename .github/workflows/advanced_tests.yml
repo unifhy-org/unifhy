@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  run-basic-tests:
+  run-advanced-tests:
 
     strategy:
       matrix:
@@ -71,6 +71,21 @@ jobs:
           pip install -e .
 
       # run tests
-      - name: run advanced test suite
+      - name: run advanced tests 1 (SameTimeSameSpace)
         run: |
-          (cd ./tests && python run_all_tests.py)
+          (cd ./tests && python run_stss_tests.py)
+
+      # run tests
+      - name: run advanced tests 2 (SameTimeDiffSpace)
+        run: |
+          (cd ./tests && python run_stds_tests.py)          
+
+      # run tests
+      - name: run advanced tests 3 (DiffTimeSameSpace)
+        run: |
+          (cd ./tests && python run_dtss_tests.py)
+
+      # run tests
+      - name: run advanced tests 4 (DiffTimeDiffSpace)
+        run: |
+          (cd ./tests && python run_dtds_tests.py)          
