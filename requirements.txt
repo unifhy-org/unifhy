@@ -3,4 +3,3 @@ netCDF4>=1.5
 numpy>=1.16
 pyproj>=3.0
 pyyaml>=5.3
-cloudpickle<3.0.0
