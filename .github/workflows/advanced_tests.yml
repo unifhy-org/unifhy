@@ -31,7 +31,7 @@ jobs:
 
       # set up a conda environment
       - name: set up miniconda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: testing-env
           python-version: ${{ matrix.python-version }}
