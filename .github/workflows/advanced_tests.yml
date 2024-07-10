@@ -25,13 +25,13 @@ jobs:
 
       # check out PR HEAD commit
       - name: check out PR HEAD commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       # set up a conda environment
       - name: set up miniconda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           activate-environment: testing-env
           python-version: ${{ matrix.python-version }}
