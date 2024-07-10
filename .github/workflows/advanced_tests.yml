@@ -52,9 +52,9 @@ jobs:
       - name: make gfortran available (macos only)
         if: matrix.os == 'macos-latest'
         run: |
-          sudo ln -s /usr/local/bin/gfortran-13 /usr/local/bin/gfortran
+          sudo ln -s /usr/local/bin/gfortran-14 /usr/local/bin/gfortran
           sudo mkdir /usr/local/gfortran
-          sudo ln -s /usr/local/Cellar/gcc@13/*/lib/gcc/13 /usr/local/gfortran/lib
+          sudo ln -s /usr/local/Cellar/gcc@13/*/lib/gcc/14 /usr/local/gfortran/lib
           gfortran --version
 
       - name: build dummy C and Fortran components
