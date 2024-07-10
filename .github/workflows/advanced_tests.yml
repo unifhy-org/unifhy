@@ -50,7 +50,7 @@ jobs:
 
       # build dummy components required for tests
       - name: make gfortran available (macos only)
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-13'
         run: |
           sudo ln -s /usr/local/bin/gfortran-11 /usr/local/bin/gfortran
           sudo mkdir /usr/local/gfortran
