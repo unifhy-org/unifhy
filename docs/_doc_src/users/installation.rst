@@ -21,21 +21,13 @@ Official releases
 ~~~~~~~~~~~~~~~~~
 
 If you wish to install the most recent **stable** version of `unifhy`, it is
-available from the *conda-forge* channel, so you can use `conda` (recommended
-way):
-
-.. code-block:: console
-   :caption: Installing stable version using `conda`.
-
-   $ conda install -c conda-forge unifhy
-
-It is also available from the Python Package Index (PyPI), so you can also
-use `pip`:
+recommended to use pip:
 
 .. code-block:: console
    :caption: Installing stable version using `pip`.
 
-   $ pip install unifhy
+   $ pip install git+https://github.com/unifhy-org/unifhy.git@main
+
 
 .. warning::
 
