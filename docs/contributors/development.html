@@ -343,10 +343,10 @@ that is compliant with the framework.</p>
 <p>You can follow the steps below to develop your component(s):</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#create-your-science-component-by-subclassing-a-generic-framework-component" id="id7">Create your science component by subclassing a generic framework component</a></p></li>
-<li><p><a class="reference internal" href="#document-your-science-component-using-its-class-docstring" id="id8">Document your science component using its class docstring</a></p></li>
-<li><p><a class="reference internal" href="#define-your-science-component-using-its-class-attributes" id="id9">Define your science component using its class attributes</a></p></li>
-<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id10">Implement the initialise-run-finalise component class methods</a></p></li>
+<li><p><a class="reference internal" href="#create-your-science-component-by-subclassing-a-generic-framework-component" id="id10">Create your science component by subclassing a generic framework component</a></p></li>
+<li><p><a class="reference internal" href="#document-your-science-component-using-its-class-docstring" id="id11">Document your science component using its class docstring</a></p></li>
+<li><p><a class="reference internal" href="#define-your-science-component-using-its-class-attributes" id="id12">Define your science component using its class attributes</a></p></li>
+<li><p><a class="reference internal" href="#implement-the-initialise-run-finalise-component-class-methods" id="id13">Implement the initialise-run-finalise component class methods</a></p></li>
 </ul>
 </div>
 <section id="create-your-science-component-by-subclassing-a-generic-framework-component">
@@ -366,12 +366,197 @@ component, i.e. “outwards”), see <a class="reference internal" href="../deve
 which of the inwards to accept and which of the outwards to produce,
 provided components within the Model do not require inwards that
 are not produced.</p>
-<figure class="align-center" id="id1">
+<figure class="align-center" id="id3">
 <span id="fig-transfers"></span><img alt="component transfers" src="../_images/framework_detailed_transfers.svg" /><figcaption>
 <p><span class="caption-text">Fig. 2: Transfers of Information between Components (see
-<a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a> for the numbers meanings).</span><a class="headerlink" href="#id1" title="Permalink to this image"><span class="fa fa-link"></a></p>
+<a class="reference internal" href="#tab-transfers"><span class="std std-ref">Tab. 1</span></a> for the numbers meanings).</span><a class="headerlink" href="#id3" title="Permalink to this image"><span class="fa fa-link"></a></p>
 </figcaption>
 </figure>
+<span id="tab-transfers"></span><table class="table" id="id4">
+<caption><span class="caption-text">Tab. 1: Transfers of Information between Components (see
+        <a class="reference internal" href="../developers/transfers.html#fig-transfers"><span class="std std-ref">Fig. 2</span></a> for the numbers context)</span><a class="headerlink" href="#id4" title="Permalink to this table"><span class="fa fa-link"></a></caption>
+<colgroup>
+<col style="width: 2%" />
+<col style="width: 75%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>canopy_liquid_throughfall_and_snow_melt_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>transpiration_flux_from_root_uptake</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>soil_water_stress_for_transpiration</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>direct_water_evaporation_flux_from_soil</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>soil_water_stress_for_direct_soil_evaporation</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>water_evaporation_flux_from_standing_water</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>standing_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>total_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>water_evaporation_flux_from_open_water</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>direct_throughfall_flux</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>surface_runoff_flux_delivered_to_rivers</p></td>
+<td><p><a href="#id1"><span class="problematic" id="id2">|</span></a>kg m-2 s-1]</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>net_groundwater_flux_to_rivers</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>open_water_area_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>open_water_surface_height</p></td>
+<td><p>m</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>mass_flux_of_dissolved_inorganic_carbon_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>mass_flux_of_dissolved_organic_carbon_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>19</p></td>
+<td><p>mass_flux_of_dissolved_organic_nitrogen_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>20</p></td>
+<td><p>mass_flux_of_dissolved_phosphorus_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>21</p></td>
+<td><p>mass_flux_of_dissolved_calcium_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>22</p></td>
+<td><p>mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>23</p></td>
+<td><p>mass_flux_of_dissolved_silicon_from_soil_in_surface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>24</p></td>
+<td><p>mass_flux_of_dissolved_inorganic_carbon_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>25</p></td>
+<td><p>mass_flux_of_dissolved_organic_carbon_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>26</p></td>
+<td><p>mass_flux_of_dissolved_nitrogen_as_ammonium_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>27</p></td>
+<td><p>mass_flux_of_dissolved_nitrogen_as_nitrate_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>mass_flux_of_dissolved_organic_nitrogen_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>29</p></td>
+<td><p>mass_flux_of_dissolved_phosphorus_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>30</p></td>
+<td><p>mass_flux_of_dissolved_calcium_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>31</p></td>
+<td><p>mass_flux_of_dissolved_sulfur_as_sulfate_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>32</p></td>
+<td><p>mass_flux_of_dissolved_silicon_from_soil_in_subsurface_runoff</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>33</p></td>
+<td><p>mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>34</p></td>
+<td><p>mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>35</p></td>
+<td><p>mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition</p></td>
+<td><p>kg m<sup>-2</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>36</p></td>
+<td><p>mass_concentration_of_carbon_dioxide_in_air</p></td>
+<td><p>kg m<sup>-3</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>37</p></td>
+<td><p>water_volume_in_surface_routing_channels</p></td>
+<td><p>m<sup>3</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>38</p></td>
+<td><p>water_volume_in_subsurface_routing_channels</p></td>
+<td><p>m<sup>3</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>39</p></td>
+<td><p>outgoing_water_volume_transport_out_of_subsurface_cell</p></td>
+<td><p>m<sup>3</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>40</p></td>
+<td><p>outgoing_water_volume_transport_out_of_surface_cell</p></td>
+<td><p>m<sup>3</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>41</p></td>
+<td><p>upward_volume_transport_of_liquid_water_between_subsurface_and_surface</p></td>
+<td><p>m<sup>3</sup> s<sup>-1</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>42</p></td>
+<td><p>return_flow_fraction</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
 <p>If your science component contribution is overlapping several components,
 it is required to be refactored into the relevant number of components.</p>
 <p>Contributions must be implemented as Python classes, and more specifically
@@ -384,8 +569,8 @@ the data and science elements of your component(s).</p>
 subclassing from the relevant framework component.</p>
 <p class="rubric">Example</p>
 <p>See an example of a mock surface layer component creation below.</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Subclassing from <a class="reference internal" href="../api/classes/unifhy.SurfaceLayerComponent.html#unifhy.SurfaceLayerComponent" title="unifhy.SurfaceLayerComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceLayerComponent</span></code></a> class.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
@@ -417,8 +602,8 @@ followed by a blank line before providing a more elaborate description as per
 The field list should be placed last and preceded by a blank line.</p>
 <p class="rubric">Example</p>
 <p>See an example of a mock component description below.</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Using the component class docstring for description and acknowledgment.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
@@ -493,8 +678,8 @@ frequency within a climatology year.</p></li>
 <p>If the input is of climatologic kind, <em>frequency</em> must also be given and it
 can take one of the supported values described in <a class="reference internal" href="#tab-frequencies"><span class="std std-ref">Tab. 1</span></a>
 below.</p>
-<span id="tab-frequencies"></span><table class="table" id="id4">
-<caption><span class="caption-text">Tab. 2: Supported frequencies for climatologic inputs</span><a class="headerlink" href="#id4" title="Permalink to this table"><span class="fa fa-link"></a></caption>
+<span id="tab-frequencies"></span><table class="table" id="id7">
+<caption><span class="caption-text">Tab. 2: Supported frequencies for climatologic inputs</span><a class="headerlink" href="#id7" title="Permalink to this table"><span class="fa fa-link"></a></caption>
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 70%" />
@@ -683,8 +868,8 @@ details).</p>
 as the space domain (see e.g. <a class="reference internal" href="../api/attributes/unifhy.LatLonGrid.cell_area.html#unifhy.LatLonGrid.cell_area" title="unifhy.LatLonGrid.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid.cell_area</span></code></a> for details).</p>
 <p class="rubric">Example</p>
 <p>See a detailed example of a mock component definition below.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Completing the component class definition in the class attributes.</span><a class="headerlink" href="#id8" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
@@ -820,8 +1005,8 @@ states, parameters, and constants.</p>
 <p>This method is not expected to return anything.</p>
 <p class="rubric">Example</p>
 <p>See a detailed example of a mock component implementation below.</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Implementing the three mandatory methods initialise, run, and finalise.</span><a class="headerlink" href="#id9" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unifhy</span>
 
 
