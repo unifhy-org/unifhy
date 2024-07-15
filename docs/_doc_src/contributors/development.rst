@@ -58,7 +58,7 @@ are not produced.
    8   total_water_area_fraction                                                       1
    9   water_evaporation_flux_from_open_water                                          |kg m-2 s-1|
    10  direct_throughfall_flux                                                         |kg m-2 s-1|
-   11  surface_runoff_flux_delivered_to_rivers                                         |kg m-2 s-1]
+   11  surface_runoff_flux_delivered_to_rivers                                         |kg m-2 s-1|
    12  net_groundwater_flux_to_rivers                                                  |kg m-2 s-1|
    13  open_water_area_fraction                                                        1
    14  open_water_surface_height                                                       m
