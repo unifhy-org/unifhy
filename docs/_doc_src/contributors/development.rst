@@ -88,7 +88,7 @@ are not produced.
    38  water_volume_in_subsurface_routing_channels                                    m\ :sup:`3`
    39  outgoing_water_volume_transport_out_of_subsurface_cell                         m\ :sup:`3` s\ :sup:`-1` 
    40  outgoing_water_volume_transport_out_of_surface_cell                            m\ :sup:`3` s\ :sup:`-1` 
-   41  upward_volume_transport_of_liquid_water_between_subsurface_and_surface         m :sup:`3` s\ :sup:`-1` 
+   41  upward_volume_transport_of_liquid_water_between_subsurface_and_surface         m\ :sup:`3` s\ :sup:`-1` 
    42  return_flow_fraction                                                           1
    ==  =============================================================================  ========================
 
