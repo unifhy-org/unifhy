@@ -17,10 +17,10 @@ Create your science component by subclassing a generic framework component
 --------------------------------------------------------------------------
 
 In the modelling framework, the terrestrial water and nutrient cycles are divided into
-three components each, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`,
- `OpenWaterComponent`, `NutrientSurfaceLayerComponent`, `NutrientSubSurfaceComponent` 
-and `NutrientOpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the
-six framework components to create subclasses from to start your
+three components each, i.e. `SurfaceLayerComponent`, `SubSurfaceComponent`, 
+`OpenWaterComponent`, `NutrientSurfaceLayerComponent`, `NutrientSubSurfaceComponent` 
+and `NutrientOpenWaterComponent` (see :ref:`Fig. 1<fig_diagram>`). These are the 
+six framework components to create subclasses from to start your 
 science component.
 
 Each component features a fixed interface (i.e. a pre-defined set of
@@ -45,7 +45,7 @@ are not produced.
 .. table:: Tab. 1: Transfers of Information between Components (see
            :ref:`Fig. 2<fig_transfers>` for the numbers context)
 
-   ==  ==============================================  ========================
+   ==  =============================================================================  ========================
    #   Name                                                                           Unit
    ==  =============================================================================  ========================
    1   canopy_liquid_throughfall_and_snow_melt_flux                                   |kg m-2 s-1|
