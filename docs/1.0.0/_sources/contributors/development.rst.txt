@@ -83,7 +83,7 @@ are not produced.
    33  mass_flux_of_nitrogen_as_ammonium_from_atmosphere_to_surface_due_to_deposition |kg m-2 s-1|
    34  mass_flux_of_nitrogen_as_nitrate_from_atmosphere_to_surface_due_to_deposition  |kg m-2 s-1|
    35  mass_flux_of_sulfur_as_sulfate_from_atmosphere_to_surface_due_to_deposition    |kg m-2 s-1|
-   36  mass_concentration_of_carbon_dioxide_in_air                                    kg m\ :sup:`-3`
+   36  mass_concentration_of_carbon_dioxide_in_air                                    kg\ m\ :sup:`-3`
    37  water_volume_in_surface_routing_channels                                       m\ :sup:`3`
    38  water_volume_in_subsurface_routing_channels                                    m\ :sup:`3`
    39  outgoing_water_volume_transport_out_of_subsurface_cell                         m\ :sup:`3` s\ :sup:`-1` 
