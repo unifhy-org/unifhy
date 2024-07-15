@@ -5,6 +5,7 @@ SPACE :=
 SPACE +=
 PKGS := $(foreach pkg,$(PKGS),$(ROOT)/unifhycontrib-$(pkg)/unifhycontrib-$(pkg))
 PKGS := $(subst $(SPACE),:,$(strip $(PKGS)))
+SHELL := /bin/bash
 
 # Minimal makefile for Sphinx documentation
 #
