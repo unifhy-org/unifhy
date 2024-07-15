@@ -1,4 +1,4 @@
-unifhy.BritishNationalGrid.from_extent_and_resolution
+﻿unifhy.BritishNationalGrid.from_extent_and_resolution
 =====================================================
 
 .. currentmodule:: unifhy

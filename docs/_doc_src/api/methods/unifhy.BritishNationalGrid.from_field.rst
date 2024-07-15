@@ -1,4 +1,4 @@
-unifhy.BritishNationalGrid.from_field
+﻿unifhy.BritishNationalGrid.from_field
 =====================================
 
 .. currentmodule:: unifhy

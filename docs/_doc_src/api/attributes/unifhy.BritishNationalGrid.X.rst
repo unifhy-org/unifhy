@@ -1,4 +1,4 @@
-unifhy.BritishNationalGrid.X
+﻿unifhy.BritishNationalGrid.X
 ============================
 
 .. currentmodule:: unifhy

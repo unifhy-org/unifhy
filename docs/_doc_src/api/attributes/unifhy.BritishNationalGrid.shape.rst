@@ -1,4 +1,4 @@
-unifhy.BritishNationalGrid.shape
+﻿unifhy.BritishNationalGrid.shape
 ================================
 
 .. currentmodule:: unifhy

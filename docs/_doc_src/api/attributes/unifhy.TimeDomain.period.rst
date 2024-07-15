@@ -1,4 +1,4 @@
-unifhy.TimeDomain.period
+﻿unifhy.TimeDomain.period
 ========================
 
 .. currentmodule:: unifhy

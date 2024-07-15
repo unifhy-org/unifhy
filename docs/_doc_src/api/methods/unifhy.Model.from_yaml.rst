@@ -1,4 +1,4 @@
-unifhy.Model.from_yaml
+﻿unifhy.Model.from_yaml
 ======================
 
 .. currentmodule:: unifhy

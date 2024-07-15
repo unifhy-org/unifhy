@@ -1,4 +1,4 @@
-unifhy.TimeDomain.from_datetime_sequence
+﻿unifhy.TimeDomain.from_datetime_sequence
 ========================================
 
 .. currentmodule:: unifhy

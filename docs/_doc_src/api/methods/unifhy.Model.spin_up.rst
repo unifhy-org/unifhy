@@ -1,4 +1,4 @@
-unifhy.Model.spin_up
+﻿unifhy.Model.spin_up
 ====================
 
 .. currentmodule:: unifhy
