@@ -73,7 +73,6 @@ jobs:
 
       - name: install dependencies for framework and its documentation
         run: |
-          mamba install --file=requirements.txt
           mamba install --file=requirements-docs.txt
 
       - name: setup git user info
