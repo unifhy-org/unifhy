@@ -1,5 +1,5 @@
 # List of packages belongings to the science library (for local build)
-PKGS := artemis rfm gr4 smart
+PKGS := artemis rfm gr4 smart ltls
 ROOT := ../../..
 SPACE :=
 SPACE +=
