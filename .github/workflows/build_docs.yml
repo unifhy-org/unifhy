@@ -23,7 +23,6 @@ jobs:
           - gr4
           - rfm
           - smart
-          - ltls
       fail-fast: false
 
     runs-on: ubuntu-latest
