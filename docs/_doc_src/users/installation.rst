@@ -11,7 +11,7 @@ come as separate packages. Thus, they need to be installed separately.
 
 The framework *only* provides the infrastructure to combine and run science
 components. The user must then select and install the science components
-they want to use to simulate the terrestrial water cycle.
+they want to use to simulate the terrestrial water and nutrient cycles.
 
 
 Installing the framework
@@ -31,10 +31,8 @@ recommended to use pip:
 
 .. warning::
 
-   Some of the package dependencies cannot be installed using `pip`
-   (e.g. `esmpy`). These needs to be installed prior the installation of
-   this package using `pip`. Please refer to the online documentation of
-   these packages to follow the recommended way of installing them. The
+   `esmpy` cannot be installed using `pip`. This needs to be installed prior to the installation of
+   unifhy using `pip`, the recommended method is to install esmpy with conda first. The
    full list of package dependencies can be found in the ``requirements.txt``
    file of the given release.
 
