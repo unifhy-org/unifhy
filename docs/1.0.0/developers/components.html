@@ -344,7 +344,7 @@ The broad strokes are:</p>
 <li><p>Add the Component to unifhy/component.py, subclassing the Component class and following the structure and syntax of the existing Components, and the inwards and outwards transfers to _inwards_info and _outwards_info respectively</p></li>
 <li><p>Add the new transfers provided by the new Component, described by the new Component’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards_info</span></code>, to the relevant other Components’ <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inward_info</span></code>s</p></li>
 <li><p>Adapt unifhy.Model to accept the extra Component(s)</p></li>
-<li><p>Update the unit tests to handle the extra Component(s). This involves creating dummy Component version(s) of the new dummy Component(s) and calculating the values of all the transfers and records for various configurations of the model when all the dummy Components are run together. There is a tool for calculating the values here.</p></li>
+<li><p>Update the unit tests to handle the extra Component(s). This involves creating dummy Component version(s) of the new Component(s) and calculating the values of all the transfers and records for various configurations of the model when all the dummy Components are run together. There is a tool for calculating the values <a class="reference external" href="https://github.com/unifhy-org/unifhy/blob/nutrients/tests/tests/test_utils/dummy_output_calculator.py">here</a>.</p></li>
 </ol>
 <p>More detail for the steps below.</p>
 <div class="contents local topic" id="contents">
@@ -358,7 +358,7 @@ The broad strokes are:</p>
 <section id="adding-components-to-component-py">
 <h2>2. Adding Components to component.py<a class="headerlink" href="#adding-components-to-component-py" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Components have the following structure, and should be added before the <a class="reference internal" href="../api/classes/unifhy.DataComponent.html#unifhy.DataComponent" title="unifhy.DataComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataComponent</span></code></a> class</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="code-block-caption"><span class="caption-text">Components have the following structure, and should be added just above the <a class="reference internal" href="../api/classes/unifhy.DataComponent.html#unifhy.DataComponent" title="unifhy.DataComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataComponent</span></code></a> class</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ComponentNameHere</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Component description here</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -410,7 +410,7 @@ The broad strokes are:</p>
 </section>
 <section id="adding-the-transfers">
 <h2>3. Adding the transfers<a class="headerlink" href="#adding-the-transfers" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
-<p>The transfers into and out of the component are specified in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inwards_info</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards_info</span></code> dictionaries. The structure of these is explained in the previous section &lt;LINK&gt;</p>
+<p>The transfers into and out of the component are specified in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">_inwards_info</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_outwards_info</span></code> dictionaries. The structure of these is explained in the <a class="reference external" href="https://unifhy-org.github.io/unifhy/developers/transfers.html">previous section</a></p>
 </section>
 <section id="adapting-unifhy-model">
 <h2>4. Adapting unifhy.Model<a class="headerlink" href="#adapting-unifhy-model" title="Permalink to this headline"><span class="fa fa-link"></a></h2>

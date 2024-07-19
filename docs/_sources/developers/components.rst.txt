@@ -16,7 +16,7 @@ The broad strokes are:
 2. Add the Component to unifhy/component.py, subclassing the Component class and following the structure and syntax of the existing Components, and the inwards and outwards transfers to _inwards_info and _outwards_info respectively
 3. Add the new transfers provided by the new Component, described by the new Component's `_outwards_info`, to the relevant other Components' `_inward_info`\s
 4. Adapt unifhy.Model to accept the extra Component(s)
-5. Update the unit tests to handle the extra Component(s). This involves creating dummy Component version(s) of the new dummy Component(s) and calculating the values of all the transfers and records for various configurations of the model when all the dummy Components are run together. There is a tool for calculating the values here.
+5. Update the unit tests to handle the extra Component(s). This involves creating dummy Component version(s) of the new Component(s) and calculating the values of all the transfers and records for various configurations of the model when all the dummy Components are run together. There is a tool for calculating the values `here <https://github.com/unifhy-org/unifhy/blob/nutrients/tests/tests/test_utils/dummy_output_calculator.py>`_.
 
 More detail for the steps below.
 
@@ -28,7 +28,7 @@ More detail for the steps below.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
-   :caption: Components have the following structure, and should be added before the `DataComponent` class
+   :caption: Components have the following structure, and should be added just above the `DataComponent` class
 
    class ComponentNameHere(Component, metaclass=abc.ABCMeta):
        """ Component description here
@@ -79,7 +79,7 @@ Anything else does not need to be touched.
 
 3. Adding the transfers
 ^^^^^^^^^^^^^^^^^^^^^^^
-The transfers into and out of the component are specified in the `_inwards_info` and `_outwards_info` dictionaries. The structure of these is explained in the previous section <LINK>
+The transfers into and out of the component are specified in the `_inwards_info` and `_outwards_info` dictionaries. The structure of these is explained in the `previous section <https://unifhy-org.github.io/unifhy/developers/transfers.html>`_
 
 4. Adapting unifhy.Model
 ^^^^^^^^^^^^^^^^^^^^^^^^

@@ -356,7 +356,7 @@ with prefix <code class="xref py py-obj docutils literal notranslate"><span clas
 come as separate packages. Thus, they need to be installed separately.</p>
 <p>The framework <em>only</em> provides the infrastructure to combine and run science
 components. The user must then select and install the science components
-they want to use to simulate the terrestrial water cycle.</p>
+they want to use to simulate the terrestrial water and nutrient cycles.</p>
 <section id="installing-the-framework">
 <h2>Installing the framework<a class="headerlink" href="#installing-the-framework" title="Permalink to this headline"><span class="fa fa-link"></a></h2>
 <section id="official-releases">
@@ -371,10 +371,8 @@ recommended to use pip:</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Some of the package dependencies cannot be installed using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span></code>
-(e.g. <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>). These needs to be installed prior the installation of
-this package using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span></code>. Please refer to the online documentation of
-these packages to follow the recommended way of installing them. The
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code> cannot be installed using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span></code>. This needs to be installed prior to the installation of
+unifhy using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span></code>, the recommended method is to install esmpy with conda first. The
 full list of package dependencies can be found in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>
 file of the given release.</p>
 </div>

@@ -377,29 +377,20 @@ function checkPageExistsAndRedirect(event) {
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>To run this tutorial, you need to install the framework and the relevant
-science components to be used (here Artemis, RFM and LTLS). To do so, run the
-following commands:</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Installing the framework.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>unifhy
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Installing the relevant science components.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>unifhycontrib-artemis<span class="w"> </span>unifhycontrib-rfm<span class="w"> </span>unifhycontrib-ltls
-</pre></div>
-</div>
-</div>
-<p>More details can be found in the <a class="reference internal" href="installation.html"><span class="doc">installation</span></a> section.</p>
-<p>This tutorial is based on v0.1.0 of the framework, you can check the version
+science components to be used (here Artemis, RFM and LTLS). To install the framework,
+follow the instructions in the <a class="reference internal" href="installation.html"><span class="doc">installation</span></a> section, then run the
+command:</p>
+<blockquote>
+<div><p>$ pip install unifhycontrib-artemis unifhycontrib-rfm unifhycontrib-ltls</p>
+</div></blockquote>
+<p>This tutorial is based on v1.0.0 of the framework, you can check the version
 you have just installed by starting a Python console and executing the following
 commands:</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Importing the framework and checking its version.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Importing the framework and checking its version.</span><a class="headerlink" href="#id1" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">unifhy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
-<span class="go">0.1.0</span>
+<span class="go">1.0.0</span>
 </pre></div>
 </div>
 </div>
@@ -421,8 +412,8 @@ articulated together.</p>
 <h3>Time<a class="headerlink" href="#time" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p><a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> characterises the time dimension of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code>, i.e.
 the period and the temporal resolution.</p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> by specifying its start, end, and step.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a> by specifying its start, end, and step.</span><a class="headerlink" href="#id2" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">timedomain</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">TimeDomain</span><span class="o">.</span><span class="n">from_start_end_step</span><span class="p">(</span>
 <span class="gp">... </span>   <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
@@ -450,8 +441,8 @@ the period and the temporal resolution.</p>
 i.e. the region and the spatial resolution. The spatial configurations
 currently supported can be found in the <a class="reference internal" href="../api_reference.html"><span class="doc">API Reference</span></a>’s
 Space section. <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> is one example.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> from its dimensions’ extents and resolutions.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a> from its dimensions’ extents and resolutions.</span><a class="headerlink" href="#id3" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">LatLonGrid</span><span class="o">.</span><span class="n">from_extent_and_resolution</span><span class="p">(</span>
 <span class="gp">... </span>   <span class="n">latitude_extent</span><span class="o">=</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">55</span><span class="p">),</span>
 <span class="gp">... </span>   <span class="n">latitude_resolution</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
@@ -486,8 +477,8 @@ each spatial element in the component spacedomain. For some spacedomains
 cell area is calculated automatically by the framework if not already set.</p></li>
 </ul>
 </div></blockquote>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Setting land sea mask and flow direction for <a class="reference internal" href="../api/classes/unifhy.LatLonGrid.html#unifhy.LatLonGrid" title="unifhy.LatLonGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LatLonGrid</span></code></a>.</span><a class="headerlink" href="#id4" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spacedomain</span><span class="o">.</span><span class="n">land_sea_mask</span> <span class="o">=</span> <span class="p">(</span>
 <span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;data/land_sea_mask.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;land_binary_mask&#39;</span><span class="p">)</span>
@@ -524,8 +515,8 @@ instances.</p>
 <p>Only data fully compliant with the
 <a class="reference external" href="https://cfconventions.org/">CF conventions</a> (v1.8 or later) can be used.</p>
 </div>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Instantiating <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> from a CF-compliant netCDF file.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Instantiating <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> from a CF-compliant netCDF file.</span><a class="headerlink" href="#id5" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset_surfacelayer</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;data/surface_downwelling_longwave_flux_in_air.nc&#39;</span><span class="p">,</span>
 <span class="gp">... </span>           <span class="s1">&#39;data/surface_downwelling_shortwave_flux_in_air.nc&#39;</span><span class="p">,</span>
@@ -611,8 +602,8 @@ with <code class="xref py py-obj docutils literal notranslate"><span class="pre"
 needs differ (i.e their signatures). Not all the components must be used to create
 a Model, any of the components can be substituted with a <a class="reference internal" href="../api/classes/unifhy.DataComponent.html#unifhy.DataComponent" title="unifhy.DataComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataComponent</span></code></a> or
 <a class="reference internal" href="../api/classes/unifhy.NullComponent.html#unifhy.NullComponent" title="unifhy.NullComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NullComponent</span></code></a>.</p>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">Exploring the signature of ‘Artemis’ <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>.</span><a class="headerlink" href="#id8" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Exploring the signature of ‘Artemis’ <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a>.</span><a class="headerlink" href="#id6" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhycontrib.artemis</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">unifhycontrib</span><span class="o">.</span><span class="n">artemis</span><span class="o">.</span><span class="n">SubSurfaceComponent</span><span class="p">)</span>
 <span class="go">SubSurfaceComponent(</span>
@@ -650,8 +641,8 @@ subsurface component page.</p>
 <p>To get a science component instance, one needs to provide a <a class="reference internal" href="../api/classes/unifhy.TimeDomain.html#unifhy.TimeDomain" title="unifhy.TimeDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDomain</span></code></a>
 instance, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceDomain</span></code> instance, a <a class="reference internal" href="../api/classes/unifhy.DataSet.html#unifhy.DataSet" title="unifhy.DataSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSet</span></code></a> instance, and parameter
 and/or constant values as per indicated in its signature.</p>
-<div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">Getting an instance of <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a> ‘Artemis’.</span><a class="headerlink" href="#id9" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Getting an instance of <a class="reference internal" href="../api/classes/unifhy.SubSurfaceComponent.html#unifhy.SubSurfaceComponent" title="unifhy.SubSurfaceComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSurfaceComponent</span></code></a> ‘Artemis’.</span><a class="headerlink" href="#id7" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">component</span> <span class="o">=</span> <span class="n">unifhycontrib</span><span class="o">.</span><span class="n">artemis</span><span class="o">.</span><span class="n">SubSurfaceComponent</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">saving_directory</span><span class="o">=</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">timedomain</span><span class="o">=</span><span class="n">timedomain</span><span class="p">,</span>
@@ -689,8 +680,8 @@ of the three parts of the terrestrial water cycle and one for each of the
 three parts of the terrestrial nutrients cycle. It combines these six
 science components to make a fully functional model for the terrestrial
 water and nutrients cycles.</p>
-<div class="literal-block-wrapper docutils container" id="id10">
-<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id10" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Instantiating a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>.</span><a class="headerlink" href="#id8" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhycontrib.rfm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">unifhycontrib.ltls</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span>
@@ -787,8 +778,8 @@ is automatically saved as a YAML file in the <em>config_directory</em> and named
 <em>identifier</em> (e.g. in this tutorial, the file would be at
 <em>configurations/tutorial.yml</em>). This file can be reused later to directly obtain
 a configured model.</p>
-<div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">Configuring a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> from a YAML configuration file.</span><a class="headerlink" href="#id11" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Configuring a <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> from a YAML configuration file.</span><a class="headerlink" href="#id9" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">another_model</span> <span class="o">=</span> <span class="n">unifhy</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s1">&#39;configurations/tutorial.yml&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">another_model</span><span class="p">)</span>
 <span class="go">Model(</span>
@@ -815,8 +806,8 @@ configuration YAML file.</p>
 <h3>Spin-Up and Simulate<a class="headerlink" href="#spin-up-and-simulate" title="Permalink to this headline"><span class="fa fa-link"></a></h3>
 <p>Once configured, the instance of <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> can be used to start a spin up run
 and/or a main simulation run.</p>
-<div class="literal-block-wrapper docutils container" id="id12">
-<div class="code-block-caption"><span class="caption-text">Spinning-up and running the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> simulation.</span><a class="headerlink" href="#id12" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">Spinning-up and running the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> simulation.</span><a class="headerlink" href="#id10" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">spin_up</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>              <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>              <span class="n">cycles</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
@@ -836,8 +827,8 @@ for the given run to be resumed to reach completion of the simulation
 period. The <em>tag</em> parameter must be used to select which run to resume
 (i.e. any spin-up cycle, or the main run), and the <em>at</em> parameter can be
 used to select the given snapshot in time to restart from.</p>
-<div class="literal-block-wrapper docutils container" id="id13">
-<div class="code-block-caption"><span class="caption-text">Resuming the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> main simulation run.</span><a class="headerlink" href="#id13" title="Permalink to this code"><span class="fa fa-link"></a></div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Resuming the <a class="reference internal" href="../api/classes/unifhy.Model.html#unifhy.Model" title="unifhy.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a> main simulation run.</span><a class="headerlink" href="#id11" title="Permalink to this code"><span class="fa fa-link"></a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>

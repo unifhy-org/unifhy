@@ -95,6 +95,10 @@ subsurface parts of the terrestrial water cycle only:
 
 - delete the modules *nutrientsurfacelayer.py*, *nutrientsubsurface.py*, *nutrientopenwater.py* and *openwater.py*, and
 - remove `from .openwater import OpenWaterComponent` in *__init__.py*.
+- remove `from .nutrientsurfacelayer import NutrientSurfaceLayerComponent` in *__init__.py*.
+- remove `from .nutrientsubsurface import NutrientSubSurfaceComponent` in *__init__.py*.
+- remove `from .nutrientopenwater import NutrientOpenWaterComponent` in *__init__.py*.
+
 
 Then, bring in your own components:
 

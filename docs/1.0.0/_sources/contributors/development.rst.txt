@@ -98,7 +98,7 @@ If your science component contribution is overlapping several components,
 it is required to be refactored into the relevant number of components.
 
 Contributions must be implemented as Python classes, and more specifically
-as subclasses of one of the three framework components. This way, the
+as subclasses of one of the six framework components. This way, the
 interface for the science component contribution is already set, and the
 component directly inherits all the functionalities intrinsic to the
 framework so that, as a contributor, you can focus solely on specifying
