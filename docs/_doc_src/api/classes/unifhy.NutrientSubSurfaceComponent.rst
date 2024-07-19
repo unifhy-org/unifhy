@@ -1,10 +1,10 @@
 .. currentmodule:: unifhy
 .. default-role:: obj
 
-SubSurfaceLayerComponent
+NutrientSubSurfaceComponent
 =====================
 
-.. autoclass:: SubSurfaceLayerComponent
+.. autoclass:: NutrientSubSurfaceComponent
    :show-inheritance:
    :members:
    :inherited-members:
