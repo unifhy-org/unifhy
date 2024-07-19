@@ -29,6 +29,9 @@ Components
    api/classes/unifhy.SurfaceLayerComponent.rst
    api/classes/unifhy.SubSurfaceComponent.rst
    api/classes/unifhy.OpenWaterComponent.rst
+   api/classes/unifhy.NutrientSurfaceLayerComponent.rst
+   api/classes/unifhy.NutrientSubSurfaceComponent.rst
+   api/classes/unifhy.NutrientOpenWaterComponent.rst
    api/classes/unifhy.DataComponent.rst
    api/classes/unifhy.NullComponent.rst
 

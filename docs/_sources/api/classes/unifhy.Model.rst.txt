@@ -58,3 +58,6 @@ Attributes
    ~unifhy.Model.surfacelayer
    ~unifhy.Model.subsurface
    ~unifhy.Model.openwater
+   ~unifhy.Model.nutrientsurfacelayer
+   ~unifhy.Model.nutrientsubsurface
+   ~unifhy.Model.nutrientopenwater

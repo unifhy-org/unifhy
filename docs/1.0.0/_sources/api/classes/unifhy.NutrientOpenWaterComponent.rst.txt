@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 NutrientOpenWaterComponent
-=====================
+==========================
 
 .. autoclass:: NutrientOpenWaterComponent
    :show-inheritance:
