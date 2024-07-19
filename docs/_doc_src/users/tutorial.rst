@@ -10,22 +10,15 @@ This section showcases the basic usage of the modelling framework `unifhy`
 .. important::
 
    To run this tutorial, you need to install the framework and the relevant
-   science components to be used (here Artemis, RFM and LTLS). To do so, run the
-   following commands:
-
-   .. code-block:: console
-      :caption: Installing the framework.
-
-      $ conda install unifhy
-
-   .. code-block:: console
-      :caption: Installing the relevant science components.
-
+   science components to be used (here Artemis, RFM and LTLS). To install the framework, 
+   follow the instructions in the :doc:`installation <installation>` section, then run the 
+   command:
+   
+      
       $ pip install unifhycontrib-artemis unifhycontrib-rfm unifhycontrib-ltls
 
-   More details can be found in the :doc:`installation <installation>` section.
 
-   This tutorial is based on v0.1.0 of the framework, you can check the version
+   This tutorial is based on v1.0.0 of the framework, you can check the version
    you have just installed by starting a Python console and executing the following
    commands:
 
@@ -34,7 +27,7 @@ This section showcases the basic usage of the modelling framework `unifhy`
 
       >>> import unifhy
       >>> print(unifhy.__version__)
-      0.1.0
+      1.0.0
 
 
    The input data required to run this tutorial can be found in the ``data``
