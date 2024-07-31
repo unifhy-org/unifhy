@@ -25,7 +25,7 @@ with open("../../unifhy/version.py") as fv:
 # -- Project information -----------------------------------------------------
 project = "unifhy"
 copyright = "2020-{}, UK Centre for Ecology & Hydrology".format(datetime.now().year)
-author = "Thibault Hallouin"
+author = "Thibault Hallouin; Matt Brown"
 
 # The full version, including alpha/beta/rc tags
 if os.getenv("VERSION_RELEASE"):
