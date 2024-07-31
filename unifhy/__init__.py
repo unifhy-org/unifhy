@@ -11,9 +11,9 @@ from .component import (
     SurfaceLayerComponent,
     SubSurfaceComponent,
     OpenWaterComponent,
-    NutrientSurfaceLayer,
-    NutrientSubSurface,
-    NutrientOpenWater,
+    NutrientSurfaceLayerComponent,
+    NutrientSubSurfaceComponent,
+    NutrientOpenWaterComponent,
     DataComponent,
     NullComponent,
 )
