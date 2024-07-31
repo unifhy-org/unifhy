@@ -90,14 +90,15 @@ class Model(object):
         #: Return the open water component of the model.
         self.openwater = self._process_component_type(openwater, OpenWaterComponent)
 
+        #: Return the nutrient surface layer component of the model.        
         self.nutrientsurfacelayer = self._process_component_type(
             nutrientsurfacelayer, NutrientSurfaceLayerComponent
         )
-        #: Return the sub-surface component of the model.
+        #: Return the nutrient sub-surface component of the model.
         self.nutrientsubsurface = self._process_component_type(
             nutrientsubsurface, NutrientSubSurfaceComponent
         )
-        #: Return the open water component of the model.
+        #: Return the nutrient open water component of the model.
         self.nutrientopenwater = self._process_component_type(
             nutrientopenwater, NutrientOpenWaterComponent
         )
