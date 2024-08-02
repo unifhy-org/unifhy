@@ -8,7 +8,12 @@
         {
             "name": "Richard J. Ellis",
             "affiliation": "UK Centre for Ecology and Hydrology, UK"
-        }
+        },
+        {
+            "name": "Matt Brown",
+            "affiliation": "UK Centre for Ecology and Hydrology, UK",
+            "orcid": "0000-0003-1127-0279"
+        }        
     ],
     "title": "unifhy",
     "description": "A Unified Framework for Hydrology.",

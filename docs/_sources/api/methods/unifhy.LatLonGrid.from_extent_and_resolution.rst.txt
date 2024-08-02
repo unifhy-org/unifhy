@@ -1,4 +1,4 @@
-unifhy.LatLonGrid.from_extent_and_resolution
+﻿unifhy.LatLonGrid.from_extent_and_resolution
 ============================================
 
 .. currentmodule:: unifhy

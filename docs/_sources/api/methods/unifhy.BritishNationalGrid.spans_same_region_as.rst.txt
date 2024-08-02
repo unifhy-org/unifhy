@@ -1,4 +1,4 @@
-unifhy.BritishNationalGrid.spans_same_region_as
+﻿unifhy.BritishNationalGrid.spans_same_region_as
 ===============================================
 
 .. currentmodule:: unifhy

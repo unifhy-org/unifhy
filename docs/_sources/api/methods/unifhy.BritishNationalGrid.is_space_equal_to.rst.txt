@@ -1,4 +1,4 @@
-unifhy.BritishNationalGrid.is_space_equal_to
+﻿unifhy.BritishNationalGrid.is_space_equal_to
 ============================================
 
 .. currentmodule:: unifhy

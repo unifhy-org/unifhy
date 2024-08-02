@@ -1,4 +1,4 @@
-unifhy.RotatedLatLonGrid.spans_same_region_as
+﻿unifhy.RotatedLatLonGrid.spans_same_region_as
 =============================================
 
 .. currentmodule:: unifhy

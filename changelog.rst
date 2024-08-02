@@ -1,10 +1,39 @@
 .. default-role:: obj
 
-..
-   latest
-   ------
 
-   Yet to be versioned and released. Only available from *dev* branch until then.
+v1.0.0
+------
+
+.. rubric:: Dependencies
+
+* add support for Python 3.10 and 3.11
+* support dropped for cf-python <=3.16.2
+
+.. rubric:: API changes
+
+* 3 new Components added to framework to allow modelling of nutrient cycle
+  (`#14 <https://github.com/unifhy-org/unifhy/issues/14>`_)
+* Unit tests updated to include the 3 new Components
+  (`#93 <https://github.com/unifhy-org/unifhy/issues/93>`_)
+
+.. rubric:: Bug fixes
+
+* fix `DataComponent`/`NullComponent` bug making them unusable as
+  substitute components in a `Model`
+  (`#87 <https://github.com/unifhy-org/unifhy/issues/87>`_)
+* fix broken grid cell area calculation with CF-Python version 3.14.0 and above 
+  (`#98 <https://github.com/unifhy-org/unifhy/issues/98>`_)
+* fix broken grid subsetting with CF-Python 3.16.2
+  (`#101 <https://github.com/unifhy-org/unifhy/issues/101>`_)
+
+
+.. rubric:: Documentation
+
+* Update documentation to include Nutrient Components
+  (`#99 <https://github.com/unifhy-org/unifhy/issues/99>`_)
+* Added Developer section to documentation to document how to add new transfers and Components to the framework
+  (`#96 <https://github.com/unifhy-org/unifhy/issues/96>`_)
+
 
 v0.1.1
 ------

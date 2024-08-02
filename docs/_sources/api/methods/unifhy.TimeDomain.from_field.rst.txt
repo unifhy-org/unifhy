@@ -1,4 +1,4 @@
-unifhy.TimeDomain.from_field
+﻿unifhy.TimeDomain.from_field
 ============================
 
 .. currentmodule:: unifhy

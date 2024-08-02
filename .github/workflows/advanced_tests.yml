@@ -7,12 +7,12 @@ on:
 
 jobs:
 
-  run-basic-tests:
+  run-advanced-tests:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        os: [ubuntu-latest, macos-13]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -25,7 +25,7 @@ jobs:
 
       # check out PR HEAD commit
       - name: check out PR HEAD commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -37,6 +37,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           auto-update-conda: true
           mamba-version: "*"
+          miniconda-version: "latest"          
           channels: conda-forge
           channel-priority: true
 
@@ -49,15 +50,22 @@ jobs:
 
       # build dummy components required for tests
       - name: make gfortran available (macos only)
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-13'
         run: |
-          sudo ln -s /usr/local/bin/gfortran-10 /usr/local/bin/gfortran
+          sudo ln -s /usr/local/bin/gfortran-11 /usr/local/bin/gfortran
           sudo mkdir /usr/local/gfortran
-          sudo ln -s /usr/local/Cellar/gcc@10/*/lib/gcc/10 /usr/local/gfortran/lib
+          sudo ln -s /usr/local/Cellar/gcc@11*/lib/gcc/11 /usr/local/gfortran/lib
+          gfortran --version
 
       - name: build dummy C and Fortran components
         run: |
           (cd ./tests/tests/components && make)
+
+
+      # install latest cf-python package
+      - name: install package
+        run: |
+          pip install https://github.com/NCAS-CMS/cf-python/archive/main.zip          
 
       # install package
       - name: install package
@@ -65,6 +73,21 @@ jobs:
           pip install -e .
 
       # run tests
-      - name: run advanced test suite
+      - name: run advanced tests 1 (SameTimeSameSpace)
         run: |
-          (cd ./tests && python run_all_tests.py)
+          (cd ./tests && python run_stss_tests.py)
+
+      # run tests
+      - name: run advanced tests 2 (SameTimeDiffSpace)
+        run: |
+          (cd ./tests && python run_stds_tests.py)          
+
+      # run tests
+      - name: run advanced tests 3 (DiffTimeSameSpace)
+        run: |
+          (cd ./tests && python run_dtss_tests.py)
+
+      # run tests
+      - name: run advanced tests 4 (DiffTimeDiffSpace)
+        run: |
+          (cd ./tests && python run_dtds_tests.py)          

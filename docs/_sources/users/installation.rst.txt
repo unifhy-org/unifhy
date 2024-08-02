@@ -11,7 +11,7 @@ come as separate packages. Thus, they need to be installed separately.
 
 The framework *only* provides the infrastructure to combine and run science
 components. The user must then select and install the science components
-they want to use to simulate the terrestrial water cycle.
+they want to use to simulate the terrestrial water and nutrient cycles.
 
 
 Installing the framework
@@ -21,28 +21,18 @@ Official releases
 ~~~~~~~~~~~~~~~~~
 
 If you wish to install the most recent **stable** version of `unifhy`, it is
-available from the *conda-forge* channel, so you can use `conda` (recommended
-way):
-
-.. code-block:: console
-   :caption: Installing stable version using `conda`.
-
-   $ conda install -c conda-forge unifhy
-
-It is also available from the Python Package Index (PyPI), so you can also
-use `pip`:
+recommended to use pip:
 
 .. code-block:: console
    :caption: Installing stable version using `pip`.
 
-   $ pip install unifhy
+   $ pip install git+https://github.com/unifhy-org/unifhy.git@main
+
 
 .. warning::
 
-   Some of the package dependencies cannot be installed using `pip`
-   (e.g. `esmpy`). These needs to be installed prior the installation of
-   this package using `pip`. Please refer to the online documentation of
-   these packages to follow the recommended way of installing them. The
+   `esmpy` cannot be installed using `pip`. This needs to be installed prior to the installation of
+   unifhy using `pip`, the recommended method is to install esmpy with conda first. The
    full list of package dependencies can be found in the ``requirements.txt``
    file of the given release.
 

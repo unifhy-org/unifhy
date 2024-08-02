@@ -13,7 +13,8 @@ def compare_states(some_states, some_other_states):
                 np.allclose(
                     some_states[state].get_timestep(slice(None)),
                     some_other_states[state].get_timestep(slice(None)),
-                    rtol, atol
+                    rtol,
+                    atol,
                 )
             )
     else:

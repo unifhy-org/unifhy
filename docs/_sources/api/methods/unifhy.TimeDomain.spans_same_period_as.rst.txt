@@ -1,4 +1,4 @@
-unifhy.TimeDomain.spans_same_period_as
+﻿unifhy.TimeDomain.spans_same_period_as
 ======================================
 
 .. currentmodule:: unifhy

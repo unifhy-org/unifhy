@@ -10,22 +10,15 @@ This section showcases the basic usage of the modelling framework `unifhy`
 .. important::
 
    To run this tutorial, you need to install the framework and the relevant
-   science components to be used (here Artemis and RFM). To do so, run the
-   following commands:
+   science components to be used (here Artemis, RFM and LTLS). To install the framework, 
+   follow the instructions in the :doc:`installation <installation>` section, then run the 
+   command:
+   
+      
+      $ pip install unifhycontrib-artemis unifhycontrib-rfm unifhycontrib-ltls
 
-   .. code-block:: console
-      :caption: Installing the framework.
 
-      $ conda install unifhy
-
-   .. code-block:: console
-      :caption: Installing the relevant science components.
-
-      $ pip install unifhycontrib-artemis unifhycontrib-rfm
-
-   More details can be found in the :doc:`installation <installation>` section.
-
-   This tutorial is based on v0.1.0 of the framework, you can check the version
+   This tutorial is based on v1.0.0 of the framework, you can check the version
    you have just installed by starting a Python console and executing the following
    commands:
 
@@ -34,7 +27,7 @@ This section showcases the basic usage of the modelling framework `unifhy`
 
       >>> import unifhy
       >>> print(unifhy.__version__)
-      0.1.0
+      1.0.0
 
 
    The input data required to run this tutorial can be found in the ``data``
@@ -44,8 +37,8 @@ This section showcases the basic usage of the modelling framework `unifhy`
 Configuring a Model
 -------------------
 
-The central object in the framework is the `Model`, which combines three
-science components for the three compartments of the terrestrial water cycle.
+The central object in the framework is the `Model`, which combines six
+science components for the three compartments of the terrestrial water cycle and nutrients cycle.
 The science components currently available to choose from are listed in
 the :doc:`science library <../science_library>` section.
 
@@ -209,18 +202,47 @@ instances.
    ...         'RFM drainage area in cell counts (WFDEI)': 'flow_accumulation'
    ...     }
    ... )
-
+   >>> dataset_nutrientsubsurface = unifhy.DataSet(
+   ...     files=['data/nutrients_runoffs/DOC_ro.nc',      
+   ...            'data/nutrients_runoffs/DIC_ro.nc',      
+   ...            'data/nutrients_runoffs/DON_ro.nc',      
+   ...            'data/nutrients_runoffs/Ammonium_ro.nc', 
+   ...            'data/nutrients_runoffs/Nitrate_ro.nc',
+   ...            'data/nutrients_runoffs/TDP_ro.nc',
+   ...            'data/nutrients_runoffs/Calcium_ro.nc',  
+   ...            'data/nutrients_runoffs/Sulphate_ro.nc', 
+   ...            'data/nutrients_runoffs/Silicon_ro.nc',  
+   ...            'data/nutrients_runoffs/DOC_gw.nc',
+   ...            'data/nutrients_runoffs/DIC_gw.nc',      
+   ...            'data/nutrients_runoffs/DON_gw.nc',
+   ...            'data/nutrients_runoffs/Ammonium_gw.nc',
+   ...            'data/nutrients_runoffs/Nitrate_gw.nc',
+   ...            'data/nutrients_runoffs/TDP_gw.nc',
+   ...            'data/nutrients_runoffs/Calcium_gw.nc',  
+   ...            'data/nutrients_runoffs/Sulphate_gw.nc', 
+   ...            'data/nutrients_runoffs/Silicon_gw.nc',  
+   ...            'data/nutrients_runoffs/CO2.nc']
+   ... ) 
+   >>> dataset_nutrientopenwater = unifhy.DataSet(
+   ...     files='data/flow_accumulation.nc',
+   ...     name_mapping={
+   ...         'RFM drainage area in cell counts (WFDEI)': 'flow_accumulation'
+   ...     }
+   ... )
 
 Science
 ~~~~~~~
 
 Each science component is either of a `SurfaceLayerComponent`,
-`SubSurfaceComponent`, or `OpenWaterComponent` type, and it embeds the
+`SubSurfaceComponent`, `OpenWaterComponent`, `NutrientSurfaceLayerComponent`,
+`NutrientSubSurfaceComponent` or `NutrientOpenWaterComponent` type, and it embeds the
 biophysical processes for the surface, sub-surface, or open water parts
-of the water cycle, respectively. All three types share the framework
+of the water and nutrients cycle, respectively. All six types share the framework
 `Component` class as their base class, which makes them readily compatible
 with `unifhy`. They have the same API, only their interfaces and data
-needs differ (i.e their signatures).
+needs differ (i.e their signatures). Not all the components must be used to create 
+a Model, any of the components can be substituted with a `DataComponent` or
+`NullComponent`.
 
 .. code-block:: python
    :caption: Exploring the signature of 'Artemis' `SubSurfaceComponent`.
@@ -294,15 +316,17 @@ Framework
 ~~~~~~~~~
 
 `Model` constitutes the core object of the modelling framework. It needs
-to be instantiated with three science `Component` instances, one for each
-of the three parts of the terrestrial water cycle. It combines these three
+to be instantiated with six science `Component` instances, one for each
+of the three parts of the terrestrial water cycle and one for each of the
+three parts of the terrestrial nutrients cycle. It combines these six
 science components to make a fully functional model for the terrestrial
-water cycle.
+water and nutrients cycles.
 
 .. code-block:: python
    :caption: Instantiating a `Model`.
 
    >>> import unifhycontrib.rfm
+   >>> import unifhycontrib.ltls
    >>> model = unifhy.Model(
    ...     identifier='tutorial',
    ...     config_directory='configurations',
@@ -329,6 +353,17 @@ water cycle.
    ...                 timedelta(days=1): ['mean']
    ...             }
    ...         }
+   ...     ),
+   ...     nutrientsurfacecomponent = unifhy.NullComponent(
+   ...          timedomain, spacedomain, unifhy.component.NutrientSurfaceLayerComponent
+   ...     ),
+   ...     nutrientsubsurface=unifhy.DataComponent(
+   ...          timedomain, spacedomain, dataset_nutrientsubsurface, 
+   ...          unifhy.component.NutrientSubSurfaceComponent
+   ...     ),
+   ...     nutrientopenwater=unifhycontrib.ltls.NutrientOpenWaterComponent(
+   ...         'outputs', timedomain, spacedomain, dataset_nutrientopenwater,
+   ...         parameters={}
    ...     )
    ... )
    >>> print(model)
@@ -339,6 +374,9 @@ water cycle.
        surfacelayer: unifhycontrib.artemis.surfacelayer
        subsurface: unifhycontrib.artemis.subsurface
        openwater: unifhycontrib.rfm.openwater
+       nutrientsurfacelayer: unifhy.component
+       nutrientsubsurface: unifhy.component
+       nutrientopenwater: unifhycontrib.ltls.nutrientopenwater
    )
 
 .. warning::
@@ -367,15 +405,15 @@ water cycle.
 
 .. note::
 
-   `DataComponent` and `NullComponent` represent convenient utility to
-   substitute science components. Any of the three components can be
+   `DataComponent` and `NullComponent` represent a convenient utility to
+   substitute science components. Any of the six components can be
    replaced by these alternatives.
 
-   `DataComponent` is provided to act the part of a component of the water
-   cycle by sourcing the component's outwards transfers from a `DataSet`,
+   `DataComponent` is provided to act the part of a component of the water or nutrient
+   cycles by sourcing the component's outwards transfers from a `DataSet`,
    e.g. containing outputs of a previous simulation.
 
-   `NullComponent` is provided to ignore a component of the water cycle
+   `NullComponent` is provided to ignore a component of the water or nutrient cycles
    by not processing the component's inwards transfers received, and by
    returning null values for the component's outwards transfers.
 
@@ -397,6 +435,9 @@ a configured model.
        surfacelayer: unifhycontrib.artemis.surfacelayer
        subsurface: unifhycontrib.artemis.subsurface
        openwater: unifhycontrib.rfm.openwater
+       nutrientsurfacelayer: unifhy.component,
+       nutrientsubsurface: unifhy.component,
+       nutrientopenwater: unifhycontrib.ltls.nutrientopenwater
    )
 
 

@@ -8,27 +8,27 @@ on:
 jobs:
 
   run-basic-tests:
-  
+
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        os: [ubuntu-latest, macos-13]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
       fail-fast: false
-        
+
     runs-on: ${{ matrix.os }}
-    
+
     defaults:
       run:
         shell: bash -l {0}
-    
+
     steps:
-    
+
       # check out PR HEAD commit
       - name: check out PR HEAD commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          
+
       # set up a conda environment
       - name: set up miniconda environment
         uses: conda-incubator/setup-miniconda@v2
@@ -37,20 +37,26 @@ jobs:
           python-version: ${{ matrix.python-version }}
           auto-update-conda: true
           mamba-version: "*"
+          miniconda-version: "latest"
           channels: conda-forge
           channel-priority: true
-          
+
       # install dependencies on conda environment
       - name: install package dependencies
         run: |
           mamba install udunits2=2.2.25
           mamba install --file=requirements.txt
-          
+
+      # install latest cf-python package
+      - name: install package
+        run: |
+          pip install https://github.com/NCAS-CMS/cf-python/archive/main.zip
+
       # install package
       - name: install package
         run: |
           pip install -e .
-          
+
       # run tests
       - name: run basic test suite
         run: |

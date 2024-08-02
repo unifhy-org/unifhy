@@ -6,20 +6,19 @@ import unifhy
 
 def get_dummy_dataset(component_category, time_res, space_res):
     return unifhy.DataSet(
-        'data/dummy_{}_data_{}_{}.nc'.format(component_category, time_res,
-                                             space_res)
+        "data/dummy_{}_data_{}_{}.nc".format(component_category, time_res, space_res)
     )
 
 
-def get_dummy_component_substitute_dataset(component_category, time_res,
-                                           space_res):
+def get_dummy_component_substitute_dataset(component_category, time_res, space_res):
     return unifhy.DataSet(
-        'data/dummy_{}_substitute_data_{}_{}.nc'.format(component_category,
-                                                        time_res, space_res)
+        "data/dummy_{}_substitute_data_{}_{}.nc".format(
+            component_category, time_res, space_res
+        )
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 

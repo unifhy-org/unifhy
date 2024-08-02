@@ -8,42 +8,38 @@ from ..time import TimeDomain
 
 
 class Clock(object):
-
     def __init__(self, timedomains):
         self.categories = tuple(timedomains)
         self.timedomains = timedomains
         # check time compatibility between components
-        supermesh_delta, supermesh_length, supermesh_step = (
-            self._check_timedomain_compatibilities(timedomains)
-        )
+        (
+            supermesh_delta,
+            supermesh_length,
+            supermesh_step,
+        ) = self._check_timedomain_compatibilities(timedomains)
 
         # get boolean arrays (switches) to determine when to run a given
         # component on temporal supermesh
         self.switches = {}
         self.increments = {}
 
-        steps = {c: timedomains[c].timedelta.total_seconds()
-                 for c in self.categories}
+        steps = {c: timedomains[c].timedelta.total_seconds() for c in self.categories}
 
         for category in timedomains:
             self.switches[category] = np.zeros((supermesh_length,), dtype=bool)
             increment = int(steps[category] // supermesh_step)
-            self.switches[category][increment - 1::increment] = True
+            self.switches[category][increment - 1 :: increment] = True
             self.increments[category] = increment
 
         # determine model states minimum dumping delta and set initial dump
-        self.switches['dumping'] = np.zeros((supermesh_length,), dtype=bool)
+        self.switches["dumping"] = np.zeros((supermesh_length,), dtype=bool)
         self.min_dumping_step = max(steps.values())
         # set as a minimum requirement one dump for the initial conditions
-        self.switches['dumping'][0] = True
+        self.switches["dumping"][0] = True
 
         # generate a TimeDomain for the Clock
-        start_datetime = (
-            timedomains[self.categories[0]].bounds.datetime_array[0, 0]
-        )
-        end_datetime = (
-            timedomains[self.categories[0]].bounds.datetime_array[-1, -1]
-        )
+        start_datetime = timedomains[self.categories[0]].bounds.datetime_array[0, 0]
+        end_datetime = timedomains[self.categories[0]].bounds.datetime_array[-1, -1]
 
         self.timedomain = TimeDomain.from_start_end_step(
             start_datetime, end_datetime, supermesh_delta
@@ -124,8 +120,13 @@ class Clock(object):
             # check that components' resolutions are integer multiples
             if timedomains[c1].timedelta < timedomains[c2].timedelta:
                 c1, c2 = c2, c1
-            if not (timedomains[c1].timedelta.total_seconds()
-                    % timedomains[c2].timedelta.total_seconds()) == 0:
+            if (
+                not (
+                    timedomains[c1].timedelta.total_seconds()
+                    % timedomains[c2].timedelta.total_seconds()
+                )
+                == 0
+            ):
                 raise ValueError(
                     f"timedomains of components {c1} and {c2} "
                     f"are not integer multiple of one another"
@@ -133,12 +134,8 @@ class Clock(object):
 
         # determine temporal supermesh properties
         # (supermesh is the fastest component)
-        delta = min(
-            *[timedomains[cat].timedelta for cat in timedomains]
-        )
-        length = max(
-            *[timedomains[cat].time.size for cat in timedomains]
-        )
+        delta = min(*[timedomains[cat].timedelta for cat in timedomains])
+        length = max(*[timedomains[cat].time.size for cat in timedomains])
         step = delta.total_seconds()
 
         return delta, length, step
@@ -163,14 +160,15 @@ class Clock(object):
         # get boolean arrays (switches) to determine when to dump the
         # component states on temporal supermesh
         dumping_increment = int(dumping_step // self.timedelta.total_seconds())
-        self.switches['dumping'][0::dumping_increment] = True
+        self.switches["dumping"][0::dumping_increment] = True
 
     def get_current_datetime(self):
         return self._current_datetime
 
     def get_current_timestamp(self):
-        return date2num(self._current_datetime, self.timedomain.units,
-                        self.timedomain.calendar)
+        return date2num(
+            self._current_datetime, self.timedomain.units, self.timedomain.calendar
+        )
 
     def get_current_timeindex(self, category):
         return self._current_timeindex // self.increments[category]
@@ -188,8 +186,7 @@ class Clock(object):
 
             return (
                 *(self.switches[cat][index] for cat in self.categories),
-                self.switches['dumping'][index]
+                self.switches["dumping"][index],
             )
         else:
             raise StopIteration
-

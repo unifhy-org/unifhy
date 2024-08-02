@@ -1,4 +1,4 @@
-unifhy.TimeDomain.is_time_equal_to
+﻿unifhy.TimeDomain.is_time_equal_to
 ==================================
 
 .. currentmodule:: unifhy
