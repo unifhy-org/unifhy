@@ -6,4 +6,4 @@ numpy>=1.16
 pyproj>=3.0
 pyyaml>=5.3
 esmpy
-cf-python>=3.16.2
+cf-python>=3.16.3
