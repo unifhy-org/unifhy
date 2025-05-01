@@ -58,7 +58,7 @@ setup(
         "Programming Language :: Python",
     ],
     packages=find_packages(exclude=["data*", "docs*", "tests*"]),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=read_requirements("requirements.txt"),
     extras_require={
         "docs": read_requirements("requirements-docs.txt"),
