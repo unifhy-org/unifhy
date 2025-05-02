@@ -46,7 +46,7 @@ setup(
         "Source Code": "https://github.com/unifhy-org/unifhy",
     },
     author=read_authors(".zenodo.json"),
-    license="BSD-3",
+    license="BSD-3-Clause",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Natural Language :: English",
@@ -54,7 +54,6 @@ setup(
         "Topic :: Scientific/Engineering :: Hydrology",
         "Operating System :: MacOS",
         "Operating System :: POSIX :: Linux",
-        "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
     ],
     packages=find_packages(exclude=["data*", "docs*", "tests*"]),
